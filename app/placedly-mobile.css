@@ -1,0 +1,433 @@
+/* ═══════════════════════════════════════════════════════════
+   PLACEDLY — Liftoff-style mobile (≤900px only)
+═══════════════════════════════════════════════════════════ */
+
+@media (min-width: 901px) {
+  .placedly-hero-mobile-brief {
+    display: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .page-wrapper {
+    background: var(--c-page-bg);
+  }
+
+  .placedly-lift-hero {
+    padding-top: 72px;
+    padding-bottom: 32px;
+    padding-left: 0;
+    padding-right: 0;
+    background: var(--c-page-bg);
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .placedly-hero-mobile-brief {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    min-height: clamp(480px, 78vh, 640px);
+    padding-bottom: 8px;
+  }
+
+  .placedly-hero-mobile-brief .placedly-lift-hero-gradient {
+    top: 62%;
+    width: 380vw;
+    max-width: none;
+    min-width: 100vw;
+    transform: translate(-50%, -50%) scale(1.5, 1.24);
+  }
+
+  .placedly-hero-mobile-brief .placedly-hero-bg-video-wrap {
+    top: 66%;
+    width: min(96vw, 520px);
+    height: min(44vw, 280px);
+  }
+
+  .placedly-hero-mobile-brief .placedly-hero-bg-video {
+    opacity: 0.58;
+    filter: blur(3px) saturate(0.58) contrast(1.08) brightness(0.58);
+  }
+
+  .placedly-hero-mobile-brief .placedly-hero-bg-video-veil {
+    background:
+      radial-gradient(ellipse 68% 62% at 50% 48%, rgba(255, 251, 244, 0.1) 0%, rgba(255, 251, 244, 0.48) 58%, rgba(255, 251, 244, 0.82) 100%),
+      linear-gradient(180deg, rgba(24, 18, 41, 0.07) 0%, rgba(255, 251, 244, 0.65) 100%);
+  }
+
+  .placedly-hero-mobile-brief .placedly-lift-hero-copy,
+  .placedly-hero-mobile-brief .placedly-lift-hero-stage {
+    position: relative;
+    z-index: 1;
+  }
+
+  .placedly-hero-desktop-only {
+    display: none !important;
+  }
+
+  /* ── Hero typography ──────────────────────────────────── */
+  .placedly-hero-mobile-brief .placedly-lift-hero-copy {
+    padding: 16px 8px 0;
+    max-width: 100%;
+  }
+
+  .placedly-liftoff-m-headline {
+    font-family: var(--font-hero-display) !important;
+    font-size: clamp(2.35rem, 10.5vw, 3rem) !important;
+    font-weight: 600 !important;
+    font-style: normal !important;
+    line-height: 1.1 !important;
+    letter-spacing: -0.03em !important;
+    color: #181229 !important;
+    margin: 0 0 16px !important;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  .placedly-liftoff-m-sub {
+    margin: 0 auto 20px !important;
+    padding: 0 6px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .placedly-liftoff-m-sub-line {
+    display: block;
+    font-family: var(--font) !important;
+    font-size: clamp(9.5px, 2.75vw, 12.5px) !important;
+    font-weight: 400 !important;
+    line-height: 1.35 !important;
+    letter-spacing: -0.025em !important;
+    color: #5c6370 !important;
+    white-space: nowrap;
+  }
+
+  /* ── Hero stage — cards overlay on full-bleed gradient ─ */
+  .placedly-lift-hero-stage--liftoff {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: 12px auto 0;
+    padding: 0;
+    min-height: clamp(240px, 52vw, 360px);
+    border-radius: 0;
+    overflow: visible;
+    background: transparent !important;
+    isolation: isolate;
+  }
+
+  .placedly-lift-hero-stage--liftoff::after {
+    display: none;
+  }
+
+  .placedly-lift-hero-stage--liftoff .placedly-lift-mobile-scene {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    min-height: clamp(240px, 52vw, 360px);
+    margin: 0;
+    padding: 0 14px;
+    box-sizing: border-box;
+  }
+
+  .placedly-lift-mobile-bokeh {
+    position: absolute;
+    border-radius: 50%;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .placedly-lift-mobile-bokeh.is-center {
+    z-index: 6 !important;
+  }
+
+  .placedly-lift-mobile-bokeh img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.1);
+    filter: none;
+    opacity: 1;
+  }
+
+  .placedly-lift-mobile-bokeh.is-blur img {
+    filter: blur(2.5px);
+    opacity: 0.82;
+  }
+
+  /* Profile cards — low, compact rectangles */
+  .placedly-lift-card--mobile {
+    position: absolute;
+    z-index: 10;
+    width: 110px;
+    padding: 0px 7px 0px;
+    border-radius: 10px;
+    text-align: left;
+    font-family: var(--font);
+    background: #fff;
+    border: none;
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.05),
+      0 8px 24px rgba(15, 23, 42, 0.1);
+  }
+
+  .placedly-lift-card--mobile-left {
+    top: -18px;
+    left: 8px;
+    z-index: 12;
+  }
+
+  .placedly-lift-card--mobile.placedly-lift-card--mobile-left .placedly-lift-card-profile,
+  .placedly-lift-card--mobile.placedly-lift-card--mobile-left .placedly-lift-card-line {
+    margin-left: -14px;
+  }
+
+  .placedly-lift-card--mobile-right {
+    top: auto;
+    bottom: 4%;
+    right: 22px;
+    left: auto;
+    z-index: 13;
+  }
+
+  .placedly-lift-card--mobile.placedly-lift-card--mobile-right .placedly-lift-card-profile,
+  .placedly-lift-card--mobile.placedly-lift-card--mobile-right .placedly-lift-card-line {
+    margin-left: -14px;
+  }
+
+  .placedly-lift-card--mobile .placedly-lift-card-profile {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    gap: 6px;
+  }
+
+  .placedly-lift-card--mobile .placedly-lift-avatar {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+
+  .placedly-lift-card--mobile .placedly-lift-card-identity {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .placedly-lift-card--mobile .placedly-lift-name {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #0a0a0a;
+    margin: 0;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .placedly-lift-card--mobile .placedly-lift-role {
+    font-size: 6.5px;
+    font-weight: 400;
+    color: #8a8fa0;
+    margin: 0;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .placedly-lift-card--mobile .placedly-lift-card-line {
+    font-size: 6.5px;
+    font-weight: 400;
+    line-height: 1.1;
+    color: #8a8fa0;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .placedly-lift-card--mobile .placedly-lift-card-line strong {
+    font-size: 6.5px !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    color: #0a0a0a;
+  }
+
+  /* Middle card — small peach recommendation badge */
+  .placedly-lift-mobile-rec {
+    position: absolute;
+    top: -6%;
+    left: 58%;
+    transform: translateX(-10%);
+    z-index: 14;
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 7px 11px;
+    border-radius: 11px;
+    background: #fde8dc;
+    color: #433449;
+    font-family: var(--font);
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.09);
+  }
+
+  .placedly-lift-mobile-rec svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: #2f2037;
+  }
+
+  .placedly-lift-mobile-rec-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    font-size: 9.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #433449;
+    white-space: nowrap;
+  }
+
+  .placedly-lift-mobile-rec-text strong {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #433449;
+  }
+
+  .placedly-lift-mobile-rec-text > span:not(strong) {
+    font-size: 9.5px;
+    font-weight: 400;
+    color: #0a0a0a;
+  }
+
+  /* Partners marquee — below mobile hero cards */
+  .placedly-lift-hero .placedly-partners-section {
+    margin-top: -52px;
+    padding: 0 0 20px;
+    background: transparent !important;
+  }
+
+  .placedly-lift-hero .placedly-partners-header {
+    margin-bottom: 14px;
+    padding: 0 14px;
+  }
+
+  .placedly-lift-hero .placedly-partners-title {
+    font-family: Inter, var(--font), sans-serif !important;
+    font-size: clamp(26px, 6.8vw, 32px) !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.03em !important;
+    line-height: 1.15 !important;
+    color: #181229 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .placedly-lift-hero .placedly-partners-sub {
+    font-size: clamp(14px, 3.4vw, 16px) !important;
+    line-height: 1.5 !important;
+  }
+
+  .placedly-lift-hero .placedly-partners-logo {
+    font-size: clamp(19px, 5vw, 23px);
+  }
+
+  .placedly-lift-hero .placedly-partners-rows {
+    gap: 12px;
+  }
+
+  /* Services — match partners marquee heading on mobile */
+  .placedly-vertical-title {
+    font-family: Inter, var(--font), sans-serif !important;
+    font-size: clamp(26px, 6.8vw, 32px) !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.03em !important;
+    line-height: 1.15 !important;
+    color: #181229 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .placedly-vertical-sub {
+    font-size: clamp(14px, 3.4vw, 16px) !important;
+    line-height: 1.5 !important;
+    padding: 0 14px;
+  }
+
+  /* CAP floating CTA */
+  .placedly-cap-floating-cta {
+    bottom: max(2px, env(safe-area-inset-bottom, 2px));
+  }
+
+  .placedly-cap-floating-cta-btn {
+    background: linear-gradient(135deg, #ff6b35 0%, #f97316 50%, #ea580c 100%);
+    width: auto;
+    max-width: fit-content;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 8px;
+    gap: 4px;
+  }
+
+  .placedly-cap-floating-cta-btn svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+
+  .floating-buttons {
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Utility tools */
+  .placedly-tools-aside.is-open {
+    position: fixed;
+    inset: 0;
+    z-index: 9500;
+    display: flex !important;
+    align-items: flex-end;
+    padding: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .placedly-tools-aside.is-open .placedly-tools-panel {
+    width: 100%;
+    max-height: min(88vh, 640px);
+    margin: 0;
+    border-radius: 24px 24px 0 0;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 380px) {
+  .placedly-liftoff-m-headline {
+    font-size: clamp(2.1rem, 10vw, 2.5rem) !important;
+  }
+
+  .placedly-liftoff-m-sub-line {
+    font-size: clamp(9px, 2.65vw, 12px) !important;
+  }
+
+  .placedly-lift-card--mobile {
+    width: 104px;
+    padding: 0px 6px 0px;
+  }
+
+  .placedly-lift-card--mobile-right {
+    right: 22px;
+    left: auto;
+  }
+
+  .placedly-lift-mobile-rec {
+    transform: translateX(-6%);
+  }
+}

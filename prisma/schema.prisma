@@ -1,0 +1,273 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Programmes ───────────────────────────────────────────────────────────────
+
+model Programme {
+  id           String                 @id @default(cuid())
+  name         String
+  description  String?
+  cycleDays    Int
+  isActive     Boolean                @default(true)
+  createdAt    DateTime               @default(now())
+  applications CandidateApplication[]
+}
+
+// ─── CAP Applications & Candidates ───────────────────────────────────────────
+
+model CandidateApplication {
+  id           String            @id @default(cuid())
+  name         String
+  email        String            @unique
+  phone        String
+  city         String
+  experience   String
+  currentRole  String?
+  targetRole   String
+  message      String?
+  programmeId  String
+  programme    Programme         @relation(fields: [programmeId], references: [id])
+  status       ApplicationStatus @default(PENDING)
+  referralCode String?           // freelancer referral code if sourced via partner
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  candidate    Candidate?
+  referral     Referral?
+}
+
+model Candidate {
+  id             String               @id @default(cuid())
+  email          String               @unique
+  passwordHash   String
+  name           String
+  phone          String
+  applicationId  String               @unique
+  application    CandidateApplication @relation(fields: [applicationId], references: [id])
+  status         CandidateStatus      @default(ACTIVE)
+  approvedAt     DateTime             @default(now())
+  validUntil     DateTime
+  lastLoginAt    DateTime?
+  city           String?
+  experience     String?
+  currentRole    String?
+  targetRole     String?
+  capStep        Int                  @default(1)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  courseProgress CourseProgress[]
+}
+
+// ─── Staff Accounts ───────────────────────────────────────────────────────────
+
+// Limited admin — managed by master admin, scoped to applications + users
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+}
+
+// Recruiter — ATS access for AP / R2R job applications
+model Recruiter {
+  id           String           @id @default(cuid())
+  email        String           @unique
+  name         String
+  phone        String?
+  passwordHash String
+  isActive     Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  assignments  JobApplication[]
+}
+
+// ─── ATS: Job Applications (AP / R2R) ────────────────────────────────────────
+
+model JobApplication {
+  id            String            @id @default(cuid())
+  name          String
+  email         String
+  phone         String
+  role          String            // 'AP' | 'R2R'
+  resumeUrl     String?
+  currentStage  String            @default("SCREENING")
+  currentStatus String            @default("PENDING")
+  recruiterId   String?
+  recruiter     Recruiter?        @relation(fields: [recruiterId], references: [id])
+  notes         ApplicationNote[]
+  stageHistory  StageHistory[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model ApplicationNote {
+  id            String         @id @default(cuid())
+  applicationId String
+  application   JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  content       String         @db.Text
+  type          String         @default("GENERAL") // CALL | INTERVIEW | GENERAL
+  authorName    String
+  createdAt     DateTime       @default(now())
+}
+
+model StageHistory {
+  id            String         @id @default(cuid())
+  applicationId String
+  application   JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  stage         String
+  status        String
+  changedBy     String
+  createdAt     DateTime       @default(now())
+}
+
+// ─── Freelancer / Partner ─────────────────────────────────────────────────────
+
+model Freelancer {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  name         String
+  phone        String
+  passwordHash String
+  referralCode String       @unique
+  isActive     Boolean      @default(true)
+  kycVerified  Boolean      @default(false)
+  city         String?
+  createdAt    DateTime     @default(now())
+  referrals    Referral[]
+  commissions  Commission[]
+}
+
+// Links a CandidateApplication to the Freelancer who sourced them
+model Referral {
+  id            String               @id @default(cuid())
+  freelancerId  String
+  freelancer    Freelancer           @relation(fields: [freelancerId], references: [id])
+  applicationId String               @unique
+  application   CandidateApplication @relation(fields: [applicationId], references: [id])
+  createdAt     DateTime             @default(now())
+}
+
+// Commission per successful placement
+model Commission {
+  id             String     @id @default(cuid())
+  freelancerId   String
+  freelancer     Freelancer @relation(fields: [freelancerId], references: [id])
+  candidateName  String
+  candidateEmail String
+  amount         Float
+  status         String     @default("PENDING") // PENDING | PAID
+  paidAt         DateTime?
+  note           String?
+  createdAt      DateTime   @default(now())
+}
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  userType  String   // CANDIDATE | RECRUITER | FREELANCER | ADMIN | MASTER_ADMIN
+  title     String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+}
+
+// ─── Content & Courses ────────────────────────────────────────────────────────
+
+model Vacancy {
+  id          String   @id @default(cuid())
+  title       String
+  company     String
+  location    String
+  type        String
+  experience  String
+  salary      String?
+  category    String   @default("General")
+  tags        String   @default("")
+  description String   @db.Text @default("")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Course {
+  id          String         @id @default(cuid())
+  title       String
+  category    String
+  description String         @db.Text
+  duration    String
+  level       String
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  modules     CourseModule[]
+}
+
+model CourseModule {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  type      String   // VIDEO | PDF | DOC | IMAGE | LINK | TEXT
+  url       String?  @db.Text  // Blob URL or external link
+  content   String?  @db.Text  // For TEXT type: HTML/markdown; for others: description
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Skill {
+  id       String @id @default(cuid())
+  name     String @unique
+  category String @default("General")
+}
+
+model SiteContent {
+  key       String   @id
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}
+
+model CourseProgress {
+  id          String    @id @default(cuid())
+  candidateId String
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  courseId    String
+  moduleIndex Int
+  completedAt DateTime  @default(now())
+
+  @@unique([candidateId, courseId, moduleIndex])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actor     String
+  action    String
+  target    String?
+  detail    String?  @db.Text
+  createdAt DateTime @default(now())
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CandidateStatus {
+  ACTIVE
+  EXPIRED
+  SUSPENDED
+}

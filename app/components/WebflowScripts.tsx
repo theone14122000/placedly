@@ -1,0 +1,50 @@
+export default function WebflowScripts() {
+  return (
+    <>
+      <script
+        src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=68297ae923cb528bf9784f53"
+        type="text/javascript"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+        crossOrigin="anonymous"
+      />
+      <script
+        src="https://cdn.prod.website-files.com/68297ae923cb528bf9784f53/js/porbe.schunk.f3a08821b4e31f89.js"
+        type="text/javascript"
+        integrity="sha384-jdiRdsaXtUN5LkaeQxuxSJeDi/u9yfDo8k3p7iBrSa0ZxuEsPQsdVokoQHgyJGi/"
+        crossOrigin="anonymous"
+      />
+      <script
+        src="https://cdn.prod.website-files.com/68297ae923cb528bf9784f53/js/porbe.schunk.d1df3b71234f3b90.js"
+        type="text/javascript"
+        integrity="sha384-OYvoZBXQ+fjSj39sWFAWgOpq8rH5JgOodQAodJIGpnHAT41eDzg5016HrurKApDz"
+        crossOrigin="anonymous"
+      />
+      <script
+        src="https://cdn.prod.website-files.com/68297ae923cb528bf9784f53/js/porbe.schunk.ffd953334ce057bc.js"
+        type="text/javascript"
+        integrity="sha384-LoLDltk26xOAgxRdUT10QO1Vz0OOjj7V58hgzv4SHs6sXcbc+HiIY8Ub7vXppoyI"
+        crossOrigin="anonymous"
+      />
+      <script
+        src="https://cdn.prod.website-files.com/68297ae923cb528bf9784f53/js/porbe.schunk.4913f0d9ee368d76.js"
+        type="text/javascript"
+        integrity="sha384-j3R/zD6ANugAuyivaSShu4Pueq0H3b21ZuYGjExFl18/3yqUApyu/S+tVZ0usPnf"
+        crossOrigin="anonymous"
+      />
+      <script
+        src="https://cdn.prod.website-files.com/68297ae923cb528bf9784f53/js/porbe.schunk.d659be6dcd9af708.js"
+        type="text/javascript"
+        integrity="sha384-fkZ6Md26P2haMCtqf4f0HB23dTQgjwR09RGdpu3VVDV0Zif+FEMEoIw0sewn8NM8"
+        crossOrigin="anonymous"
+      />
+      <script
+        src="https://cdn.prod.website-files.com/68297ae923cb528bf9784f53/js/porbe.84b96995.2a8a6b9ca04293c5.js"
+        type="text/javascript"
+        integrity="sha384-nQBD1ogMuMKgjf7KncAlppv5CMN9XGG1g1/naqAkeDuYd84KstX1uHFRSrQBPI3g"
+        crossOrigin="anonymous"
+      />
+      <script src="https://cdn.prod.website-files.com/gsap/3.14.2/gsap.min.js" type="text/javascript" />
+      <script src="https://cdn.prod.website-files.com/gsap/3.14.2/SplitText.min.js" type="text/javascript" />
+    </>
+  );
+}

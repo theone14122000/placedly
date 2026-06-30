@@ -1,0 +1,179 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+
+const SKILLS: { name: string; category: string }[] = [
+  // ─── Tech / Engineering ───────────────────────────────
+  { name: 'JavaScript', category: 'Tech' }, { name: 'TypeScript', category: 'Tech' },
+  { name: 'Python', category: 'Tech' }, { name: 'Java', category: 'Tech' },
+  { name: 'C++', category: 'Tech' }, { name: 'C#', category: 'Tech' },
+  { name: 'Go', category: 'Tech' }, { name: 'Rust', category: 'Tech' },
+  { name: 'PHP', category: 'Tech' }, { name: 'Ruby', category: 'Tech' },
+  { name: 'Kotlin', category: 'Tech' }, { name: 'Swift', category: 'Tech' },
+  { name: 'React', category: 'Tech' }, { name: 'Next.js', category: 'Tech' },
+  { name: 'Vue.js', category: 'Tech' }, { name: 'Angular', category: 'Tech' },
+  { name: 'Node.js', category: 'Tech' }, { name: 'Express.js', category: 'Tech' },
+  { name: 'FastAPI', category: 'Tech' }, { name: 'Django', category: 'Tech' },
+  { name: 'Spring Boot', category: 'Tech' }, { name: '.NET', category: 'Tech' },
+  { name: 'REST API', category: 'Tech' }, { name: 'GraphQL', category: 'Tech' },
+  { name: 'Docker', category: 'Tech' }, { name: 'Kubernetes', category: 'Tech' },
+  { name: 'AWS', category: 'Tech' }, { name: 'Azure', category: 'Tech' },
+  { name: 'Google Cloud', category: 'Tech' }, { name: 'Terraform', category: 'Tech' },
+  { name: 'CI/CD', category: 'Tech' }, { name: 'GitHub Actions', category: 'Tech' },
+  { name: 'Jenkins', category: 'Tech' }, { name: 'Ansible', category: 'Tech' },
+  { name: 'Linux', category: 'Tech' }, { name: 'Bash', category: 'Tech' },
+  { name: 'Git', category: 'Tech' }, { name: 'PostgreSQL', category: 'Tech' },
+  { name: 'MySQL', category: 'Tech' }, { name: 'MongoDB', category: 'Tech' },
+  { name: 'Redis', category: 'Tech' }, { name: 'Elasticsearch', category: 'Tech' },
+  { name: 'Kafka', category: 'Tech' }, { name: 'RabbitMQ', category: 'Tech' },
+  { name: 'Microservices', category: 'Tech' }, { name: 'System Design', category: 'Tech' },
+  { name: 'Machine Learning', category: 'Tech' }, { name: 'Deep Learning', category: 'Tech' },
+  { name: 'NLP', category: 'Tech' }, { name: 'Computer Vision', category: 'Tech' },
+  { name: 'TensorFlow', category: 'Tech' }, { name: 'PyTorch', category: 'Tech' },
+  { name: 'Scikit-learn', category: 'Tech' }, { name: 'LangChain', category: 'Tech' },
+  { name: 'Cybersecurity', category: 'Tech' }, { name: 'Penetration Testing', category: 'Tech' },
+  { name: 'SIEM', category: 'Tech' }, { name: 'Network Security', category: 'Tech' },
+  { name: 'Selenium', category: 'Tech' }, { name: 'Cypress', category: 'Tech' },
+  { name: 'Jest', category: 'Tech' }, { name: 'Postman', category: 'Tech' },
+  { name: 'Figma', category: 'Tech' }, { name: 'Jira', category: 'Tech' },
+  { name: 'Confluence', category: 'Tech' }, { name: 'Agile', category: 'Tech' },
+  { name: 'Scrum', category: 'Tech' }, { name: 'Kanban', category: 'Tech' },
+
+  // ─── Data & Analytics ─────────────────────────────────
+  { name: 'SQL', category: 'Data' }, { name: 'Advanced Excel', category: 'Data' },
+  { name: 'Power BI', category: 'Data' }, { name: 'Tableau', category: 'Data' },
+  { name: 'Looker', category: 'Data' }, { name: 'Google Data Studio', category: 'Data' },
+  { name: 'Data Analysis', category: 'Data' }, { name: 'Data Visualization', category: 'Data' },
+  { name: 'ETL', category: 'Data' }, { name: 'Data Warehousing', category: 'Data' },
+  { name: 'Apache Spark', category: 'Data' }, { name: 'Hadoop', category: 'Data' },
+  { name: 'dbt', category: 'Data' }, { name: 'Snowflake', category: 'Data' },
+  { name: 'BigQuery', category: 'Data' }, { name: 'Pandas', category: 'Data' },
+  { name: 'NumPy', category: 'Data' }, { name: 'Matplotlib', category: 'Data' },
+  { name: 'Statistics', category: 'Data' }, { name: 'R', category: 'Data' },
+  { name: 'A/B Testing', category: 'Data' }, { name: 'Business Intelligence', category: 'Data' },
+
+  // ─── Finance & Accounting ─────────────────────────────
+  { name: 'Financial Analysis', category: 'Finance' }, { name: 'Financial Modelling', category: 'Finance' },
+  { name: 'Accounting', category: 'Finance' }, { name: 'Bookkeeping', category: 'Finance' },
+  { name: 'Tally', category: 'Finance' }, { name: 'SAP FICO', category: 'Finance' },
+  { name: 'QuickBooks', category: 'Finance' }, { name: 'Zoho Books', category: 'Finance' },
+  { name: 'GST', category: 'Finance' }, { name: 'TDS', category: 'Finance' },
+  { name: 'Income Tax', category: 'Finance' }, { name: 'Audit', category: 'Finance' },
+  { name: 'IFRS', category: 'Finance' }, { name: 'Ind AS', category: 'Finance' },
+  { name: 'Valuation', category: 'Finance' }, { name: 'Investment Banking', category: 'Finance' },
+  { name: 'Equity Research', category: 'Finance' }, { name: 'Risk Management', category: 'Finance' },
+  { name: 'Treasury', category: 'Finance' }, { name: 'Credit Analysis', category: 'Finance' },
+  { name: 'Derivatives', category: 'Finance' }, { name: 'Bloomberg Terminal', category: 'Finance' },
+  { name: 'MS Excel (Finance)', category: 'Finance' }, { name: 'VBA', category: 'Finance' },
+  { name: 'CFA', category: 'Finance' }, { name: 'CA', category: 'Finance' },
+  { name: 'CPA', category: 'Finance' }, { name: 'ACCA', category: 'Finance' },
+
+  // ─── Healthcare & Pharma ──────────────────────────────
+  { name: 'Medical Coding', category: 'Healthcare' }, { name: 'ICD-10', category: 'Healthcare' },
+  { name: 'CPT Coding', category: 'Healthcare' }, { name: 'Revenue Cycle Management', category: 'Healthcare' },
+  { name: 'Claims Processing', category: 'Healthcare' }, { name: 'Prior Authorization', category: 'Healthcare' },
+  { name: 'Medical Billing', category: 'Healthcare' }, { name: 'Healthcare IT', category: 'Healthcare' },
+  { name: 'EMR/EHR', category: 'Healthcare' }, { name: 'HIPAA', category: 'Healthcare' },
+  { name: 'Clinical Documentation', category: 'Healthcare' }, { name: 'Pharmacovigilance', category: 'Healthcare' },
+  { name: 'Clinical Trials', category: 'Healthcare' }, { name: 'Regulatory Affairs', category: 'Healthcare' },
+  { name: 'Quality Assurance (Pharma)', category: 'Healthcare' },
+
+  // ─── Sales & Business Development ─────────────────────
+  { name: 'B2B Sales', category: 'Sales' }, { name: 'B2C Sales', category: 'Sales' },
+  { name: 'Inside Sales', category: 'Sales' }, { name: 'Field Sales', category: 'Sales' },
+  { name: 'Enterprise Sales', category: 'Sales' }, { name: 'SaaS Sales', category: 'Sales' },
+  { name: 'Lead Generation', category: 'Sales' }, { name: 'Cold Calling', category: 'Sales' },
+  { name: 'Negotiation', category: 'Sales' }, { name: 'CRM', category: 'Sales' },
+  { name: 'Salesforce', category: 'Sales' }, { name: 'HubSpot', category: 'Sales' },
+  { name: 'Account Management', category: 'Sales' }, { name: 'Key Account Management', category: 'Sales' },
+  { name: 'Business Development', category: 'Sales' }, { name: 'Proposal Writing', category: 'Sales' },
+  { name: 'Zoho CRM', category: 'Sales' }, { name: 'Pipeline Management', category: 'Sales' },
+
+  // ─── Marketing ────────────────────────────────────────
+  { name: 'Digital Marketing', category: 'Marketing' }, { name: 'SEO', category: 'Marketing' },
+  { name: 'SEM / Google Ads', category: 'Marketing' }, { name: 'Meta Ads', category: 'Marketing' },
+  { name: 'LinkedIn Ads', category: 'Marketing' }, { name: 'Content Marketing', category: 'Marketing' },
+  { name: 'Email Marketing', category: 'Marketing' }, { name: 'Social Media Marketing', category: 'Marketing' },
+  { name: 'Performance Marketing', category: 'Marketing' }, { name: 'Brand Management', category: 'Marketing' },
+  { name: 'Copywriting', category: 'Marketing' }, { name: 'Market Research', category: 'Marketing' },
+  { name: 'Google Analytics', category: 'Marketing' }, { name: 'Marketing Automation', category: 'Marketing' },
+  { name: 'Growth Hacking', category: 'Marketing' }, { name: 'Product Marketing', category: 'Marketing' },
+  { name: 'PR & Communications', category: 'Marketing' }, { name: 'Influencer Marketing', category: 'Marketing' },
+
+  // ─── Operations & Supply Chain ────────────────────────
+  { name: 'Operations Management', category: 'Operations' }, { name: 'Supply Chain', category: 'Operations' },
+  { name: 'Logistics', category: 'Operations' }, { name: 'Inventory Management', category: 'Operations' },
+  { name: 'Procurement', category: 'Operations' }, { name: 'Vendor Management', category: 'Operations' },
+  { name: 'Six Sigma', category: 'Operations' }, { name: 'Lean Manufacturing', category: 'Operations' },
+  { name: 'Process Improvement', category: 'Operations' }, { name: 'ERP', category: 'Operations' },
+  { name: 'SAP MM', category: 'Operations' }, { name: 'SAP SD', category: 'Operations' },
+  { name: 'WMS', category: 'Operations' }, { name: 'Quality Control', category: 'Operations' },
+  { name: 'ISO Compliance', category: 'Operations' }, { name: 'Project Management', category: 'Operations' },
+  { name: 'PMP', category: 'Operations' }, { name: 'Prince2', category: 'Operations' },
+
+  // ─── HR & Recruitment ─────────────────────────────────
+  { name: 'Recruitment', category: 'HR' }, { name: 'Talent Acquisition', category: 'HR' },
+  { name: 'HR Operations', category: 'HR' }, { name: 'Payroll', category: 'HR' },
+  { name: 'Employee Engagement', category: 'HR' }, { name: 'Performance Management', category: 'HR' },
+  { name: 'L&D', category: 'HR' }, { name: 'HRIS', category: 'HR' },
+  { name: 'Workday', category: 'HR' }, { name: 'SAP HR', category: 'HR' },
+  { name: 'Labour Laws', category: 'HR' }, { name: 'Compensation & Benefits', category: 'HR' },
+  { name: 'HRBP', category: 'HR' }, { name: 'Onboarding', category: 'HR' },
+  { name: 'Bulk Hiring', category: 'HR' }, { name: 'Naukri', category: 'HR' },
+  { name: 'LinkedIn Recruiter', category: 'HR' },
+
+  // ─── Design & Creative ────────────────────────────────
+  { name: 'UI/UX Design', category: 'Design' }, { name: 'Graphic Design', category: 'Design' },
+  { name: 'Figma', category: 'Design' }, { name: 'Adobe XD', category: 'Design' },
+  { name: 'Photoshop', category: 'Design' }, { name: 'Illustrator', category: 'Design' },
+  { name: 'InDesign', category: 'Design' }, { name: 'After Effects', category: 'Design' },
+  { name: 'Premiere Pro', category: 'Design' }, { name: 'Video Editing', category: 'Design' },
+  { name: 'Motion Graphics', category: 'Design' }, { name: 'Canva', category: 'Design' },
+  { name: 'Wireframing', category: 'Design' }, { name: 'Prototyping', category: 'Design' },
+  { name: 'User Research', category: 'Design' }, { name: 'Brand Identity', category: 'Design' },
+
+  // ─── Soft Skills / General ────────────────────────────
+  { name: 'Communication', category: 'Soft Skills' }, { name: 'Leadership', category: 'Soft Skills' },
+  { name: 'Problem Solving', category: 'Soft Skills' }, { name: 'Critical Thinking', category: 'Soft Skills' },
+  { name: 'Time Management', category: 'Soft Skills' }, { name: 'Teamwork', category: 'Soft Skills' },
+  { name: 'Presentation Skills', category: 'Soft Skills' }, { name: 'Client Handling', category: 'Soft Skills' },
+  { name: 'Stakeholder Management', category: 'Soft Skills' }, { name: 'Analytical Skills', category: 'Soft Skills' },
+  { name: 'Attention to Detail', category: 'Soft Skills' }, { name: 'Adaptability', category: 'Soft Skills' },
+  { name: 'Emotional Intelligence', category: 'Soft Skills' }, { name: 'Conflict Resolution', category: 'Soft Skills' },
+  { name: 'Mentoring', category: 'Soft Skills' }, { name: 'Cross-functional Collaboration', category: 'Soft Skills' },
+
+  // ─── BPO / KPO / Shared Services ─────────────────────
+  { name: 'BPO Operations', category: 'BPO' }, { name: 'KPO', category: 'BPO' },
+  { name: 'Voice Process', category: 'BPO' }, { name: 'Non-Voice Process', category: 'BPO' },
+  { name: 'Chat Support', category: 'BPO' }, { name: 'Email Support', category: 'BPO' },
+  { name: 'Back Office', category: 'BPO' }, { name: 'Data Entry', category: 'BPO' },
+  { name: 'Transaction Processing', category: 'BPO' }, { name: 'Quality Assurance (BPO)', category: 'BPO' },
+  { name: 'Team Leader (BPO)', category: 'BPO' }, { name: 'MIS Reporting', category: 'BPO' },
+  { name: 'Workforce Management', category: 'BPO' }, { name: 'SLA Management', category: 'BPO' },
+];
+
+export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  const role = (session?.user as any)?.role;
+  if (!session || !['admin', 'master_admin'].includes(role)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  let seeded = 0;
+  let skipped = 0;
+  for (const skill of SKILLS) {
+    try {
+      await prisma.skill.upsert({
+        where: { name: skill.name },
+        update: { category: skill.category },
+        create: skill,
+      });
+      seeded++;
+    } catch {
+      skipped++;
+    }
+  }
+
+  return NextResponse.json({ ok: true, seeded, skipped, total: SKILLS.length });
+}
