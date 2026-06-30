@@ -132,6 +132,9 @@
 }
 
 /* ── Global base styles ─────────────────────────────────── */
+html{
+  scroll-behavior:smooth;
+}
 html,body{
   font-family:var(--font);
   color:var(--c-text-body);
@@ -1959,10 +1962,15 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   .placedly-about-visual{min-height:360px}
   .placedly-about-visual-frame{min-height:360px}
 }
-@media(max-width:600px){
-  .placedly-about-glass--stat{left:0;bottom:22%}
-  .placedly-about-glass--accent{right:0;top:8%}
+@media(max-width:700px){
+  .placedly-about-section{padding:48px 14px}
+  .placedly-about-visual-frame{min-height:320px}
+  .placedly-about-img--main{width:76%;height:54%}
+  .placedly-about-img--secondary{width:62%;height:46%}
+  .placedly-about-glass--stat{left:8px;bottom:24%;padding:12px 14px}
+  .placedly-about-glass--accent{right:8px;top:8%;padding:12px 14px}
   .placedly-about-glass--chip{display:none}
+  .placedly-about-feature{padding:14px 15px}
 }
 
 /* ══ Shared Gen-Z section shell ══ */
@@ -2528,6 +2536,18 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 @media(max-width:640px){
   .placedly-footer-bottom{flex-direction:column;align-items:center;text-align:center}
 }
+@media(max-width:760px){
+  .placedly-hiw-panel-inner{grid-template-columns:1fr;gap:22px}
+  .placedly-hiw-panel-copy{padding:0}
+  .placedly-hiw-tabbar{gap:8px}
+  .placedly-hiw-tabbar-shell{padding:4px}
+  .placedly-hiw-tab{padding:9px 12px;white-space:nowrap}
+}
+@media(max-width:600px){
+  .placedly-hiw-section,.placedly-vertical-section{padding-left:14px;padding-right:14px}
+  .placedly-hiw-title,.placedly-vertical-title{font-size:clamp(1.7rem,7vw,2.25rem)!important}
+  .placedly-hiw-subtitle,.placedly-vertical-sub{font-size:15px!important}
+}
 
 /* ════════════════════════════════════════════════════════
    HERO — Liftoff-style (centered, serif, network cards)
@@ -2883,13 +2903,35 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-lift-trust-logos span{
   font-size:13px;font-weight:700;color:#cbd5e1;
 }
-@media(max-width:768px){
+@media(max-width:900px){
+  .placedly-lift-hero{
+    padding:clamp(96px,12vh,118px) 16px clamp(48px,8vh,72px);
+  }
+  .placedly-hero-desktop-only{
+    min-height:auto;
+    padding-bottom:8px;
+  }
+  .placedly-lift-hero-copy{
+    max-width:720px;
+  }
+  .placedly-lift-hero-title{
+    font-size:clamp(2.2rem,7vw,3.2rem)!important;
+  }
+  .placedly-lift-hero-sub{
+    max-width:620px;
+    font-size:clamp(15px,2.1vw,17px)!important;
+  }
   .placedly-lift-network{
     grid-template-columns:1fr;
     gap:16px;
+    max-width:560px;
   }
   .placedly-lift-card--left,
-  .placedly-lift-card--right{max-width:100%;margin:0}
+  .placedly-lift-card--right{
+    max-width:100%;
+    margin:0 auto;
+    width:min(100%, 360px);
+  }
   .placedly-lift-connect{
     min-width:100%;
     padding:8px 0;
@@ -2897,6 +2939,16 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   .placedly-lift-scatter{
     width:min(280px,78vw);
     height:min(260px,70vw);
+  }
+  .placedly-hero-desktop-only .placedly-lift-card--left,
+  .placedly-hero-desktop-only .placedly-lift-card--right,
+  .placedly-hero-desktop-only .placedly-lift-scatter-avatar-wrap:first-child,
+  .placedly-hero-desktop-only .placedly-lift-scatter-avatar-wrap:nth-child(2),
+  .placedly-hero-desktop-only .placedly-lift-scatter-avatar-wrap:nth-child(3),
+  .placedly-hero-desktop-only .placedly-lift-scatter-avatar-wrap:nth-child(4),
+  .placedly-hero-desktop-only .placedly-lift-scatter-avatar-wrap:nth-child(5){
+    transform:none;
+    margin:0;
   }
   .placedly-lift-glass-pill--share{top:12%;left:32%}
   .placedly-lift-glass-pill--rec{top:46%;left:28%}
@@ -2907,6 +2959,9 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   .placedly-lift-hero-ctas .placedly-lift-hero-btn,
   .placedly-lift-hero-ctas .placedly-see-demo{width:100%;justify-content:center}
   .placedly-lift-stats{display:grid;grid-template-columns:1fr 1fr}
+  .placedly-lift-glass-pill{padding:8px 11px;border-radius:14px}
+  .placedly-lift-glass-pill-text strong{font-size:12px}
+  .placedly-lift-glass-pill-text > span{font-size:10px}
 }
 
 /* ════════════════════════════════════════════════════════

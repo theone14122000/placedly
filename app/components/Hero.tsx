@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { Share2, Sparkles } from 'lucide-react';
 import Link from 'next/link';
@@ -61,6 +61,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
     target: heroRef,
     offset: ['start end', 'end start'],
   });
+  const prefersReducedMotion = useReducedMotion();
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 70]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.6, 1], [1, 0.96, 0.86]);
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.02]);
@@ -72,12 +73,12 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
   return (
     <section id="Top" className="placedly-lift-hero" ref={heroRef}>
-      <motion.div className="placedly-hero-desktop-gradient" aria-hidden style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}>
+      <motion.div className="placedly-hero-desktop-gradient" aria-hidden style={{ y: prefersReducedMotion ? 0 : heroY, opacity: prefersReducedMotion ? 1 : heroOpacity, scale: prefersReducedMotion ? 1 : heroScale }}>
         <HeroGradientBg />
         <HeroBgVideo />
       </motion.div>
       <div className="placedly-hero-desktop-only">
-        <motion.div className="placedly-lift-hero-copy" style={{ y: copyY }}>
+        <motion.div className="placedly-lift-hero-copy" style={{ y: prefersReducedMotion ? 0 : copyY }}>
         <motion.h1
           className="placedly-lift-hero-title"
           initial={{ opacity: 0, y: 18 }}
@@ -115,21 +116,21 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
       <motion.div
         className="placedly-lift-hero-stage"
-        style={{ y: stageY }}
+        style={{ y: prefersReducedMotion ? 0 : stageY }}
         initial={{ opacity: 0, y: 28 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, delay: 0.28 }}
       >
         <motion.div
           className="placedly-lift-network"
-          animate={{ y: [0, -6, 0], x: [0, 2, 0], scale: [1, 1.004, 1] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          animate={prefersReducedMotion ? { opacity: 1, y: 0, x: 0, scale: 1 } : { y: [0, -6, 0], x: [0, 2, 0], scale: [1, 1.004, 1] }}
+          transition={{ duration: 8, repeat: prefersReducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
         >
           <motion.div
             className="placedly-lift-card placedly-lift-card--left"
-            animate={{ y: [0, -8, 0] }}
+            animate={prefersReducedMotion ? { y: 0 } : { y: [0, -8, 0] }}
             whileHover={{ scale: 1.015, y: -6, rotate: -1 }}
-            transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+            transition={{ duration: 5.5, repeat: prefersReducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
           >
             <div className="placedly-lift-card-profile">
               <img
@@ -208,9 +209,9 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
           <motion.div
             className="placedly-lift-card placedly-lift-card--right"
-            animate={{ y: [0, 8, 0] }}
+            animate={prefersReducedMotion ? { y: 0 } : { y: [0, 8, 0] }}
             whileHover={{ scale: 1.015, y: 4, rotate: 1 }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+            transition={{ duration: 6, repeat: prefersReducedMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.4 }}
           >
             <div className="placedly-lift-card-profile">
               <img
