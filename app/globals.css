@@ -3387,8 +3387,190 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   .placedly-vertical-showcase-grid{grid-template-columns:1fr}
   .placedly-vertical-copy{padding-right:0}
 }
-
-
+/* ════════════════════════════════════════════════════════
+   CAP JOURNEY — scroll-driven sticky cards + floating CTA
+════════════════════════════════════════════════════════ */
+.placedly-cap-journey{
+  position:relative;
+  padding:var(--placedly-section-pad,clamp(56px,8vw,96px)) clamp(20px,4vw,40px);
+  background:#FFFBF4;
+  overflow:visible;
+}
+.placedly-cap-journey-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 0%,rgba(255,255,255,0.95),transparent 65%),
+    radial-gradient(ellipse 40% 30% at 8% 85%,rgba(15,23,42,0.03),transparent 55%);
+  opacity:1;
+}
+.placedly-cap-journey-wrap{
+  position:relative;z-index:1;
+  max-width:1180px;margin:0 auto;
+}
+.placedly-cap-journey-header{
+  text-align:center;margin-bottom:clamp(36px,5vw,52px);
+}
+.placedly-cap-journey-kicker{
+  font-size:12px;font-weight:600;letter-spacing:0.1em;
+  text-transform:uppercase;color:#94a3b8;margin:0 0 12px;
+}
+.placedly-cap-journey-title{
+  font-family:Inter,var(--font),sans-serif!important;
+  font-size:clamp(1.85rem,3.4vw,2.65rem)!important;
+  font-weight:600!important;
+  letter-spacing:-0.03em!important;
+  line-height:1.12!important;
+  color:#181229!important;
+  margin:0 0 14px!important;
+}
+.placedly-cap-journey-sub{
+  font-size:clamp(15px,1.35vw,17px);
+  line-height:1.65;color:#64748b;
+  max-width:620px;margin:0 auto;
+}
+.placedly-cap-journey-scroll-layout{
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr);
+  gap:clamp(20px,3vw,36px);
+  align-items:stretch;
+}
+.placedly-cap-journey-rail-col{
+  position:relative;
+  min-height:100%;
+}
+.placedly-cap-journey-rail{
+  position:absolute;
+  inset:0;
+  display:flex;
+  justify-content:center;
+}
+.placedly-cap-journey-rail-track{
+  position:relative;
+  width:2px;
+  height:100%;
+  background:#e2e8f0;
+  border-radius:999px;
+  overflow:hidden;
+}
+.placedly-cap-journey-rail-fill{
+  position:absolute;
+  top:0;left:0;right:0;
+  width:100%;
+  background:#181229;
+  border-radius:999px;
+  transition:height .12s linear;
+  will-change:height;
+}
+.placedly-cap-journey-rail-markers{
+  position:absolute;
+  inset:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:10px;
+  pointer-events:none;
+}
+.placedly-cap-journey-rail-marker{
+  position:absolute;
+  left:50%;
+  width:8px;height:8px;
+  margin:-4px 0 0 -4px;
+  border-radius:999px;
+  background:#fff;
+  border:2px solid #e2e8f0;
+  transition:border-color .25s ease,background .25s ease,transform .25s ease;
+}
+.placedly-cap-journey-rail-marker.is-lit{
+  border-color:#cbd5e1;
+  background:#f8fafc;
+}
+.placedly-cap-journey-rail-marker.is-active,
+.placedly-cap-journey-rail-marker.is-lit.is-active{
+  border-color:#181229;
+  background:#181229;
+  transform:scale(1.15);
+}
+.placedly-cap-journey-cards-col{
+  min-width:0;
+}
+.placedly-cap-journey-track{
+  position:relative;
+  display:flex;flex-direction:column;gap:0;
+  padding-bottom:min(36vh,280px);
+}
+.placedly-cap-journey-card{
+  position:sticky;
+  top:clamp(88px,12vh,112px);
+  margin-bottom:clamp(18px,3vw,28px);
+  border-radius:clamp(24px,3vw,36px);
+  background:#FFFBF4;
+  border:1px solid rgba(0,0,0,0.06);
+  box-shadow:0 12px 40px rgba(249,115,22,0.12);
+  transition:transform .35s cubic-bezier(0.22,1,0.36,1),box-shadow .35s ease,opacity .35s ease;
+}
+.placedly-cap-journey-card:not(.is-active){
+  opacity:0.94;
+  transform:scale(0.992);
+}
+.placedly-cap-journey-card.is-active{
+  opacity:1;
+  transform:scale(1);
+  box-shadow:0 14px 44px rgba(249,115,22,0.15);
+}
+.placedly-cap-journey-card-inner{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(160px,220px) minmax(0,1fr);
+  gap:clamp(20px,3vw,40px);
+  align-items:stretch;
+  min-height:clamp(220px,24vw,280px);
+  padding:clamp(28px,3.5vw,44px) clamp(24px,3vw,40px);
+}
+.placedly-cap-journey-card-left{
+  display:flex;flex-direction:column;
+  justify-content:space-between;align-items:flex-start;
+  min-height:100%;
+}
+.placedly-cap-journey-card-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:7px 16px;border-radius:999px;
+  border:1px solid #334155;
+  font-size:13px;font-weight:500;letter-spacing:0.02em;
+  color:#334155;background:transparent;
+  line-height:1;
+}
+.placedly-cap-journey-card-title{
+  font-family:Inter,var(--font),sans-serif!important;
+  font-size:clamp(1.75rem,3vw,2.5rem)!important;
+  font-weight:700!important;
+  letter-spacing:-0.03em!important;
+  line-height:1.08!important;
+  color:#0f172a!important;
+  margin:0!important;
+  max-width:14ch;
+}
+.placedly-cap-journey-card-media{
+  display:flex;align-items:center;justify-content:center;
+  padding:8px 0;
+}
+.placedly-cap-journey-card-img{
+  display:block;
+  width:min(100%,220px);
+  aspect-ratio:4/3;
+  object-fit:cover;
+  border-radius:16px;
+  transform:rotate(-7deg);
+  box-shadow:0 14px 40px rgba(15,23,42,0.14),0 4px 12px rgba(15,23,42,0.08);
+}
+.placedly-cap-journey-card-right{
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:flex-start;
+  gap:clamp(16px,2vw,22px);
+  max-width:320px;
+  margin-left:auto;
+}
+.placedly-cap-journey-card-body{
+  font-size:clamp(14px,1.2vw,15px);
+  line-height:1.65;color:#64748b;margin:0;
+}
 .placedly-cap-journey-card-link{
   display:inline-flex;align-items:center;gap:8px;
   font-size:15px;font-weight:600;color:#2563eb!important;
@@ -3397,7 +3579,6 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-cap-journey-card-link:hover{
   color:#1d4ed8!important;gap:10px;
 }
-
 
 /* ════════════════════════════════════════════════════════
    FAQ — Liftoff-style two-column accordion
