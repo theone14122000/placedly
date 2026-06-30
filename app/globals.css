@@ -135,15 +135,26 @@
 html{
   scroll-behavior:smooth;
 }
+html{
+  scroll-behavior:smooth;
+  color-scheme:light;
+}
 html,body{
   font-family:var(--font);
   color:var(--c-text-body);
   background:var(--c-page-bg)!important;
   background-color:var(--c-page-bg)!important;
   overflow-x:hidden;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
+::selection{
+  background:rgba(33,69,251,0.16);
+  color:var(--c-ink);
+}
 
 /* ════════════════════════════════════════════════════════
    UTILITIES
