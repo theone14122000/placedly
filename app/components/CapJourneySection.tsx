@@ -75,7 +75,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   const [markerTops, setMarkerTops] = useState<number[]>([]);
 
   // ── Floating CTA visibility state ──────────────────────────
-  // true while any part of the CAP section is in the viewport
   const [ctaInView, setCtaInView] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -168,8 +167,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   }, [updateMarkerPositions, updateScrollProgress]);
 
   // ── Floating CTA: fade-in on enter, stay visible throughout, fade-out on exit ──
-  // Observes the WHOLE section (not individual cards), so the CTA persists
-  // across every step — Resume → LinkedIn → Mock Interview → Referral → Offer.
   useEffect(() => {
     const node = sectionRef.current;
     if (!node) return;
@@ -180,8 +177,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
       },
       {
         threshold: 0,
-        // small negative bottom margin so it doesn't flicker exactly at the
-        // section's last pixel — fades out a touch before fully leaving
         rootMargin: '0px 0px -2% 0px',
       },
     );
@@ -246,6 +241,10 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                     key={step.id}
                     data-cap-step={index}
                     className={`placedly-cap-journey-card${activeStep === index ? ' is-active' : ''}`}
+                    // ── Overlap fix (inline, overrides the global
+                    // margin-bottom gap so each sticky card slides flush
+                    // over the one behind it as you scroll) ──
+                    style={{ marginBottom: 0 }}
                   >
                     <div className="placedly-cap-journey-card-inner">
                       <div className="placedly-cap-journey-card-left">
@@ -287,11 +286,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
         </div>
       </section>
 
-      {/* ── Self-contained floating CTA ────────────────────────────
-          Fade-in / persist / fade-out is driven entirely by ctaInView
-          (section-level IntersectionObserver above). The gentle bob
-          is a continuous CSS animation independent of the fade state.
-          No global CSS file is touched — all styling lives here. */}
+      {/* ── Self-contained floating CTA ──────────────────────────── */}
       <div
         aria-hidden={!ctaInView}
         style={{
@@ -329,7 +324,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
             border: '1px solid rgba(255,255,255,0.35)',
             boxShadow:
               '0 4px 14px rgba(234,88,12,0.35), 0 14px 40px rgba(234,88,12,0.28), inset 0 1px 0 rgba(255,255,255,0.25)',
-            // gentle continuous float, independent of fade transition above
             animation: 'capJourneyCtaFloat 3.4s ease-in-out infinite',
           }}
         >
