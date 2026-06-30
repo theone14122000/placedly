@@ -140,7 +140,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
     };
 
     const onResize = () => {
-      updateMarkerPositions();
       updateScrollProgress();
     };
 
@@ -217,7 +216,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                   key={step.id}
                   data-cap-step={index}
                   className={`placedly-cap-journey-card${activeStep === index ? ' is-active' : ''}`}
-                  style={{ zIndex: index + 1 }}
                 >
                   <div className="placedly-cap-journey-card-inner">
                     <div className="placedly-cap-journey-card-left">

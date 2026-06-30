@@ -5302,62 +5302,49 @@ header.placedly-navbar a.placedly-nav-mega-apply:visited{
 
 
 /* ── CapJourney overlapping deck ────────────────────────── */
-.placedly-cap-journey-card {
-  /* stack cards so they physically overlap */
-  margin-bottom: -60px;          /* pull the next card up */
-  z-index: var(--card-index, 1);
-  transition:
-    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.35s ease,
-    margin-bottom 0.35s ease,
-    opacity 0.35s ease;
+/* ── CapJourney overlapping deck (single source of truth) ── */
+.placedly-cap-journey-card{
+  position:sticky;
+  top:clamp(88px,12vh,112px);
+  margin-bottom:0;
+  border-radius:clamp(30px,3.2vw,42px);
+  background:linear-gradient(135deg,rgba(255,255,255,0.94) 0%,rgba(255,251,244,0.98) 100%);
+  border:1px solid rgba(15,23,42,0.08);
+  box-shadow:0 16px 46px rgba(249,115,22,0.12);
+  overflow:hidden;
+  isolation:isolate;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  transition:transform .4s cubic-bezier(0.22,1,0.36,1),box-shadow .4s ease,opacity .4s ease;
+  will-change:transform;
 }
 
-.placedly-cap-journey-card:first-child {
-  margin-bottom: 0;               /* first card starts flush */
+.placedly-cap-journey-card:not(.is-active){
+  transform:scale(0.96) translateY(18px);
+  opacity:0.92;
+  box-shadow:0 10px 30px rgba(15,23,42,0.08);
 }
 
-/* Inactive cards (already passed by the active one) */
-.placedly-cap-journey-card.is-overlapped {
-  opacity: 0.88;
-  transform: scale(0.975) translateY(8px);
-  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.1);
+.placedly-cap-journey-card.is-active{
+  transform:scale(1) translateY(0);
+  opacity:1;
+  box-shadow:0 28px 80px rgba(15,23,42,0.18);
 }
 
-/* Actively scrolling card */
-.placedly-cap-journey-card.is-active {
-  transform: scale(1) translateY(0);
-  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.16);
-  z-index: 999;                   /* always on top */
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-img{
+  transform:rotate(-6deg) translateY(-4px) scale(1.02);
+  box-shadow:0 18px 48px rgba(15,23,42,0.16),0 6px 16px rgba(15,23,42,0.12);
 }
 
-/* Upcoming cards (not yet active) */
-.placedly-cap-journey-card:not(.is-active):not(.is-overlapped) {
-  opacity: 0.96;
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-media{
+  animation:capJourneyFloat 3.8s ease-in-out infinite;
 }
 
-/* Adjust the sticky top – same for all cards */
-.placedly-cap-journey-card {
-  top: clamp(88px, 12vh, 112px);
+@keyframes capJourneyFloat{
+  0%,100%{transform:translateY(0) rotate(-6deg)}
+  50%{transform:translateY(-6px) rotate(-4deg)}
 }
 
-/* Ensure the media image rotates and floats for the active card */
-.placedly-cap-journey-card.is-active .placedly-cap-journey-card-img {
-  transform: rotate(-6deg) translateY(-4px) scale(1.02);
-  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.16),
-    0 6px 16px rgba(15, 23, 42, 0.12);
-}
-
-.placedly-cap-journey-card.is-active .placedly-cap-journey-card-media {
-  animation: capJourneyFloat 3.8s ease-in-out infinite;
-}
-
-@keyframes capJourneyFloat {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-6deg);
-  }
-  50% {
-    transform: translateY(-6px) rotate(-4deg);
-  }
+@media(max-width:480px){
+  .placedly-cap-journey-card{top:78px}
 }
