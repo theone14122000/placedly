@@ -192,18 +192,20 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                 />
               </div>
 
-              <div className="placedly-cap-journey-rail-markers">
-                {DEFAULT_STEPS.map((step, index) => {
-                  const top = markerTops[index] ?? (index / (DEFAULT_STEPS.length - 1)) * 100;
-                  const isLit =
-                    fillProgress >= top / 100 - 0.02 || activeStep >= index;
+              <div className="placedly-cap-journey-rail-markers">                {DEFAULT_STEPS.map((step, index) => {
+                  // Cards before the active one are overlapped
+                  const isOverlapped = index < activeStep;
+                  const isActive = index === activeStep;
 
                   return (
-                    <span
+                    <article
                       key={step.id}
-                      className={`placedly-cap-journey-rail-marker${isLit ? ' is-lit' : ''}${activeStep === index ? ' is-active' : ''}`}
-                      style={{ top: `${top}%` }}
-                    />
+                      data-cap-step={index}
+                      className={`placedly-cap-journey-card${isActive ? ' is-active' : ''}${isOverlapped ? ' is-overlapped' : ''}`}
+                      style={{ zIndex: index + 1 }}
+                    >
+                      {/* ... existing card-inner content ... */}
+                    </article>
                   );
                 })}
               </div>
