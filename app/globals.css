@@ -2129,10 +2129,6 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-tools-section,
 .placedly-hiw-section,
 .placedly-vertical-section,
-.placedly-cap-journey{
-  perspective:1400px;
-  transform-style:preserve-3d;
-}
 .placedly-genz-glass,
 .placedly-tools-card,
 .placedly-tools-panel,
@@ -2141,11 +2137,6 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-hiw-panel,
 .placedly-hiw-mock-card,
 .placedly-ceo-card,
-.placedly-cap-journey-card{
-  position:relative;
-  transform-style:preserve-3d;
-  isolation:isolate;
-}
 .placedly-genz-glass::before,
 .placedly-tools-card::before,
 .placedly-tools-panel::before,
@@ -2154,13 +2145,6 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-hiw-panel::before,
 .placedly-hiw-mock-card::before,
 .placedly-ceo-card::before,
-.placedly-cap-journey-card::before{
-  content:'';
-  position:absolute;inset:0;border-radius:inherit;
-  pointer-events:none;z-index:0;
-  background:linear-gradient(135deg,rgba(255,255,255,0.42) 0%,rgba(255,255,255,0.06) 42%,transparent 100%);
-  opacity:0.85;
-}
 .placedly-genz-glass::after,
 .placedly-tools-card::after,
 .placedly-tools-panel::after,
@@ -2169,16 +2153,6 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-hiw-panel::after,
 .placedly-hiw-mock-card::after,
 .placedly-ceo-card::after,
-.placedly-cap-journey-card::after{
-  content:'';
-  position:absolute;inset:auto -6% -14% auto;
-  width:160px;height:160px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,255,0.36),transparent 70%);
-  filter:blur(14px);
-  pointer-events:none;z-index:0;
-  opacity:0.75;
-}
-
 /* Utility Tools — AI section */
 .placedly-tools-section{
   background:var(--gradient-warm),transparent;
