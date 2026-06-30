@@ -74,6 +74,11 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   const [fillProgress, setFillProgress] = useState(0);
   const [markerTops, setMarkerTops] = useState<number[]>([]);
 
+  // ── Floating CTA visibility state ──────────────────────────
+  // true while any part of the CAP section is in the viewport
+  const [ctaInView, setCtaInView] = useState(false);
+
+  const sectionRef = useRef<HTMLElement>(null);
   const cardsColRef = useRef<HTMLDivElement>(null);
   const cardsTrackRef = useRef<HTMLDivElement>(null);
 
@@ -162,94 +167,195 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
     };
   }, [updateMarkerPositions, updateScrollProgress]);
 
+  // ── Floating CTA: fade-in on enter, stay visible throughout, fade-out on exit ──
+  // Observes the WHOLE section (not individual cards), so the CTA persists
+  // across every step — Resume → LinkedIn → Mock Interview → Referral → Offer.
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setCtaInView(entry.isIntersecting);
+      },
+      {
+        threshold: 0,
+        // small negative bottom margin so it doesn't flicker exactly at the
+        // section's last pixel — fades out a touch before fully leaving
+        rootMargin: '0px 0px -2% 0px',
+      },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section
-      className="placedly-cap-journey"
-      id={CAP_JOURNEY_SECTION_ID}
-      aria-labelledby="cap-journey-title"
-    >
-      <div className="placedly-cap-journey-bg" aria-hidden />
+    <>
+      <section
+        ref={sectionRef}
+        className="placedly-cap-journey"
+        id={CAP_JOURNEY_SECTION_ID}
+        aria-labelledby="cap-journey-title"
+      >
+        <div className="placedly-cap-journey-bg" aria-hidden />
 
-      <div className="placedly-cap-journey-wrap">
-        <FadeUp className="placedly-cap-journey-header">
-          <p className="placedly-cap-journey-kicker">{kicker}</p>
-          <h2 id="cap-journey-title" className="placedly-cap-journey-title">
-            {title}
-          </h2>
-          <p className="placedly-cap-journey-sub">{subtitle}</p>
-        </FadeUp>
+        <div className="placedly-cap-journey-wrap">
+          <FadeUp className="placedly-cap-journey-header">
+            <p className="placedly-cap-journey-kicker">{kicker}</p>
+            <h2 id="cap-journey-title" className="placedly-cap-journey-title">
+              {title}
+            </h2>
+            <p className="placedly-cap-journey-sub">{subtitle}</p>
+          </FadeUp>
 
-        <div className="placedly-cap-journey-scroll-layout">
-          <div
-            className="placedly-cap-journey-rail-col"
-            aria-hidden
-          >
-            <div className="placedly-cap-journey-rail">
-              <div className="placedly-cap-journey-rail-track">
-                <div
-                  className="placedly-cap-journey-rail-fill"
-                  style={{ height: `${fillProgress * 100}%` }}
-                />
-              </div>
+          <div className="placedly-cap-journey-scroll-layout">
+            <div className="placedly-cap-journey-rail-col" aria-hidden>
+              <div className="placedly-cap-journey-rail">
+                <div className="placedly-cap-journey-rail-track">
+                  <div
+                    className="placedly-cap-journey-rail-fill"
+                    style={{ height: `${fillProgress * 100}%` }}
+                  />
+                </div>
 
-              <div className="placedly-cap-journey-rail-markers">
-                {DEFAULT_STEPS.map((step, index) => {
-                  const top = markerTops[index] ?? (index / (DEFAULT_STEPS.length - 1)) * 100;
-                  const isLit =
-                    fillProgress >= top / 100 - 0.02 || activeStep >= index;
+                <div className="placedly-cap-journey-rail-markers">
+                  {DEFAULT_STEPS.map((step, index) => {
+                    const top =
+                      markerTops[index] ??
+                      (index / (DEFAULT_STEPS.length - 1)) * 100;
+                    const isLit =
+                      fillProgress >= top / 100 - 0.02 || activeStep >= index;
 
-                  return (
-                    <span
-                      key={step.id}
-                      className={`placedly-cap-journey-rail-marker${isLit ? ' is-lit' : ''}${activeStep === index ? ' is-active' : ''}`}
-                      style={{ top: `${top}%` }}
-                    />
-                  );
-                })}
+                    return (
+                      <span
+                        key={step.id}
+                        className={`placedly-cap-journey-rail-marker${isLit ? ' is-lit' : ''}${activeStep === index ? ' is-active' : ''}`}
+                        style={{ top: `${top}%` }}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div ref={cardsColRef} className="placedly-cap-journey-cards-col">
-            <div ref={cardsTrackRef} className="placedly-cap-journey-track">
-              {DEFAULT_STEPS.map((step, index) => (
-                <article
-                  key={step.id}
-                  data-cap-step={index}
-                  className={`placedly-cap-journey-card${activeStep === index ? ' is-active' : ''}`}
-                  style={{ zIndex: index + 1 }}
-                >
-                  <div className="placedly-cap-journey-card-inner">
-                    <div className="placedly-cap-journey-card-left">
-                      <span className="placedly-cap-journey-card-badge">
-                        {String(index + 1).padStart(3, '0')}
-                      </span>
-                      <h3 className="placedly-cap-journey-card-title">{step.title}</h3>
-                    </div>
+            <div ref={cardsColRef} className="placedly-cap-journey-cards-col">
+              <div ref={cardsTrackRef} className="placedly-cap-journey-track">
+                {DEFAULT_STEPS.map((step, index) => (
+                  <article
+                    key={step.id}
+                    data-cap-step={index}
+                    className={`placedly-cap-journey-card${activeStep === index ? ' is-active' : ''}`}
+                  >
+                    <div className="placedly-cap-journey-card-inner">
+                      <div className="placedly-cap-journey-card-left">
+                        <span className="placedly-cap-journey-card-badge">
+                          {String(index + 1).padStart(3, '0')}
+                        </span>
+                        <h3 className="placedly-cap-journey-card-title">
+                          {step.title}
+                        </h3>
+                      </div>
 
-                    <div className="placedly-cap-journey-card-media">
-                      <img
-                        src={step.image}
-                        alt=""
-                        className="placedly-cap-journey-card-img"
-                        loading={index < 2 ? 'eager' : 'lazy'}
-                      />
-                    </div>
+                      <div className="placedly-cap-journey-card-media">
+                        <img
+                          src={step.image}
+                          alt=""
+                          className="placedly-cap-journey-card-img"
+                          loading={index < 2 ? 'eager' : 'lazy'}
+                        />
+                      </div>
 
-                    <div className="placedly-cap-journey-card-right">
-                      <p className="placedly-cap-journey-card-body">{step.body}</p>
-                      <Link href={step.href} className="placedly-cap-journey-card-link">
-                        Read More
-                        <ArrowRight size={16} strokeWidth={2.25} aria-hidden />
-                      </Link>
+                      <div className="placedly-cap-journey-card-right">
+                        <p className="placedly-cap-journey-card-body">
+                          {step.body}
+                        </p>
+                        <Link
+                          href={step.href}
+                          className="placedly-cap-journey-card-link"
+                        >
+                          Read More
+                          <ArrowRight size={16} strokeWidth={2.25} aria-hidden />
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ── Self-contained floating CTA ────────────────────────────
+          Fade-in / persist / fade-out is driven entirely by ctaInView
+          (section-level IntersectionObserver above). The gentle bob
+          is a continuous CSS animation independent of the fade state.
+          No global CSS file is touched — all styling lives here. */}
+      <div
+        aria-hidden={!ctaInView}
+        style={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          bottom: 'max(20px, env(safe-area-inset-bottom, 20px))',
+          zIndex: 8995,
+          display: 'flex',
+          justifyContent: 'center',
+          pointerEvents: ctaInView ? 'auto' : 'none',
+          opacity: ctaInView ? 1 : 0,
+          transform: ctaInView ? 'translateY(0)' : 'translateY(14px)',
+          transition: 'opacity 0.45s ease, transform 0.45s ease',
+        }}
+      >
+        <Link
+          href="/cap/apply"
+          className="cap-journey-floating-cta-btn"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 10,
+            padding: '15px 26px 15px 24px',
+            borderRadius: 999,
+            background:
+              'linear-gradient(135deg,#fb923c 0%,#f97316 45%,#ea580c 100%)',
+            color: '#fff',
+            textDecoration: 'none',
+            fontSize: 15,
+            fontWeight: 700,
+            lineHeight: 1,
+            whiteSpace: 'nowrap',
+            border: '1px solid rgba(255,255,255,0.35)',
+            boxShadow:
+              '0 4px 14px rgba(234,88,12,0.35), 0 14px 40px rgba(234,88,12,0.28), inset 0 1px 0 rgba(255,255,255,0.25)',
+            // gentle continuous float, independent of fade transition above
+            animation: 'capJourneyCtaFloat 3.4s ease-in-out infinite',
+          }}
+        >
+          Start My CAP Journey
+          <ArrowRight size={16} strokeWidth={2.25} aria-hidden />
+        </Link>
       </div>
-    </section>
+
+      <style>{`
+        @keyframes capJourneyCtaFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+        .cap-journey-floating-cta-btn:hover {
+          transform: translateY(-2px);
+          box-shadow:
+            0 6px 18px rgba(234,88,12,0.4),
+            0 18px 48px rgba(234,88,12,0.32),
+            inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .cap-journey-floating-cta-btn {
+            animation: none !important;
+          }
+        }
+      `}</style>
+    </>
   );
 }
