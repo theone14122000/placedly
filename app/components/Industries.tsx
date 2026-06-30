@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { ArrowUpRight, ClipboardList, Stethoscope, Wallet, type LucideIcon } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight, Building2, ClipboardList, Stethoscope, Wallet, type LucideIcon } from 'lucide-react';
 import GenZBlobs from './GenZBlobs';
 
 type Industry = {
@@ -73,6 +73,8 @@ const industries: Industry[] = [
 ];
 
 export default function Industries() {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <section className="placedly-genz-section placedly-domains-section" id="domains">
       <GenZBlobs />
@@ -99,24 +101,27 @@ export default function Industries() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.55, delay: i * 0.1 }}
-              whileHover={{ y: -4 }}
+              whileHover={prefersReducedMotion ? undefined : { y: -8, scale: 1.01, rotate: -0.5 }}
             >
               <div className="placedly-domain-img-wrap">
                 <img src={ind.img} alt={ind.name} className="placedly-domain-img" loading="lazy" />
+                <div className="placedly-domain-overlay" />
                 <span className="placedly-domain-serial">{ind.serial}</span>
-              </div>
-              <div className="placedly-domain-body">
-                <span className="placedly-domain-tag" style={{ color: ind.accent, borderColor: `${ind.accent}44`, background: `${ind.accent}14` }}>
+                <span className="placedly-domain-badge" style={{ color: ind.accent, borderColor: `${ind.accent}44`, background: `${ind.accent}14` }}>
                   <ind.Icon size={12} strokeWidth={2.5} />
                   {ind.tag}
                 </span>
-                <h3 className="placedly-domain-name">
+              </div>
+              <div className="placedly-domain-body">
+                <div className="placedly-domain-body-top">
                   <span className="placedly-domain-icon" style={{ background: ind.grad }}>
                     <ind.Icon size={16} strokeWidth={2.25} color="#fff" />
                   </span>
-                  {ind.name}
-                </h3>
-                <p className="placedly-domain-details">{ind.details}</p>
+                  <div>
+                    <h3 className="placedly-domain-name">{ind.name}</h3>
+                    <p className="placedly-domain-details">{ind.details}</p>
+                  </div>
+                </div>
                 <div className="placedly-domain-stat">
                   <strong style={{ color: ind.accent }}>{ind.stat}</strong>
                   <span>{ind.statLabel}</span>

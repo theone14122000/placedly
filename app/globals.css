@@ -2081,6 +2081,61 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 }
 .placedly-genz-link:hover{gap:9px}
 
+/* 3D depth layer — subtle dimensional polish without changing motion */
+.placedly-genz-section,
+.placedly-tools-section,
+.placedly-hiw-section,
+.placedly-vertical-section,
+.placedly-cap-journey{
+  perspective:1400px;
+  transform-style:preserve-3d;
+}
+.placedly-genz-glass,
+.placedly-tools-card,
+.placedly-tools-panel,
+.placedly-domain-card,
+.placedly-vertical-showcase,
+.placedly-hiw-panel,
+.placedly-hiw-mock-card,
+.placedly-ceo-card,
+.placedly-cap-journey-card{
+  position:relative;
+  transform-style:preserve-3d;
+  isolation:isolate;
+}
+.placedly-genz-glass::before,
+.placedly-tools-card::before,
+.placedly-tools-panel::before,
+.placedly-domain-card::before,
+.placedly-vertical-showcase::before,
+.placedly-hiw-panel::before,
+.placedly-hiw-mock-card::before,
+.placedly-ceo-card::before,
+.placedly-cap-journey-card::before{
+  content:'';
+  position:absolute;inset:0;border-radius:inherit;
+  pointer-events:none;z-index:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.42) 0%,rgba(255,255,255,0.06) 42%,transparent 100%);
+  opacity:0.85;
+}
+.placedly-genz-glass::after,
+.placedly-tools-card::after,
+.placedly-tools-panel::after,
+.placedly-domain-card::after,
+.placedly-vertical-showcase::after,
+.placedly-hiw-panel::after,
+.placedly-hiw-mock-card::after,
+.placedly-ceo-card::after,
+.placedly-cap-journey-card::after{
+  content:'';
+  position:absolute;inset:auto -6% -14% auto;
+  width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.36),transparent 70%);
+  filter:blur(14px);
+  pointer-events:none;z-index:0;
+  opacity:0.75;
+}
+
 /* Utility Tools — AI section */
 .placedly-tools-section{
   background:var(--gradient-warm),transparent;
@@ -2204,40 +2259,57 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 }
 .placedly-domain-card{
   display:flex;flex-direction:column;overflow:hidden;padding:0;
+  position:relative;
+  min-height:100%;
 }
-.placedly-domain-img-wrap{position:relative;aspect-ratio:16/9;overflow:hidden}
+.placedly-domain-img-wrap{
+  position:relative;aspect-ratio:16/9;overflow:hidden;background:#f8fafc;
+}
 .placedly-domain-img{
   width:100%;height:100%;object-fit:cover;display:block;
-  transition:transform .4s ease;
+  transition:transform .45s ease;
 }
-.placedly-domain-card:hover .placedly-domain-img{transform:scale(1.04)}
+.placedly-domain-card:hover .placedly-domain-img{transform:scale(1.05)}
+.placedly-domain-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(2,6,23,0.08) 0%,rgba(2,6,23,0.38) 100%);
+  pointer-events:none;
+}
+.placedly-domain-serial,
+.placedly-domain-badge{
+  position:absolute;z-index:2;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
 .placedly-domain-serial{
-  position:absolute;top:14px;left:14px;
+  top:14px;left:14px;
   padding:6px 10px;border-radius:8px;
-  background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);
+  background:rgba(255,255,255,0.86);
   font-size:11px;font-weight:800;color:#0a0a0a;letter-spacing:0.04em;
 }
-.placedly-domain-body{
-  padding:22px 22px 24px;display:flex;flex-direction:column;flex:1;gap:0;
-}
-.placedly-domain-tag{
-  display:inline-flex;align-items:center;gap:6px;width:fit-content;
-  padding:5px 10px;border-radius:999px;border:1px solid;
+.placedly-domain-badge{
+  left:14px;bottom:14px;
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 10px;border-radius:999px;border:1px solid;
   font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;
+}
+.placedly-domain-body{
+  padding:20px 20px 22px;display:flex;flex-direction:column;flex:1;gap:0;
+}
+.placedly-domain-body-top{
+  display:flex;align-items:flex-start;gap:12px;
   margin-bottom:12px;
 }
 .placedly-domain-name{
-  display:flex;align-items:flex-start;gap:10px;
   font-size:15px;font-weight:800;color:#0a0a0a;
-  margin:0 0 10px;line-height:1.35;
+  margin:0 0 8px;line-height:1.35;
 }
 .placedly-domain-icon{
-  width:32px;height:32px;border-radius:10px;flex-shrink:0;
+  width:36px;height:36px;border-radius:12px;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
   margin-top:2px;
 }
 .placedly-domain-details{
-  font-size:13px;line-height:1.65;color:#64748b;margin:0 0 14px;
+  font-size:13px;line-height:1.65;color:#64748b;margin:0;
 }
 .placedly-domain-stat{
   display:flex;align-items:baseline;gap:8px;margin-bottom:12px;
@@ -2250,7 +2322,11 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-domain-chips span{
   font-size:10.5px;font-weight:600;color:#475569;
   background:rgba(241,245,249,0.9);border:1px solid rgba(226,232,240,0.9);
-  border-radius:6px;padding:4px 9px;
+  border-radius:999px;padding:5px 9px;
+}
+.placedly-domain-card .placedly-genz-link{
+  margin-top:auto;
+  padding-top:4px;
 }
 
 /* CEO quote */
@@ -3150,20 +3226,67 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 }
 .placedly-vertical-showcase--video-only{
   padding:0;
-  background:#000!important;
+  background:linear-gradient(145deg,#020617 0%,#0f172a 100%)!important;
+  border:1px solid rgba(255,255,255,0.14);
   overflow:hidden;
   line-height:0;
   min-height:0;
-  max-height:clamp(388px,44.8vw,526px);
+  border-radius:32px;
+}
+.placedly-vertical-video-shell{
+  padding:14px;
+  background:linear-gradient(145deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03));
+  border-radius:inherit;
+}
+.placedly-vertical-video-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:2px 4px 12px;
+}
+.placedly-vertical-video-dots{display:flex;gap:6px}
+.placedly-vertical-video-dots span{
+  width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,0.34);
+}
+.placedly-vertical-video-label{
+  font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(255,255,255,0.7);
+}
+.placedly-vertical-video-stage{
+  position:relative;overflow:hidden;border-radius:24px;
+  background:#000;box-shadow:inset 0 1px 0 rgba(255,255,255,0.08);
 }
 .placedly-vertical-showcase--video-only .placedly-vertical-cap-video{
   display:block;
   width:100%;
-  height:auto;
+  height:100%;
   min-height:0;
+  aspect-ratio:16 / 9;
+  object-fit:cover;
   border-radius:inherit;
   vertical-align:top;
   background:#000;
+}
+.placedly-vertical-video-overlay{
+  position:absolute;left:16px;right:16px;bottom:16px;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+  padding:12px 14px;border-radius:16px;
+  background:linear-gradient(180deg,rgba(2,6,23,0.16),rgba(2,6,23,0.74));
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:#fff;
+}
+.placedly-vertical-video-overlay-kicker{
+  display:block;margin-bottom:4px;
+  font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(255,255,255,0.7);
+}
+.placedly-vertical-video-overlay strong{
+  display:block;font-size:14px;font-weight:700;line-height:1.35;
+  max-width:560px;
+}
+.placedly-vertical-video-pill{
+  flex-shrink:0;padding:8px 10px;border-radius:999px;
+  background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.18);
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;
+  color:#fff;
 }
 .placedly-vertical-mock-inner{
   background:#fff;border-radius:16px;
@@ -3215,22 +3338,44 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-cap-journey{
   position:relative;
   padding:var(--placedly-section-pad,clamp(56px,8vw,96px)) clamp(20px,4vw,40px);
-  background:#FFFBF4;
+  background:linear-gradient(180deg,#fffaf2 0%,#fffbf4 100%);
   overflow:visible;
+  perspective:1400px;
+  transform-style:preserve-3d;
+}
+.placedly-cap-journey::before,
+.placedly-cap-journey::after{
+  content:'';
+  position:absolute;
+  border-radius:999px;
+  pointer-events:none;
+  filter:blur(70px);
+  z-index:0;
+}
+.placedly-cap-journey::before{
+  left:-8%;bottom:8%;width:320px;height:320px;
+  background:radial-gradient(circle, rgba(249,115,22,0.18), transparent 70%);
+}
+.placedly-cap-journey::after{
+  right:-8%;top:8%;width:300px;height:300px;
+  background:radial-gradient(circle, rgba(37,99,235,0.16), transparent 70%);
 }
 .placedly-cap-journey-bg{
   position:absolute;inset:0;pointer-events:none;
   background:
-    radial-gradient(ellipse 70% 45% at 50% 0%,rgba(255,255,255,0.95),transparent 65%),
-    radial-gradient(ellipse 40% 30% at 8% 85%,rgba(15,23,42,0.03),transparent 55%);
+    radial-gradient(ellipse 72% 54% at 50% 0%,rgba(255,255,255,0.95),transparent 68%),
+    radial-gradient(ellipse 38% 28% at 8% 86%,rgba(15,23,42,0.03),transparent 56%),
+    radial-gradient(ellipse 34% 24% at 92% 18%,rgba(249,115,22,0.12),transparent 58%);
   opacity:1;
 }
 .placedly-cap-journey-wrap{
   position:relative;z-index:1;
   max-width:1180px;margin:0 auto;
+  perspective:1400px;
 }
 .placedly-cap-journey-header{
   text-align:center;margin-bottom:clamp(36px,5vw,52px);
+  transform:translateZ(16px);
 }
 .placedly-cap-journey-kicker{
   font-size:12px;font-weight:600;letter-spacing:0.1em;
@@ -3270,18 +3415,20 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   position:relative;
   width:2px;
   height:100%;
-  background:#e2e8f0;
+  background:linear-gradient(180deg,rgba(226,232,240,0.7) 0%,rgba(226,232,240,0.95) 100%);
   border-radius:999px;
   overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.4);
 }
 .placedly-cap-journey-rail-fill{
   position:absolute;
   top:0;left:0;right:0;
   width:100%;
-  background:#181229;
+  background:linear-gradient(180deg,#181229 0%,#1f2937 60%,#fb923c 100%);
   border-radius:999px;
-  transition:height .12s linear;
+  transition:height .16s cubic-bezier(0.22,1,0.36,1);
   will-change:height;
+  box-shadow:0 0 24px rgba(249,115,22,0.24);
 }
 .placedly-cap-journey-rail-markers{
   position:absolute;
@@ -3294,12 +3441,13 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-cap-journey-rail-marker{
   position:absolute;
   left:50%;
-  width:8px;height:8px;
-  margin:-4px 0 0 -4px;
+  width:10px;height:10px;
+  margin:-5px 0 0 -5px;
   border-radius:999px;
   background:#fff;
   border:2px solid #e2e8f0;
-  transition:border-color .25s ease,background .25s ease,transform .25s ease;
+  transition:border-color .25s ease,background .25s ease,transform .25s ease,box-shadow .25s ease;
+  box-shadow:0 0 0 0 rgba(249,115,22,0);
 }
 .placedly-cap-journey-rail-marker.is-lit{
   border-color:#cbd5e1;
@@ -3308,8 +3456,9 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-cap-journey-rail-marker.is-active,
 .placedly-cap-journey-rail-marker.is-lit.is-active{
   border-color:#181229;
-  background:#181229;
-  transform:scale(1.15);
+  background:linear-gradient(135deg,#181229 0%,#fb923c 100%);
+  transform:scale(1.18);
+  box-shadow:0 0 0 4px rgba(249,115,22,0.15);
 }
 .placedly-cap-journey-cards-col{
   min-width:0;
@@ -3324,40 +3473,89 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   top:clamp(88px,12vh,112px);
   margin-bottom:clamp(18px,3vw,28px);
   border-radius:clamp(24px,3vw,36px);
-  background:#FFFBF4;
-  border:1px solid rgba(0,0,0,0.06);
-  box-shadow:0 12px 40px rgba(249,115,22,0.12);
+  background:linear-gradient(135deg,rgba(255,255,255,0.94) 0%,rgba(255,251,244,0.98) 100%);
+  border:1px solid rgba(15,23,42,0.08);
+  box-shadow:0 16px 46px rgba(249,115,22,0.12);
+  overflow:hidden;
+  isolation:isolate;
+  transform-style:preserve-3d;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
   transition:transform .35s cubic-bezier(0.22,1,0.36,1),box-shadow .35s ease,opacity .35s ease;
 }
+.placedly-cap-journey-card::before{
+  content:'';
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at top right, rgba(249,115,22,0.16), transparent 38%),
+    linear-gradient(135deg, rgba(255,255,255,0.72), rgba(248,250,252,0.06));
+  pointer-events:none;
+  z-index:0;
+}
+.placedly-cap-journey-card::after{
+  content:'';
+  position:absolute;inset:1px;
+  border-radius:inherit;
+  border:1px solid rgba(255,255,255,0.5);
+  pointer-events:none;
+  z-index:0;
+}
 .placedly-cap-journey-card:not(.is-active){
-  opacity:0.94;
+  opacity:0.96;
   transform:scale(0.992);
 }
 .placedly-cap-journey-card.is-active{
   opacity:1;
   transform:scale(1);
-  box-shadow:0 14px 44px rgba(249,115,22,0.15);
+  box-shadow:0 28px 80px rgba(15,23,42,0.15);
+}
+.placedly-cap-journey-card-ambient{
+  position:absolute;inset:auto -8% -24% auto;
+  width:240px;height:240px;
+  background:radial-gradient(circle, rgba(37,99,235,0.2), transparent 70%);
+  filter:blur(28px);
+  pointer-events:none;
+  z-index:0;
+  opacity:0.85;
 }
 .placedly-cap-journey-card-inner{
+  position:relative;z-index:1;
   display:grid;
   grid-template-columns:minmax(0,1fr) minmax(160px,220px) minmax(0,1fr);
   gap:clamp(20px,3vw,40px);
   align-items:stretch;
   min-height:clamp(220px,24vw,280px);
   padding:clamp(28px,3.5vw,44px) clamp(24px,3vw,40px);
+  transform:translateZ(18px);
+  transition:transform .35s ease;
+}
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-inner{
+  transform:translateZ(24px);
 }
 .placedly-cap-journey-card-left{
   display:flex;flex-direction:column;
   justify-content:space-between;align-items:flex-start;
   min-height:100%;
+  gap:16px;
 }
 .placedly-cap-journey-card-badge{
   display:inline-flex;align-items:center;justify-content:center;
   padding:7px 16px;border-radius:999px;
-  border:1px solid #334155;
-  font-size:13px;font-weight:500;letter-spacing:0.02em;
-  color:#334155;background:transparent;
+  border:1px solid rgba(15,23,42,0.12);
+  font-size:13px;font-weight:600;letter-spacing:0.02em;
+  color:#334155;background:rgba(255,255,255,0.8);
   line-height:1;
+  box-shadow:0 8px 24px rgba(15,23,42,0.05);
+}
+.placedly-cap-journey-card-copy{
+  display:flex;flex-direction:column;gap:10px;
+}
+.placedly-cap-journey-card-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  width:fit-content;
+  padding:6px 10px;border-radius:999px;
+  font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;
+  color:#f97316;background:rgba(249,115,22,0.12);
 }
 .placedly-cap-journey-card-title{
   font-family:Inter,var(--font),sans-serif!important;
@@ -3381,6 +3579,29 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   border-radius:16px;
   transform:rotate(-7deg);
   box-shadow:0 14px 40px rgba(15,23,42,0.14),0 4px 12px rgba(15,23,42,0.08);
+  transition:transform .35s ease,box-shadow .35s ease;
+}
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-img{
+  transform:rotate(-6deg) translateY(-4px) scale(1.02);
+  box-shadow:0 18px 48px rgba(15,23,42,0.16),0 6px 16px rgba(15,23,42,0.12);
+}
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-media{
+  animation:capJourneyFloat 3.8s ease-in-out infinite;
+}
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-left,
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-right{
+  transform:translateZ(16px);
+}
+.placedly-cap-journey-card:hover .placedly-cap-journey-card-inner{
+  transform:translateZ(24px);
+}
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-left,
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-right{
+  transform:translateZ(20px);
+}
+@keyframes capJourneyFloat{
+  0%,100%{transform:translateY(0) rotate(-6deg)}
+  50%{transform:translateY(-6px) rotate(-4deg)}
 }
 .placedly-cap-journey-card-right{
   display:flex;flex-direction:column;
@@ -3396,10 +3617,10 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-cap-journey-card-link{
   display:inline-flex;align-items:center;gap:8px;
   font-size:15px;font-weight:600;color:#2563eb!important;
-  text-decoration:none;transition:gap .2s ease,color .2s ease;
+  text-decoration:none;transition:gap .2s ease,color .2s ease,transform .2s ease;
 }
 .placedly-cap-journey-card-link:hover{
-  color:#1d4ed8!important;gap:10px;
+  color:#1d4ed8!important;gap:10px;transform:translateX(2px);
 }
 
 /* Floating CAP CTA — Solidroad-inspired, orange brand */
@@ -3504,6 +3725,7 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   .placedly-cap-floating-cta-float{animation:none!important}
   .placedly-cap-journey-card{transition:none!important}
   .placedly-cap-journey-card-img{transform:none}
+  .placedly-cap-journey-card-inner{transform:none}
   .placedly-cap-journey-rail-fill{transition:none!important}
 }
 

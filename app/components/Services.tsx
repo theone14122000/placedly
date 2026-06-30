@@ -172,7 +172,36 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
             whileHover={{ scale: 1.01, y: -4 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
-            <VerticalScrollVideo src={current.videoSrc} ariaLabel={current.ariaLabel} />
+            <div className="placedly-vertical-video-shell">
+              <div className="placedly-vertical-video-toolbar">
+                <div className="placedly-vertical-video-dots" aria-hidden>
+                  <span />
+                  <span />
+                  <span />
+                </div>
+                <span className="placedly-vertical-video-label">
+                  {current.id === 'cap' ? 'Placement experience' : 'Study abroad journey'}
+                </span>
+              </div>
+              <div className="placedly-vertical-video-stage">
+                <VerticalScrollVideo src={current.videoSrc} ariaLabel={current.ariaLabel} />
+                <div className="placedly-vertical-video-overlay">
+                  <div>
+                    <span className="placedly-vertical-video-overlay-kicker">
+                      {current.id === 'cap' ? 'Live preview' : 'Guided experience'}
+                    </span>
+                    <strong>
+                      {current.id === 'cap'
+                        ? 'See how the placement journey comes to life.'
+                        : 'Explore the full study abroad path in motion.'}
+                    </strong>
+                  </div>
+                  <span className="placedly-vertical-video-pill">
+                    {current.id === 'cap' ? 'End to end' : 'From start to visa'}
+                  </span>
+                </div>
+              </div>
+            </div>
           </motion.article>
         </AnimatePresence>
       </motion.div>
