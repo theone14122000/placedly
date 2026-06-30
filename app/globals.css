@@ -3417,325 +3417,693 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 /* ════════════════════════════════════════════════════════
    CAP JOURNEY — scroll-driven sticky cards + floating CTA
 ════════════════════════════════════════════════════════ */
-.placedly-cap-journey{
-  position:relative;
-  padding:var(--placedly-section-pad,clamp(56px,8vw,96px)) clamp(20px,4vw,40px);
-  background:linear-gradient(180deg,#fffaf2 0%,#fffbf4 100%);
-  overflow:visible;
-  perspective:1400px;
-  transform-style:preserve-3d;
-}
-.placedly-cap-journey::before,
-.placedly-cap-journey::after{
-  content:'';
-  position:absolute;
-  border-radius:999px;
-  pointer-events:none;
-  filter:blur(70px);
-  z-index:0;
-}
-.placedly-cap-journey::before{
-  left:-8%;bottom:8%;width:320px;height:320px;
-  background:radial-gradient(circle, rgba(249,115,22,0.18), transparent 70%);
-}
-.placedly-cap-journey::after{
-  right:-8%;top:8%;width:300px;height:300px;
-  background:radial-gradient(circle, rgba(37,99,235,0.16), transparent 70%);
-}
-.placedly-cap-journey-bg{
-  position:absolute;inset:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse 72% 54% at 50% 0%,rgba(255,255,255,0.95),transparent 68%),
-    radial-gradient(ellipse 38% 28% at 8% 86%,rgba(15,23,42,0.03),transparent 56%),
-    radial-gradient(ellipse 34% 24% at 92% 18%,rgba(249,115,22,0.12),transparent 58%);
-  opacity:1;
-}
-.placedly-cap-journey-wrap{
-  position:relative;z-index:1;
-  max-width:1180px;margin:0 auto;
-  perspective:1400px;
-}
-.placedly-cap-journey-header{
-  text-align:center;margin-bottom:clamp(36px,5vw,52px);
-  transform:translateZ(16px);
-}
-.placedly-cap-journey-kicker{
-  font-size:12px;font-weight:600;letter-spacing:0.1em;
-  text-transform:uppercase;color:#94a3b8;margin:0 0 12px;
-}
-.placedly-cap-journey-title{
-  font-family:Inter,var(--font),sans-serif!important;
-  font-size:clamp(1.85rem,3.4vw,2.65rem)!important;
-  font-weight:600!important;
-  letter-spacing:-0.03em!important;
-  line-height:1.12!important;
-  color:#181229!important;
-  margin:0 0 14px!important;
-}
-.placedly-cap-journey-sub{
-  font-size:clamp(15px,1.35vw,17px);
-  line-height:1.65;color:#64748b;
-  max-width:620px;margin:0 auto;
-}
-.placedly-cap-journey-scroll-layout{
-  display:grid;
-  grid-template-columns:48px minmax(0,1fr);
-  gap:clamp(20px,3vw,36px);
-  align-items:stretch;
-}
-.placedly-cap-journey-rail-col{
-  position:relative;
-  min-height:100%;
-}
-.placedly-cap-journey-rail{
-  position:absolute;
-  inset:0;
-  display:flex;
-  justify-content:center;
-}
-.placedly-cap-journey-rail-track{
-  position:relative;
-  width:2px;
-  height:100%;
-  background:linear-gradient(180deg,rgba(226,232,240,0.7) 0%,rgba(226,232,240,0.95) 100%);
-  border-radius:999px;
-  overflow:hidden;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.4);
-}
-.placedly-cap-journey-rail-fill{
-  position:absolute;
-  top:0;left:0;right:0;
-  width:100%;
-  background:linear-gradient(180deg,#181229 0%,#1f2937 60%,#fb923c 100%);
-  border-radius:999px;
-  transition:height .16s cubic-bezier(0.22,1,0.36,1);
-  will-change:height;
-  box-shadow:0 0 24px rgba(249,115,22,0.24);
-}
-.placedly-cap-journey-rail-markers{
-  position:absolute;
-  inset:0;
-  left:50%;
-  transform:translateX(-50%);
-  width:10px;
-  pointer-events:none;
-}
-.placedly-cap-journey-rail-marker{
-  position:absolute;
-  left:50%;
-  width:10px;height:10px;
-  margin:-5px 0 0 -5px;
-  border-radius:999px;
-  background:#fff;
-  border:2px solid #e2e8f0;
-  transition:border-color .25s ease,background .25s ease,transform .25s ease,box-shadow .25s ease;
-  box-shadow:0 0 0 0 rgba(249,115,22,0);
-}
-.placedly-cap-journey-rail-marker.is-lit{
-  border-color:#cbd5e1;
-  background:#f8fafc;
-}
-.placedly-cap-journey-rail-marker.is-active,
-.placedly-cap-journey-rail-marker.is-lit.is-active{
-  border-color:#181229;
-  background:linear-gradient(135deg,#181229 0%,#fb923c 100%);
-  transform:scale(1.18);
-  box-shadow:0 0 0 4px rgba(249,115,22,0.15);
-}
-.placedly-cap-journey-cards-col{
-  min-width:0;
-}
-.placedly-cap-journey-track{
-  position:relative;
-  display:flex;flex-direction:column;gap:0;
-  padding-bottom:min(36vh,280px);
-}
-.placedly-cap-journey-card{
-  position:sticky;
-  top:clamp(88px,12vh,112px);
-  margin-bottom:clamp(18px,3vw,28px);
-  border-radius:clamp(24px,3vw,36px);
-  background:#FFFBF4;
-  border:1px solid rgba(0,0,0,0.06);
-  box-shadow:0 12px 40px rgba(249,115,22,0.12);
-  transition:transform .35s cubic-bezier(0.22,1,0.36,1),box-shadow .35s ease,opacity .35s ease;
-}
-.placedly-cap-journey-card:not(.is-active){
-  opacity:0.94;
-  transform:scale(0.992);
-}
-.placedly-cap-journey-card.is-active{
-  opacity:1;
-  transform:scale(1);
-  box-shadow:0 14px 44px rgba(249,115,22,0.15);
-}
-.placedly-cap-journey-card-inner{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(160px,220px) minmax(0,1fr);
-  gap:clamp(20px,3vw,40px);
-  align-items:stretch;
-  min-height:clamp(220px,24vw,280px);
-  padding:clamp(28px,3.5vw,44px) clamp(24px,3vw,40px);
-}
-.placedly-cap-journey-card-left{
-  display:flex;flex-direction:column;
-  justify-content:space-between;align-items:flex-start;
-  min-height:100%;
-}
-.placedly-cap-journey-card-badge{
-  display:inline-flex;align-items:center;justify-content:center;
-  padding:7px 16px;border-radius:999px;
-  border:1px solid #334155;
-  font-size:13px;font-weight:500;letter-spacing:0.02em;
-  color:#334155;background:transparent;
-  line-height:1;
-}
-.placedly-cap-journey-card-title{
-  font-family:Inter,var(--font),sans-serif!important;
-  font-size:clamp(1.75rem,3vw,2.5rem)!important;
-  font-weight:700!important;
-  letter-spacing:-0.03em!important;
-  line-height:1.08!important;
-  color:#0f172a!important;
-  margin:0!important;
-  max-width:14ch;
-}
-.placedly-cap-journey-card-media{
-  display:flex;align-items:center;justify-content:center;
-  padding:8px 0;
-}
-.placedly-cap-journey-card-img{
-  display:block;
-  width:min(100%,220px);
-  aspect-ratio:4/3;
-  object-fit:cover;
-  border-radius:16px;
-  transform:rotate(-7deg);
-  box-shadow:0 14px 40px rgba(15,23,42,0.14),0 4px 12px rgba(15,23,42,0.08);
-}
-.placedly-cap-journey-card-right{
-  display:flex;flex-direction:column;
-  justify-content:center;align-items:flex-start;
-  gap:clamp(16px,2vw,22px);
-  max-width:320px;
-  margin-left:auto;
-}
-.placedly-cap-journey-card-body{
-  font-size:clamp(14px,1.2vw,15px);
-  line-height:1.65;color:#64748b;margin:0;
-}
-.placedly-cap-journey-card-link{
-  display:inline-flex;align-items:center;gap:8px;
-  font-size:15px;font-weight:600;color:#2563eb!important;
-  text-decoration:none;transition:gap .2s ease,color .2s ease;
-}
-.placedly-cap-journey-card-link:hover{
-  color:#1d4ed8!important;gap:10px;
+/* ═══════════════════════════════════════════════════════════════════
+   CAP JOURNEY — SECTION SHELL
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey {
+  position: relative;
+  padding: clamp(72px, 10vw, 120px) 0 clamp(48px, 8vw, 96px);
+  overflow: hidden;
 }
 
-/* Floating CAP CTA — Solidroad-inspired, orange brand */
-.placedly-cap-floating-cta{
-  position:fixed;left:0;right:0;bottom:0;
-  z-index:8995;
-  display:flex;justify-content:center;align-items:flex-end;
-  pointer-events:none;
-  padding:0 16px calc(2px + env(safe-area-inset-bottom,0px));
-  background:transparent;
+.placedly-cap-journey-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(249, 115, 22, 0.07), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(37, 99, 235, 0.05), transparent),
+    #f8fafc;
+  z-index: 0;
+  pointer-events: none;
 }
-.placedly-cap-floating-cta::after{
-  content:'';
-  position:absolute;left:0;right:0;bottom:0;
-  height:14px;
-  background:#ffffff;
-  border-top:1px solid rgba(15,23,42,0.08);
-  box-shadow:0 -8px 28px rgba(15,23,42,0.08);
-  pointer-events:none;
-  z-index:0;
+
+.placedly-cap-journey-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 48px);
 }
-.placedly-cap-floating-cta-float{pointer-events:auto;position:relative;z-index:1}
-.placedly-cap-floating-cta-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:10px;
-  padding:15px 26px 15px 24px;
-  border-radius:999px;
-  background:linear-gradient(135deg,#fb923c 0%,#f97316 45%,#ea580c 100%);
-  color:#fff!important;text-decoration:none;
-  font-size:15px;font-weight:700;line-height:1;
-  white-space:nowrap;
-  border:1px solid rgba(255,255,255,0.35);
+
+/* ═══════════════════════════════════════════════════════════════════
+   HEADER BLOCK
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey-header {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto clamp(48px, 7vw, 88px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.placedly-cap-journey-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(249, 115, 22, 0.10);
+  border: 1px solid rgba(249, 115, 22, 0.22);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ea580c;
+  margin: 0;
+}
+
+.placedly-cap-journey-title {
+  font-family: Inter, var(--font), sans-serif;
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.06;
+  color: #0f172a;
+  margin: 0;
+}
+
+.placedly-cap-journey-sub {
+  font-size: clamp(15px, 1.3vw, 17px);
+  line-height: 1.7;
+  color: #64748b;
+  max-width: 580px;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCROLL LAYOUT — sidebar rail + cards column
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey-scroll-layout {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: clamp(24px, 3vw, 48px);
+  align-items: start;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PROGRESS RAIL
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey-rail-col {
+  position: sticky;
+  top: clamp(88px, 12vh, 112px);
+  height: calc(100vh - clamp(88px, 12vh, 112px) - 48px);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.placedly-cap-journey-rail {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.placedly-cap-journey-rail-track {
+  position: relative;
+  width: 3px;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.placedly-cap-journey-rail-fill {
+  position: absolute;
+  inset: 0 0 auto 0;
+  background: linear-gradient(180deg, #f97316 0%, #2563eb 100%);
+  border-radius: 999px;
+  transition: height 0.12s ease;
+  will-change: height;
+}
+
+.placedly-cap-journey-rail-markers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.placedly-cap-journey-rail-marker {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.12);
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.placedly-cap-journey-rail-marker.is-lit {
+  background: #f97316;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.25);
+}
+
+.placedly-cap-journey-rail-marker.is-active {
+  background: #f97316;
+  transform: translate(-50%, -50%) scale(1.45);
   box-shadow:
-    0 4px 14px rgba(234,88,12,0.35),
-    0 14px 40px rgba(234,88,12,0.28),
-    inset 0 1px 0 rgba(255,255,255,0.25);
-  transition:transform .25s var(--placedly-ease-out,cubic-bezier(0.22,1,0.36,1)),box-shadow .25s ease;
+    0 0 0 3px rgba(249, 115, 22, 0.22),
+    0 0 12px rgba(249, 115, 22, 0.35);
 }
-.placedly-cap-floating-cta-btn:hover{
-  transform:translateY(-2px);
+
+/* ═══════════════════════════════════════════════════════════════════
+   CARDS COLUMN
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey-cards-col {
+  min-width: 0;
+}
+
+/* ── Track: the scrollable container that holds all cards ── */
+.placedly-cap-journey-track {
+  display: flex;
+  flex-direction: column;
+  /* Gap gives each card scroll room before the next one arrives */
+  gap: clamp(80px, 14vh, 120px);
+  padding-bottom: 30vh;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   JOURNEY CARD — base
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey-card {
+  position: sticky;
+  top: clamp(88px, 12vh, 112px);
+  border-radius: clamp(28px, 3vw, 40px);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(255, 251, 244, 0.99) 100%
+  );
+  border: 1px solid rgba(15, 23, 42, 0.07);
   box-shadow:
-    0 6px 18px rgba(234,88,12,0.4),
-    0 18px 48px rgba(234,88,12,0.32),
-    inset 0 1px 0 rgba(255,255,255,0.3);
+    0 4px 6px rgba(15, 23, 42, 0.04),
+    0 16px 46px rgba(249, 115, 22, 0.10);
+  overflow: hidden;
+  isolation: isolate;
+  transform-style: preserve-3d;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  /* All animated properties in one declaration */
+  transition:
+    transform    0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow   0.42s ease,
+    opacity      0.42s ease,
+    margin-top   0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.42s ease;
+
+  will-change: transform, opacity;
 }
-.placedly-cap-floating-cta-btn:active{transform:translateY(0)}
-@media(max-width:768px){
-  .placedly-cap-journey-scroll-layout{
-    grid-template-columns:1fr;
-    gap:0;
-  }
-  .placedly-cap-journey-rail-col{
-    display:none;
-  }
-  .placedly-cap-journey-card-inner{
-    grid-template-columns:1fr;
-    grid-template-rows:auto auto auto;
-    min-height:0;
-    gap:20px;
-    padding:24px 20px 28px;
-  }
-  .placedly-cap-journey-card-left{
-    flex-direction:row;flex-wrap:wrap;
-    justify-content:space-between;align-items:center;
-    gap:12px;min-height:0;
-  }
-  .placedly-cap-journey-card-title{
-    width:100%;max-width:none;
-    font-size:clamp(1.5rem,6vw,1.85rem)!important;
-  }
-  .placedly-cap-journey-card-media{padding:4px 0 8px}
-  .placedly-cap-journey-card-img{
-    width:min(72vw,260px);
-    transform:rotate(-5deg);
-  }
-  .placedly-cap-journey-card-right{
-    max-width:none;margin-left:0;
-  }
-  .placedly-cap-journey-track{padding-bottom:24vh}
-  .placedly-cap-floating-cta{
-    bottom:0;
-    padding:0 16px calc(2px + env(safe-area-inset-bottom,0px));
-  }
-  .placedly-cap-floating-cta::after{
-    height:12px;
-  }
-  .placedly-cap-floating-cta-btn{
-    width:auto;
-    max-width:fit-content;
-    padding:9px 16px;
-    font-size:13px;
-    gap:4px;
-  }
-  .placedly-cap-floating-cta-btn svg{
-    width:13px;height:13px;flex-shrink:0;
-  }
-  .floating-buttons{bottom:max(72px,calc(60px + env(safe-area-inset-bottom,0px)))}
+
+/* Inner gloss + border shine layers */
+.placedly-cap-journey-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.13), transparent 40%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.65), rgba(248, 250, 252, 0.04));
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.42s ease;
 }
-@media(max-width:480px){
-  .placedly-cap-journey-card{top:78px}
+
+.placedly-cap-journey-card::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+  z-index: 0;
 }
-@media (prefers-reduced-motion:reduce){
-  .placedly-cap-floating-cta-float{animation:none!important}
-  .placedly-cap-journey-card{transition:none!important}
-  .placedly-cap-journey-card-img{transform:none}
-  .placedly-cap-journey-rail-fill{transition:none!important}
+
+/* ── Ambient glow blob ── */
+.placedly-cap-journey-card-ambient {
+  position: absolute;
+  inset: auto -8% -24% auto;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.18), transparent 70%);
+  filter: blur(32px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.8;
+  transition: opacity 0.42s ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CARD STATE — default (not active, not overlapped)
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey-card:not(.is-active):not(.is-overlapped) {
+  opacity: 0.97;
+  transform: scale(0.994);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CARD STATE — is-active  (front of stack)
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey-card.is-active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  box-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.04),
+    0 28px 80px rgba(15, 23, 42, 0.13),
+    0 0 0 1px rgba(249, 115, 22, 0.08);
+  border-color: rgba(249, 115, 22, 0.14);
+}
+
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-ambient {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CARD STATE — is-overlapped  (being slid under by next card)
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey-card.is-overlapped:not(.is-active) {
+  transform: scale(0.96) translateY(-8px);
+  opacity: 0.80;
+  box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.06),
+    0 8px 24px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+  border-color: rgba(15, 23, 42, 0.05);
+}
+
+.placedly-cap-journey-card.is-overlapped:not(.is-active)::before {
+  opacity: 0.5;
+}
+
+.placedly-cap-journey-card.is-overlapped:not(.is-active) .placedly-cap-journey-card-ambient {
+  opacity: 0.3;
+}
+
+/*
+  Cards that are TWO or more levels deep in the stack
+  shrink and fade even more — uses :has() for modern browsers
+  with a JS fallback class .is-deep-overlapped
+*/
+.placedly-cap-journey-card.is-overlapped:not(.is-active):has(~ .is-overlapped ~ .is-active),
+.placedly-cap-journey-card.is-deep-overlapped:not(.is-active) {
+  transform: scale(0.92) translateY(-16px);
+  opacity: 0.60;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CARD INNER GRID
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey-card-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 220px) minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 40px);
+  align-items: stretch;
+  min-height: clamp(220px, 24vw, 280px);
+  padding: clamp(28px, 3.5vw, 44px) clamp(24px, 3vw, 40px);
+  transform: translateZ(18px);
+  transform-style: preserve-3d;
+  transition: transform 0.42s ease;
+}
+
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-inner {
+  transform: translateZ(26px);
+}
+
+.placedly-cap-journey-card.is-overlapped:not(.is-active) .placedly-cap-journey-card-inner {
+  transform: translateZ(8px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LEFT COLUMN — badge + title
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey-card-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  min-height: 100%;
+  gap: 16px;
+  transition: transform 0.42s ease;
+}
+
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-left {
+  transform: translateZ(16px);
+}
+
+.placedly-cap-journey-card-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.11);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #334155;
+  background: rgba(255, 255, 255, 0.85);
+  line-height: 1;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  font-variant-numeric: tabular-nums;
+}
+
+.placedly-cap-journey-card-title {
+  font-family: Inter, var(--font), sans-serif !important;
+  font-size: clamp(1.75rem, 3vw, 2.5rem) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.08 !important;
+  color: #0f172a !important;
+  margin: 0 !important;
+  max-width: 14ch;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CENTRE COLUMN — image
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey-card-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.placedly-cap-journey-card-img {
+  display: block;
+  width: min(100%, 220px);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 16px;
+  transform: rotate(-7deg);
+  box-shadow:
+    0 14px 40px rgba(15, 23, 42, 0.14),
+    0 4px 12px rgba(15, 23, 42, 0.08);
+  transition: transform 0.42s ease, box-shadow 0.42s ease;
+}
+
+/* Active card — image lifts */
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-img {
+  transform: rotate(-6deg) translateY(-4px) scale(1.03);
+  box-shadow:
+    0 20px 52px rgba(15, 23, 42, 0.17),
+    0 6px 16px rgba(15, 23, 42, 0.10);
+}
+
+/* Overlapped card — image settles back */
+.placedly-cap-journey-card.is-overlapped:not(.is-active) .placedly-cap-journey-card-img {
+  transform: rotate(-7deg) translateY(2px) scale(0.98);
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, 0.08),
+    0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+/* Floating animation on active card only */
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-media {
+  animation: capJourneyFloat 3.8s ease-in-out infinite;
+}
+
+@keyframes capJourneyFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RIGHT COLUMN — body text + link
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-journey-card-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(14px, 2vw, 20px);
+  max-width: 320px;
+  margin-left: auto;
+  transition: transform 0.42s ease;
+}
+
+.placedly-cap-journey-card.is-active .placedly-cap-journey-card-right {
+  transform: translateZ(16px);
+}
+
+.placedly-cap-journey-card-body {
+  font-size: clamp(14px, 1.2vw, 15px);
+  line-height: 1.68;
+  color: #64748b;
+  margin: 0;
+  transition: opacity 0.42s ease;
+}
+
+.placedly-cap-journey-card.is-overlapped:not(.is-active) .placedly-cap-journey-card-body {
+  opacity: 0.7;
+}
+
+.placedly-cap-journey-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2563eb !important;
+  text-decoration: none;
+  transition: gap 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.placedly-cap-journey-card-link:hover {
+  color: #1d4ed8 !important;
+  gap: 11px;
+  transform: translateX(2px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FLOATING CTA
+═══════════════════════════════════════════════════════════════════ */
+.placedly-cap-floating-cta {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 8995;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  pointer-events: none;
+  padding: 0 16px calc(2px + env(safe-area-inset-bottom, 0px));
+}
+
+.placedly-cap-floating-cta::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 14px;
+  background: #ffffff;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 -8px 28px rgba(15, 23, 42, 0.08);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.placedly-cap-floating-cta-float {
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.placedly-cap-floating-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 28px 15px 26px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 45%, #ea580c 100%);
+  color: #fff !important;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 4px 14px rgba(234, 88, 12, 0.35),
+    0 14px 40px rgba(234, 88, 12, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition:
+    transform  0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease;
+}
+
+.placedly-cap-floating-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 18px rgba(234, 88, 12, 0.40),
+    0 18px 48px rgba(234, 88, 12, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+
+.placedly-cap-floating-cta-btn:active {
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE — tablet
+═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .placedly-cap-journey-card-inner {
+    grid-template-columns: 1fr minmax(140px, 180px);
+    grid-template-rows: auto auto;
+    min-height: 0;
+  }
+
+  .placedly-cap-journey-card-left {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .placedly-cap-journey-card-media {
+    grid-column: 2;
+    grid-row: 1 / 3;
+  }
+
+  .placedly-cap-journey-card-right {
+    grid-column: 1;
+    grid-row: 2;
+    max-width: none;
+    margin-left: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE — mobile
+═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .placedly-cap-journey-scroll-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .placedly-cap-journey-rail-col {
+    display: none;
+  }
+
+  .placedly-cap-journey-card-inner {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    min-height: 0;
+    gap: 20px;
+    padding: 24px 20px 28px;
+  }
+
+  .placedly-cap-journey-card-left {
+    grid-column: 1;
+    grid-row: 1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: 0;
+  }
+
+  .placedly-cap-journey-card-title {
+    width: 100%;
+    max-width: none;
+    font-size: clamp(1.5rem, 6vw, 1.85rem) !important;
+  }
+
+  .placedly-cap-journey-card-media {
+    grid-column: 1;
+    grid-row: 2;
+    padding: 4px 0 8px;
+  }
+
+  .placedly-cap-journey-card-img {
+    width: min(72vw, 260px);
+    transform: rotate(-5deg);
+  }
+
+  .placedly-cap-journey-card-right {
+    grid-column: 1;
+    grid-row: 3;
+    max-width: none;
+    margin-left: 0;
+  }
+
+  /* Reduce overlap intensity on mobile — less screen real estate */
+  .placedly-cap-journey-card.is-overlapped:not(.is-active) {
+    transform: scale(0.98) translateY(-4px);
+    opacity: 0.85;
+  }
+
+  .placedly-cap-journey-track {
+    gap: clamp(56px, 10vh, 80px);
+    padding-bottom: 24vh;
+  }
+
+  .placedly-cap-journey-card {
+    top: 78px;
+  }
+
+  .placedly-cap-floating-cta {
+    padding: 0 16px calc(2px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .placedly-cap-floating-cta::after {
+    height: 12px;
+  }
+
+  .placedly-cap-floating-cta-btn {
+    padding: 10px 18px;
+    font-size: 13px;
+    gap: 6px;
+  }
+
+  .placedly-cap-floating-cta-btn svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .placedly-cap-journey-card {
+    top: 72px;
+    border-radius: 24px;
+  }
+
+  /* Deep stack on small screens — only 1 card visible at a time */
+  .placedly-cap-journey-card.is-overlapped:not(.is-active) {
+    transform: scale(0.97) translateY(-3px);
+    opacity: 0.75;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   REDUCED MOTION
+═══════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .placedly-cap-journey-card,
+  .placedly-cap-journey-card.is-active,
+  .placedly-cap-journey-card.is-overlapped:not(.is-active),
+  .placedly-cap-journey-card-img,
+  .placedly-cap-journey-card-inner,
+  .placedly-cap-journey-card-left,
+  .placedly-cap-journey-card-right,
+  .placedly-cap-journey-rail-fill {
+    transition: opacity 0.15s ease !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .placedly-cap-journey-card.is-active .placedly-cap-journey-card-media {
+    animation: none !important;
+  }
 }
 /* ════════════════════════════════════════════════════════
    FAQ — Liftoff-style two-column accordion

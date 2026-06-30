@@ -20,48 +20,42 @@ const DEFAULT_STEPS: JourneyStep[] = [
   {
     id: 'resume',
     title: 'Resume Rebuild',
-    body:
-      'ATS-friendly resume with achievement-based bullets, domain keywords, and a narrative that positions you for MNC roles — ready in 48 hours.',
+    body: 'ATS-friendly resume with achievement-based bullets, domain keywords, and a narrative that positions you for MNC roles — ready in 48 hours.',
     image: '/img/hero%20feature%20img.png',
     href: '/cap',
   },
   {
     id: 'linkedin',
     title: 'LinkedIn Overhaul',
-    body:
-      'Headline, summary, and experience aligned to the roles you want — so recruiters and hiring managers see a consistent, credible profile.',
+    body: 'Headline, summary, and experience aligned to the roles you want — so recruiters and hiring managers see a consistent, credible profile.',
     image: '/img/hero%20feature%20img%202.png',
     href: '/cap',
   },
   {
     id: 'mock',
     title: 'Mock Interview Sprint',
-    body:
-      'Three live coaching rounds — HR, technical/domain, and a full mock with salary negotiation scripting before you ever enter the real room.',
+    body: 'Three live coaching rounds — HR, technical/domain, and a full mock with salary negotiation scripting before you ever enter the real room.',
     image: '/img/team.png',
     href: '/cap',
   },
   {
     id: 'referral',
     title: 'Warm Referrals',
-    body:
-      'Your profile goes directly to hiring managers at 10–15 target companies — with a warm introduction from Placedly, not a mass blast.',
+    body: 'Your profile goes directly to hiring managers at 10–15 target companies — with a warm introduction from Placedly, not a mass blast.',
     image: '/img/career%20fair.png',
     href: '/cap',
   },
   {
     id: 'offer',
     title: 'Offer Letter',
-    body:
-      'When your offer arrives, the journey completes — and only then does our 12% Career Assistance Fee apply. Zero upfront, zero risk.',
+    body: 'When your offer arrives, the journey completes — and only then does our 12% Career Assistance Fee apply. Zero upfront, zero risk.',
     image: '/img/placed.jpg',
     href: '/cap/apply',
   },
   {
     id: 'launch',
     title: 'Career Launch',
-    body:
-      'Post-offer onboarding prep, salary negotiation support, and first-90-days check-ins so your new role starts strong.',
+    body: 'Post-offer onboarding prep, salary negotiation support, and first-90-days check-ins so your new role starts strong.',
     image: '/img/hero%20feaure%20img%203.png',
     href: '/cap',
   },
@@ -69,17 +63,22 @@ const DEFAULT_STEPS: JourneyStep[] = [
 
 const STICKY_TOP = 112;
 
+// How much each card peeks below the previous when stacked
+const STACK_PEEK = 24; // px
+
 export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   const [activeStep, setActiveStep] = useState(0);
   const [fillProgress, setFillProgress] = useState(0);
   const [markerTops, setMarkerTops] = useState<number[]>([]);
+  // Track which cards are currently "overlapped" (being stacked under)
+  const [overlappedSteps, setOverlappedSteps] = useState<Set<number>>(new Set());
 
   const cardsColRef = useRef<HTMLDivElement>(null);
   const cardsTrackRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLElement | null)[]>([]);
 
   const kicker = cms['hp:capJourneyKicker'] ?? 'Career Assistance Programme';
-  const title =
-    cms['hp:capJourneyTitle'] ?? 'Your CAP Journey — From Resume to Offer';
+  const title = cms['hp:capJourneyTitle'] ?? 'Your CAP Journey — From Resume to Offer';
   const subtitle =
     cms['hp:capJourneySubtitle'] ??
     'Scroll through each stage of the programme. Every step is advisor-led, transparent, and built to get you placed — not just applied.';
@@ -115,6 +114,30 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
     setFillProgress(Math.min(1, Math.max(0, scrolled / scrollable)));
   }, []);
 
+  // Core overlap detection — runs on every scroll tick
+  const updateOverlapState = useCallback(() => {
+    const cards = cardRefs.current.filter(Boolean) as HTMLElement[];
+    if (!cards.length) return;
+
+    const newOverlapped = new Set<number>();
+    const viewportH = window.innerHeight;
+
+    cards.forEach((card, i) => {
+      const nextCard = cards[i + 1];
+      if (!nextCard) return;
+
+      const nextRect = nextCard.getBoundingClientRect();
+
+      // Next card is visibly encroaching on this card
+      if (nextRect.top < viewportH * 0.72) {
+        newOverlapped.add(i);
+      }
+    });
+
+    setOverlappedSteps(newOverlapped);
+  }, []);
+
+  // Active step via IntersectionObserver
   useEffect(() => {
     const cards = document.querySelectorAll<HTMLElement>('[data-cap-step]');
     if (!cards.length) return;
@@ -137,11 +160,13 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   useEffect(() => {
     const onScroll = () => {
       updateScrollProgress();
+      updateOverlapState();
     };
 
     const onResize = () => {
       updateMarkerPositions();
       updateScrollProgress();
+      updateOverlapState();
     };
 
     onResize();
@@ -160,7 +185,28 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
       window.removeEventListener('resize', onResize);
       resizeObserver?.disconnect();
     };
-  }, [updateMarkerPositions, updateScrollProgress]);
+  }, [updateMarkerPositions, updateScrollProgress, updateOverlapState]);
+
+  // Build className for each card
+  const getCardClassName = (index: number) => {
+    const classes = ['placedly-cap-journey-card'];
+    if (activeStep === index) classes.push('is-active');
+    if (overlappedSteps.has(index)) classes.push('is-overlapped');
+    return classes.join(' ');
+  };
+
+  // Compute dynamic top offset so cards visually stack with a peek
+  const getCardStyle = (index: number): React.CSSProperties => {
+    const base: React.CSSProperties = { zIndex: index + 1 };
+
+    // Cards that are overlapped get a slightly reduced top so the
+    // next card slides over them — the peek gap makes the stack clear
+    if (overlappedSteps.has(index) && activeStep !== index) {
+      base.marginTop = index === 0 ? 0 : -STACK_PEEK;
+    }
+
+    return base;
+  };
 
   return (
     <section
@@ -180,10 +226,8 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
         </FadeUp>
 
         <div className="placedly-cap-journey-scroll-layout">
-          <div
-            className="placedly-cap-journey-rail-col"
-            aria-hidden
-          >
+          {/* ── Rail column ── */}
+          <div className="placedly-cap-journey-rail-col" aria-hidden>
             <div className="placedly-cap-journey-rail">
               <div className="placedly-cap-journey-rail-track">
                 <div
@@ -194,7 +238,9 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
 
               <div className="placedly-cap-journey-rail-markers">
                 {DEFAULT_STEPS.map((step, index) => {
-                  const top = markerTops[index] ?? (index / (DEFAULT_STEPS.length - 1)) * 100;
+                  const top =
+                    markerTops[index] ??
+                    (index / (DEFAULT_STEPS.length - 1)) * 100;
                   const isLit =
                     fillProgress >= top / 100 - 0.02 || activeStep >= index;
 
@@ -210,23 +256,32 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
             </div>
           </div>
 
+          {/* ── Cards column ── */}
           <div ref={cardsColRef} className="placedly-cap-journey-cards-col">
             <div ref={cardsTrackRef} className="placedly-cap-journey-track">
               {DEFAULT_STEPS.map((step, index) => (
                 <article
                   key={step.id}
                   data-cap-step={index}
-                  className={`placedly-cap-journey-card${activeStep === index ? ' is-active' : ''}`}
-                  style={{ zIndex: index + 1 }}
+                  ref={(el) => { cardRefs.current[index] = el; }}
+                  className={getCardClassName(index)}
+                  style={getCardStyle(index)}
                 >
+                  {/* Ambient glow blob */}
+                  <div className="placedly-cap-journey-card-ambient" aria-hidden />
+
                   <div className="placedly-cap-journey-card-inner">
+                    {/* LEFT — badge + title */}
                     <div className="placedly-cap-journey-card-left">
                       <span className="placedly-cap-journey-card-badge">
                         {String(index + 1).padStart(3, '0')}
                       </span>
-                      <h3 className="placedly-cap-journey-card-title">{step.title}</h3>
+                      <h3 className="placedly-cap-journey-card-title">
+                        {step.title}
+                      </h3>
                     </div>
 
+                    {/* CENTRE — image */}
                     <div className="placedly-cap-journey-card-media">
                       <img
                         src={step.image}
@@ -236,9 +291,15 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                       />
                     </div>
 
+                    {/* RIGHT — body + link */}
                     <div className="placedly-cap-journey-card-right">
-                      <p className="placedly-cap-journey-card-body">{step.body}</p>
-                      <Link href={step.href} className="placedly-cap-journey-card-link">
+                      <p className="placedly-cap-journey-card-body">
+                        {step.body}
+                      </p>
+                      <Link
+                        href={step.href}
+                        className="placedly-cap-journey-card-link"
+                      >
                         Read More
                         <ArrowRight size={16} strokeWidth={2.25} aria-hidden />
                       </Link>
