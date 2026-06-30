@@ -59,14 +59,16 @@ function LogoRow({
         <div className="placedly-partners-inner">
           {sequence.map((name, i) => (
             <span key={`a-${name}-${i}`} className="placedly-partners-logo">
-              {name}
+              <span className="placedly-partners-logo-mark" aria-hidden />
+              <span className="placedly-partners-logo-text">{name}</span>
             </span>
           ))}
         </div>
         <div className="placedly-partners-inner" aria-hidden>
           {sequence.map((name, i) => (
             <span key={`b-${name}-${i}`} className="placedly-partners-logo">
-              {name}
+              <span className="placedly-partners-logo-mark" aria-hidden />
+              <span className="placedly-partners-logo-text">{name}</span>
             </span>
           ))}
         </div>

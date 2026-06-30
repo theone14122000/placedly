@@ -70,25 +70,46 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
   const offerRole = cms['hp:heroOfferRole'] ?? 'Senior Claims Analyst';
   const admitProgramme = cms['hp:heroAdmitProgramme'] ?? "MSc International Business · Fall '25";
+  const heroTitleLines = [
+    ['Grow', 'your', 'career,'],
+    ['through', 'people', 'you', 'trust.'],
+  ];
 
   return (
     <section id="Top" className="placedly-lift-hero" ref={heroRef}>
+      <div className="placedly-hero-split-surface" aria-hidden />
       <motion.div className="placedly-hero-desktop-gradient" aria-hidden style={{ y: prefersReducedMotion ? 0 : heroY, opacity: prefersReducedMotion ? 1 : heroOpacity, scale: prefersReducedMotion ? 1 : heroScale }}>
         <HeroGradientBg />
         <HeroBgVideo />
       </motion.div>
       <div className="placedly-hero-desktop-only">
         <motion.div className="placedly-lift-hero-copy" style={{ y: prefersReducedMotion ? 0 : copyY }}>
-        <motion.h1
-          className="placedly-lift-hero-title"
+        <motion.div
+          className="placedly-lift-hero-title-wrap"
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55 }}
         >
-          Grow your career,
-          <br />
-          through people you trust.
-        </motion.h1>
+          <h1 className="placedly-lift-hero-title">
+            {heroTitleLines.map((line, lineIndex) => (
+              <span key={`line-${lineIndex}`} className="placedly-hero-line">
+                {line.map((word, wordIndex) => (
+                  <motion.span
+                    key={`${word}-${wordIndex}`}
+                    className="placedly-hero-word"
+                    initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ duration: 0.62, delay: 0.06 + wordIndex * 0.04 + lineIndex * 0.08 }}
+                  >
+                    {word}
+                    {wordIndex < line.length - 1 ? '\u00A0' : ''}
+                  </motion.span>
+                ))}
+                {lineIndex < heroTitleLines.length - 1 ? <br /> : null}
+              </span>
+            ))}
+          </h1>
+        </motion.div>
 
         <motion.p
           className="placedly-lift-hero-sub"

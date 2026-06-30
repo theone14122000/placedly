@@ -848,17 +848,27 @@ header.placedly-navbar,
   white-space:nowrap;
 }
 .placedly-partners-logo{
-  display:inline-flex;align-items:center;
+  display:inline-flex;align-items:center;gap:10px;
   font-size:clamp(22px,2.2vw,28px);
   font-weight:700;
   letter-spacing:-0.02em;
   color:#1a1a1a;
   opacity:0.88;
   flex-shrink:0;
-  transition:opacity .2s ease;
-  padding:0 4px;
+  transition:opacity .2s ease,transform .2s ease;
+  padding:10px 16px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.72);
+  border:1px solid rgba(15,23,42,0.08);
+  box-shadow:0 10px 24px rgba(15,23,42,0.04);
 }
-.placedly-partners-logo:hover{opacity:1}
+.placedly-partners-logo:hover{opacity:1;transform:translateY(-1px)}
+.placedly-partners-logo-mark{
+  width:10px;height:10px;border-radius:50%;
+  background:linear-gradient(135deg,#2145fb 0%,#14b8a6 100%);
+  box-shadow:0 0 0 5px rgba(33,69,251,0.12);
+}
+.placedly-partners-logo-text{white-space:nowrap}
 .placedly-partners-edge{
   position:absolute;top:0;bottom:0;width:min(120px,12vw);
   z-index:2;pointer-events:none;
@@ -1630,6 +1640,28 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-hiw-mock-bubble--purple{background:#f3e8ff;color:#5b21b6;font-style:normal}
 .placedly-hiw-mock-name{font-size:16px;font-weight:700;color:#0a0a0a;margin:0;font-family:var(--font)}
 .placedly-hiw-mock-role{font-size:13px;color:#6b7280;margin:4px 0 14px;font-family:var(--font)}
+.placedly-hiw-path-visual{
+  position:relative;width:100%;max-width:360px;min-height:220px;padding:24px;
+  border-radius:24px;background:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.72);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 16px 40px rgba(15,23,42,0.08);overflow:hidden;
+}
+.placedly-hiw-path-visual::before,
+.placedly-hiw-path-visual::after{
+  content:'';position:absolute;border-radius:50%;filter:blur(30px);pointer-events:none;opacity:.7;
+}
+.placedly-hiw-path-visual::before{left:-10%;top:-12%;width:140px;height:140px;background:rgba(33,69,251,0.18)}
+.placedly-hiw-path-visual::after{right:-6%;bottom:-10%;width:160px;height:160px;background:rgba(20,184,166,0.18)}
+.placedly-hiw-path-svg{width:100%;height:100%;min-height:180px;display:block;position:relative;z-index:1}
+.placedly-hiw-path{fill:none;stroke:#2563eb;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 8px 12px rgba(37,99,235,0.2));}
+.placedly-hiw-node{stroke:#fff;stroke-width:3;fill:#2563eb;filter:drop-shadow(0 10px 18px rgba(15,23,42,0.16));}
+.placedly-hiw-node--company{fill:#0f766e}
+.placedly-hiw-path-pill{
+  position:absolute;z-index:2;display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:999px;
+  font-size:12px;font-weight:700;background:rgba(255,255,255,0.82);color:#0f172a;border:1px solid rgba(15,23,42,0.08);box-shadow:0 8px 20px rgba(15,23,42,0.08);
+}
+.placedly-hiw-path-pill--profile{left:18px;top:18px}
+.placedly-hiw-path-pill--goal{right:22px;top:84px}
+.placedly-hiw-path-pill--company{left:38px;bottom:20px}
 
 @media(max-width:900px){
   .placedly-hiw-tabbar-arrow{width:44px;height:44px}
@@ -2459,6 +2491,16 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 }
 .placedly-testimonial-card{
   padding:26px 24px;display:flex;flex-direction:column;position:relative;
+  transform-style:preserve-3d;perspective:1000px;
+}
+.placedly-testimonial-metric-wrap{
+  display:flex;flex-direction:column;gap:4px;margin-bottom:18px;
+}
+.placedly-testimonial-metric{
+  font-size:clamp(2rem,3vw,2.85rem);font-weight:900;letter-spacing:-0.04em;line-height:0.95;color:#0f172a;
+}
+.placedly-testimonial-metric-label{
+  font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#64748b;
 }
 .placedly-testimonial-quote-icon{
   position:absolute;top:20px;right:22px;
@@ -2485,6 +2527,20 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   font-size:11.5px;color:#94a3b8;margin:0;line-height:1.4;
 }
 
+@keyframes placedly-pricing-pulse{0%,100%{transform:scale(1);box-shadow:0 10px 24px rgba(234,88,12,0.18)}50%{transform:scale(1.02);box-shadow:0 16px 30px rgba(234,88,12,0.24)}}
+.placedly-pricing-banner{
+  position:fixed;right:18px;bottom:92px;z-index:8998;display:flex;align-items:center;gap:10px;pointer-events:none;
+}
+.placedly-pricing-banner-pill{
+  display:inline-flex;align-items:center;gap:10px;padding:12px 14px;border-radius:999px;background:rgba(255,255,255,0.9);border:1px solid rgba(15,23,42,0.08);box-shadow:0 12px 30px rgba(15,23,42,0.12);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);animation:placedly-pricing-pulse 2.8s ease-in-out infinite;
+}
+.placedly-pricing-banner-dot{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,#f97316,#fb923c);box-shadow:0 0 0 4px rgba(249,115,22,0.16)}
+.placedly-pricing-banner-copy{display:flex;flex-direction:column;line-height:1.1}
+.placedly-pricing-banner-copy strong{font-size:13px;color:#0f172a}
+.placedly-pricing-banner-copy span{font-size:11px;color:#64748b}
+.placedly-pricing-banner-link{
+  pointer-events:auto;display:inline-flex;align-items:center;gap:8px;padding:11px 14px;border-radius:999px;background:#0f172a;color:#fff;text-decoration:none;font-size:13px;font-weight:700;box-shadow:0 10px 24px rgba(15,23,42,0.16);
+}
 @media(max-width:1024px){
   .placedly-domains-grid{grid-template-columns:1fr}
   .placedly-jobs-grid{grid-template-columns:1fr}
@@ -2492,6 +2548,9 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   .placedly-testimonials-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:640px){
+  .placedly-pricing-banner{left:12px;right:12px;bottom:86px;justify-content:center}
+  .placedly-pricing-banner-pill{flex:1;justify-content:center}
+  .placedly-pricing-banner-link{display:none}
   .placedly-jobs-header{align-items:flex-start}
   .placedly-why-grid{grid-template-columns:1fr}
   .placedly-testimonials-grid{grid-template-columns:1fr}
@@ -2634,6 +2693,15 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   background:var(--c-page-bg);
   text-align:center;
 }
+.placedly-hero-split-surface{
+  position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 58% 42% at 18% 16%, rgba(33,69,251,0.18), transparent 58%),
+    radial-gradient(ellipse 44% 36% at 84% 16%, rgba(20,184,166,0.2), transparent 48%),
+    linear-gradient(115deg, rgba(33,69,251,0.08) 0%, rgba(20,184,166,0.06) 54%, rgba(255,255,255,0.35) 100%);
+  mask-image:linear-gradient(180deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 72%, transparent 100%);
+  -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 72%, transparent 100%);
+}
 .placedly-lift-hero-gradient{
   position:absolute;
   left:50%;
@@ -2763,6 +2831,7 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   text-transform:uppercase;color:#94a3b8;
   margin:0 0 clamp(16px,2vw,22px);
 }
+.placedly-lift-hero-title-wrap{max-width:980px;margin:0 auto}
 .placedly-lift-hero-title{
   font-family:var(--font-hero-display)!important;
   font-size:64px!important;
@@ -2772,6 +2841,8 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   color:#181229!important;
   margin:0 0 clamp(18px,2.5vw,24px)!important;
 }
+.placedly-hero-line{display:block}
+.placedly-hero-word{display:inline-block;will-change:transform,filter,opacity}
 .placedly-lift-hero-sub{
   font-size:clamp(16px,1.45vw,19px)!important;
   line-height:1.65!important;

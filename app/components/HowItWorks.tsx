@@ -70,23 +70,46 @@ const STUDY_DEFAULTS = [
 function VisualCareer1() {
   return (
     <div className="placedly-hiw-visual placedly-hiw-visual--warm">
-      <div className="placedly-hiw-mock placedly-hiw-mock--stack">
-        <div className="placedly-hiw-mock-card">
-          <p className="placedly-hiw-mock-label">I&apos;m targeting:</p>
-          <div className="placedly-hiw-tags">
-            {['Claims & Insurance', 'BPO / MNC', '₹8–12 LPA'].map((t) => (
-              <span key={t} className="placedly-hiw-tag">{t}</span>
-            ))}
-          </div>
-        </div>
-        <div className="placedly-hiw-mock-card">
-          <p className="placedly-hiw-mock-label">My Placedly roadmap</p>
-          <ul className="placedly-hiw-mock-list">
-            <li><span className="placedly-hiw-mock-dot placedly-hiw-mock-dot--exl" />EXL · Senior Analyst</li>
-            <li><span className="placedly-hiw-mock-dot placedly-hiw-mock-dot--optum" />Optum · Claims Lead</li>
-            <li><span className="placedly-hiw-mock-dot placedly-hiw-mock-dot--wns" />WNS · Operations</li>
-          </ul>
-      </div>
+      <div className="placedly-hiw-path-visual" aria-hidden>
+        <motion.svg className="placedly-hiw-path-svg" viewBox="0 0 320 220" role="presentation">
+          <motion.path
+            d="M44 176C80 160 90 92 132 84C176 76 198 110 214 128C238 156 270 168 288 62"
+            className="placedly-hiw-path"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 1.1, ease: 'easeOut' }}
+          />
+          <motion.circle
+            cx="44"
+            cy="176"
+            r="9"
+            className="placedly-hiw-node placedly-hiw-node--profile"
+            initial={{ scale: 0.7, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          />
+          <motion.circle
+            cx="214"
+            cy="128"
+            r="9"
+            className="placedly-hiw-node placedly-hiw-node--company"
+            initial={{ scale: 0.7, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.45 }}
+          />
+          <motion.circle
+            cx="288"
+            cy="62"
+            r="9"
+            className="placedly-hiw-node placedly-hiw-node--company"
+            initial={{ scale: 0.7, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+          />
+        </motion.svg>
+        <div className="placedly-hiw-path-pill placedly-hiw-path-pill--profile">Profile</div>
+        <div className="placedly-hiw-path-pill placedly-hiw-path-pill--goal">Claims & Insurance</div>
+        <div className="placedly-hiw-path-pill placedly-hiw-path-pill--company">Optum · EXL</div>
       </div>
     </div>
   );

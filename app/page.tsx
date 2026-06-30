@@ -18,6 +18,7 @@ import Cta from './components/Cta';
 import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import PlacedlyFixes from './components/PlacedlyFixes';
+import PricingBanner from './components/PricingBanner';
 import { getCmsMap } from '@/lib/cms';
 
 const HP_DEFAULTS: Record<string, string> = {
@@ -130,6 +131,7 @@ export default async function Home() {
         <Cta cms={cms} />
         <Footer cms={cms} />
       </div>
+      <PricingBanner />
       <FloatingWhatsApp cms={cms} />
       <CapFloatingCta label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'} />
       <PlacedlyFixes />

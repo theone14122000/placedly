@@ -72,7 +72,7 @@ function FaqItem({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ type: 'spring', stiffness: 260, damping: 24, mass: 0.8 }}
           >
             <div className="placedly-faq-answer">
               {paragraphs.length > 1 ? (

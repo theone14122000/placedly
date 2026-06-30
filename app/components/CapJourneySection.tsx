@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { FadeUp } from './motion';
@@ -74,7 +73,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   const [activeStep, setActiveStep] = useState(0);
   const [fillProgress, setFillProgress] = useState(0);
   const [markerTops, setMarkerTops] = useState<number[]>([]);
-  const [parallax, setParallax] = useState({ x: 0, y: 0 });
 
   const cardsColRef = useRef<HTMLDivElement>(null);
   const cardsTrackRef = useRef<HTMLDivElement>(null);
@@ -141,18 +139,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
       updateScrollProgress();
     };
 
-    const onMouseMove = (event: MouseEvent) => {
-      if (!cardsColRef.current) return;
-      const rect = cardsColRef.current.getBoundingClientRect();
-      const offsetX = (event.clientX - rect.left) / rect.width - 0.5;
-      const offsetY = (event.clientY - rect.top) / rect.height - 0.5;
-      setParallax({ x: offsetX * 6, y: offsetY * 6 });
-    };
-
-    const onMouseLeave = () => {
-      setParallax({ x: 0, y: 0 });
-    };
-
     const onResize = () => {
       updateMarkerPositions();
       updateScrollProgress();
@@ -161,8 +147,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
     onResize();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
-    cardsColRef.current?.addEventListener('mousemove', onMouseMove);
-    cardsColRef.current?.addEventListener('mouseleave', onMouseLeave);
 
     const track = cardsTrackRef.current;
     const resizeObserver =
@@ -174,8 +158,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
     return () => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
-      cardsColRef.current?.removeEventListener('mousemove', onMouseMove);
-      cardsColRef.current?.removeEventListener('mouseleave', onMouseLeave);
       resizeObserver?.disconnect();
     };
   }, [updateMarkerPositions, updateScrollProgress]);
@@ -230,62 +212,40 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
 
           <div ref={cardsColRef} className="placedly-cap-journey-cards-col">
             <div ref={cardsTrackRef} className="placedly-cap-journey-track">
-              {DEFAULT_STEPS.map((step, index) => {
-                const isActive = activeStep === index;
-
-                return (
-                  <motion.article
-                    key={step.id}
-                    data-cap-step={index}
-                    className={`placedly-cap-journey-card${isActive ? ' is-active' : ''}${index > 0 ? ' is-overlapped' : ''}`}
-                    style={{ zIndex: index + 1, marginTop: index > 0 ? '-18px' : 0 }}
-                    initial={{ opacity: 0, y: 28, rotateX: 12, rotateY: -8 }}
-                    animate={{
-                      opacity: isActive ? 1 : 0.96,
-                      scale: isActive ? 1 : 0.985,
-                      y: isActive ? 0 : 6,
-                      rotateX: isActive ? 0 : 4,
-                      rotateY: isActive ? 0 : -2,
-                      x: isActive ? parallax.x * 0.25 : index % 2 === 0 ? -4 : 4,
-                      boxShadow: isActive
-                        ? '0 28px 80px rgba(15,23,42,0.15)'
-                        : '0 16px 46px rgba(249,115,22,0.12)',
-                    }}
-                    transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: index * 0.04 }}
-                    whileHover={{ y: -8, scale: 1.015, rotateX: -4, rotateY: 2, rotateZ: -0.25 }}
-                  >
-                    <div className="placedly-cap-journey-card-ambient" aria-hidden />
-                    <div className="placedly-cap-journey-card-inner">
-                      <div className="placedly-cap-journey-card-left">
-                        <span className="placedly-cap-journey-card-badge">
-                          {String(index + 1).padStart(3, '0')}
-                        </span>
-                        <div className="placedly-cap-journey-card-copy">
-                          <span className="placedly-cap-journey-card-chip">Advisor-led</span>
-                          <h3 className="placedly-cap-journey-card-title">{step.title}</h3>
-                        </div>
-                      </div>
-
-                      <div className="placedly-cap-journey-card-media">
-                        <img
-                          src={step.image}
-                          alt=""
-                          className="placedly-cap-journey-card-img"
-                          loading={index < 2 ? 'eager' : 'lazy'}
-                        />
-                      </div>
-
-                      <div className="placedly-cap-journey-card-right">
-                        <p className="placedly-cap-journey-card-body">{step.body}</p>
-                        <Link href={step.href} className="placedly-cap-journey-card-link">
-                          Read More
-                          <ArrowRight size={16} strokeWidth={2.25} aria-hidden />
-                        </Link>
-                      </div>
+              {DEFAULT_STEPS.map((step, index) => (
+                <article
+                  key={step.id}
+                  data-cap-step={index}
+                  className={`placedly-cap-journey-card${activeStep === index ? ' is-active' : ''}`}
+                  style={{ zIndex: index + 1 }}
+                >
+                  <div className="placedly-cap-journey-card-inner">
+                    <div className="placedly-cap-journey-card-left">
+                      <span className="placedly-cap-journey-card-badge">
+                        {String(index + 1).padStart(3, '0')}
+                      </span>
+                      <h3 className="placedly-cap-journey-card-title">{step.title}</h3>
                     </div>
-                  </motion.article>
-                );
-              })}
+
+                    <div className="placedly-cap-journey-card-media">
+                      <img
+                        src={step.image}
+                        alt=""
+                        className="placedly-cap-journey-card-img"
+                        loading={index < 2 ? 'eager' : 'lazy'}
+                      />
+                    </div>
+
+                    <div className="placedly-cap-journey-card-right">
+                      <p className="placedly-cap-journey-card-body">{step.body}</p>
+                      <Link href={step.href} className="placedly-cap-journey-card-link">
+                        Read More
+                        <ArrowRight size={16} strokeWidth={2.25} aria-hidden />
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </div>
