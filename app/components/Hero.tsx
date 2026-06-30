@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
 import { Share2, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import HeroMobileBrief from './HeroMobileBrief';
@@ -55,17 +56,28 @@ const HERO_CARD_AVATARS = {
 } as const;
 
 export default function Hero({ cms = {} }: { cms?: HeroCms }) {
+  const heroRef = useRef<HTMLElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start end', 'end start'],
+  });
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 70]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.6, 1], [1, 0.96, 0.86]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.02]);
+  const copyY = useTransform(scrollYProgress, [0, 1], [0, -18]);
+  const stageY = useTransform(scrollYProgress, [0, 1], [0, 22]);
+
   const offerRole = cms['hp:heroOfferRole'] ?? 'Senior Claims Analyst';
   const admitProgramme = cms['hp:heroAdmitProgramme'] ?? "MSc International Business · Fall '25";
 
   return (
-    <section id="Top" className="placedly-lift-hero">
-      <div className="placedly-hero-desktop-gradient" aria-hidden>
+    <section id="Top" className="placedly-lift-hero" ref={heroRef}>
+      <motion.div className="placedly-hero-desktop-gradient" aria-hidden style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}>
         <HeroGradientBg />
         <HeroBgVideo />
-      </div>
+      </motion.div>
       <div className="placedly-hero-desktop-only">
-      <div className="placedly-lift-hero-copy">
+        <motion.div className="placedly-lift-hero-copy" style={{ y: copyY }}>
         <motion.h1
           className="placedly-lift-hero-title"
           initial={{ opacity: 0, y: 18 }}
@@ -93,22 +105,30 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.16 }}
         >
-          <Link href="/study-visa" className="placedly-lift-hero-btn">
-            {cms['hp:heroSecondaryCtaText'] ?? 'Study Abroad'}
-          </Link>
+          <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.98 }}>
+            <Link href="/study-visa" className="placedly-lift-hero-btn">
+              {cms['hp:heroSecondaryCtaText'] ?? 'Study Abroad'}
+            </Link>
+          </motion.div>
         </motion.div>
-      </div>
+      </motion.div>
 
       <motion.div
         className="placedly-lift-hero-stage"
+        style={{ y: stageY }}
         initial={{ opacity: 0, y: 28 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, delay: 0.28 }}
       >
-        <div className="placedly-lift-network">
+        <motion.div
+          className="placedly-lift-network"
+          animate={{ y: [0, -6, 0], x: [0, 2, 0], scale: [1, 1.004, 1] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        >
           <motion.div
             className="placedly-lift-card placedly-lift-card--left"
             animate={{ y: [0, -8, 0] }}
+            whileHover={{ scale: 1.015, y: -6, rotate: -1 }}
             transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
           >
             <div className="placedly-lift-card-profile">
@@ -189,6 +209,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           <motion.div
             className="placedly-lift-card placedly-lift-card--right"
             animate={{ y: [0, 8, 0] }}
+            whileHover={{ scale: 1.015, y: 4, rotate: 1 }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
           >
             <div className="placedly-lift-card-profile">
@@ -212,7 +233,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
               Interested in <strong>{admitProgramme.split('·')[0]?.trim() ?? 'UK Masters'}</strong>
             </p>
           </motion.div>
-        </div>
+        </motion.div>
       </motion.div>
       </div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
 import { FadeUp } from './motion';
 
 type Cms = Record<string, string>;
@@ -94,6 +94,13 @@ function VerticalScrollVideo({ src, ariaLabel }: { src: string; ariaLabel: strin
 }
 
 export default function Services({ cms = {} }: { cms?: Cms }) {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+  const showcaseY = useTransform(scrollYProgress, [0, 1], [0, -10]);
+
   const [active, setActive] = useState(0);
   const current = VERTICALS[active];
 
@@ -104,6 +111,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
 
   return (
     <section
+      ref={sectionRef}
       className="placedly-vertical-section"
       data-active={current.id}
       id="services"
@@ -122,7 +130,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
         animate={{ opacity: active === 1 ? 1 : 0 }}
         transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
       />
-      <div className="placedly-vertical-wrap">
+      <motion.div className="placedly-vertical-wrap" style={{ y: showcaseY }}>
         <FadeUp className="placedly-vertical-header">
           <p className="placedly-vertical-kicker">{tagline}</p>
           <h2 className="placedly-vertical-title">{title}</h2>
@@ -137,16 +145,19 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           >
             <span className="placedly-vertical-tabs-indicator" aria-hidden />
             {VERTICALS.map((v, i) => (
-              <button
+              <motion.button
                 key={v.id}
                 type="button"
                 role="tab"
                 aria-selected={active === i}
                 className={`placedly-vertical-tab${active === i ? ' is-active' : ''}`}
                 onClick={() => setActive(i)}
+                whileHover={{ y: -2, scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 280, damping: 20 }}
               >
                 {v.tabLabel}
-              </button>
+              </motion.button>
             ))}
           </div>
         </div>
@@ -158,12 +169,13 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
+            whileHover={{ scale: 1.01, y: -4 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
             <VerticalScrollVideo src={current.videoSrc} ariaLabel={current.ariaLabel} />
           </motion.article>
         </AnimatePresence>
-      </div>
+      </motion.div>
     </section>
   );
 }

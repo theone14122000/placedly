@@ -293,17 +293,20 @@ function TabBar({
           {tabs.map((tab) => {
             const active = tab.id === activeId;
             return (
-              <button
+              <motion.button
                 key={tab.id}
                 type="button"
                 role="tab"
                 aria-selected={active}
                 className={`placedly-hiw-tab ${active ? 'is-active' : ''}`}
                 onClick={() => onSelect(tab.id)}
+                whileHover={{ y: -2, scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 280, damping: 20 }}
               >
                 <tab.Icon size={16} strokeWidth={2} aria-hidden />
                 <span>{tab.label}</span>
-              </button>
+              </motion.button>
             );
           })}
         </div>
@@ -348,6 +351,7 @@ function TabPanel({ tab }: { tab: TabDef }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -6 }}
+      whileHover={{ y: -3, scale: 1.01 }}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="placedly-hiw-panel-visual">
@@ -357,9 +361,11 @@ function TabPanel({ tab }: { tab: TabDef }) {
         <h3 className="placedly-hiw-panel-title">{tab.title}</h3>
         <p className="placedly-hiw-panel-desc">{tab.details}</p>
         {tab.cta && (
-          <Link href={tab.cta.href} className="placedly-hiw-step-cta">
-            {tab.cta.label}
-          </Link>
+          <motion.div whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Link href={tab.cta.href} className="placedly-hiw-step-cta">
+              {tab.cta.label}
+            </Link>
+          </motion.div>
         )}
       </div>
     </motion.div>
