@@ -3554,103 +3554,41 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   position:sticky;
   top:clamp(88px,12vh,112px);
   margin-bottom:clamp(18px,3vw,28px);
-  border-radius:clamp(30px,3.2vw,42px);
-  background:linear-gradient(135deg,rgba(255,255,255,0.94) 0%,rgba(255,251,244,0.98) 100%);
-  border:1px solid rgba(15,23,42,0.08);
-  box-shadow:0 16px 46px rgba(249,115,22,0.12);
-  overflow:hidden;
-  isolation:isolate;
-  transform-style:preserve-3d;
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  transition:transform .35s cubic-bezier(0.22,1,0.36,1),box-shadow .35s ease,opacity .35s ease,margin-top .35s ease;
-}
-.placedly-cap-journey-card.is-overlapped{
-  margin-top:-18px;
-  z-index:calc(var(--card-index, 1) + 1);
-}
-.placedly-cap-journey-card.is-overlapped.is-active{
-  margin-top:-8px;
-}
-.placedly-cap-journey-card::before{
-  content:'';
-  position:absolute;inset:0;
-  background:
-    radial-gradient(circle at top right, rgba(249,115,22,0.16), transparent 38%),
-    linear-gradient(135deg, rgba(255,255,255,0.72), rgba(248,250,252,0.06));
-  pointer-events:none;
-  z-index:0;
-}
-.placedly-cap-journey-card::after{
-  content:'';
-  position:absolute;inset:1px;
-  border-radius:inherit;
-  border:1px solid rgba(255,255,255,0.5);
-  pointer-events:none;
-  z-index:0;
-}
-.placedly-cap-journey-card.is-overlapped{
-  box-shadow:0 22px 58px rgba(15,23,42,0.16),0 0 0 1px rgba(255,255,255,0.4) inset;
+  border-radius:clamp(24px,3vw,36px);
+  background:#FFFBF4;
+  border:1px solid rgba(0,0,0,0.06);
+  box-shadow:0 12px 40px rgba(249,115,22,0.12);
+  transition:transform .35s cubic-bezier(0.22,1,0.36,1),box-shadow .35s ease,opacity .35s ease;
 }
 .placedly-cap-journey-card:not(.is-active){
-  opacity:0.96;
+  opacity:0.94;
   transform:scale(0.992);
 }
 .placedly-cap-journey-card.is-active{
   opacity:1;
   transform:scale(1);
-  box-shadow:0 28px 80px rgba(15,23,42,0.15);
-}
-.placedly-cap-journey-card-ambient{
-  position:absolute;inset:auto -8% -24% auto;
-  width:240px;height:240px;
-  background:radial-gradient(circle, rgba(37,99,235,0.2), transparent 70%);
-  filter:blur(28px);
-  pointer-events:none;
-  z-index:0;
-  opacity:0.85;
+  box-shadow:0 14px 44px rgba(249,115,22,0.15);
 }
 .placedly-cap-journey-card-inner{
-  position:relative;z-index:1;
   display:grid;
   grid-template-columns:minmax(0,1fr) minmax(160px,220px) minmax(0,1fr);
   gap:clamp(20px,3vw,40px);
   align-items:stretch;
   min-height:clamp(220px,24vw,280px);
   padding:clamp(28px,3.5vw,44px) clamp(24px,3vw,40px);
-  transform:translateZ(18px);
-  transition:transform .35s ease;
-}
-.placedly-cap-journey-card.is-overlapped .placedly-cap-journey-card-inner{
-  padding-top:clamp(26px,3vw,36px);
-}
-.placedly-cap-journey-card.is-active .placedly-cap-journey-card-inner{
-  transform:translateZ(24px);
 }
 .placedly-cap-journey-card-left{
   display:flex;flex-direction:column;
   justify-content:space-between;align-items:flex-start;
   min-height:100%;
-  gap:16px;
 }
 .placedly-cap-journey-card-badge{
   display:inline-flex;align-items:center;justify-content:center;
   padding:7px 16px;border-radius:999px;
-  border:1px solid rgba(15,23,42,0.12);
-  font-size:13px;font-weight:600;letter-spacing:0.02em;
-  color:#334155;background:rgba(255,255,255,0.8);
+  border:1px solid #334155;
+  font-size:13px;font-weight:500;letter-spacing:0.02em;
+  color:#334155;background:transparent;
   line-height:1;
-  box-shadow:0 8px 24px rgba(15,23,42,0.05);
-}
-.placedly-cap-journey-card-copy{
-  display:flex;flex-direction:column;gap:10px;
-}
-.placedly-cap-journey-card-chip{
-  display:inline-flex;align-items:center;gap:6px;
-  width:fit-content;
-  padding:6px 10px;border-radius:999px;
-  font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;
-  color:#f97316;background:rgba(249,115,22,0.12);
 }
 .placedly-cap-journey-card-title{
   font-family:Inter,var(--font),sans-serif!important;
@@ -3674,29 +3612,6 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   border-radius:16px;
   transform:rotate(-7deg);
   box-shadow:0 14px 40px rgba(15,23,42,0.14),0 4px 12px rgba(15,23,42,0.08);
-  transition:transform .35s ease,box-shadow .35s ease;
-}
-.placedly-cap-journey-card.is-active .placedly-cap-journey-card-img{
-  transform:rotate(-6deg) translateY(-4px) scale(1.02);
-  box-shadow:0 18px 48px rgba(15,23,42,0.16),0 6px 16px rgba(15,23,42,0.12);
-}
-.placedly-cap-journey-card.is-active .placedly-cap-journey-card-media{
-  animation:capJourneyFloat 3.8s ease-in-out infinite;
-}
-.placedly-cap-journey-card.is-active .placedly-cap-journey-card-left,
-.placedly-cap-journey-card.is-active .placedly-cap-journey-card-right{
-  transform:translateZ(16px);
-}
-.placedly-cap-journey-card:hover .placedly-cap-journey-card-inner{
-  transform:translateZ(24px);
-}
-.placedly-cap-journey-card.is-active .placedly-cap-journey-card-left,
-.placedly-cap-journey-card.is-active .placedly-cap-journey-card-right{
-  transform:translateZ(20px);
-}
-@keyframes capJourneyFloat{
-  0%,100%{transform:translateY(0) rotate(-6deg)}
-  50%{transform:translateY(-6px) rotate(-4deg)}
 }
 .placedly-cap-journey-card-right{
   display:flex;flex-direction:column;
@@ -3712,10 +3627,10 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
 .placedly-cap-journey-card-link{
   display:inline-flex;align-items:center;gap:8px;
   font-size:15px;font-weight:600;color:#2563eb!important;
-  text-decoration:none;transition:gap .2s ease,color .2s ease,transform .2s ease;
+  text-decoration:none;transition:gap .2s ease,color .2s ease;
 }
 .placedly-cap-journey-card-link:hover{
-  color:#1d4ed8!important;gap:10px;transform:translateX(2px);
+  color:#1d4ed8!important;gap:10px;
 }
 
 /* Floating CAP CTA — Solidroad-inspired, orange brand */
@@ -3820,10 +3735,8 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   .placedly-cap-floating-cta-float{animation:none!important}
   .placedly-cap-journey-card{transition:none!important}
   .placedly-cap-journey-card-img{transform:none}
-  .placedly-cap-journey-card-inner{transform:none}
   .placedly-cap-journey-rail-fill{transition:none!important}
 }
-
 /* ════════════════════════════════════════════════════════
    FAQ — Liftoff-style two-column accordion
 ════════════════════════════════════════════════════════ */
