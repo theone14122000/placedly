@@ -3472,7 +3472,7 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   position:sticky;
   top:clamp(88px,12vh,112px);
   margin-bottom:clamp(18px,3vw,28px);
-  border-radius:clamp(24px,3vw,36px);
+  border-radius:clamp(30px,3.2vw,42px);
   background:linear-gradient(135deg,rgba(255,255,255,0.94) 0%,rgba(255,251,244,0.98) 100%);
   border:1px solid rgba(15,23,42,0.08);
   box-shadow:0 16px 46px rgba(249,115,22,0.12);
@@ -3481,7 +3481,14 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   transform-style:preserve-3d;
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
-  transition:transform .35s cubic-bezier(0.22,1,0.36,1),box-shadow .35s ease,opacity .35s ease;
+  transition:transform .35s cubic-bezier(0.22,1,0.36,1),box-shadow .35s ease,opacity .35s ease,margin-top .35s ease;
+}
+.placedly-cap-journey-card.is-overlapped{
+  margin-top:-18px;
+  z-index:calc(var(--card-index, 1) + 1);
+}
+.placedly-cap-journey-card.is-overlapped.is-active{
+  margin-top:-8px;
 }
 .placedly-cap-journey-card::before{
   content:'';
@@ -3499,6 +3506,9 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   border:1px solid rgba(255,255,255,0.5);
   pointer-events:none;
   z-index:0;
+}
+.placedly-cap-journey-card.is-overlapped{
+  box-shadow:0 22px 58px rgba(15,23,42,0.16),0 0 0 1px rgba(255,255,255,0.4) inset;
 }
 .placedly-cap-journey-card:not(.is-active){
   opacity:0.96;
@@ -3528,6 +3538,9 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   padding:clamp(28px,3.5vw,44px) clamp(24px,3vw,40px);
   transform:translateZ(18px);
   transition:transform .35s ease;
+}
+.placedly-cap-journey-card.is-overlapped .placedly-cap-journey-card-inner{
+  padding-top:clamp(26px,3vw,36px);
 }
 .placedly-cap-journey-card.is-active .placedly-cap-journey-card-inner{
   transform:translateZ(24px);

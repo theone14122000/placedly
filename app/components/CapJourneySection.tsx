@@ -237,8 +237,8 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                   <motion.article
                     key={step.id}
                     data-cap-step={index}
-                    className={`placedly-cap-journey-card${isActive ? ' is-active' : ''}`}
-                    style={{ zIndex: index + 1 }}
+                    className={`placedly-cap-journey-card${isActive ? ' is-active' : ''}${index > 0 ? ' is-overlapped' : ''}`}
+                    style={{ zIndex: index + 1, marginTop: index > 0 ? '-18px' : 0 }}
                     initial={{ opacity: 0, y: 28, rotateX: 12, rotateY: -8 }}
                     animate={{
                       opacity: isActive ? 1 : 0.96,
@@ -246,7 +246,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                       y: isActive ? 0 : 6,
                       rotateX: isActive ? 0 : 4,
                       rotateY: isActive ? 0 : -2,
-                      x: isActive ? parallax.x * 0.25 : 0,
+                      x: isActive ? parallax.x * 0.25 : index % 2 === 0 ? -4 : 4,
                       boxShadow: isActive
                         ? '0 28px 80px rgba(15,23,42,0.15)'
                         : '0 16px 46px rgba(249,115,22,0.12)',
