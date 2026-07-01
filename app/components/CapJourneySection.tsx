@@ -16,6 +16,25 @@ type JourneyStep = {
   href: string;
 };
 
+const HEADING_GRADIENT =
+  'linear-gradient(270deg, #2563eb 0%, #4f46e5 20%, #f97316 45%, #f43f5e 65%, #9333ea 85%, #2563eb 100%)';
+
+const gradientTextStyle: React.CSSProperties = {
+  backgroundImage: HEADING_GRADIENT,
+  backgroundSize: '200% 200%',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  color: 'transparent',
+};
+
+const gradientButtonStyle: React.CSSProperties = {
+  backgroundImage: HEADING_GRADIENT,
+  backgroundSize: '200% 200%',
+  color: '#fff',
+  WebkitTextFillColor: '#fff',
+};
+
 const DEFAULT_STEPS: JourneyStep[] = [
   {
     id: 'resume',
@@ -173,7 +192,11 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
       <div className="placedly-cap-journey-wrap">
         <FadeUp className="placedly-cap-journey-header">
           <p className="placedly-cap-journey-kicker">{kicker}</p>
-          <h2 id="cap-journey-title" className="placedly-cap-journey-title">
+          <h2
+            id="cap-journey-title"
+            className="placedly-cap-journey-title"
+            style={gradientTextStyle}
+          >
             {title}
           </h2>
           <p className="placedly-cap-journey-sub">{subtitle}</p>
@@ -188,7 +211,11 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
               <div className="placedly-cap-journey-rail-track">
                 <div
                   className="placedly-cap-journey-rail-fill"
-                  style={{ height: `${fillProgress * 100}%` }}
+                  style={{
+                    height: `${fillProgress * 100}%`,
+                    backgroundImage: HEADING_GRADIENT,
+                    backgroundSize: '200% 200%',
+                  }}
                 />
               </div>
 
@@ -202,7 +229,15 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                     <span
                       key={step.id}
                       className={`placedly-cap-journey-rail-marker${isLit ? ' is-lit' : ''}${activeStep === index ? ' is-active' : ''}`}
-                      style={{ top: `${top}%` }}
+                      style={{
+                        top: `${top}%`,
+                        ...(isLit
+                          ? {
+                              backgroundImage: HEADING_GRADIENT,
+                              backgroundSize: '200% 200%',
+                            }
+                          : {}),
+                      }}
                     />
                   );
                 })}
@@ -224,7 +259,12 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                       <span className="placedly-cap-journey-card-badge">
                         {String(index + 1).padStart(3, '0')}
                       </span>
-                      <h3 className="placedly-cap-journey-card-title">{step.title}</h3>
+                      <h3
+                        className="placedly-cap-journey-card-title"
+                        style={gradientTextStyle}
+                      >
+                        {step.title}
+                      </h3>
                     </div>
 
                     <div className="placedly-cap-journey-card-media">
@@ -238,7 +278,11 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
 
                     <div className="placedly-cap-journey-card-right">
                       <p className="placedly-cap-journey-card-body">{step.body}</p>
-                      <Link href={step.href} className="placedly-cap-journey-card-link">
+                      <Link
+                        href={step.href}
+                        className="placedly-cap-journey-card-link"
+                        style={gradientButtonStyle}
+                      >
                         Read More
                         <ArrowRight size={16} strokeWidth={2.25} aria-hidden />
                       </Link>

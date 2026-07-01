@@ -644,7 +644,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                   border: 'none', fontWeight: '600',
                   fontSize: 'clamp(13px, 1.1vw, 15px)',
                   cursor: 'pointer', background: 'transparent',
-                  color: active === i ? '#fff' : isDark ? 'rgba(255,255,255,0.55)' : '#666',
+                  color: active === i ? '#f7d28e' : isDark ? 'rgba(240, 167, 167, 0.55)' : '#a2b8e7',
                   transition: 'color 0.3s ease',
                   zIndex: 1, whiteSpace: 'nowrap',
                 }}
