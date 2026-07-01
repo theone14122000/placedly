@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import UtilityToolsSection from './components/UtilityToolsSection';
 import Services from './components/Services';
 import CapJourneySection from './components/CapJourneySection';
 import CapFloatingCta from './components/CapFloatingCta';
@@ -98,6 +99,7 @@ export default async function Home() {
       <div className="page-wrapper">
         <Navbar />
         <Hero cms={cms} />
+        <UtilityToolsSection />
         <Services cms={cms} />
         <CapJourneySection cms={cms} />
         <HowItWorks cms={cms} />
@@ -106,8 +108,7 @@ export default async function Home() {
         <Testimonials />
         <Faq />
         <Cta cms={cms} />
-        <Footer cms={cms} />
-      
+        <Footer cms={cms} />      
         <FloatingWhatsApp cms={cms} />
         <CapFloatingCta label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'} />
         <PlacedlyFixes />
