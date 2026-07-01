@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Bot,
   Calculator,
   FileSearch,
   FileText,
   GraduationCap,
   MessageSquare,
   PenLine,
+  Rocket,
   Search,
   Sparkles,
   Target,
@@ -17,7 +17,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
-type Category = 'career' | 'study' | 'ai';
+type Category = 'career' | 'study';
 
 type Tool = {
   id: string;
@@ -37,7 +37,6 @@ const CATEGORY_META: Record<Category | 'all', { label: string } & Accent> = {
   all: { label: 'All Tools', from: '#6366f1', to: '#8b5cf6', soft: 'rgba(99,102,241,0.12)' },
   career: { label: 'Career & Resume', from: '#6366f1', to: '#8b5cf6', soft: 'rgba(99,102,241,0.12)' },
   study: { label: 'Study Abroad', from: '#3b82f6', to: '#06b6d4', soft: 'rgba(59,130,246,0.12)' },
-  ai: { label: 'AI Assistant', from: '#ec4899', to: '#f97316', soft: 'rgba(236,72,153,0.12)' },
 };
 
 const TOOLS: Tool[] = [
@@ -132,21 +131,17 @@ const TOOLS: Tool[] = [
       'Opening hook strengthened, career pivot clarified, and closing tied to post-study outcomes — ready for advisor review.',
     category: 'study',
   },
-  {
-    id: 'chat',
-    title: 'AI Career Assistant Chat',
-    description: 'Ask anything about placements, CAP, or study abroad — 24/7.',
-    Icon: Bot,
-    placeholder: 'Ask Placedly AI: "How does CAP work?" or "Best countries for MSc Finance?"',
-    cta: 'Start Chat',
-    sampleResult:
-      "Hi — I'm Placedly AI. CAP is pay-after-offer: we rebuild your profile, run mocks, and introduce you to hiring managers. Want a free roadmap call?",
-    category: 'ai',
-    popular: true,
-  },
 ];
 
-const FILTERS: (Category | 'all')[] = ['all', 'career', 'study', 'ai'];
+const FILTERS: (Category | 'all')[] = ['all', 'career', 'study'];
+
+/* ---------- rotating headline config ---------- */
+
+const HEADLINE_WORDS: { text: string; emphasis: boolean; dwell: number }[] = [
+  { text: 'Grow Career.', emphasis: false, dwell: 1400 },
+  { text: 'Go Global.', emphasis: false, dwell: 1400 },
+  { text: 'Go Placedly.', emphasis: true, dwell: 2200 },
+];
 
 /* ---------- helpers ---------- */
 
@@ -179,6 +174,144 @@ function useTypewriter(text: string, active: boolean, speed = 14) {
     return () => window.clearInterval(id);
   }, [text, active, speed]);
   return output;
+}
+
+/* ---------- rotating headline banner ---------- */
+
+function RotatingHeadlineBanner() {
+  const [index, setIndex] = useState(0);
+  const current = HEADLINE_WORDS[index];
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      setIndex((i) => (i + 1) % HEADLINE_WORDS.length);
+    }, current.dwell);
+    return () => window.clearTimeout(id);
+  }, [index, current.dwell]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.4 }}
+      transition={{ duration: 0.5 }}
+      style={{
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '10px',
+        margin: '0 auto clamp(28px, 4vw, 40px)',
+        maxWidth: '640px',
+        padding: 'clamp(18px, 3vw, 26px) clamp(20px, 4vw, 32px)',
+        borderRadius: '20px',
+        background:
+          'linear-gradient(135deg, rgba(37,99,235,0.06) 0%, rgba(251,146,60,0.06) 100%)',
+        border: '1px solid rgba(37,99,235,0.12)',
+        boxShadow: '0 10px 30px rgba(37,99,235,0.06)',
+        textAlign: 'center',
+        overflow: 'hidden',
+      }}
+    >
+      {/* soft animated glow sweep */}
+      <motion.div
+        aria-hidden
+        animate={{ x: ['-30%', '130%'] }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: 'linear' }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          width: '40%',
+          background:
+            'linear-gradient(90deg, transparent, rgba(251,146,60,0.08), transparent)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontSize: 'clamp(1.3rem, 3vw, 1.9rem)',
+          fontWeight: 800,
+          letterSpacing: '-0.01em',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        <motion.span
+          animate={{ rotate: [0, -8, 8, 0] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            display: 'inline-flex',
+            width: '30px',
+            height: '30px',
+            borderRadius: '9px',
+            background: 'linear-gradient(135deg, #2563eb, #fb923c)',
+            color: '#fff',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <Rocket size={15} strokeWidth={2.2} />
+        </motion.span>
+
+        <span
+          style={{
+            position: 'relative',
+            display: 'inline-block',
+            minWidth: 'clamp(160px, 30vw, 230px)',
+            height: '1.3em',
+            textAlign: 'left',
+          }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={current.text}
+              initial={{ y: 18, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -18, opacity: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                whiteSpace: 'nowrap',
+                backgroundImage: current.emphasis
+                  ? 'linear-gradient(135deg, #2563eb 0%, #fb923c 100%)'
+                  : 'linear-gradient(135deg, #2563eb 0%, #60a5fa 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                fontSize: current.emphasis ? '1.06em' : '1em',
+              }}
+            >
+              {current.text}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      </div>
+
+      <p
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          fontSize: 'clamp(0.85rem, 1.3vw, 0.98rem)',
+          color: '#475569',
+          lineHeight: 1.6,
+          maxWidth: '520px',
+        }}
+      >
+        From CV to Offer. Home to Abroad.{' '}
+        <span style={{ fontWeight: 700, color: '#1e3a8a' }}>
+          Your Career Co-Pilot — One Place, One Partner.
+        </span>
+      </p>
+    </motion.div>
+  );
 }
 
 /* ---------- component ---------- */
@@ -248,7 +381,7 @@ export default function UtilityToolsSection() {
       id="utility-tools"
       style={{
         position: 'relative',
-        padding: 'clamp(64px, 9vw, 120px) clamp(16px, 5vw, 24px)',
+        padding: 'clamp(48px, 7vw, 96px) clamp(16px, 5vw, 24px)',
         overflow: 'hidden',
         background: '#fafafa',
       }}
@@ -312,7 +445,7 @@ export default function UtilityToolsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.5 }}
-          style={{ textAlign: 'center', marginBottom: 'clamp(32px, 5vw, 48px)' }}
+          style={{ textAlign: 'center', marginBottom: 'clamp(24px, 3.5vw, 36px)' }}
         >
           <p
             style={{
@@ -324,7 +457,7 @@ export default function UtilityToolsSection() {
               textTransform: 'uppercase',
               letterSpacing: '1.5px',
               color: accent.from,
-              marginBottom: '16px',
+              marginBottom: '12px',
               transition: 'color 0.4s ease',
             }}
           >
@@ -337,7 +470,7 @@ export default function UtilityToolsSection() {
               fontWeight: 800,
               lineHeight: 1.1,
               color: '#111',
-              marginBottom: '16px',
+              marginBottom: '12px',
               letterSpacing: '-0.02em',
             }}
           >
@@ -356,16 +489,19 @@ export default function UtilityToolsSection() {
           </p>
         </motion.div>
 
+        {/* Rotating headline banner — Grow Career / Go Global / Go Placedly */}
+        <RotatingHeadlineBanner />
+
         {/* Search + Category filter */}
         <div
           className="tools-controls"
           style={{
             display: 'flex',
             flexWrap: 'wrap',
-            gap: '14px',
+            gap: '12px',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: 'clamp(28px, 4vw, 40px)',
+            marginBottom: 'clamp(20px, 3vw, 28px)',
           }}
         >
           <div
@@ -468,9 +604,9 @@ export default function UtilityToolsSection() {
         </div>
 
         {/* Layout: grid + aside */}
-        <div className="tools-layout" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 'clamp(24px, 3vw, 40px)', alignItems: 'start' }}>
+        <div className="tools-layout" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 'clamp(20px, 2.5vw, 32px)', alignItems: 'start' }}>
           {/* Cards grid */}
-          <motion.div layout className="tools-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+          <motion.div layout className="tools-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px' }}>
             <AnimatePresence mode="popLayout">
               {filteredTools.length === 0 ? (
                 <motion.p
@@ -478,7 +614,7 @@ export default function UtilityToolsSection() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  style={{ gridColumn: '1 / -1', color: '#888', textAlign: 'center', padding: '40px 0' }}
+                  style={{ gridColumn: '1 / -1', color: '#888', textAlign: 'center', padding: '32px 0' }}
                 >
                   No tools match “{query}”. Try another search.
                 </motion.p>
@@ -504,8 +640,8 @@ export default function UtilityToolsSection() {
                         textAlign: 'left',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '10px',
-                        padding: '20px',
+                        gap: '8px',
+                        padding: '18px',
                         borderRadius: '18px',
                         border: isActive
                           ? `1.5px solid ${meta.from}`
@@ -568,7 +704,7 @@ export default function UtilityToolsSection() {
 
           {/* Desktop sticky aside */}
           {!isMobile && (
-            <div className="tools-aside" style={{ position: 'sticky', top: '100px' }}>
+            <div className="tools-aside" style={{ position: 'sticky', top: '90px' }}>
               <ToolPanel
                 active={active}
                 accent={accent}
@@ -716,12 +852,12 @@ function ToolPanel({
             position: 'relative',
             background: variant === 'desktop' ? '#fff' : 'transparent',
             borderRadius: '22px',
-            padding: variant === 'desktop' ? '28px' : '4px',
+            padding: variant === 'desktop' ? '24px' : '4px',
             border: variant === 'desktop' ? '1px solid rgba(0,0,0,0.06)' : 'none',
             boxShadow: variant === 'desktop' ? '0 20px 50px rgba(0,0,0,0.08)' : 'none',
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '18px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
               <span
                 style={{
@@ -784,7 +920,7 @@ function ToolPanel({
               lineHeight: 1.5,
               color: '#111',
               outline: 'none',
-              marginBottom: '14px',
+              marginBottom: '12px',
               fontFamily: 'inherit',
             }}
           />
@@ -845,7 +981,7 @@ function ToolPanel({
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
                 style={{
-                  marginTop: '16px',
+                  marginTop: '14px',
                   padding: '16px',
                   borderRadius: '14px',
                   background: accent.soft,
@@ -895,7 +1031,7 @@ function ToolPanel({
             style={{
               background: '#fff',
               borderRadius: '22px',
-              padding: '40px 28px',
+              padding: '36px 24px',
               border: '1px dashed rgba(0,0,0,0.12)',
               textAlign: 'center',
             }}
@@ -909,7 +1045,7 @@ function ToolPanel({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                margin: '0 auto 16px',
+                margin: '0 auto 14px',
                 color: '#fff',
               }}
             >

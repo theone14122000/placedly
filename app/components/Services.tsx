@@ -481,6 +481,7 @@ function dotStyle(color: string): React.CSSProperties {
 export default function Services({ cms = {} }: { cms?: Cms }) {
   const [active, setActive] = useState(0);
   const current = VERTICALS[active];
+  const isDark = current.id === 'study';
 
   const tagline = cms['hp:servicesTagline'] ?? 'What We Do';
   const title =
@@ -498,20 +499,50 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
         overflow: 'hidden',
       }}
     >
-      {/* Dot-grid pattern — desktop only, adds texture */}
+      {/* Base background layer — always light */}
       <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: '#ffffff',
+          zIndex: 0,
+        }}
+      />
+
+      {/* Dark theme overlay — crossfades in on Study Abroad */}
+      <motion.div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            'linear-gradient(180deg, #060912 0%, #0b1226 45%, #04070f 100%)',
+          zIndex: 0,
+          pointerEvents: 'none',
+        }}
+        animate={{ opacity: isDark ? 1 : 0 }}
+        transition={{ duration: 0.65, ease: [0.4, 0, 0.2, 1] }}
+      />
+
+      {/* Dot-grid pattern — adapts color to theme */}
+      <motion.div
         aria-hidden
         className="services-pattern"
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage:
-            'radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px)',
           backgroundSize: '28px 28px',
           maskImage:
             'radial-gradient(ellipse 60% 50% at 50% 50%, black 30%, transparent 80%)',
           zIndex: 0,
         }}
+        animate={{
+          backgroundImage: isDark
+            ? 'radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px)'
+            : 'radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px)',
+        }}
+        transition={{ duration: 0.5 }}
       />
 
       {/* Ambient animated background blobs */}
@@ -530,7 +561,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           pointerEvents: 'none',
         }}
         animate={{
-          background: `radial-gradient(circle, ${current.accent.from}38 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${current.accent.from}${isDark ? '4d' : '38'} 0%, transparent 70%)`,
           x: [0, 35, 0],
           y: [0, 25, 0],
         }}
@@ -555,7 +586,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           pointerEvents: 'none',
         }}
         animate={{
-          background: `radial-gradient(circle, ${current.accent.to}32 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${current.accent.to}${isDark ? '45' : '32'} 0%, transparent 70%)`,
           x: [0, -30, 0],
           y: [0, -20, 0],
         }}
@@ -581,7 +612,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           transform: 'translateX(-50%)',
         }}
         animate={{
-          background: `radial-gradient(ellipse, ${current.accent.from}14 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse, ${current.accent.from}${isDark ? '22' : '14'} 0%, transparent 70%)`,
         }}
         transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
       />
@@ -619,9 +650,10 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
               fontSize: 'clamp(1.8rem, 4vw, 3.4rem)',
               fontWeight: '800',
               lineHeight: '1.1',
-              color: '#111',
+              color: isDark ? '#f8fafc' : '#111',
               marginBottom: '18px',
               letterSpacing: '-0.02em',
+              transition: 'color 0.4s ease',
             }}
           >
             {title}
@@ -629,17 +661,18 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           <p
             style={{
               fontSize: 'clamp(0.95rem, 1.4vw, 1.2rem)',
-              color: '#666',
+              color: isDark ? '#a3b1c6' : '#666',
               maxWidth: '640px',
               margin: '0 auto',
               padding: '0 12px',
+              transition: 'color 0.4s ease',
             }}
           >
             {subtitle}
           </p>
         </FadeUp>
 
-        {/* Toggle Tabs — sliding pill */}
+        {/* Toggle Tabs — pill shaped, sliding pill */}
         <div
           style={{
             display: 'flex',
@@ -648,19 +681,25 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
             padding: '0 12px',
           }}
         >
-          <div
+          <motion.div
             className="services-toggle"
             style={{
               position: 'relative',
               display: 'inline-flex',
               width: '100%',
               maxWidth: '440px',
-              background: '#fff',
-              borderRadius: '14px',
+              borderRadius: '999px',
               padding: '6px',
-              boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
               border: '1px solid rgba(0, 0, 0, 0.05)',
             }}
+            animate={{
+              background: isDark ? 'rgba(255,255,255,0.06)' : '#ffffff',
+              boxShadow: isDark
+                ? '0 4px 30px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.06)'
+                : '0 4px 24px rgba(0, 0, 0, 0.08)',
+              borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+            }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
             role="tablist"
             aria-label="Services"
           >
@@ -675,13 +714,14 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                   position: 'relative',
                   flex: 1,
                   padding: '13px 20px',
-                  borderRadius: '10px',
+                  borderRadius: '999px',
                   border: 'none',
                   fontWeight: '600',
                   fontSize: 'clamp(13px, 1.1vw, 15px)',
                   cursor: 'pointer',
                   background: 'transparent',
-                  color: active === i ? '#fff' : '#666',
+                  color:
+                    active === i ? '#fff' : isDark ? 'rgba(255,255,255,0.55)' : '#666',
                   transition: 'color 0.3s ease',
                   zIndex: 1,
                   whiteSpace: 'nowrap',
@@ -693,7 +733,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                     style={{
                       position: 'absolute',
                       inset: 0,
-                      borderRadius: '10px',
+                      borderRadius: '999px',
                       background: `linear-gradient(135deg, ${current.accent.from} 0%, ${current.accent.to} 100%)`,
                       zIndex: -1,
                       boxShadow: `0 8px 20px ${current.accent.soft}`,
@@ -704,7 +744,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                 {v.tabLabel}
               </button>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {/* Main Content Grid */}
