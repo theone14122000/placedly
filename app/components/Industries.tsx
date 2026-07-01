@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import {
   ArrowUpRight,
-  ArrowLeft,
-  ArrowRight,
   ClipboardList,
   Stethoscope,
   Wallet,
@@ -74,7 +72,7 @@ const industries: Industry[] = [
   },
 ];
 
-/* ─── Gradient Text Helper ─── */
+/* ─── Gradient Text ─── */
 function GradientText({
   children,
   style,
@@ -97,17 +95,21 @@ function GradientText({
   );
 }
 
-/* ─── Single Industry Card ─── */
+/* ─── Industry Card ─── */
 function IndustryCard({
   ind,
   index,
-  isActive,
-  onClick,
+  isHovered,
+  anyHovered,
+  onMouseEnter,
+  onMouseLeave,
 }: {
   ind: Industry;
   index: number;
-  isActive: boolean;
-  onClick: () => void;
+  isHovered: boolean;
+  anyHovered: boolean;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -116,52 +118,63 @@ function IndustryCard({
   });
   const imgY = useTransform(scrollYProgress, [0, 1], ['-6%', '6%']);
 
+  /*
+   * Width logic:
+   *  - Nothing hovered  → all equal (flex: 1)
+   *  - This card hovered → flex: 2  (takes ~2× the space)
+   *  - Other card hovered → flex: 0.6 (shrinks gracefully)
+   */
+  const flexGrow = !anyHovered ? 1 : isHovered ? 2 : 0.6;
+
   return (
     <motion.article
       ref={cardRef}
-      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       layout
-      initial={{ opacity: 0, y: 40, scale: 0.96 }}
+      initial={{ opacity: 0, y: 40, scale: 0.97 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{
-        duration: 0.6,
+        duration: 0.55,
         delay: index * 0.1,
         ease: [0.22, 1, 0.36, 1],
-        layout: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+        layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
       }}
-      whileHover={{ y: -6, transition: { duration: 0.3 } }}
       style={{
+        /* flex-based expansion — no fixed widths needed */
+        flexGrow,
+        flexShrink: 1,
+        flexBasis: 0,
+        minWidth: 0,           /* allow shrinking below content width */
+        transition: 'flex-grow 0.45s cubic-bezier(0.22,1,0.36,1)',
+
         position: 'relative',
-        flexShrink: 0,
-        width: isActive ? 'clamp(340px, 46vw, 520px)' : 'clamp(220px, 26vw, 300px)',
         borderRadius: '24px',
         overflow: 'hidden',
         background: '#fff',
-        border: `1px solid ${isActive ? `${ACCENT.from}30` : 'rgba(15,23,42,0.06)'}`,
-        boxShadow: isActive
+        border: `1px solid ${isHovered ? `${ACCENT.from}30` : 'rgba(15,23,42,0.06)'}`,
+        boxShadow: isHovered
           ? `0 24px 60px rgba(37,99,235,0.14)`
           : '0 8px 28px rgba(15,23,42,0.06)',
-        cursor: isActive ? 'default' : 'pointer',
         display: 'flex',
         flexDirection: 'column',
-        transition: 'width 0.5s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease, border-color 0.4s ease',
+        cursor: 'default',
         minHeight: '480px',
       }}
     >
-      {/* Gradient border glow */}
+      {/* ── Gradient border glow on hover ── */}
       <motion.span
         aria-hidden
-        animate={{ opacity: isActive ? 1 : 0 }}
-        transition={{ duration: 0.4 }}
+        animate={{ opacity: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.35 }}
         style={{
           position: 'absolute',
           inset: 0,
           borderRadius: '24px',
           padding: '1.5px',
           background: `linear-gradient(135deg, ${ACCENT.from}, ${ACCENT.to})`,
-          WebkitMask:
-            'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
           WebkitMaskComposite: 'xor',
           maskComposite: 'exclude',
           pointerEvents: 'none',
@@ -169,13 +182,13 @@ function IndustryCard({
         }}
       />
 
-      {/* Media — full top image */}
+      {/* ── Image ── */}
       <div
         style={{
           position: 'relative',
           overflow: 'hidden',
-          height: isActive ? '220px' : '180px',
-          transition: 'height 0.5s cubic-bezier(0.22,1,0.36,1)',
+          height: isHovered ? '220px' : '180px',
+          transition: 'height 0.45s cubic-bezier(0.22,1,0.36,1)',
           flexShrink: 0,
         }}
       >
@@ -190,8 +203,11 @@ function IndustryCard({
             height: '112%',
             objectFit: 'cover',
             y: imgY,
+            scale: isHovered ? 1.05 : 1,
+            transition: 'scale 0.6s cubic-bezier(0.22,1,0.36,1)',
           }}
         />
+
         {/* Dark overlay */}
         <div
           aria-hidden
@@ -203,13 +219,7 @@ function IndustryCard({
         />
 
         {/* Serial badge */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '16px',
-            left: '16px',
-          }}
-        >
+        <div style={{ position: 'absolute', top: '16px', left: '16px' }}>
           <span
             style={{
               fontSize: '11.5px',
@@ -227,7 +237,7 @@ function IndustryCard({
           </span>
         </div>
 
-        {/* Icon badge bottom-left of image */}
+        {/* Icon + tag badge */}
         <div
           style={{
             position: 'absolute',
@@ -262,6 +272,9 @@ function IndustryCard({
               textTransform: 'uppercase',
               color: '#fff',
               textShadow: '0 1px 4px rgba(0,0,0,0.4)',
+              /* hide tag label when card is narrow */
+              opacity: anyHovered && !isHovered ? 0 : 1,
+              transition: 'opacity 0.3s ease',
             }}
           >
             {ind.tag}
@@ -289,27 +302,34 @@ function IndustryCard({
         </div>
       </div>
 
-      {/* Content */}
+      {/* ── Content ── */}
       <div
         style={{
           position: 'relative',
           zIndex: 1,
-          padding: 'clamp(18px, 2.5vw, 28px)',
+          padding: 'clamp(18px, 2.5vw, 26px)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '12px',
+          gap: '10px',
           flex: 1,
+          overflow: 'hidden',   /* clip content that overflows narrow card */
         }}
       >
+        {/* Title */}
         <h3
           style={{
-            fontSize: isActive ? 'clamp(1.1rem, 2vw, 1.4rem)' : '1rem',
+            fontSize: isHovered ? 'clamp(1.05rem, 1.8vw, 1.35rem)' : '0.95rem',
             fontWeight: 800,
             lineHeight: 1.25,
             letterSpacing: '-0.01em',
             color: '#0f172a',
             margin: 0,
             transition: 'font-size 0.4s ease',
+            /* prevent wrapping on narrow cards */
+            overflow: 'hidden',
+            display: '-webkit-box',
+            WebkitLineClamp: isHovered ? 3 : 2,
+            WebkitBoxOrient: 'vertical',
           }}
         >
           {ind.name}
@@ -341,20 +361,20 @@ function IndustryCard({
           />
         </div>
 
-        {/* Expanded details — only visible when active */}
+        {/* ── Expanded content (hover only) ── */}
         <AnimatePresence>
-          {isActive && (
+          {isHovered && (
             <motion.div
-              key="details"
+              key="expanded"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
               style={{ overflow: 'hidden' }}
             >
               <p
                 style={{
-                  fontSize: '13.5px',
+                  fontSize: '13px',
                   lineHeight: 1.7,
                   color: '#5b6472',
                   margin: 0,
@@ -362,13 +382,12 @@ function IndustryCard({
               >
                 {ind.details}
               </p>
-
               <div
                 style={{
                   display: 'flex',
                   flexWrap: 'wrap',
                   gap: '6px',
-                  marginTop: '12px',
+                  marginTop: '10px',
                 }}
               >
                 {ind.companies.map((c) => (
@@ -378,10 +397,11 @@ function IndustryCard({
                       fontSize: '11.5px',
                       fontWeight: 600,
                       color: '#334155',
-                      padding: '5px 10px',
+                      padding: '4px 10px',
                       borderRadius: '999px',
                       background: 'rgba(37,99,235,0.05)',
                       border: '1px solid rgba(37,99,235,0.12)',
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     {c}
@@ -392,17 +412,17 @@ function IndustryCard({
           )}
         </AnimatePresence>
 
-        {/* Collapsed teaser — visible when inactive */}
+        {/* ── Teaser (not hovered) ── */}
         <AnimatePresence>
-          {!isActive && (
+          {!isHovered && (
             <motion.p
               key="teaser"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.2 }}
               style={{
-                fontSize: '12.5px',
+                fontSize: '12px',
                 lineHeight: 1.6,
                 color: '#8b95a5',
                 margin: 0,
@@ -417,11 +437,11 @@ function IndustryCard({
           )}
         </AnimatePresence>
 
-        {/* Footer */}
+        {/* ── Footer ── */}
         <div
           style={{
             marginTop: 'auto',
-            paddingTop: '14px',
+            paddingTop: '12px',
             borderTop: '1px solid rgba(15,23,42,0.06)',
             display: 'flex',
             alignItems: 'center',
@@ -429,10 +449,11 @@ function IndustryCard({
             gap: '10px',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+          {/* Stat */}
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2, flexShrink: 0 }}>
             <strong
               style={{
-                fontSize: isActive ? '1.4rem' : '1.1rem',
+                fontSize: isHovered ? '1.35rem' : '1.05rem',
                 fontWeight: 800,
                 backgroundImage: `linear-gradient(90deg, ${ACCENT.from}, ${ACCENT.to})`,
                 WebkitBackgroundClip: 'text',
@@ -443,19 +464,19 @@ function IndustryCard({
             >
               {ind.stat}
             </strong>
-            <span style={{ fontSize: '11px', color: '#8b95a5', fontWeight: 600 }}>
+            <span style={{ fontSize: '11px', color: '#8b95a5', fontWeight: 600, whiteSpace: 'nowrap' }}>
               {ind.statLabel}
             </span>
           </div>
 
+          {/* CTA — only on hovered card */}
           <AnimatePresence>
-            {isActive && (
+            {isHovered && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.85, x: 10 }}
+                initial={{ opacity: 0, scale: 0.85, x: 8 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.85, x: 10 }}
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                whileHover="hover"
+                exit={{ opacity: 0, scale: 0.85, x: 8 }}
+                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               >
                 <Link
                   href={ind.href}
@@ -466,7 +487,7 @@ function IndustryCard({
                     fontSize: '12.5px',
                     fontWeight: 700,
                     color: '#fff',
-                    padding: '10px 18px',
+                    padding: '9px 16px',
                     borderRadius: '999px',
                     background: `linear-gradient(135deg, ${ACCENT.from}, ${ACCENT.to})`,
                     boxShadow: `0 8px 22px ${ACCENT.from}35`,
@@ -475,33 +496,9 @@ function IndustryCard({
                   }}
                 >
                   {ind.linkText}
-                  <motion.span
-                    variants={{ rest: { x: 0 }, hover: { x: 3 } }}
-                    style={{ display: 'inline-flex' }}
-                  >
-                    <ArrowUpRight size={14} strokeWidth={2.6} />
-                  </motion.span>
+                  <ArrowUpRight size={13} strokeWidth={2.6} />
                 </Link>
               </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Expand hint for inactive cards */}
-          <AnimatePresence>
-            {!isActive && (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                style={{
-                  fontSize: '11.5px',
-                  fontWeight: 600,
-                  color: ACCENT.from,
-                  opacity: 0.7,
-                }}
-              >
-                Tap to expand →
-              </motion.span>
             )}
           </AnimatePresence>
         </div>
@@ -510,49 +507,9 @@ function IndustryCard({
   );
 }
 
-/* ─── Dot Indicator ─── */
-function DotIndicator({
-  total,
-  active,
-  onDotClick,
-}: {
-  total: number;
-  active: number;
-  onDotClick: (i: number) => void;
-}) {
-  return (
-    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-      {Array.from({ length: total }).map((_, i) => (
-        <button
-          key={i}
-          onClick={() => onDotClick(i)}
-          aria-label={`Go to card ${i + 1}`}
-          style={{
-            width: i === active ? '28px' : '8px',
-            height: '8px',
-            borderRadius: '999px',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-            background:
-              i === active
-                ? `linear-gradient(90deg, ${ACCENT.from}, ${ACCENT.to})`
-                : 'rgba(15,23,42,0.15)',
-            transition: 'width 0.4s cubic-bezier(0.22,1,0.36,1), background 0.3s ease',
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
 /* ─── Section ─── */
 export default function Industries() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const rowRef = useRef<HTMLDivElement>(null);
-
-  const prev = () => setActiveIndex((i) => Math.max(i - 1, 0));
-  const next = () => setActiveIndex((i) => Math.min(i + 1, industries.length - 1));
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
     <section
@@ -607,16 +564,13 @@ export default function Industries() {
           padding: '0 clamp(16px, 5vw, 40px)',
         }}
       >
-        {/* ── Header ── */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.5 }}
-          style={{
-            textAlign: 'center',
-            marginBottom: 'clamp(36px, 5vw, 56px)',
-          }}
+          style={{ textAlign: 'center', marginBottom: 'clamp(36px, 5vw, 56px)' }}
         >
           <p
             style={{
@@ -663,19 +617,13 @@ export default function Industries() {
           </h2>
         </motion.div>
 
-        {/* ── Row of Cards ── */}
+        {/* ── Card Row ── */}
         <div
-          ref={rowRef}
           style={{
             display: 'flex',
             flexDirection: 'row',
-            gap: 'clamp(14px, 2vw, 20px)',
+            gap: 'clamp(12px, 1.8vw, 18px)',
             alignItems: 'stretch',
-            overflowX: 'auto',
-            scrollSnapType: 'x mandatory',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            paddingBottom: '8px',
           }}
         >
           {industries.map((ind, i) => (
@@ -683,122 +631,23 @@ export default function Industries() {
               key={ind.serial}
               ind={ind}
               index={i}
-              isActive={i === activeIndex}
-              onClick={() => setActiveIndex(i)}
+              isHovered={hoveredIndex === i}
+              anyHovered={hoveredIndex !== null}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
             />
           ))}
         </div>
-
-        {/* ── Controls ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '20px',
-            marginTop: 'clamp(28px, 4vw, 44px)',
-          }}
-        >
-          {/* Prev */}
-          <motion.button
-            onClick={prev}
-            disabled={activeIndex === 0}
-            whileHover={{ scale: activeIndex === 0 ? 1 : 1.08 }}
-            whileTap={{ scale: activeIndex === 0 ? 1 : 0.94 }}
-            style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '50%',
-              border: `1.5px solid ${activeIndex === 0 ? 'rgba(15,23,42,0.1)' : `${ACCENT.from}50`}`,
-              background: activeIndex === 0 ? 'rgba(15,23,42,0.03)' : '#fff',
-              color: activeIndex === 0 ? 'rgba(15,23,42,0.3)' : ACCENT.from,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: activeIndex === 0 ? 'not-allowed' : 'pointer',
-              boxShadow:
-                activeIndex === 0
-                  ? 'none'
-                  : `0 4px 14px ${ACCENT.from}20`,
-              transition: 'all 0.3s ease',
-            }}
-          >
-            <ArrowLeft size={18} strokeWidth={2.2} />
-          </motion.button>
-
-          {/* Dots */}
-          <DotIndicator
-            total={industries.length}
-            active={activeIndex}
-            onDotClick={setActiveIndex}
-          />
-
-          {/* Next */}
-          <motion.button
-            onClick={next}
-            disabled={activeIndex === industries.length - 1}
-            whileHover={{ scale: activeIndex === industries.length - 1 ? 1 : 1.08 }}
-            whileTap={{ scale: activeIndex === industries.length - 1 ? 1 : 0.94 }}
-            style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '50%',
-              border: `1.5px solid ${
-                activeIndex === industries.length - 1
-                  ? 'rgba(15,23,42,0.1)'
-                  : `${ACCENT.from}50`
-              }`,
-              background:
-                activeIndex === industries.length - 1 ? 'rgba(15,23,42,0.03)' : '#fff',
-              color:
-                activeIndex === industries.length - 1
-                  ? 'rgba(15,23,42,0.3)'
-                  : ACCENT.from,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor:
-                activeIndex === industries.length - 1 ? 'not-allowed' : 'pointer',
-              boxShadow:
-                activeIndex === industries.length - 1
-                  ? 'none'
-                  : `0 4px 14px ${ACCENT.from}20`,
-              transition: 'all 0.3s ease',
-            }}
-          >
-            <ArrowRight size={18} strokeWidth={2.2} />
-          </motion.button>
-        </motion.div>
       </div>
 
       <style>{`
-        /* Hide scrollbar */
-        #domains [style*="overflow-x"] {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        #domains [style*="overflow-x"]::-webkit-scrollbar {
-          display: none;
-        }
-
-        /* Image zoom on card hover */
-        .industry-img {
-          transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
-        }
-        article:hover .industry-img {
-          transform: scale(1.05);
-        }
-
-        /* Mobile: all cards same width, horizontal scroll */
+        /* Mobile — stack vertically, equal width */
         @media (max-width: 700px) {
+          #domains > div > div:last-child {
+            flex-direction: column !important;
+          }
           #domains article {
-            width: clamp(280px, 80vw, 340px) !important;
-            min-height: 420px !important;
-            scroll-snap-align: start;
+            min-height: 380px !important;
           }
         }
       `}</style>
