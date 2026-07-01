@@ -574,84 +574,93 @@ export default function UtilityToolsSection() {
             marginBottom: 'clamp(20px, 3vw, 28px)',
           }}
         >
-          <div
-            className="tools-toggle-bar"
-            style={{
-              background: '#fff',
-              borderRadius: '999px',
-              padding: '8px',
-              boxShadow: '0 6px 24px rgba(0,0,0,0.08)',
-              border: '1px solid rgba(0,0,0,0.06)',
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '6px',
-              justifyContent: 'center',
-              alignItems: 'center',
-              maxWidth: '100%',
-              margin: '0 auto',
-            }}
-          >
-            {filteredTools.map((tool) => {
-              const meta = CATEGORY_META[tool.category];
-              const isActive = activeId === tool.id;
-              return (
-                <motion.button
-                  key={tool.id}
-                  type="button"
-                  onClick={() => openTool(tool)}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  style={{
-                    position: 'relative',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '10px 18px',
-                    borderRadius: '999px',
-                    border: 'none',
-                    background: isActive
-                      ? `linear-gradient(135deg, ${meta.from}, ${meta.to})`
-                      : 'rgba(0,0,0,0.02)',
-                    color: isActive ? '#fff' : '#333',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    boxShadow: isActive ? `0 6px 16px ${meta.soft}` : 'none',
-                  }}
-                >
-                  <tool.Icon size={16} strokeWidth={2} />
-                  <span className="tool-title-desktop">{tool.title}</span>
-                  <span className="tool-title-mobile">
-                    {tool.title.split(' ')[0]}
-                  </span>
-                  {tool.popular && (
-                    <span
-                      style={{
-                        fontSize: '9px',
-                        fontWeight: 700,
-                        letterSpacing: '0.5px',
-                        background: isActive ? 'rgba(255,255,255,0.25)' : meta.soft,
-                        color: isActive ? '#fff' : meta.from,
-                        borderRadius: '999px',
-                        padding: '2px 6px',
-                      }}
-                    >
-                      HOT
+          {/* NOTE: wrapper only adds mobile scroll-fade hints — no desktop visual change */}
+          <div className="tools-toggle-wrap">
+            <div
+              className="tools-toggle-bar"
+              style={{
+                background: '#fff',
+                borderRadius: '999px',
+                padding: '8px',
+                boxShadow: '0 6px 24px rgba(0,0,0,0.08)',
+                border: '1px solid rgba(0,0,0,0.06)',
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '6px',
+                justifyContent: 'center',
+                alignItems: 'center',
+                maxWidth: '100%',
+                margin: '0 auto',
+              }}
+            >
+              {filteredTools.map((tool) => {
+                const meta = CATEGORY_META[tool.category];
+                const isActive = activeId === tool.id;
+                return (
+                  <motion.button
+                    key={tool.id}
+                    type="button"
+                    onClick={() => openTool(tool)}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    style={{
+                      position: 'relative',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '10px 18px',
+                      borderRadius: '999px',
+                      border: 'none',
+                      background: isActive
+                        ? `linear-gradient(135deg, ${meta.from}, ${meta.to})`
+                        : 'rgba(0,0,0,0.02)',
+                      color: isActive ? '#fff' : '#333',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: isActive ? `0 6px 16px ${meta.soft}` : 'none',
+                    }}
+                  >
+                    <tool.Icon size={16} strokeWidth={2} />
+                    <span className="tool-title-desktop">{tool.title}</span>
+                    <span className="tool-title-mobile">
+                      {tool.title.split(' ')[0]}
                     </span>
-                  )}
-                  {isActive && (
-                    <ChevronDown
-                      size={14}
-                      strokeWidth={2.5}
-                      style={{
-                        marginLeft: '2px',
-                      }}
-                    />
-                  )}
-                </motion.button>
-              );
-            })}
+                    {tool.popular && (
+                      <span
+                        className="tool-hot-badge"
+                        style={{
+                          fontSize: '9px',
+                          fontWeight: 700,
+                          letterSpacing: '0.5px',
+                          background: isActive ? 'rgba(255,255,255,0.25)' : meta.soft,
+                          color: isActive ? '#fff' : meta.from,
+                          borderRadius: '999px',
+                          padding: '2px 6px',
+                        }}
+                      >
+                        HOT
+                      </span>
+                    )}
+                    {isActive && (
+                      <ChevronDown
+                        size={14}
+                        strokeWidth={2.5}
+                        className="tool-chevron"
+                        style={{
+                          marginLeft: '2px',
+                        }}
+                      />
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            {/* mobile-only scroll affordance (hidden on desktop) */}
+            <span className="tools-toggle-fade tools-toggle-fade--left" aria-hidden />
+            <span className="tools-toggle-fade tools-toggle-fade--right" aria-hidden />
           </div>
         </motion.div>
 
@@ -700,15 +709,59 @@ export default function UtilityToolsSection() {
           .tools-blob {
             display: none;
           }
-          .tools-toggle-bar {
-            padding: 6px !important;
-            gap: 4px !important;
-          }
           .tool-title-desktop {
             display: none;
           }
           .tool-title-mobile {
             display: inline;
+          }
+
+          /* ── Mobile-only toggle bar redesign: single-row horizontal scroll ── */
+          .tools-toggle-wrap {
+            position: relative;
+          }
+          .tools-toggle-bar {
+            flex-wrap: nowrap !important;
+            justify-content: flex-start !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x proximity;
+            padding: 8px 16px !important;
+            gap: 8px !important;
+            scrollbar-width: none;
+          }
+          .tools-toggle-bar::-webkit-scrollbar {
+            display: none;
+          }
+          .tools-toggle-bar > button {
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            padding: 10px 16px !important;
+          }
+          .tool-hot-badge {
+            display: none;
+          }
+          .tool-chevron {
+            display: none;
+          }
+          .tools-toggle-fade {
+            display: block;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 28px;
+            pointer-events: none;
+            z-index: 2;
+          }
+          .tools-toggle-fade--left {
+            left: 0;
+            background: linear-gradient(90deg, #fafafa, rgba(250,250,250,0));
+            border-radius: 999px 0 0 999px;
+          }
+          .tools-toggle-fade--right {
+            right: 0;
+            background: linear-gradient(270deg, #fafafa, rgba(250,250,250,0));
+            border-radius: 0 999px 999px 0;
           }
         }
         @media (min-width: 901px) {
@@ -716,6 +769,9 @@ export default function UtilityToolsSection() {
             display: inline;
           }
           .tool-title-mobile {
+            display: none;
+          }
+          .tools-toggle-fade {
             display: none;
           }
         }
