@@ -1,1262 +1,1485 @@
-'use client';
+/* eslint-disable @next/next/no-img-element */
+export const dynamic = 'force-dynamic';
 
-import { useEffect, useRef, useState, useCallback, type CSSProperties } from 'react';
+import type { Metadata } from 'next';
+import type { CSSProperties } from 'react';
 import {
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from 'framer-motion';
-import Link from 'next/link';
-import {
-  ArrowRight,
-  CheckCircle2,
-  GraduationCap,
-  Briefcase,
+  Target,
+  DollarSign,
+  Handshake,
+  Globe,
+  Building2,
+  TrendingUp,
+  Rocket,
+  Plane,
+  Trophy,
   Sparkles,
-  Play,
+  ArrowRight,
+  Quote,
+  CheckCircle2,
+  type LucideIcon,
 } from 'lucide-react';
-import { FadeUp } from './motion';
+import PageLayout from '../components/PageLayout';
+import { getCmsMap, parseCmsJson } from '@/lib/cms';
 
-type Cms = Record<string, string>;
-
-type Vertical = {
-  id: 'cap' | 'study';
-  tabLabel: string;
-  videoSrc: string;
-  ariaLabel: string;
-  icon: typeof Briefcase;
-  eyebrow: string;
-  headline: string;
-  description: string;
-  bullets: string[];
-  stats: { numeric: number; suffix: string; label: string }[];
-  ctaLabel: string;
-  ctaHref: string;
-  accent: string;
-  accentSoft: string;
+export const metadata: Metadata = {
+  title: 'About Us — Placedly',
+  description:
+    "Learn about Placedly — Delhi NCR's career placement and global education consultancy.",
 };
 
-const VERTICALS: Vertical[] = [
+const ICON_MAP: Record<string, LucideIcon> = {
+  Target,
+  DollarSign,
+  Handshake,
+  Globe,
+  Building2,
+  TrendingUp,
+};
+
+const DEFAULT_VALUES = [
   {
-    id: 'cap',
-    tabLabel: 'Get Placed',
-    videoSrc: '/new1.mp4',
-    ariaLabel: 'Career Assistance Programme overview',
-    icon: Briefcase,
-    eyebrow: 'Career Assistance Programme',
-    headline: 'Land the MNC role — pay only after your offer letter.',
-    description:
-      'From resume rebuild to warm referrals at hiring managers, CAP is a done-with-you placement engine. No upfront fees, no spray-and-pray applications — just a structured path to an offer.',
-    bullets: [
-      'ATS-optimised resume & LinkedIn overhaul in 48 hours',
-      'Live mock interviews with real-time feedback',
-      'Warm introductions to 10–15 target companies',
-      'Zero cost until you sign your offer letter',
-    ],
-    stats: [
-      { numeric: 48, suffix: 'h', label: 'Resume turnaround' },
-      { numeric: 12, suffix: '%', label: 'Fee, only post-offer' },
-      { numeric: 15, suffix: '+', label: 'Warm referrals' },
-    ],
-    ctaLabel: 'Start My CAP Journey',
-    ctaHref: '/cap',
-    accent: '#f97316',
-    accentSoft: 'rgba(249,115,22,0.12)',
+    Icon: Target,
+    color: '#2145fb',
+    bg: '#eff6ff',
+    title: 'Personalised, Always',
+    desc: 'No two careers are the same. Every candidate gets a bespoke roadmap built around their skills, goals, and target industry — not a generic playbook.',
   },
   {
-    id: 'study',
-    tabLabel: 'Study Abroad',
-    videoSrc: '/new2.mp4',
-    ariaLabel: 'Study Abroad Programme overview',
-    icon: GraduationCap,
-    eyebrow: 'Study Abroad Programme',
-    headline: 'Your global degree, mapped from shortlist to visa.',
-    description:
-      'University shortlisting, SOP crafting, funding strategy, and visa filing — handled by advisors who know the process cold. Built around your goals, not commission-driven university tie-ups.',
-    bullets: [
-      'Personalised university shortlist across 6 countries',
-      'SOP & LOR crafted with subject-matter advisors',
-      'Scholarship & education-loan guidance',
-      'End-to-end visa filing support',
-    ],
-    stats: [
-      { numeric: 6, suffix: '', label: 'Study destinations' },
-      { numeric: 95, suffix: '%', label: 'Visa success rate' },
-      { numeric: 1, suffix: ':1', label: 'Dedicated advisor' },
-    ],
-    ctaLabel: 'Explore Study Abroad',
-    ctaHref: '/study-abroad',
-    accent: '#2563eb',
-    accentSoft: 'rgba(37,99,235,0.12)',
+    Icon: DollarSign,
+    color: '#16a34a',
+    bg: '#f0fdf4',
+    title: 'Zero Upfront',
+    desc: 'We believe in putting our money where our mouth is. Career Assistance Fee of 12% is charged only after you receive your offer letter. Our success is tied directly to yours.',
+  },
+  {
+    Icon: Handshake,
+    color: '#f97316',
+    bg: '#fff7ed',
+    title: 'End-to-End Partnership',
+    desc: 'From CV rebuild to day 90 in your new role — we stay with you through every step, including salary negotiation and joining support.',
+  },
+  {
+    Icon: Globe,
+    color: '#0891b2',
+    bg: '#ecfeff',
+    title: 'Global Reach',
+    desc: '140+ university partners across UK, France, Germany, and Dubai. We make international education accessible, transparent, and stress-free.',
+  },
+  {
+    Icon: Building2,
+    color: '#7c3aed',
+    bg: '#faf5ff',
+    title: 'Direct Employer Access',
+    desc: 'Our 50+ hiring partner network means your profile goes directly to decision-makers — not into a black-hole job board.',
+  },
+  {
+    Icon: TrendingUp,
+    color: '#ef4444',
+    bg: '#fef2f2',
+    title: 'Measurable Outcomes',
+    desc: 'Average 40% salary hike. 300+ careers transformed. First interview call within 1–2 weeks. Results you can count on.',
   },
 ];
 
-/* ============================================================
- * Animated counter — counts up once when scrolled into view
- * ============================================================ */
-function AnimatedCounter({
-  target,
-  suffix,
-}: {
-  target: number;
-  suffix: string;
-}) {
-  const [display, setDisplay] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const hasAnimated = useRef(false);
+const DEFAULT_TIMELINE = [
+  {
+    year: '2022',
+    title: 'Placedly Founded',
+    desc: 'Started in Delhi NCR with a single mission: make career growth transparent and accessible to every professional.',
+  },
+  {
+    year: '2023',
+    title: '100 Placements Milestone',
+    desc: 'Crossed 100 successful placements and launched our flagship Career Assistance Programme (CAP).',
+  },
+  {
+    year: '2024',
+    title: 'Study Abroad Division',
+    desc: 'Launched global education services with 140+ university partnerships across UK, France, Germany, and Dubai.',
+  },
+  {
+    year: '2025',
+    title: '300+ Careers Transformed',
+    desc: 'Expanded to 50+ hiring partners and achieved an average 40% salary hike for placed professionals.',
+  },
+  {
+    year: '2026',
+    title: 'Scaling Pan-India',
+    desc: 'Growing beyond Delhi NCR to serve professionals in Bangalore, Mumbai, Hyderabad, and Chennai.',
+  },
+];
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof IntersectionObserver === 'undefined') return;
+const DEFAULT_STATS = [
+  { num: '300+', label: 'Professionals Placed' },
+  { num: '50+', label: 'Hiring Partners' },
+  { num: '40%', label: 'Avg. Salary Hike' },
+  { num: '₹0', label: 'Upfront Cost' },
+];
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          const duration = 1100;
-          const start = performance.now();
+type AbCmsData = {
+  stats?: Array<{ num?: string; label?: string }>;
+  values?: Array<{ icon?: string; title?: string; desc?: string }>;
+  timeline?: Array<{ year?: string; title?: string; desc?: string }>;
+  founder?: { name?: string; role?: string; bio?: string; quote?: string };
+};
 
-          const step = (now: number): void => {
-            const progress = Math.min((now - start) / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setDisplay(Math.round(eased * target));
-            if (progress < 1) requestAnimationFrame(step);
+type CssVars = CSSProperties & {
+  '--ab-color'?: string;
+  '--ab-bg'?: string;
+  '--ab-delay'?: string;
+};
+
+const ABOUT_STYLES = `
+.ab-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 8% 6%, rgba(33, 69, 251, 0.08), transparent 30%),
+    radial-gradient(circle at 90% 20%, rgba(249, 115, 22, 0.10), transparent 34%),
+    linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+}
+
+.ab-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+  pointer-events: none;
+  opacity: 0.34;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(circle at 50% 18%, #000 0%, transparent 72%);
+  -webkit-mask-image: radial-gradient(circle at 50% 18%, #000 0%, transparent 72%);
+}
+
+.ab-section {
+  position: relative;
+  padding: 80px 0;
+}
+
+.ab-section--hero {
+  padding: calc(56px + 68px) 0 0;
+}
+
+.ab-section--alt {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(33, 69, 251, 0.045), transparent 34%),
+    radial-gradient(circle at 88% 80%, rgba(249, 115, 22, 0.055), transparent 36%),
+    rgba(248, 250, 252, 0.58);
+}
+
+.ab-orb {
+  position: absolute;
+  z-index: -1;
+  border-radius: 999px;
+  filter: blur(42px);
+  pointer-events: none;
+  opacity: 0.26;
+  animation: abFloat 9s ease-in-out infinite;
+}
+
+.ab-orb--blue {
+  width: 330px;
+  height: 330px;
+  top: 5%;
+  right: -120px;
+  background: #2145fb;
+}
+
+.ab-orb--orange {
+  width: 300px;
+  height: 300px;
+  bottom: 8%;
+  left: -110px;
+  background: #f97316;
+  animation-delay: -3s;
+}
+
+.ab-container {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.ab-reveal {
+  opacity: 0;
+  animation: abReveal 850ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--ab-delay, 0ms);
+}
+
+.ab-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: #2145fb;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+}
+
+.ab-eyebrow::before {
+  content: '';
+  width: 22px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2145fb, #f97316);
+  box-shadow: 0 0 18px rgba(33, 69, 251, 0.28);
+}
+
+.ab-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.ab-breadcrumb a {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.ab-breadcrumb a:hover {
+  color: #2145fb;
+}
+
+.ab-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.75fr);
+  gap: clamp(40px, 6vw, 84px);
+  align-items: center;
+}
+
+.ab-hero-copy {
+  max-width: 760px;
+}
+
+.ab-hero-title {
+  margin: 0 0 20px;
+  color: #0b0d20;
+  font-size: clamp(2.35rem, 5vw, 4.55rem);
+  font-weight: 950;
+  line-height: 1.04;
+  letter-spacing: -0.065em;
+}
+
+.ab-gradient-text {
+  background: linear-gradient(90deg, #f97316, #2145fb, #f97316);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: abTextShine 5s linear infinite;
+}
+
+.ab-hero-sub {
+  max-width: 545px;
+  margin: 0 0 32px;
+  color: #64748b;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.ab-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+.ab-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 0 28px;
+  border-radius: 999px;
+  font-family: Poppins, sans-serif;
+  font-size: 14px;
+  font-weight: 750;
+  text-decoration: none;
+  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
+}
+
+.ab-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%) skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.34), transparent);
+  transition: transform 700ms ease;
+}
+
+.ab-btn:hover {
+  transform: translateY(-3px);
+}
+
+.ab-btn:hover::after {
+  transform: translateX(120%) skewX(-18deg);
+}
+
+.ab-btn--primary {
+  color: #fff;
+  background: linear-gradient(135deg, #2145fb, #4866ff);
+  box-shadow: 0 16px 34px rgba(33, 69, 251, 0.24);
+}
+
+.ab-btn--orange {
+  color: #fff;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  box-shadow: 0 16px 34px rgba(249, 115, 22, 0.28);
+}
+
+.ab-btn--ghost {
+  color: #374151;
+  border: 1.5px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(12px);
+}
+
+.ab-hero-visual {
+  position: relative;
+  min-height: 480px;
+  perspective: 1200px;
+}
+
+.ab-hero-card {
+  position: absolute;
+  inset: 20px 0 auto auto;
+  width: min(100%, 390px);
+  min-height: 430px;
+  border-radius: 34px;
+  padding: 16px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.92), rgba(255,255,255,.62)),
+    radial-gradient(circle at 20% 0%, rgba(33,69,251,.18), transparent 38%);
+  border: 1px solid rgba(226, 232, 240, 0.82);
+  box-shadow:
+    0 34px 90px rgba(15, 23, 42, 0.13),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  backdrop-filter: blur(18px);
+  transform: rotateY(-9deg) rotateX(4deg);
+  animation: abCardFloat 6s ease-in-out infinite;
+}
+
+.ab-hero-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(33,69,251,.55), transparent, rgba(249,115,22,.42));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.ab-hero-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 4px 14px;
+}
+
+.ab-window-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.ab-window-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+
+.ab-window-dots span:nth-child(1) { background: #ef4444; }
+.ab-window-dots span:nth-child(2) { background: #f59e0b; }
+.ab-window-dots span:nth-child(3) { background: #22c55e; }
+
+.ab-hero-card-label {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.ab-hero-img {
+  overflow: hidden;
+  height: 255px;
+  border-radius: 26px;
+  background: #e2e8f0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.ab-hero-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.04);
+}
+
+.ab-hero-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.ab-hero-mini {
+  padding: 14px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(226,232,240,.8);
+  box-shadow: 0 14px 30px rgba(15,23,42,.06);
+}
+
+.ab-hero-mini strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #0f172a;
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing: -0.04em;
+}
+
+.ab-hero-mini span {
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ab-floating-proof {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(226,232,240,.9);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(14px);
+  animation: abFloat 7s ease-in-out infinite;
+}
+
+.ab-floating-proof--one {
+  left: 0;
+  bottom: 70px;
+}
+
+.ab-floating-proof--two {
+  right: -8px;
+  top: 78px;
+  animation-delay: -2.5s;
+}
+
+.ab-floating-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+}
+
+.ab-floating-proof strong {
+  display: block;
+  color: #0b0d20;
+  font-size: 18px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.ab-floating-proof span {
+  display: block;
+  margin-top: 3px;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.ab-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  overflow: hidden;
+  border: 1px solid #eef0f6;
+  border-radius: 28px;
+  background: rgba(255,255,255,.72);
+  box-shadow: 0 22px 60px rgba(15,23,42,.08);
+  backdrop-filter: blur(16px);
+}
+
+.ab-stat {
+  position: relative;
+  padding: 30px 16px;
+  text-align: center;
+}
+
+.ab-stat:not(:last-child) {
+  border-right: 1px solid #eef0f6;
+}
+
+.ab-stat::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-110%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.82), transparent);
+  animation: abShimmer 5.5s ease-in-out infinite;
+  animation-delay: var(--ab-delay, 0ms);
+}
+
+.ab-stat-num {
+  position: relative;
+  margin-bottom: 7px;
+  color: #0b0d20;
+  font-size: clamp(1.8rem, 3vw, 2.45rem);
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.ab-stat-label {
+  position: relative;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.ab-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(44px, 6vw, 72px);
+  align-items: center;
+}
+
+.ab-section-title {
+  margin: 0 0 20px;
+  color: #0b0d20;
+  font-size: clamp(1.85rem, 3.4vw, 2.75rem);
+  font-weight: 950;
+  line-height: 1.1;
+  letter-spacing: -0.055em;
+}
+
+.ab-copy {
+  margin: 0 0 16px;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.78;
+}
+
+.ab-copy--dark {
+  color: #374151;
+}
+
+.ab-mission-visual {
+  position: relative;
+  height: 500px;
+  perspective: 1200px;
+}
+
+.ab-img-card {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 24px 58px rgba(15,23,42,.14);
+  transition: transform 420ms cubic-bezier(0.22,1,0.36,1), box-shadow 420ms ease;
+}
+
+.ab-img-card:hover {
+  transform: translateY(-10px) rotateX(3deg) rotateY(-3deg) scale(1.015);
+  box-shadow: 0 34px 76px rgba(15,23,42,.18);
+}
+
+.ab-img-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms ease;
+}
+
+.ab-img-card:hover img {
+  transform: scale(1.07);
+}
+
+.ab-img-card--primary {
+  top: 0;
+  left: 0;
+  width: 72%;
+  height: 310px;
+}
+
+.ab-img-card--secondary {
+  right: 0;
+  bottom: 0;
+  width: 62%;
+  height: 250px;
+  border: 5px solid #fff;
+}
+
+.ab-values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.ab-value-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 255px;
+  padding: 30px;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,255,255,.72));
+  border: 1px solid rgba(226,232,240,.92);
+  box-shadow:
+    0 1px 4px rgba(15,23,42,.04),
+    0 18px 44px rgba(15,23,42,.055);
+  transform-style: preserve-3d;
+  transition:
+    transform 420ms cubic-bezier(0.22,1,0.36,1),
+    box-shadow 420ms ease,
+    border-color 420ms ease;
+}
+
+.ab-value-card::before {
+  content: '';
+  position: absolute;
+  inset: -45%;
+  transform: translateX(-115%) rotate(14deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.86), transparent);
+  transition: transform 900ms ease;
+}
+
+.ab-value-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 18% 12%, var(--ab-bg), transparent 44%);
+  opacity: .72;
+  pointer-events: none;
+}
+
+.ab-value-card:hover {
+  transform: translateY(-12px) rotateX(4deg) rotateY(-4deg);
+  border-color: color-mix(in srgb, var(--ab-color) 32%, #e2e8f0);
+  box-shadow: 0 30px 70px rgba(15,23,42,.12), 0 16px 36px color-mix(in srgb, var(--ab-color) 14%, transparent);
+}
+
+.ab-value-card:hover::before {
+  transform: translateX(115%) rotate(14deg);
+}
+
+.ab-value-icon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 18px;
+  border-radius: 16px;
+  color: var(--ab-color);
+  background: var(--ab-bg);
+  box-shadow: 0 12px 26px color-mix(in srgb, var(--ab-color) 17%, transparent);
+}
+
+.ab-value-title {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 10px;
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: 850;
+}
+
+.ab-value-desc {
+  position: relative;
+  z-index: 1;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.68;
+}
+
+.ab-timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ab-timeline::before {
+  content: '';
+  position: absolute;
+  left: 18px;
+  top: 20px;
+  bottom: 20px;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #2145fb, #f97316);
+  opacity: .26;
+}
+
+.ab-timeline-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 18px;
+}
+
+.ab-timeline-node {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, #2145fb, #4866ff);
+  border: 4px solid #eff6ff;
+  box-shadow: 0 0 0 0 rgba(33,69,251,.35);
+  animation: abPulse 2.8s ease-in-out infinite;
+  animation-delay: var(--ab-delay, 0ms);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.ab-timeline-card {
+  padding: 20px 22px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(226,232,240,.9);
+  box-shadow: 0 14px 34px rgba(15,23,42,.055);
+  backdrop-filter: blur(12px);
+  transition: transform 260ms ease, box-shadow 260ms ease;
+}
+
+.ab-timeline-card:hover {
+  transform: translateX(8px);
+  box-shadow: 0 22px 46px rgba(15,23,42,.09);
+}
+
+.ab-timeline-year {
+  margin-bottom: 4px;
+  color: #2145fb;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.ab-timeline-title {
+  margin-bottom: 6px;
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 850;
+}
+
+.ab-timeline-desc {
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.ab-founder-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  gap: 52px;
+  align-items: center;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: clamp(32px, 5vw, 56px);
+  border-radius: 32px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.94), rgba(255,255,255,.72)),
+    radial-gradient(circle at 0% 0%, rgba(33,69,251,.09), transparent 38%);
+  border: 1px solid rgba(226,232,240,.92);
+  box-shadow: 0 28px 76px rgba(15,23,42,.10);
+  backdrop-filter: blur(18px);
+}
+
+.ab-founder-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(33,69,251,.38), transparent, rgba(249,115,22,.36));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.ab-founder-img {
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+  width: 205px;
+  height: 255px;
+  border-radius: 24px;
+  box-shadow: 0 22px 46px rgba(15,23,42,.16);
+  transform: rotate(-2deg);
+}
+
+.ab-founder-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.ab-founder-name {
+  margin-bottom: 4px;
+  color: #0b0d20;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.ab-founder-role {
+  margin-bottom: 22px;
+  color: #2145fb;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.ab-quote {
+  position: relative;
+  margin-top: 26px;
+  padding: 20px 22px 20px 54px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f8faff, #fff7ed);
+  border-left: 4px solid #2145fb;
+  color: #374151;
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.72;
+  box-shadow: 0 12px 28px rgba(15,23,42,.045);
+}
+
+.ab-quote svg {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  color: #2145fb;
+  opacity: .55;
+}
+
+.ab-dark-cta {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(54px, 7vw, 82px) clamp(24px, 6vw, 72px);
+  border-radius: 34px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 25% 30%, rgba(33,69,251,.25), transparent 34%),
+    radial-gradient(circle at 80% 80%, rgba(249,115,22,.22), transparent 36%),
+    linear-gradient(135deg, #070918, #11142d 48%, #080a18);
+  box-shadow: 0 34px 90px rgba(11,13,32,.34);
+}
+
+.ab-dark-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%) skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.11), transparent);
+  animation: abShimmer 6s ease-in-out infinite;
+}
+
+.ab-dark-cta h2 {
+  position: relative;
+  margin: 0 0 14px;
+  color: #fff;
+  font-size: clamp(1.8rem, 3.4vw, 2.75rem);
+  font-weight: 950;
+  line-height: 1.12;
+  letter-spacing: -0.055em;
+}
+
+.ab-dark-cta p {
+  position: relative;
+  max-width: 520px;
+  margin: 0 auto 34px;
+  color: rgba(255,255,255,.66);
+  font-size: 15px;
+  line-height: 1.72;
+}
+
+.ab-center {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+@keyframes abReveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes abFloat {
+  0%, 100% { transform: translate3d(0,0,0); }
+  50% { transform: translate3d(14px,-18px,0); }
+}
+
+@keyframes abCardFloat {
+  0%, 100% { transform: rotateY(-9deg) rotateX(4deg) translateY(0); }
+  50% { transform: rotateY(-5deg) rotateX(6deg) translateY(-12px); }
+}
+
+@keyframes abTextShine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 220% 50%; }
+}
+
+@keyframes abShimmer {
+  0% { transform: translateX(-120%) skewX(-18deg); opacity: 0; }
+  18% { opacity: 1; }
+  48%, 100% { transform: translateX(120%) skewX(-18deg); opacity: 0; }
+}
+
+@keyframes abPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(33,69,251,.34); }
+  50% { box-shadow: 0 0 0 12px rgba(33,69,251,0); }
+}
+
+@media (max-width: 980px) {
+  .ab-hero-grid,
+  .ab-two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .ab-hero-visual {
+    min-height: 430px;
+  }
+
+  .ab-hero-card {
+    position: relative;
+    inset: auto;
+    margin: 0 auto;
+  }
+
+  .ab-values-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ab-founder-card {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .ab-container {
+    width: min(100% - 28px, 1180px);
+  }
+
+  .ab-section {
+    padding: 62px 0;
+  }
+
+  .ab-section--hero {
+    padding-top: calc(48px + 64px);
+  }
+
+  .ab-stats,
+  .ab-values-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ab-stat:not(:last-child) {
+    border-right: 0;
+    border-bottom: 1px solid #eef0f6;
+  }
+
+  .ab-mission-visual {
+    height: 430px;
+  }
+
+  .ab-img-card--primary {
+    width: 82%;
+    height: 270px;
+  }
+
+  .ab-img-card--secondary {
+    width: 72%;
+    height: 220px;
+  }
+
+  .ab-floating-proof--one {
+    left: 6px;
+    bottom: 58px;
+  }
+
+  .ab-floating-proof--two {
+    right: 4px;
+    top: 42px;
+  }
+
+  .ab-founder-card {
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .ab-founder-img {
+    width: 100%;
+    max-width: 240px;
+    height: 280px;
+  }
+}
+
+@media (max-width: 520px) {
+  .ab-hero-visual {
+    min-height: 380px;
+  }
+
+  .ab-hero-card {
+    min-height: auto;
+    border-radius: 28px;
+  }
+
+  .ab-hero-img {
+    height: 210px;
+  }
+
+  .ab-hero-mini-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ab-floating-proof {
+    display: none;
+  }
+
+  .ab-actions {
+    flex-direction: column;
+  }
+
+  .ab-btn {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ab-reveal,
+  .ab-orb,
+  .ab-hero-card,
+  .ab-stat::before,
+  .ab-dark-cta::before,
+  .ab-timeline-node {
+    animation: none !important;
+  }
+
+  .ab-value-card,
+  .ab-img-card,
+  .ab-btn,
+  .ab-timeline-card {
+    transition: none !important;
+  }
+}
+`;
+
+export default async function AboutUsPage() {
+  const cmsMap = await getCmsMap('ab:');
+  const abCms = parseCmsJson<AbCmsData>(cmsMap, 'ab:data', {});
+
+  const stats =
+    abCms.stats && abCms.stats.length > 0
+      ? abCms.stats.map((s) => ({ num: s.num ?? '', label: s.label ?? '' }))
+      : DEFAULT_STATS;
+
+  const values =
+    abCms.values && abCms.values.length > 0
+      ? abCms.values.map((v, i) => {
+          const def = DEFAULT_VALUES[i] ?? DEFAULT_VALUES[0];
+          const IconComp = v.icon && ICON_MAP[v.icon] ? ICON_MAP[v.icon] : def.Icon;
+
+          return {
+            Icon: IconComp,
+            color: def.color,
+            bg: def.bg,
+            title: v.title ?? def.title,
+            desc: v.desc ?? def.desc,
           };
-          requestAnimationFrame(step);
-        }
-      },
-      { threshold: 0.4 },
-    );
+        })
+      : DEFAULT_VALUES;
 
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [target]);
+  const timeline =
+    abCms.timeline && abCms.timeline.length > 0
+      ? abCms.timeline.map((t) => ({
+          year: t.year ?? '',
+          title: t.title ?? '',
+          desc: t.desc ?? '',
+        }))
+      : DEFAULT_TIMELINE;
 
-  return (
-    <span ref={ref}>
-      {display}
-      {suffix}
-    </span>
-  );
-}
-
-/* ============================================================
- * Video with autoplay/sound-unlock logic + live indicator
- * ============================================================ */
-function VerticalScrollVideo({
-  src,
-  ariaLabel,
-}: {
-  src: string;
-  ariaLabel: string;
-}) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const isVisibleRef = useRef(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const canPlayWithSound = (): boolean => {
-      if (
-        typeof navigator !== 'undefined' &&
-        navigator.userActivation?.hasBeenActive
-      ) {
-        return true;
-      }
-      return false;
-    };
-
-    const playMuted = () => {
-      video.muted = true;
-      return video
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => undefined);
-    };
-
-    const playWithSound = () => {
-      video.muted = false;
-      return video
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => playMuted());
-    };
-
-    const unlockSound = () => {
-      video.muted = false;
-      if (isVisibleRef.current) {
-        void video.play().catch(() => playMuted());
-      }
-    };
-
-    document.addEventListener('pointerdown', unlockSound, { capture: true });
-    document.addEventListener('keydown', unlockSound, { capture: true });
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isVisibleRef.current = entry.isIntersecting;
-        if (entry.isIntersecting) {
-          if (canPlayWithSound()) {
-            void playWithSound();
-          } else {
-            void playMuted();
-          }
-        } else {
-          video.pause();
-          setIsPlaying(false);
-        }
-      },
-      { threshold: 0.35, rootMargin: '0px 0px -8% 0px' },
-    );
-
-    observer.observe(video);
-    return () => {
-      observer.disconnect();
-      document.removeEventListener('pointerdown', unlockSound, {
-        capture: true,
-      });
-      document.removeEventListener('keydown', unlockSound, { capture: true });
-    };
-  }, []);
+  const founder = {
+    name: abCms.founder?.name ?? 'Our Founder',
+    role: abCms.founder?.role ?? 'Founder & CEO, Placedly',
+    bio:
+      abCms.founder?.bio ??
+      "With a deep background in talent acquisition and career consulting across Delhi NCR's top MNCs, our founder built Placedly with a frustration-turned-mission: too many talented professionals were being left behind by a system that favoured connections over competence.",
+    quote:
+      abCms.founder?.quote ??
+      "Your next job shouldn't depend on who you know. It should depend on how well we prepare you.",
+  };
 
   return (
-    <>
-      <video
-        ref={videoRef}
-        className="pv-video"
-        src={src}
-        loop
-        playsInline
-        preload="auto"
-        aria-label={ariaLabel}
-      />
-      <AnimatePresence>
-        {isPlaying && (
-          <motion.div
-            className="pv-live-pulse"
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.3 }}
-          >
-            <span className="pv-live-dot" />
-            LIVE
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
-}
+    <PageLayout>
+      <style dangerouslySetInnerHTML={{ __html: ABOUT_STYLES }} />
 
-export default function Services({ cms = {} }: { cms?: Cms }) {
-  const [active, setActive] = useState(0);
-  const current = VERTICALS[active];
-  const Icon = current.icon;
+      <main className="ab-page">
+        {/* ── Hero ── */}
+        <section className="ab-section ab-section--hero">
+          <span className="ab-orb ab-orb--blue" aria-hidden />
+          <span className="ab-orb ab-orb--orange" aria-hidden />
 
-  const tagline = cms['hp:servicesTagline'] ?? 'What We Do';
-  const title =
-    cms['hp:servicesTitle'] ?? 'One Platform. Two Powerful Verticals.';
-  const subtitle =
-    cms['hp:servicesSubtitle'] ??
-    'Both Designed Around Your Growth — Not Our Revenue.';
+          <div className="ab-container">
+            <div className="ab-hero-grid">
+              <div className="ab-hero-copy ab-reveal">
+                <nav className="ab-breadcrumb" aria-label="Breadcrumb">
+                  <a href="/">Home</a>
+                  <span>›</span>
+                  <span style={{ color: '#374151' }}>About Us</span>
+                </nav>
 
-  /* ---------------- 3D tilt for the media card ---------------- */
-  const cardRef = useRef<HTMLDivElement>(null);
-  const mvX = useMotionValue(0);
-  const mvY = useMotionValue(0);
-  const rotateX = useSpring(useTransform(mvY, [-0.5, 0.5], [9, -9]), {
-    stiffness: 220,
-    damping: 22,
-  });
-  const rotateY = useSpring(useTransform(mvX, [-0.5, 0.5], [-9, 9]), {
-    stiffness: 220,
-    damping: 22,
-  });
-  const glowX = useTransform(mvX, [-0.5, 0.5], ['0%', '100%']);
-  const glowY = useTransform(mvY, [-0.5, 0.5], ['0%', '100%']);
-
-  const handleCardMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      const rect = cardRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      mvX.set((e.clientX - rect.left) / rect.width - 0.5);
-      mvY.set((e.clientY - rect.top) / rect.height - 0.5);
-    },
-    [mvX, mvY],
-  );
-
-  const handleCardLeave = useCallback(() => {
-    mvX.set(0);
-    mvY.set(0);
-  }, [mvX, mvY]);
-
-  /* ---------------- Magnetic CTA button ---------------- */
-  const ctaWrapRef = useRef<HTMLDivElement>(null);
-  const ctaX = useSpring(0, { stiffness: 300, damping: 20 });
-  const ctaY = useSpring(0, { stiffness: 300, damping: 20 });
-
-  const handleCtaMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      const rect = ctaWrapRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const relX = e.clientX - rect.left - rect.width / 2;
-      const relY = e.clientY - rect.top - rect.height / 2;
-      ctaX.set(relX * 0.22);
-      ctaY.set(relY * 0.32);
-    },
-    [ctaX, ctaY],
-  );
-
-  const handleCtaLeave = useCallback(() => {
-    ctaX.set(0);
-    ctaY.set(0);
-  }, [ctaX, ctaY]);
-
-  const glowStyle = {
-    '--gx': glowX,
-    '--gy': glowY,
-  } as CSSProperties;
-
-  return (
-    <section className="pv-section" data-active={current.id} id="services">
-      <style jsx>{`
-        .pv-section {
-          position: relative;
-          padding: clamp(64px, 8vw, 104px) clamp(20px, 4vw, 40px);
-          background: #fffbf4;
-          overflow: hidden;
-        }
-
-        /* ── Animated background ── */
-        .pv-bg {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          z-index: 0;
-        }
-        .pv-bg-layer {
-          position: absolute;
-          inset: 0;
-        }
-        .pv-bg-layer--cap {
-          background: radial-gradient(
-              ellipse 60% 50% at 85% 10%,
-              rgba(249, 115, 22, 0.14),
-              transparent 65%
-            ),
-            radial-gradient(
-              ellipse 45% 40% at 5% 90%,
-              rgba(249, 115, 22, 0.08),
-              transparent 60%
-            );
-        }
-        .pv-bg-layer--study {
-          background: radial-gradient(
-              ellipse 60% 50% at 85% 10%,
-              rgba(37, 99, 235, 0.14),
-              transparent 65%
-            ),
-            radial-gradient(
-              ellipse 45% 40% at 5% 90%,
-              rgba(37, 99, 235, 0.08),
-              transparent 60%
-            );
-        }
-        .pv-orb {
-          position: absolute;
-          border-radius: 50%;
-          filter: blur(54px);
-          opacity: 0.32;
-          pointer-events: none;
-          transition: background 0.6s ease;
-        }
-        .pv-orb-1 {
-          width: 280px;
-          height: 280px;
-          top: -60px;
-          right: 8%;
-          animation: pv-float-1 9s ease-in-out infinite;
-        }
-        .pv-orb-2 {
-          width: 200px;
-          height: 200px;
-          bottom: -40px;
-          left: 4%;
-          animation: pv-float-2 11s ease-in-out infinite;
-        }
-        @keyframes pv-float-1 {
-          0%,
-          100% {
-            transform: translate(0, 0) scale(1);
-          }
-          50% {
-            transform: translate(-24px, 30px) scale(1.08);
-          }
-        }
-        @keyframes pv-float-2 {
-          0%,
-          100% {
-            transform: translate(0, 0) scale(1);
-          }
-          50% {
-            transform: translate(20px, -24px) scale(1.1);
-          }
-        }
-        .pv-grain {
-          position: absolute;
-          inset: 0;
-          opacity: 0.02;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-          mix-blend-mode: overlay;
-          pointer-events: none;
-        }
-
-        .pv-wrap {
-          position: relative;
-          z-index: 1;
-          max-width: 1220px;
-          margin: 0 auto;
-        }
-
-        .pv-header {
-          text-align: center;
-          max-width: 640px;
-          margin: 0 auto clamp(28px, 4vw, 40px);
-        }
-        .pv-kicker {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 12px;
-          font-weight: 700;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: #94a3b8;
-          margin: 0 0 12px;
-        }
-        .pv-kicker :global(svg) {
-          animation: pv-spin-slow 6s linear infinite;
-        }
-        @keyframes pv-spin-slow {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-        .pv-title {
-          font-family: Inter, var(--font), sans-serif;
-          font-size: clamp(1.85rem, 3.4vw, 2.65rem);
-          font-weight: 600;
-          letter-spacing: -0.03em;
-          line-height: 1.14;
-          color: #181229;
-          margin: 0 0 12px;
-        }
-        .pv-sub {
-          font-size: clamp(14px, 1.3vw, 16px);
-          line-height: 1.6;
-          color: #64748b;
-          margin: 0;
-        }
-
-        /* ── Toggle ─────────────────────────────────────── */
-        .pv-tabs-wrap {
-          display: flex;
-          justify-content: center;
-          margin-bottom: clamp(36px, 5vw, 52px);
-        }
-        .pv-tabs {
-          position: relative;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          width: min(100%, 320px);
-          min-height: 56px;
-          padding: 4px;
-          border-radius: 999px;
-          background: linear-gradient(
-            90deg,
-            #a8d8f8 0%,
-            #d5c8f5 50%,
-            #f8c9a8 100%
-          );
-          background-size: 200% 100%;
-          animation: pv-gradient-shift 6s ease infinite;
-          isolation: isolate;
-          box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-        }
-        @keyframes pv-gradient-shift {
-          0%,
-          100% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-        }
-        .pv-tabs::before {
-          content: '';
-          position: absolute;
-          inset: 4px;
-          border-radius: 999px;
-          background: #fffbf4;
-          z-index: 0;
-        }
-        .pv-tabs-indicator {
-          position: absolute;
-          z-index: 1;
-          top: 8px;
-          bottom: 8px;
-          left: 8px;
-          width: calc(50% - 16px);
-          border-radius: 999px;
-          background: #0a1225;
-          transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-          transform: translateX(0);
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-          overflow: hidden;
-        }
-        .pv-tabs-indicator::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.16),
-            transparent
-          );
-          background-size: 200% 100%;
-          animation: pv-shimmer 2.6s linear infinite;
-        }
-        @keyframes pv-shimmer {
-          0% {
-            background-position: -100% 0;
-          }
-          100% {
-            background-position: 200% 0;
-          }
-        }
-        .pv-tabs.is-right .pv-tabs-indicator {
-          transform: translateX(calc(100% + 16px));
-        }
-        .pv-tab {
-          position: relative;
-          z-index: 2;
-          border: none;
-          cursor: pointer;
-          background: transparent;
-          color: #0a0a0a;
-          font-family: var(--font);
-          font-size: 14px;
-          font-weight: 600;
-          border-radius: 999px;
-          padding: 10px 6px;
-          transition: color 0.25s ease, transform 0.2s ease;
-        }
-        .pv-tab:hover {
-          transform: scale(1.03);
-        }
-        .pv-tab.is-active {
-          color: #fff;
-        }
-        .pv-tab:focus-visible {
-          outline: 2px solid #2563eb;
-          outline-offset: 2px;
-        }
-
-        /* ── Split layout ───────────────────────────────── */
-        .pv-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: clamp(32px, 5vw, 64px);
-          align-items: center;
-        }
-
-        .pv-copy {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-        }
-        .pv-copy-eyebrow {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 7px 14px 7px 10px;
-          border-radius: 999px;
-          font-size: 12px;
-          font-weight: 700;
-          letter-spacing: 0.04em;
-          margin-bottom: 18px;
-          transition: background 0.4s ease, color 0.4s ease;
-        }
-        .pv-copy-eyebrow-icon {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          position: relative;
-        }
-        .pv-copy-eyebrow-icon::after {
-          content: '';
-          position: absolute;
-          inset: -4px;
-          border-radius: 50%;
-          border: 1.5px solid currentColor;
-          opacity: 0.5;
-          animation: pv-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-        }
-        @keyframes pv-ping {
-          0% {
-            transform: scale(1);
-            opacity: 0.5;
-          }
-          75%,
-          100% {
-            transform: scale(1.7);
-            opacity: 0;
-          }
-        }
-        .pv-headline {
-          font-family: Inter, var(--font), sans-serif;
-          font-size: clamp(1.65rem, 2.8vw, 2.25rem);
-          font-weight: 700;
-          letter-spacing: -0.03em;
-          line-height: 1.18;
-          color: #0f172a;
-          margin: 0 0 16px;
-          max-width: 20ch;
-        }
-        .pv-desc {
-          font-size: 15px;
-          line-height: 1.7;
-          color: #4b5563;
-          margin: 0 0 26px;
-          max-width: 46ch;
-        }
-        .pv-bullets {
-          list-style: none;
-          margin: 0 0 30px;
-          padding: 0;
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          width: 100%;
-        }
-        .pv-bullet {
-          display: flex;
-          align-items: flex-start;
-          gap: 10px;
-          font-size: 14.5px;
-          font-weight: 500;
-          color: #334155;
-          line-height: 1.5;
-        }
-        .pv-bullet-check {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          flex-shrink: 0;
-          margin-top: 1px;
-        }
-
-        .pv-stats {
-          display: flex;
-          gap: clamp(20px, 3vw, 32px);
-          margin-bottom: 30px;
-          padding-top: 22px;
-          border-top: 1px solid rgba(15, 23, 42, 0.08);
-          width: 100%;
-        }
-        .pv-stat strong {
-          display: block;
-          font-family: Inter, var(--font), sans-serif;
-          font-size: clamp(1.35rem, 2.2vw, 1.7rem);
-          font-weight: 800;
-          letter-spacing: -0.02em;
-          line-height: 1;
-        }
-        .pv-stat span {
-          display: block;
-          margin-top: 6px;
-          font-size: 11.5px;
-          font-weight: 600;
-          color: #94a3b8;
-          letter-spacing: 0.02em;
-        }
-
-        .pv-cta-wrap {
-          display: inline-block;
-        }
-        .pv-cta {
-          position: relative;
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          padding: 14px 24px;
-          border-radius: 999px;
-          background: #0a0a0a;
-          color: #fff !important;
-          font-size: 14.5px;
-          font-weight: 700;
-          text-decoration: none;
-          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
-          overflow: hidden;
-          transition: box-shadow 0.25s ease;
-        }
-        .pv-cta:hover {
-          box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
-        }
-        .pv-cta::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.18),
-            transparent
-          );
-          transform: translateX(-100%);
-          transition: transform 0.6s ease;
-        }
-        .pv-cta:hover::before {
-          transform: translateX(100%);
-        }
-        .pv-cta-icon {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 26px;
-          height: 26px;
-          border-radius: 50%;
-          background: rgba(255, 255, 255, 0.16);
-          position: relative;
-          z-index: 1;
-          transition: transform 0.25s ease;
-        }
-        .pv-cta:hover .pv-cta-icon {
-          transform: translateX(3px);
-        }
-        .pv-cta > span:not(.pv-cta-icon) {
-          position: relative;
-          z-index: 1;
-        }
-
-        /* ── Video card (right) ─────────────────────────── */
-        .pv-media {
-          position: relative;
-          display: flex;
-          justify-content: center;
-          perspective: 1400px;
-        }
-        .pv-media-card {
-          position: relative;
-          width: 100%;
-          max-width: 460px;
-          border-radius: 32px;
-          padding: 14px;
-          background: linear-gradient(145deg, #020617 0%, #0f172a 100%);
-          border: 1px solid rgba(255, 255, 255, 0.14);
-          box-shadow: 0 30px 70px -20px rgba(15, 23, 42, 0.45);
-          transform-style: preserve-3d;
-          cursor: pointer;
-        }
-        .pv-media-glow {
-          position: absolute;
-          inset: -2px;
-          border-radius: 34px;
-          padding: 2px;
-          background: radial-gradient(
-            circle at var(--gx, 50%) var(--gy, 50%),
-            currentColor,
-            transparent 60%
-          );
-          opacity: 0.5;
-          pointer-events: none;
-          z-index: -1;
-          filter: blur(2px);
-        }
-        .pv-media-toolbar {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 2px 6px 12px;
-        }
-        .pv-media-dots {
-          display: flex;
-          gap: 6px;
-        }
-        .pv-media-dots span {
-          width: 8px;
-          height: 8px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.34);
-        }
-        .pv-media-label {
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-          color: rgba(255, 255, 255, 0.65);
-        }
-        .pv-media-stage {
-          position: relative;
-          overflow: hidden;
-          border-radius: 24px;
-          background: #000;
-          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-        }
-        .pv-video {
-          display: block;
-          width: 100%;
-          height: 100%;
-          aspect-ratio: 3 / 4;
-          object-fit: cover;
-          border-radius: inherit;
-          background: #000;
-        }
-        .pv-live-pulse {
-          position: absolute;
-          top: 14px;
-          left: 14px;
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 5px 10px;
-          border-radius: 999px;
-          background: rgba(0, 0, 0, 0.5);
-          backdrop-filter: blur(6px);
-          font-size: 10px;
-          font-weight: 800;
-          letter-spacing: 0.08em;
-          color: #fff;
-        }
-        .pv-live-dot {
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: #ef4444;
-          animation: pv-live-blink 1.4s ease-in-out infinite;
-        }
-        @keyframes pv-live-blink {
-          0%,
-          100% {
-            opacity: 1;
-            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
-          }
-          50% {
-            opacity: 0.4;
-            box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
-          }
-        }
-        .pv-media-overlay {
-          position: absolute;
-          left: 14px;
-          right: 14px;
-          bottom: 14px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 12px 14px;
-          border-radius: 16px;
-          background: linear-gradient(
-            180deg,
-            rgba(2, 6, 23, 0.1),
-            rgba(2, 6, 23, 0.78)
-          );
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          color: #fff;
-        }
-        .pv-media-overlay-icon {
-          flex-shrink: 0;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 34px;
-          height: 34px;
-          border-radius: 12px;
-          background: rgba(255, 255, 255, 0.14);
-        }
-        .pv-media-overlay strong {
-          display: block;
-          font-size: 13px;
-          font-weight: 700;
-          line-height: 1.3;
-        }
-        .pv-media-overlay span {
-          display: block;
-          margin-top: 2px;
-          font-size: 11px;
-          color: rgba(255, 255, 255, 0.65);
-        }
-
-        .pv-media-badge {
-          position: absolute;
-          top: -14px;
-          right: 18px;
-          z-index: 3;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 9px 14px;
-          border-radius: 999px;
-          background: #fff;
-          border: 1px solid rgba(15, 23, 42, 0.08);
-          box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
-          font-size: 12.5px;
-          font-weight: 700;
-          color: #0f172a;
-        }
-        .pv-media-badge-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          animation: pv-live-blink 1.6s ease-in-out infinite;
-        }
-
-        .pv-float-chip {
-          position: absolute;
-          z-index: 4;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 10px 14px;
-          border-radius: 16px;
-          background: rgba(255, 255, 255, 0.92);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(15, 23, 42, 0.06);
-          box-shadow: 0 16px 34px rgba(15, 23, 42, 0.14);
-          font-size: 12px;
-          font-weight: 700;
-          color: #0f172a;
-        }
-        .pv-float-chip--left {
-          bottom: 32px;
-          left: -18px;
-        }
-
-        @media (max-width: 900px) {
-          .pv-grid {
-            grid-template-columns: 1fr;
-            gap: 40px;
-          }
-          .pv-copy {
-            align-items: center;
-            text-align: center;
-          }
-          .pv-bullets {
-            align-items: center;
-          }
-          .pv-bullet {
-            text-align: left;
-          }
-          .pv-stats {
-            justify-content: center;
-          }
-          .pv-media {
-            order: -1;
-          }
-          .pv-media-card {
-            max-width: 380px;
-          }
-          .pv-float-chip {
-            display: none;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .pv-stats {
-            gap: 18px;
-          }
-          .pv-headline {
-            max-width: none;
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .pv-orb-1,
-          .pv-orb-2,
-          .pv-tabs,
-          .pv-tabs-indicator::after,
-          .pv-copy-eyebrow-icon::after,
-          .pv-live-dot,
-          .pv-media-badge-dot,
-          .pv-kicker :global(svg) {
-            animation: none !important;
-          }
-        }
-      `}</style>
-
-      <div className="pv-bg" aria-hidden>
-        <motion.div
-          className="pv-bg-layer pv-bg-layer--cap"
-          initial={false}
-          animate={{ opacity: active === 0 ? 1 : 0 }}
-          transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
-        />
-        <motion.div
-          className="pv-bg-layer pv-bg-layer--study"
-          initial={false}
-          animate={{ opacity: active === 1 ? 1 : 0 }}
-          transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
-        />
-        <div className="pv-orb pv-orb-1" style={{ background: current.accent }} />
-        <div className="pv-orb pv-orb-2" style={{ background: current.accent }} />
-        <div className="pv-grain" />
-      </div>
-
-      <div className="pv-wrap">
-        <FadeUp className="pv-header">
-          <p className="pv-kicker">
-            <Sparkles size={13} strokeWidth={2.5} />
-            {tagline}
-          </p>
-          <h2 className="pv-title">{title}</h2>
-          <p className="pv-sub">{subtitle}</p>
-        </FadeUp>
-
-        <div className="pv-tabs-wrap">
-          <div
-            className={`pv-tabs${active === 1 ? ' is-right' : ''}`}
-            role="tablist"
-            aria-label="Placedly verticals"
-          >
-            <span className="pv-tabs-indicator" aria-hidden />
-            {VERTICALS.map((v, i) => (
-              <motion.button
-                key={v.id}
-                type="button"
-                role="tab"
-                aria-selected={active === i}
-                className={`pv-tab${active === i ? ' is-active' : ''}`}
-                onClick={() => setActive(i)}
-                whileTap={{ scale: 0.95 }}
-              >
-                {v.tabLabel}
-              </motion.button>
-            ))}
-          </div>
-        </div>
-
-        <div className="pv-grid">
-          {/* ── Left: copy ── */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={current.id}
-              className="pv-copy"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -14 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <motion.span
-                className="pv-copy-eyebrow"
-                style={{ background: current.accentSoft, color: current.accent }}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.05, duration: 0.4 }}
-              >
-                <span
-                  className="pv-copy-eyebrow-icon"
-                  style={{ background: current.accent, color: '#fff' }}
-                >
-                  <Icon size={12} strokeWidth={2.5} />
-                </span>
-                {current.eyebrow}
-              </motion.span>
-
-              <motion.h3
-                className="pv-headline"
-                initial={{ opacity: 0, y: 22 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  delay: 0.1,
-                  duration: 0.5,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
-                {current.headline}
-              </motion.h3>
-
-              <motion.p
-                className="pv-desc"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.18, duration: 0.4 }}
-              >
-                {current.description}
-              </motion.p>
-
-              <ul className="pv-bullets">
-                {current.bullets.map((b, i) => (
-                  <motion.li
-                    key={b}
-                    className="pv-bullet"
-                    initial={{ opacity: 0, x: -14 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{
-                      delay: 0.24 + i * 0.06,
-                      duration: 0.35,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
-                  >
-                    <span
-                      className="pv-bullet-check"
-                      style={{ background: current.accentSoft }}
-                    >
-                      <CheckCircle2
-                        size={13}
-                        strokeWidth={2.5}
-                        color={current.accent}
-                      />
-                    </span>
-                    {b}
-                  </motion.li>
-                ))}
-              </ul>
-
-              <motion.div
-                className="pv-stats"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.4 }}
-              >
-                {current.stats.map((s) => (
-                  <div key={s.label} className="pv-stat">
-                    <strong style={{ color: current.accent }}>
-                      <AnimatedCounter target={s.numeric} suffix={s.suffix} />
-                    </strong>
-                    <span>{s.label}</span>
-                  </div>
-                ))}
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.58, duration: 0.4 }}
-              >
-                <motion.div
-                  ref={ctaWrapRef}
-                  className="pv-cta-wrap"
-                  style={{ x: ctaX, y: ctaY }}
-                  onMouseMove={handleCtaMove}
-                  onMouseLeave={handleCtaLeave}
-                >
-                  <Link href={current.ctaHref} className="pv-cta">
-                    <span>{current.ctaLabel}</span>
-                    <span className="pv-cta-icon">
-                      <ArrowRight size={14} strokeWidth={2.5} />
-                    </span>
-                  </Link>
-                </motion.div>
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* ── Right: video card ── */}
-          <div className="pv-media">
-            <motion.div
-              className="pv-media-badge"
-              style={{ color: current.accent }}
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                delay: 0.3,
-                type: 'spring',
-                stiffness: 260,
-                damping: 20,
-              }}
-            >
-              <span
-                className="pv-media-badge-dot"
-                style={{ background: current.accent }}
-              />
-              Live walkthrough
-            </motion.div>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={current.id}
-                ref={cardRef}
-                className="pv-media-card"
-                style={{ rotateX, rotateY, color: current.accent }}
-                initial={{ opacity: 0, scale: 0.94, y: 16 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                onMouseMove={handleCardMove}
-                onMouseLeave={handleCardLeave}
-              >
-                <div className="pv-media-glow" style={glowStyle} />
-
-                <div className="pv-media-toolbar">
-                  <div className="pv-media-dots">
-                    <span />
-                    <span />
-                    <span />
-                  </div>
-                  <span className="pv-media-label">{current.tabLabel}</span>
+                <div className="ab-eyebrow">
+                  <Sparkles size={13} />
+                  Our Story
                 </div>
 
-                <div className="pv-media-stage">
-                  <VerticalScrollVideo
-                    src={current.videoSrc}
-                    ariaLabel={current.ariaLabel}
-                  />
+                <h1 className="ab-hero-title">
+                  We&apos;re Not Just a
+                  <br />
+                  Placement Agency.
+                  <br />
+                  <span className="ab-gradient-text">We&apos;re Career Partners.</span>
+                </h1>
 
-                  <div className="pv-media-overlay">
-                    <span
-                      className="pv-media-overlay-icon"
-                      style={{
-                        background: current.accentSoft,
-                        color: current.accent,
-                      }}
-                    >
-                      <Icon size={16} strokeWidth={2.5} />
-                    </span>
-                    <div>
-                      <strong>{current.eyebrow}</strong>
-                      <span>Watch how it works, end to end</span>
+                <p className="ab-hero-sub">
+                  Born in Delhi NCR. Built for every professional who deserves
+                  better — a better role, a better salary, and a career that
+                  actually reflects their potential.
+                </p>
+
+                <div className="ab-actions">
+                  <a href="/contact" className="ab-btn ab-btn--primary">
+                    <Rocket size={16} />
+                    Start Your Journey
+                  </a>
+                  <a href="#our-story" className="ab-btn ab-btn--ghost">
+                    Read Our Story
+                    <ArrowRight size={16} />
+                  </a>
+                </div>
+              </div>
+
+              <div className="ab-hero-visual ab-reveal" style={{ '--ab-delay': '120ms' } as CssVars}>
+                <div className="ab-hero-card">
+                  <div className="ab-hero-card-top">
+                    <div className="ab-window-dots" aria-hidden>
+                      <span />
+                      <span />
+                      <span />
+                    </div>
+                    <span className="ab-hero-card-label">Placedly impact</span>
+                  </div>
+
+                  <div className="ab-hero-img">
+                    <img src="/img/team.png" alt="Placedly team" />
+                  </div>
+
+                  <div className="ab-hero-mini-grid">
+                    <div className="ab-hero-mini">
+                      <strong>300+</strong>
+                      <span>Careers transformed</span>
+                    </div>
+                    <div className="ab-hero-mini">
+                      <strong>₹0</strong>
+                      <span>Upfront fee</span>
                     </div>
                   </div>
                 </div>
 
-                <motion.div
-                  className="pv-float-chip pv-float-chip--left"
-                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{
-                    delay: 0.4,
-                    type: 'spring',
-                    stiffness: 240,
-                    damping: 18,
-                  }}
+                <div className="ab-floating-proof ab-floating-proof--one">
+                  <div className="ab-floating-icon" style={{ background: '#eff6ff' }}>
+                    <Trophy size={18} color="#2145fb" />
+                  </div>
+                  <div>
+                    <strong>40%</strong>
+                    <span>Avg. Salary Hike</span>
+                  </div>
+                </div>
+
+                <div className="ab-floating-proof ab-floating-proof--two">
+                  <div className="ab-floating-icon" style={{ background: '#f0fdf4' }}>
+                    <Handshake size={18} color="#16a34a" />
+                  </div>
+                  <div>
+                    <strong>50+</strong>
+                    <span>Hiring Partners</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="ab-stats ab-reveal" style={{ '--ab-delay': '220ms' } as CssVars}>
+              {stats.map((s, i) => (
+                <div
+                  key={`${s.num}-${s.label}`}
+                  className="ab-stat"
+                  style={{ '--ab-delay': `${i * 170}ms` } as CssVars}
                 >
-                  <Play
-                    size={12}
-                    fill={current.accent}
-                    color={current.accent}
-                  />
-                  Autoplaying preview
-                </motion.div>
-              </motion.div>
-            </AnimatePresence>
+                  <div className="ab-stat-num">{s.num}</div>
+                  <div className="ab-stat-label">{s.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
+
+        {/* ── Mission ── */}
+        <section className="ab-section" id="our-story">
+          <div className="ab-container">
+            <div className="ab-two-col">
+              <div className="ab-reveal">
+                <div className="ab-eyebrow">Our Mission</div>
+
+                <h2 className="ab-section-title">
+                  Making Career Growth{' '}
+                  <span style={{ color: '#2145fb' }}>Accessible</span> for Everyone
+                </h2>
+
+                <p className="ab-copy">
+                  Placedly was founded with one deeply held belief: exceptional
+                  careers shouldn&apos;t be a privilege reserved for people with
+                  the right connections. Every professional deserves expert
+                  guidance, real employer access, and a fair shot at the role
+                  they want.
+                </p>
+
+                <p className="ab-copy ab-copy--dark">
+                  We operate on a simple model:{' '}
+                  <strong>zero upfront, success-share only.</strong> Career
+                  Assistance Fee of 12% of CTC — collected only after you receive
+                  your offer letter. If we don&apos;t place you, you don&apos;t pay.
+                </p>
+
+                <div style={{ marginTop: 30 }}>
+                  <a href="/contact" className="ab-btn ab-btn--primary">
+                    Talk to Our Team
+                    <ArrowRight size={16} />
+                  </a>
+                </div>
+              </div>
+
+              <div className="ab-mission-visual ab-reveal" style={{ '--ab-delay': '120ms' } as CssVars}>
+                <div className="ab-img-card ab-img-card--primary">
+                  <img src="/img/team.png" alt="Placedly Team" />
+                </div>
+
+                <div className="ab-img-card ab-img-card--secondary">
+                  <img src="/img/aboutt us consultancy.png" alt="Consultancy" />
+                </div>
+
+                <div className="ab-floating-proof ab-floating-proof--one">
+                  <div className="ab-floating-icon" style={{ background: '#eff6ff' }}>
+                    <Trophy size={18} color="#2145fb" />
+                  </div>
+                  <div>
+                    <strong>300+</strong>
+                    <span>Careers Transformed</span>
+                  </div>
+                </div>
+
+                <div className="ab-floating-proof ab-floating-proof--two">
+                  <div className="ab-floating-icon" style={{ background: '#f0fdf4' }}>
+                    <Handshake size={18} color="#16a34a" />
+                  </div>
+                  <div>
+                    <strong>50+</strong>
+                    <span>Hiring Partners</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Values ── */}
+        <section className="ab-section ab-section--alt">
+          <div className="ab-container">
+            <div className="ab-center ab-reveal">
+              <div className="ab-eyebrow">What We Stand For</div>
+              <h2 className="ab-section-title">
+                The Principles That{' '}
+                <span style={{ color: '#2145fb' }}>Drive Us</span>
+              </h2>
+            </div>
+
+            <div className="ab-values-grid">
+              {values.map((v, index) => (
+                <div
+                  key={v.title}
+                  className="ab-value-card ab-reveal"
+                  style={
+                    {
+                      '--ab-color': v.color,
+                      '--ab-bg': v.bg,
+                      '--ab-delay': `${index * 80}ms`,
+                    } as CssVars
+                  }
+                >
+                  <div className="ab-value-icon">
+                    <v.Icon size={22} />
+                  </div>
+                  <div className="ab-value-title">{v.title}</div>
+                  <div className="ab-value-desc">{v.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Timeline ── */}
+        <section className="ab-section">
+          <div className="ab-container">
+            <div className="ab-two-col" style={{ alignItems: 'start' }}>
+              <div className="ab-reveal">
+                <div className="ab-eyebrow">Our Journey</div>
+                <h2 className="ab-section-title">
+                  From Startup to{' '}
+                  <span style={{ color: '#2145fb' }}>300+ Placements</span>
+                </h2>
+                <p className="ab-copy">
+                  Every milestone was earned the hard way — one candidate at a
+                  time, one employer relationship at a time.
+                </p>
+              </div>
+
+              <div className="ab-timeline">
+                {timeline.map((item, i) => (
+                  <div
+                    key={`${item.year}-${item.title}`}
+                    className="ab-timeline-item ab-reveal"
+                    style={{ '--ab-delay': `${i * 90}ms` } as CssVars}
+                  >
+                    <div
+                      className="ab-timeline-node"
+                      style={{ '--ab-delay': `${i * 180}ms` } as CssVars}
+                    >
+                      {i + 1}
+                    </div>
+
+                    <div className="ab-timeline-card">
+                      <div className="ab-timeline-year">{item.year}</div>
+                      <div className="ab-timeline-title">{item.title}</div>
+                      <div className="ab-timeline-desc">{item.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Leadership ── */}
+        <section className="ab-section ab-section--alt">
+          <div className="ab-container">
+            <div className="ab-center ab-reveal">
+              <div className="ab-eyebrow">Leadership</div>
+              <h2 className="ab-section-title">The Person Behind Placedly</h2>
+            </div>
+
+            <div className="ab-founder-card ab-reveal">
+              <div className="ab-founder-img">
+                <img src="/img/at founder part.png" alt="Founder" />
+              </div>
+
+              <div>
+                <div className="ab-founder-name">{founder.name}</div>
+                <div className="ab-founder-role">{founder.role}</div>
+
+                <p className="ab-copy" style={{ marginBottom: 0 }}>
+                  {founder.bio}
+                </p>
+
+                <div className="ab-quote">
+                  <Quote size={20} />
+                  &ldquo;{founder.quote}&rdquo;
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── CTA ── */}
+        <section className="ab-section">
+          <div className="ab-container">
+            <div className="ab-dark-cta ab-reveal">
+              <h2>
+                Ready to Write Your{' '}
+                <span className="ab-gradient-text">Success Story?</span>
+              </h2>
+              <p>
+                Join 300+ professionals who trusted Placedly to transform their
+                career. Zero upfront — you only pay after you&apos;re placed.
+              </p>
+
+              <div className="ab-actions" style={{ justifyContent: 'center', marginBottom: 0 }}>
+                <a href="/contact" className="ab-btn ab-btn--orange">
+                  <Rocket size={16} />
+                  Get Placed Now
+                </a>
+                <a href="/study-visa" className="ab-btn ab-btn--ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.24)', background: 'rgba(255,255,255,.06)' }}>
+                  <Plane size={16} />
+                  Study Abroad
+                </a>
+              </div>
+
+              <div
+                style={{
+                  position: 'relative',
+                  zIndex: 1,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  marginTop: 26,
+                  color: 'rgba(255,255,255,.55)',
+                  fontSize: 12,
+                  fontWeight: 650,
+                }}
+              >
+                <CheckCircle2 size={14} color="#22c55e" />
+                Zero upfront. Advisor-led. Outcome-focused.
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </PageLayout>
   );
 }
