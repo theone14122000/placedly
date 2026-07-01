@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import Link from 'next/link';
 import {
   BadgeCheck,
@@ -88,7 +88,7 @@ const STUDY_DEFAULTS = [
 ];
 
 /* ─────────────────────────────────────────────────────────────────
-   VISUAL COMPONENTS (Unchanged, clean & reusable)
+   SHARED VISUAL ATOMS
 ───────────────────────────────────────────────────────────────── */
 function MockCard({
   children,
@@ -113,13 +113,7 @@ function MockCard({
   );
 }
 
-function Tag({
-  children,
-  color = '#f97316',
-}: {
-  children: React.ReactNode;
-  color?: string;
-}) {
+function Tag({ children, color = '#f97316' }: { children: React.ReactNode; color?: string }) {
   return (
     <span
       style={{
@@ -171,13 +165,7 @@ function Avatar({
   );
 }
 
-function VisualShell({
-  gradient,
-  children,
-}: {
-  gradient: string;
-  children: React.ReactNode;
-}) {
+function VisualShell({ gradient, children }: { gradient: string; children: React.ReactNode }) {
   return (
     <div
       style={{
@@ -196,26 +184,16 @@ function VisualShell({
     >
       <div
         style={{
-          position: 'absolute',
-          top: -40,
-          right: -40,
-          width: 140,
-          height: 140,
-          borderRadius: '50%',
-          background: 'rgba(255,255,255,0.12)',
-          pointerEvents: 'none',
+          position: 'absolute', top: -40, right: -40,
+          width: 140, height: 140, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.12)', pointerEvents: 'none',
         }}
       />
       <div
         style={{
-          position: 'absolute',
-          bottom: -30,
-          left: -30,
-          width: 100,
-          height: 100,
-          borderRadius: '50%',
-          background: 'rgba(255,255,255,0.08)',
-          pointerEvents: 'none',
+          position: 'absolute', bottom: -30, left: -30,
+          width: 100, height: 100, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.08)', pointerEvents: 'none',
         }}
       />
       <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 320 }}>
@@ -225,7 +203,7 @@ function VisualShell({
   );
 }
 
-/* Career Visuals */
+/* ── Career visuals ── */
 function VisualCareer1() {
   return (
     <VisualShell gradient="linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)">
@@ -308,7 +286,7 @@ function VisualCareer3() {
         <p style={{ fontSize: 20, fontWeight: 800, color: '#0f172a', margin: '0 0 16px', letterSpacing: '-0.02em' }}>
           Offer Letter · ₹9.2 LPA
         </p>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: -6, marginBottom: 12 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
           {['P', 'A', 'M'].map((l, i) => (
             <div key={l} style={{ marginLeft: i === 0 ? 0 : -8, zIndex: 3 - i }}>
               <Avatar size={32} color={['#f97316','#2563eb','#7c3aed'][i]} letter={l} />
@@ -331,7 +309,7 @@ function VisualCareer3() {
   );
 }
 
-/* Study Visuals */
+/* ── Study visuals ── */
 function VisualStudy1() {
   return (
     <VisualShell gradient="linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)">
@@ -422,16 +400,30 @@ function VisualStudy3() {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   TAB META & BUILD
+   TAB META (flat, ordered career → study)
 ───────────────────────────────────────────────────────────────── */
-const TAB_META = [
+const TAB_META: {
+  id: string;
+  label: string;
+  Icon: LucideIcon;
+  accent: string;
+  category: 'career' | 'study';
+  step: number;
+  cmsKey: string;
+  defaultIndex: number;
+  defaults: typeof CAREER_DEFAULTS;
+  Visual: () => React.ReactNode;
+}[] = [
   { id: 'consult', label: 'Free Session', Icon: Users, accent: '#f97316', category: 'career', step: 1, cmsKey: '1', defaultIndex: 0, defaults: CAREER_DEFAULTS, Visual: VisualCareer1 },
   { id: 'prep', label: 'Interview Prep', Icon: FileText, accent: '#f59e0b', category: 'career', step: 2, cmsKey: '3', defaultIndex: 1, defaults: CAREER_DEFAULTS, Visual: VisualCareer2 },
   { id: 'offer', label: 'Offer & Fee', Icon: BadgeCheck, accent: '#16a34a', category: 'career', step: 3, cmsKey: '5', defaultIndex: 2, defaults: CAREER_DEFAULTS, Visual: VisualCareer3 },
   { id: 'counsel', label: 'Counselling', Icon: GraduationCap, accent: '#2563eb', category: 'study', step: 1, cmsKey: 'Study1', defaultIndex: 0, defaults: STUDY_DEFAULTS, Visual: VisualStudy1 },
   { id: 'apply', label: 'Applications', Icon: Send, accent: '#7c3aed', category: 'study', step: 2, cmsKey: 'Study2', defaultIndex: 1, defaults: STUDY_DEFAULTS, Visual: VisualStudy2 },
   { id: 'visa', label: 'Visa Support', Icon: Plane, accent: '#0891b2', category: 'study', step: 3, cmsKey: 'Study3', defaultIndex: 2, defaults: STUDY_DEFAULTS, Visual: VisualStudy3 },
-] as const;
+];
+
+const CAREER_TOTAL = TAB_META.filter((t) => t.category === 'career').length;
+const STUDY_TOTAL = TAB_META.filter((t) => t.category === 'study').length;
 
 function buildTabs(cms: Cms): TabDef[] {
   return TAB_META.map((meta) => {
@@ -439,7 +431,7 @@ function buildTabs(cms: Cms): TabDef[] {
     const isStudy = meta.cmsKey.startsWith('Study');
     const prefix = isStudy ? 'hp:hiwStudy' : 'hp:hiw';
     const key = isStudy ? meta.cmsKey.replace('Study', '') : meta.cmsKey;
-    const totalSteps = meta.category === 'career' ? 3 : 3;
+    const totalSteps = meta.category === 'career' ? CAREER_TOTAL : STUDY_TOTAL;
 
     return {
       id: meta.id,
@@ -458,118 +450,121 @@ function buildTabs(cms: Cms): TabDef[] {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   AUTO-PLAY HOOK
+   TIMING — 5 to 8 seconds, randomised for organic feel
 ───────────────────────────────────────────────────────────────── */
-function useAutoPlay(
-  items: TabDef[],
-  intervalMs: number,
-  isPaused: boolean,
-) {
-  const [index, setIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const rafRef = useRef<number>(0);
-  const startRef = useRef<number>(0);
+const MIN_DURATION = 5000;
+const MAX_DURATION = 8000;
 
-  useEffect(() => {
-    startRef.current = performance.now();
+function randomDuration() {
+  return MIN_DURATION + Math.random() * (MAX_DURATION - MIN_DURATION);
+}
 
-    const tick = (now: number) => {
-      if (isPaused) {
-        rafRef.current = requestAnimationFrame(tick);
-        return;
-      }
+const PROGRESS_RADIUS = 20;
+const PROGRESS_CIRC = 2 * Math.PI * PROGRESS_RADIUS;
 
-      const elapsed = now - startRef.current;
-      const p = Math.min(elapsed / intervalMs, 1);
-      setProgress(p);
-
-      if (p >= 1) {
-        setIndex((prev) => (prev + 1) % items.length);
-        startRef.current = now;
-        setProgress(0);
-      } else {
-        rafRef.current = requestAnimationFrame(tick);
-      }
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [items.length, intervalMs, isPaused]);
-
-  const goTo = useCallback(
-    (i: number) => {
-      setIndex(((i % items.length) + items.length) % items.length);
-      setProgress(0);
-      startRef.current = performance.now();
-    },
-    [items.length],
+/* ─────────────────────────────────────────────────────────────────
+   CATEGORY SWITCHER — sliding highlight via layoutId
+───────────────────────────────────────────────────────────────── */
+function CategorySwitcher({
+  active,
+  onChange,
+}: {
+  active: 'career' | 'study';
+  onChange: (c: 'career' | 'study') => void;
+}) {
+  return (
+    <LayoutGroup id="category-switcher">
+      <div
+        style={{
+          position: 'relative',
+          display: 'inline-flex',
+          background: 'rgba(15,23,42,0.05)',
+          borderRadius: 999,
+          padding: 4,
+          gap: 2,
+          marginBottom: 24,
+        }}
+      >
+        {(
+          [
+            { id: 'career', label: '💼 Career', color: '#f97316' },
+            { id: 'study', label: '🎓 Study Abroad', color: '#2563eb' },
+          ] as const
+        ).map((cat) => {
+          const isActive = active === cat.id;
+          return (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => onChange(cat.id)}
+              style={{
+                position: 'relative',
+                padding: '8px 20px',
+                borderRadius: 999,
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: '0.01em',
+                background: 'transparent',
+                color: isActive ? cat.color : '#64748b',
+                zIndex: 1,
+                transition: 'color 0.25s ease',
+              }}
+            >
+              {isActive && (
+                <motion.span
+                  layoutId="category-pill"
+                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: 999,
+                    background: '#fff',
+                    boxShadow: '0 2px 8px rgba(15,23,42,0.10)',
+                    zIndex: -1,
+                  }}
+                />
+              )}
+              {cat.label}
+            </button>
+          );
+        })}
+      </div>
+    </LayoutGroup>
   );
-
-  return { index, progress, goTo };
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   COMPONENTS
+   TAB BAR
 ───────────────────────────────────────────────────────────────── */
-function StepIndicator({ tab }: { tab: TabDef }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
-      <div
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          padding: '4px 12px',
-          borderRadius: 999,
-          background: `${tab.accent}14`,
-          border: `1px solid ${tab.accent}30`,
-          fontSize: 11,
-          fontWeight: 700,
-          letterSpacing: '0.08em',
-          color: tab.accent,
-          textTransform: 'uppercase',
-        }}
-      >
-        <span
-          style={{
-            width: 6,
-            height: 6,
-            borderRadius: '50%',
-            background: tab.accent,
-            flexShrink: 0,
-          }}
-        />
-        {tab.category === 'career' ? 'Career' : 'Study Abroad'}
-        {' · '}Step {tab.step} of {tab.totalSteps}
-      </div>
-    </div>
-  );
-}
-
 function TabBar({
   tabs,
-  activeIndex,
+  activeId,
   progress,
+  isPaused,
+  onSelect,
   onPrev,
   onNext,
-  onSelect,
+  onTogglePause,
 }: {
   tabs: TabDef[];
-  activeIndex: number;
+  activeId: string;
   progress: number;
+  isPaused: boolean;
+  onSelect: (id: string) => void;
   onPrev: () => void;
   onNext: () => void;
-  onSelect: (i: number) => void;
+  onTogglePause: () => void;
 }) {
-  const activeTab = tabs[activeIndex];
-  const circumference = 2 * Math.PI * 20;
-  const offset = circumference * (1 - progress);
+  const activeTab = tabs.find((t) => t.id === activeId);
+  const progressOffset = PROGRESS_CIRC * (1 - progress);
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
       <button
         type="button"
-        aria-label="Previous tab"
+        aria-label="Previous step"
         onClick={onPrev}
         style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -577,71 +572,101 @@ function TabBar({
           border: '1px solid rgba(15,23,42,0.10)', background: '#fff',
           cursor: 'pointer', color: '#64748b', flexShrink: 0,
           boxShadow: '0 1px 4px rgba(15,23,42,0.06)',
-          transition: 'all 0.2s ease',
         }}
       >
         <ChevronLeft size={18} strokeWidth={2} />
       </button>
 
-      <div
+      <LayoutGroup id="tab-pills">
+        <div
+          style={{
+            display: 'flex', gap: 6, flex: 1, overflowX: 'auto',
+            scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', padding: '2px 0',
+          }}
+          role="tablist"
+          aria-label="How Placedly works"
+        >
+          {tabs.map((tab) => {
+            const isActive = tab.id === activeId;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => onSelect(tab.id)}
+                style={{
+                  position: 'relative',
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  padding: '8px 14px', borderRadius: 999,
+                  border: isActive ? `1.5px solid ${tab.accent}40` : '1.5px solid rgba(15,23,42,0.08)',
+                  background: 'transparent',
+                  color: isActive ? tab.accent : '#64748b',
+                  fontSize: 13, fontWeight: isActive ? 700 : 500,
+                  cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+                  zIndex: 1,
+                  transition: 'color 0.25s ease, border-color 0.25s ease',
+                }}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="tab-pill-bg"
+                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    style={{
+                      position: 'absolute', inset: 0, borderRadius: 999,
+                      background: `${tab.accent}12`,
+                      boxShadow: `0 0 0 3px ${tab.accent}18`,
+                      zIndex: -1,
+                    }}
+                  />
+                )}
+                <tab.Icon size={14} strokeWidth={2} aria-hidden />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      </LayoutGroup>
+
+      {/* Pause / play toggle */}
+      <button
+        type="button"
+        aria-label={isPaused ? 'Resume autoplay' : 'Pause autoplay'}
+        onClick={onTogglePause}
         style={{
-          display: 'flex', gap: 6, flex: 1, overflowX: 'auto',
-          scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', padding: '2px 0',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: 32, height: 32, borderRadius: '50%',
+          border: '1px solid rgba(15,23,42,0.10)', background: '#fff',
+          cursor: 'pointer', color: '#94a3b8', flexShrink: 0,
         }}
-        role="tablist"
-        aria-label="How Placedly works"
       >
-        {tabs.map((tab, i) => {
-          const isActive = i === activeIndex;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => onSelect(i)}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                padding: '8px 14px', borderRadius: 999,
-                border: isActive ? `1.5px solid ${tab.accent}40` : '1.5px solid rgba(15,23,42,0.08)',
-                background: isActive ? `${tab.accent}12` : '#fff',
-                color: isActive ? tab.accent : '#64748b',
-                fontSize: 13, fontWeight: isActive ? 700 : 500,
-                cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
-                boxShadow: isActive ? `0 0 0 3px ${tab.accent}18` : '0 1px 3px rgba(15,23,42,0.05)',
-                transition: 'all 0.25s cubic-bezier(0.22,1,0.36,1)',
-              }}
-            >
-              <tab.Icon size={14} strokeWidth={2} aria-hidden />
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+        {isPaused ? <Play size={13} strokeWidth={2.5} /> : <Pause size={13} strokeWidth={2.5} />}
+      </button>
 
       <button
         type="button"
-        aria-label="Next tab"
+        aria-label="Next step"
         onClick={onNext}
         style={{
           position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
           width: 40, height: 40, borderRadius: '50%', border: 'none',
-          background: activeTab?.accent ?? '#f97316',
-          cursor: 'pointer', color: '#fff', flexShrink: 0,
+          background: activeTab?.accent ?? '#f97316', cursor: 'pointer',
+          color: '#fff', flexShrink: 0,
           boxShadow: `0 4px 12px ${activeTab?.accent ?? '#f97316'}40`,
-          transition: 'all 0.25s ease',
+          transition: 'background 0.3s ease',
         }}
       >
         <svg
           style={{ position: 'absolute', inset: -3, width: 46, height: 46, transform: 'rotate(-90deg)', pointerEvents: 'none' }}
-          viewBox="0 0 48 48" aria-hidden
+          viewBox="0 0 48 48"
+          aria-hidden
         >
-          <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="2" />
+          <circle cx="24" cy="24" r={PROGRESS_RADIUS} fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="2" />
           <circle
-            cx="24" cy="24" r="20" fill="none"
-            stroke="rgba(255,255,255,0.85)" strokeWidth="2" strokeLinecap="round"
-            strokeDasharray={circumference} strokeDashoffset={offset}
-            style={{ transition: 'stroke-dashoffset 0.1s linear' }}
+            cx="24" cy="24" r={PROGRESS_RADIUS} fill="none"
+            stroke="rgba(255,255,255,0.9)" strokeWidth="2" strokeLinecap="round"
+            strokeDasharray={PROGRESS_CIRC} strokeDashoffset={progressOffset}
+            style={{ transition: isPaused ? 'none' : 'stroke-dashoffset 0.1s linear' }}
           />
         </svg>
         <ChevronRight size={18} strokeWidth={2.5} />
@@ -650,14 +675,88 @@ function TabBar({
   );
 }
 
-function TabPanel({ tab }: { tab: TabDef }) {
+/* ─────────────────────────────────────────────────────────────────
+   STEP INDICATOR
+───────────────────────────────────────────────────────────────── */
+function StepIndicator({ tab }: { tab: TabDef }) {
+  return (
+    <div
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: 6,
+        padding: '4px 12px', borderRadius: 999,
+        background: `${tab.accent}14`, border: `1px solid ${tab.accent}30`,
+        fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+        color: tab.accent, textTransform: 'uppercase', marginBottom: 12,
+        width: 'fit-content',
+      }}
+    >
+      <span style={{ width: 6, height: 6, borderRadius: '50%', background: tab.accent, flexShrink: 0 }} />
+      {tab.category === 'career' ? 'Career' : 'Study Abroad'} · Step {tab.step} of {tab.totalSteps}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   PANEL BODY (shared copy block)
+───────────────────────────────────────────────────────────────── */
+function PanelCopy({ tab }: { tab: TabDef }) {
+  return (
+    <>
+      <StepIndicator tab={tab} />
+      <h3
+        style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: 'clamp(1.35rem,2.6vw,1.9rem)',
+          fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.15,
+          color: '#0f172a', margin: '0 0 12px',
+        }}
+      >
+        {tab.title}
+      </h3>
+      <p style={{ fontSize: 'clamp(14px,1.2vw,15px)', lineHeight: 1.72, color: '#64748b', margin: '0 0 16px' }}>
+        {tab.details}
+      </p>
+      <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: tab.cta ? 20 : 0 }}>
+        {Array.from({ length: tab.totalSteps }).map((_, i) => (
+          <div
+            key={i}
+            style={{
+              width: i + 1 === tab.step ? 20 : 6, height: 6, borderRadius: 999,
+              background: i + 1 <= tab.step ? tab.accent : 'rgba(15,23,42,0.10)',
+              transition: 'all 0.35s cubic-bezier(0.22,1,0.36,1)',
+            }}
+          />
+        ))}
+        <span style={{ fontSize: 11, color: '#94a3b8', marginLeft: 4, fontWeight: 600 }}>
+          {tab.step}/{tab.totalSteps}
+        </span>
+      </div>
+      {tab.cta && (
+        <Link
+          href={tab.cta.href}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '11px 22px', borderRadius: 999, background: tab.accent,
+            color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none',
+            width: 'fit-content', boxShadow: `0 4px 14px ${tab.accent}40`,
+          }}
+        >
+          {tab.cta.label}
+          <ArrowRight size={15} strokeWidth={2.25} aria-hidden />
+        </Link>
+      )}
+    </>
+  );
+}
+
+function DesktopPanel({ tab }: { tab: TabDef }) {
   return (
     <motion.div
       key={tab.id}
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
       style={{
         display: 'grid',
         gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)',
@@ -668,38 +767,8 @@ function TabPanel({ tab }: { tab: TabDef }) {
       <div style={{ borderRadius: 20, overflow: 'hidden' }}>
         <tab.Visual />
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <StepIndicator tab={tab} />
-        <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'clamp(1.4rem,2.5vw,1.9rem)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.15, color: '#0f172a', margin: 0 }}>
-          {tab.title}
-        </h3>
-        <p style={{ fontSize: 'clamp(14px,1.2vw,15px)', lineHeight: 1.72, color: '#64748b', margin: 0 }}>
-          {tab.details}
-        </p>
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          {Array.from({ length: tab.totalSteps }).map((_, i) => (
-            <div key={i} style={{
-              width: i + 1 === tab.step ? 20 : 6, height: 6, borderRadius: 999,
-              background: i + 1 <= tab.step ? tab.accent : 'rgba(15,23,42,0.10)',
-              transition: 'all 0.35s cubic-bezier(0.22,1,0.36,1)',
-            }} />
-          ))}
-          <span style={{ fontSize: 11, color: '#94a3b8', marginLeft: 4, fontWeight: 600 }}>
-            {tab.step}/{tab.totalSteps}
-          </span>
-        </div>
-        {tab.cta && (
-          <Link href={tab.cta.href} style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            padding: '11px 22px', borderRadius: 999, background: tab.accent,
-            color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none',
-            width: 'fit-content', boxShadow: `0 4px 14px ${tab.accent}40`,
-            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-          }}>
-            {tab.cta.label}
-            <ArrowRight size={15} strokeWidth={2.25} aria-hidden />
-          </Link>
-        )}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <PanelCopy tab={tab} />
       </div>
     </motion.div>
   );
@@ -712,39 +781,13 @@ function MobilePanel({ tab }: { tab: TabDef }) {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
       style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
     >
       <div style={{ borderRadius: 16, overflow: 'hidden' }}>
         <tab.Visual />
       </div>
-      <StepIndicator tab={tab} />
-      <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'clamp(1.3rem,5.5vw,1.6rem)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.15, color: '#0f172a', margin: 0 }}>
-        {tab.title}
-      </h3>
-      <p style={{ fontSize: 14, lineHeight: 1.7, color: '#64748b', margin: 0 }}>
-        {tab.details}
-      </p>
-      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-        {Array.from({ length: tab.totalSteps }).map((_, i) => (
-          <div key={i} style={{
-            width: i + 1 === tab.step ? 20 : 6, height: 6, borderRadius: 999,
-            background: i + 1 <= tab.step ? tab.accent : 'rgba(15,23,42,0.10)',
-            transition: 'all 0.35s cubic-bezier(0.22,1,0.36,1)',
-          }} />
-        ))}
-      </div>
-      {tab.cta && (
-        <Link href={tab.cta.href} style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8,
-          padding: '11px 22px', borderRadius: 999, background: tab.accent,
-          color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none',
-          width: 'fit-content', boxShadow: `0 4px 14px ${tab.accent}40`,
-        }}>
-          {tab.cta.label}
-          <ArrowRight size={15} strokeWidth={2.25} aria-hidden />
-        </Link>
-      )}
+      <PanelCopy tab={tab} />
     </motion.div>
   );
 }
@@ -754,8 +797,23 @@ function MobilePanel({ tab }: { tab: TabDef }) {
 ───────────────────────────────────────────────────────────────── */
 export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
   const tabs = useMemo(() => buildTabs(cms), [cms]);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+
+  const elapsedRef = useRef(0);
+  const isPausedRef = useRef(false);
+
+  const activeTab = tabs[activeIndex] ?? tabs[0];
+  const activeCategory = activeTab.category;
+  // Tabs shown in the pill bar — filtered to current category, order preserved
+  const displayedTabs = tabs.filter((t) => t.category === activeCategory);
+
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
 
   // SSR-safe mobile detection
   useEffect(() => {
@@ -765,24 +823,82 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Auto-play configuration: 6 seconds per tab (within 5-8s request)
-  const AUTO_INTERVAL = 6000;
-  const { index: activeIndex, progress, goTo } = useAutoPlay(tabs, AUTO_INTERVAL, isPaused);
-  const activeTab = tabs[activeIndex] ?? tabs[0];
+  const goToIndex = useCallback(
+    (index: number) => {
+      if (!tabs.length) return;
+      const next = ((index % tabs.length) + tabs.length) % tabs.length;
+      setActiveIndex(next);
+      setProgress(0);
+      elapsedRef.current = 0;
+    },
+    [tabs.length],
+  );
 
-  // Sync category automatically based on active tab
-  const activeCategory = activeTab?.category ?? 'career';
+  const goNext = useCallback(() => goToIndex(activeIndex + 1), [activeIndex, goToIndex]);
+  const goPrev = useCallback(() => goToIndex(activeIndex - 1), [activeIndex, goToIndex]);
 
-  const handlePrev = useCallback(() => goTo(activeIndex - 1), [activeIndex, goTo]);
-  const handleNext = useCallback(() => goTo(activeIndex + 1), [activeIndex, goTo]);
-  const handleSelect = useCallback((i: number) => goTo(i), [goTo]);
+  const handleSelect = useCallback(
+    (id: string) => {
+      const idx = tabs.findIndex((t) => t.id === id);
+      if (idx >= 0) goToIndex(idx);
+    },
+    [tabs, goToIndex],
+  );
+
+  // Manual category switch — jump to that category's first tab
+  const handleCategoryChange = useCallback(
+    (cat: 'career' | 'study') => {
+      const idx = tabs.findIndex((t) => t.category === cat);
+      if (idx >= 0) goToIndex(idx);
+    },
+    [tabs, goToIndex],
+  );
+
+  const togglePause = useCallback(() => setIsPaused((p) => !p), []);
+
+  /* ── Auto-advance: 5–8s per step, wraps career → study automatically ── */
+  useEffect(() => {
+    if (!tabs.length) return;
+
+    setProgress(0);
+    elapsedRef.current = 0;
+    const duration = randomDuration();
+    let start = performance.now();
+    let raf = 0;
+
+    const tick = (now: number) => {
+      if (isPausedRef.current) {
+        // Freeze progress: shift the reference start forward each frame
+        start = now - elapsedRef.current;
+      }
+      const elapsed = now - start;
+      elapsedRef.current = elapsed;
+
+      const p = Math.min(elapsed / duration, 1);
+      setProgress(p);
+
+      if (p >= 1) {
+        goToIndex(activeIndex + 1);
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex]);
 
   const title = cms['hp:hiwTitle'] ?? 'How Placedly Works — Simple, Transparent, Proven';
-  const subtitle = cms['hp:hiwSubtitle'] ?? 'Placedly connects ambitious professionals to careers and global education. Built for candidates who want clarity, warm guidance, and results — not generic agency noise.';
+  const subtitle =
+    cms['hp:hiwSubtitle'] ??
+    'Placedly connects ambitious professionals to careers and global education. Built for candidates who want clarity, warm guidance, and results — not generic agency noise.';
 
   return (
     <section
       id="how"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
       style={{
         position: 'relative',
         padding: isMobile ? 'clamp(48px,8vw,72px) clamp(16px,4vw,24px)' : 'clamp(64px,9vw,104px) clamp(20px,4vw,48px)',
@@ -790,50 +906,57 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
         overflow: 'hidden',
       }}
     >
-      <div aria-hidden style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: `
-          radial-gradient(ellipse 60% 50% at 80% 20%, rgba(249,115,22,0.05), transparent 60%),
-          radial-gradient(ellipse 50% 40% at 20% 80%, rgba(37,99,235,0.05), transparent 60%)
-        `,
-      }} />
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: `
+            radial-gradient(ellipse 60% 50% at 80% 20%, rgba(249,115,22,0.05), transparent 60%),
+            radial-gradient(ellipse 50% 40% at 20% 80%, rgba(37,99,235,0.05), transparent 60%)
+          `,
+        }}
+      />
 
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 1100, margin: '0 auto' }}>
         <FadeUp style={{ textAlign: 'center', marginBottom: isMobile ? 32 : 48 }}>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '5px 14px', borderRadius: 999,
-            background: 'rgba(15,23,42,0.05)', border: '1px solid rgba(15,23,42,0.08)',
-            fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#64748b', marginBottom: 16,
-          }}>
+          <div
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '5px 14px', borderRadius: 999,
+              background: 'rgba(15,23,42,0.05)', border: '1px solid rgba(15,23,42,0.08)',
+              fontSize: 11, fontWeight: 700, letterSpacing: '0.12em',
+              textTransform: 'uppercase', color: '#64748b', marginBottom: 16,
+            }}
+          >
             <Sparkles size={12} aria-hidden />
             How it works
           </div>
-          <h2 style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: isMobile ? 'clamp(1.65rem,7vw,2.1rem)' : 'clamp(1.9rem,3.5vw,2.8rem)',
-            fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.1, color: '#0f172a', margin: '0 0 14px',
-          }}>
+
+          <h2
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: isMobile ? 'clamp(1.65rem,7vw,2.1rem)' : 'clamp(1.9rem,3.5vw,2.8rem)',
+              fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.1,
+              color: '#0f172a', margin: '0 0 14px',
+            }}
+          >
             {title}
           </h2>
-          <p style={{
-            fontSize: isMobile ? 14 : 'clamp(15px,1.3vw,17px)',
-            lineHeight: 1.72, color: '#64748b', maxWidth: 600, margin: '0 auto',
-          }}>
+
+          <p
+            style={{
+              fontSize: isMobile ? 14 : 'clamp(15px,1.3vw,17px)',
+              lineHeight: 1.72, color: '#64748b', maxWidth: 600, margin: '0 auto 24px',
+            }}
+          >
             {subtitle}
           </p>
+
+          <CategorySwitcher active={activeCategory} onChange={handleCategoryChange} />
         </FadeUp>
 
-        {/* Showcase Card */}
         <div
-          role="region"
-          aria-label="How Placedly works showcase"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          onFocus={() => setIsPaused(true)}
-          onBlur={() => setIsPaused(false)}
           style={{
-            position: 'relative',
             background: '#fff',
             borderRadius: isMobile ? 20 : 28,
             border: '1px solid rgba(15,23,42,0.07)',
@@ -842,66 +965,58 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
             overflow: 'hidden',
           }}
         >
-          {/* Top Progress Bar */}
-          <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, height: 3,
-            background: 'rgba(15,23,42,0.06)', borderRadius: '0 0 3px 3px',
-          }}>
-            <motion.div
-              style={{
-                height: '100%',
-                background: activeTab?.accent ?? '#f97316',
-                borderRadius: '0 0 3px 3px',
-              }}
-              animate={{ width: `${progress * 100}%` }}
-              transition={{ duration: 0.1, ease: 'linear' }}
-            />
-          </div>
-
           <TabBar
-            tabs={tabs}
-            activeIndex={activeIndex}
+            tabs={displayedTabs}
+            activeId={activeTab.id}
             progress={progress}
-            onPrev={handlePrev}
-            onNext={handleNext}
+            isPaused={isPaused}
             onSelect={handleSelect}
+            onPrev={goPrev}
+            onNext={goNext}
+            onTogglePause={togglePause}
           />
 
           <AnimatePresence mode="wait">
             {isMobile ? (
               <MobilePanel key={activeTab.id} tab={activeTab} />
             ) : (
-              <TabPanel key={activeTab.id} tab={activeTab} />
+              <DesktopPanel key={activeTab.id} tab={activeTab} />
             )}
           </AnimatePresence>
 
-          {/* Footer */}
-          <div style={{
-            marginTop: isMobile ? 20 : 28,
-            paddingTop: isMobile ? 16 : 20,
-            borderTop: '1px solid rgba(15,23,42,0.06)',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            flexWrap: 'wrap', gap: 12,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 4,
-                padding: '4px 10px', borderRadius: 999,
-                background: isPaused ? 'rgba(15,23,42,0.06)' : 'rgba(249,115,22,0.1)',
-                fontSize: 11, fontWeight: 600, color: isPaused ? '#64748b' : '#f97316',
-                transition: 'all 0.2s ease',
-              }}>
-                {isPaused ? <Pause size={10} /> : <Play size={10} />}
-                {isPaused ? 'Paused' : 'Auto-playing'}
-              </div>
-              <p style={{ fontSize: 12, color: '#94a3b8', margin: 0, fontWeight: 500 }}>
-                {activeCategory === 'career' ? '500+ professionals placed · Zero upfront fee' : '140+ partner universities · End-to-end support'}
-              </p>
-            </div>
+          <div
+            style={{
+              marginTop: isMobile ? 20 : 28,
+              paddingTop: isMobile ? 16 : 20,
+              borderTop: '1px solid rgba(15,23,42,0.06)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              flexWrap: 'wrap', gap: 12,
+            }}
+          >
+            <p style={{ fontSize: 12, color: '#94a3b8', margin: 0, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span
+                style={{
+                  width: 6, height: 6, borderRadius: '50%',
+                  background: isPaused ? '#cbd5e1' : '#16a34a',
+                  animation: isPaused ? 'none' : 'hiwPulse 2s ease-in-out infinite',
+                  flexShrink: 0,
+                }}
+              />
+              {activeCategory === 'career'
+                ? '500+ professionals placed · Zero upfront fee'
+                : '140+ partner universities · End-to-end support'}
+            </p>
             <SeeDemoButton variant="panel" />
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes hiwPulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.35); }
+          50% { box-shadow: 0 0 0 5px rgba(22,163,74,0); }
+        }
+      `}</style>
     </section>
   );
 }

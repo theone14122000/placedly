@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -74,6 +74,7 @@ const PIN_STACK_STEP = 16;
 /** Fixed scroll runway per card (also drives the overlap timing). */
 const SLOT_RUNWAY = 340;
 const SECTION_ID = 'cap-journey-section';
+const MOBILE_BREAKPOINT = 768;
 
 const clamp = (v: number, min: number, max: number): number =>
   Math.min(Math.max(v, min), max);
@@ -154,9 +155,9 @@ const STYLES = `
   top: 0;
   left: 0;
   right: 0;
+  height: 0%;
   background: linear-gradient(#181229, #f97316);
   border-radius: 999px;
-  transition: height 0.1s linear;
   box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
 }
 .placedly-cap-journey-rail-markers {
@@ -191,7 +192,6 @@ const STYLES = `
 .placedly-cap-journey-track {
   position: relative;
 }
-/* The slot creates the scroll runway. Its padding-bottom == the pin distance. */
 .placedly-cap-journey-slot {
   position: relative;
   padding-bottom: ${SLOT_RUNWAY}px;
@@ -205,6 +205,7 @@ const STYLES = `
   will-change: transform;
   overflow: hidden;
   transition: box-shadow 0.35s ease;
+  transform: translate3d(0, 0, 0);
 }
 .placedly-cap-journey-card:not(.is-active) {
   box-shadow: 0 8px 30px rgba(249, 115, 22, 0.08);
@@ -393,16 +394,19 @@ const STYLES = `
 
 export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const [fillProgress, setFillProgress] = useState<number>(0);
-  const [transforms, setTransforms] = useState<CSSProperties[]>(() =>
-    DEFAULT_STEPS.map(() => ({})),
+  const [markerFlags, setMarkerFlags] = useState<boolean[]>(() =>
+    DEFAULT_STEPS.map(() => false),
   );
   const [showFloatingCta, setShowFloatingCta] = useState<boolean>(false);
 
   const sectionRef = useRef<HTMLElement | null>(null);
-  const cardsColRef = useRef<HTMLDivElement | null>(null);
+  const railFillRef = useRef<HTMLDivElement | null>(null);
   const slotRefs = useRef<Array<HTMLDivElement | null>>([]);
   const cardRefs = useRef<Array<HTMLElement | null>>([]);
+
+  // Keep latest activeStep in a ref so the rAF loop (defined once) can read
+  // it without needing to be re-created every render.
+  const activeStepRef = useRef<number>(0);
 
   const kicker = cms['hp:capJourneyKicker'] ?? 'Career Assistance Programme';
   const title =
@@ -411,116 +415,127 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
     cms['hp:capJourneySubtitle'] ??
     'Scroll through each stage of the programme. Every step is advisor-led, transparent, and built to get you placed — not just applied.';
 
-  /* -------------------- SCROLL-DRIVEN PIN / STACK -------------------- */
+  /* ============================================================
+   * CORE ENGINE — continuous rAF polling of getBoundingClientRect().
+   * This does NOT rely on the 'scroll' event or 'position: sticky',
+   * so it works correctly even with smooth-scroll libraries (Lenis,
+   * GSAP ScrollSmoother, etc.) that intercept native scrolling.
+   * Only runs while the section is near the viewport.
+   * ============================================================ */
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    let running = false;
     let rafId: number | null = null;
-    let mobile = window.innerWidth <= 768;
 
-    const run = (): void => {
-      rafId = null;
+    const tick = (): void => {
+      if (!running) return;
 
-      // On mobile the cards flow normally — no transforms.
-      if (mobile) {
-        setTransforms(DEFAULT_STEPS.map(() => ({})));
-        updateFill();
-        return;
+      const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+
+      if (!isMobile) {
+        DEFAULT_STEPS.forEach((_, i) => {
+          const slot = slotRefs.current[i];
+          const card = cardRefs.current[i];
+          if (!slot || !card) return;
+
+          const slotRect = slot.getBoundingClientRect();
+          const cardH = card.offsetHeight;
+          const slotH = slot.offsetHeight;
+          const pinTop = PIN_BASE_TOP + i * PIN_STACK_STEP;
+          const maxTranslate = Math.max(slotH - cardH, 0);
+          const translateY = clamp(pinTop - slotRect.top, 0, maxTranslate);
+
+          card.style.transform = `translate3d(0, ${translateY}px, 0)`;
+          card.style.zIndex = String(10 + i);
+        });
+      } else {
+        DEFAULT_STEPS.forEach((_, i) => {
+          const card = cardRefs.current[i];
+          if (!card) return;
+          card.style.transform = 'translate3d(0, 0, 0)';
+        });
       }
 
-      const next: CSSProperties[] = DEFAULT_STEPS.map((_, i) => {
-        const slot = slotRefs.current[i];
+      // Rail fill progress, driven off the first/last slot positions.
+      const firstSlot = slotRefs.current[0];
+      const lastSlot = slotRefs.current[DEFAULT_STEPS.length - 1];
+      if (firstSlot && lastSlot && railFillRef.current) {
+        const startTop = firstSlot.getBoundingClientRect().top;
+        const lastRect = lastSlot.getBoundingClientRect();
+        const totalRange =
+          lastRect.top + lastRect.height - startTop - window.innerHeight * 0.4;
+        const progressed = clamp(
+          (PIN_BASE_TOP - startTop) / Math.max(totalRange, 1),
+          0,
+          1,
+        );
+        railFillRef.current.style.height = `${progressed * 100}%`;
+      }
+
+      // Determine which card is "active" (closest to the pin line).
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      DEFAULT_STEPS.forEach((_, i) => {
         const card = cardRefs.current[i];
-        if (!slot || !card) return {};
-
-        const slotTop = slot.getBoundingClientRect().top;
-        const cardH = card.offsetHeight;
-        const slotH = slot.offsetHeight;
-        const pinTop = PIN_BASE_TOP + i * PIN_STACK_STEP;
-
-        // Max we can push the card down and still stay inside its slot.
-        const maxTranslate = Math.max(slotH - cardH, 0);
-        const translateY = clamp(pinTop - slotTop, 0, maxTranslate);
-
-        return {
-          transform: `translate3d(0, ${translateY}px, 0)`,
-          zIndex: 10 + i,
-        };
+        if (!card) return;
+        const rect = card.getBoundingClientRect();
+        const distance = Math.abs(rect.top - PIN_BASE_TOP);
+        if (rect.top <= PIN_BASE_TOP + 4 && distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = i;
+        }
       });
 
-      setTransforms(next);
-      updateFill();
-    };
-
-    const updateFill = (): void => {
-      const col = cardsColRef.current;
-      if (!col) return;
-      const rect = col.getBoundingClientRect();
-      const scrollable = col.offsetHeight - window.innerHeight + PIN_BASE_TOP;
-      if (scrollable <= 0) {
-        setFillProgress(rect.top <= PIN_BASE_TOP ? 1 : 0);
-        return;
+      if (closestIndex !== activeStepRef.current) {
+        activeStepRef.current = closestIndex;
+        setActiveStep(closestIndex);
       }
-      setFillProgress(clamp((-rect.top + PIN_BASE_TOP) / scrollable, 0, 1));
+
+      setMarkerFlags((prev) => {
+        const next = prev.map((_, i) => i <= closestIndex);
+        // Avoid redundant state updates.
+        if (next.every((v, i) => v === prev[i])) return prev;
+        return next;
+      });
+
+      rafId = window.requestAnimationFrame(tick);
     };
 
-    const onScroll = (): void => {
-      if (rafId === null) rafId = window.requestAnimationFrame(run);
+    const start = (): void => {
+      if (running) return;
+      running = true;
+      rafId = window.requestAnimationFrame(tick);
     };
 
-    const onResize = (): void => {
-      mobile = window.innerWidth <= 768;
-      onScroll();
+    const stop = (): void => {
+      running = false;
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+        rafId = null;
+      }
     };
 
-    run();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize);
-
-    // Re-run once images have loaded (they change card heights).
-    const imgs = document.querySelectorAll<HTMLImageElement>(
-      '.placedly-cap-journey-card-img',
-    );
-    const onImg = (): void => onScroll();
-    imgs.forEach((img) => {
-      if (!img.complete) img.addEventListener('load', onImg);
-    });
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
-      imgs.forEach((img) => img.removeEventListener('load', onImg));
-      if (rafId !== null) window.cancelAnimationFrame(rafId);
-    };
-  }, []);
-
-  /* -------------------- ACTIVE STEP DETECTION -------------------- */
-  useEffect(() => {
-    if (
-      typeof window === 'undefined' ||
-      typeof IntersectionObserver === 'undefined'
-    ) {
-      return;
+    // Only run the loop while the section is anywhere near the viewport.
+    let observer: IntersectionObserver | null = null;
+    if (sectionRef.current && typeof IntersectionObserver !== 'undefined') {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) start();
+          else stop();
+        },
+        { rootMargin: '200px 0px 200px 0px', threshold: 0 },
+      );
+      observer.observe(sectionRef.current);
+    } else {
+      // Fallback: always run.
+      start();
     }
 
-    const cards = document.querySelectorAll<HTMLElement>('[data-cap-step]');
-    if (!cards.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const attr = entry.target.getAttribute('data-cap-step');
-          if (attr === null) return;
-          const idx = Number(attr);
-          if (!Number.isNaN(idx)) setActiveStep(idx);
-        });
-      },
-      { threshold: 0.5, rootMargin: '-40% 0px -40% 0px' },
-    );
-
-    cards.forEach((card) => observer.observe(card));
-    return () => observer.disconnect();
+    return () => {
+      stop();
+      observer?.disconnect();
+    };
   }, []);
 
   /* -------------------- FLOATING CTA VISIBILITY -------------------- */
@@ -569,17 +584,12 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           <div className="placedly-cap-journey-rail-col" aria-hidden>
             <div className="placedly-cap-journey-rail">
               <div className="placedly-cap-journey-rail-track">
-                <div
-                  className="placedly-cap-journey-rail-fill"
-                  style={{ height: `${fillProgress * 100}%` }}
-                />
+                <div ref={railFillRef} className="placedly-cap-journey-rail-fill" />
               </div>
               <div className="placedly-cap-journey-rail-markers">
                 {DEFAULT_STEPS.map((step, index) => {
-                  const top =
-                    ((index + 0.5) / DEFAULT_STEPS.length) * 100;
-                  const isLit =
-                    fillProgress >= top / 100 - 0.04 || activeStep >= index;
+                  const top = ((index + 0.5) / DEFAULT_STEPS.length) * 100;
+                  const isLit = markerFlags[index] ?? false;
                   const isActive = activeStep === index;
                   return (
                     <span
@@ -598,7 +608,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           </div>
 
           {/* Stacking Cards */}
-          <div ref={cardsColRef} className="placedly-cap-journey-cards-col">
+          <div className="placedly-cap-journey-cards-col">
             <div className="placedly-cap-journey-track">
               {DEFAULT_STEPS.map((step, index) => (
                 <div
@@ -617,7 +627,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                       'placedly-cap-journey-card' +
                       (activeStep === index ? ' is-active' : '')
                     }
-                    style={transforms[index]}
                   >
                     <div className="placedly-cap-journey-card-inner">
                       <div className="placedly-cap-journey-card-left">
