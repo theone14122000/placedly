@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, ArrowUp } from 'lucide-react';
-import GenZBlobs from './GenZBlobs';
 
 const IgIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -56,11 +55,12 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
 
   return (
     <footer className="placedly-footer">
-      <GenZBlobs />
+      <div className="placedly-footer-bg" aria-hidden />
+      <div className="placedly-footer-overlay" aria-hidden />
 
-      <div className="placedly-genz-wrap placedly-footer-wrap">
+      <div className="placedly-footer-wrap">
         <motion.div
-          className="placedly-genz-glass placedly-footer-card"
+          className="placedly-footer-card"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
@@ -96,12 +96,18 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
             </div>
 
             <div className="placedly-footer-col">
-              <h3 className="placedly-footer-heading">Useful Links</h3>
+              <h3 className="placedly-footer-heading">Company</h3>
               <nav className="placedly-footer-links">
                 <Link href="/">Home</Link>
-                <Link href="#services">Services</Link>
                 <Link href="/about-us">About Us</Link>
                 <Link href="#vacancies">Vacancies</Link>
+              </nav>
+            </div>
+
+            <div className="placedly-footer-col">
+              <h3 className="placedly-footer-heading">Programmes</h3>
+              <nav className="placedly-footer-links">
+                <Link href="#services">Services</Link>
                 <Link href="/cap">CAP Programme</Link>
                 <Link href="/study-visa">Study Visa</Link>
               </nav>

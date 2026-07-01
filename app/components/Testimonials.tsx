@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Quote } from 'lucide-react';
 import GenZBlobs from './GenZBlobs';
@@ -71,16 +71,9 @@ type TestimonialItem = {
   img: string;
 };
 
-function TestimonialCard({ t, index }: { t: TestimonialItem; index: number }) {
+function TestimonialCard({ t }: { t: TestimonialItem }) {
   return (
-    <motion.article
-      className="placedly-genz-glass placedly-testimonial-card"
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.5, delay: (index % 3) * 0.08 }}
-      whileHover={{ y: -3 }}
-    >
+    <article className="placedly-genz-glass placedly-testimonial-card">
       <Quote className="placedly-testimonial-quote-icon" size={28} strokeWidth={1.5} aria-hidden />
       <div className="placedly-testimonial-body">{t.details}</div>
       <div className="placedly-testimonial-author">
@@ -90,7 +83,99 @@ function TestimonialCard({ t, index }: { t: TestimonialItem; index: number }) {
           <p className="placedly-testimonial-date">{t.date}</p>
         </div>
       </div>
-    </motion.article>
+    </article>
+  );
+}
+
+const AUTO_SLIDE_MS = 3500;
+
+function TestimonialsCarousel({ items }: { items: TestimonialItem[] }) {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [perView, setPerView] = useState(3);
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const computePerView = () => {
+      const w = window.innerWidth;
+      if (w <= 640) return 1;
+      if (w <= 1024) return 2;
+      return 3;
+    };
+    const onResize = () => {
+      setPerView(computePerView());
+      setActive(0);
+    };
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const maxIndex = Math.max(0, items.length - perView);
+
+  // translate track by measuring the first slide width + gap
+  const applyTransform = useCallback(
+    (index: number) => {
+      const track = trackRef.current;
+      if (!track) return;
+      const firstSlide = track.children[0] as HTMLElement | undefined;
+      if (!firstSlide) return;
+      const slideWidth = firstSlide.getBoundingClientRect().width;
+      const styles = window.getComputedStyle(track);
+      const gap = parseFloat(styles.columnGap || styles.gap || '0') || 0;
+      const offset = index * (slideWidth + gap);
+      track.style.transform = `translateX(${-offset}px)`;
+    },
+    [],
+  );
+
+  useEffect(() => {
+    applyTransform(active);
+  }, [active, perView, applyTransform]);
+
+  useEffect(() => {
+    if (maxIndex === 0) return;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    const timer = window.setInterval(() => {
+      setActive((cur) => (cur >= maxIndex ? 0 : cur + 1));
+    }, AUTO_SLIDE_MS);
+    return () => window.clearInterval(timer);
+  }, [maxIndex]);
+
+  return (
+    <div className="placedly-testimonials-carousel">
+      <div className="placedly-testimonials-viewport" ref={viewportRef}>
+        <div className="placedly-testimonials-track" ref={trackRef}>
+          {items.map((t, i) => (
+            <div
+              className="placedly-testimonials-slide"
+              key={`${t.name}-${i}`}
+              style={{ flexBasis: `calc((100% - ${(perView - 1) * 20}px) / ${perView})` }}
+            >
+              <TestimonialCard t={t} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {maxIndex > 0 && (
+        <div className="placedly-testimonials-dots" role="tablist" aria-label="Testimonials">
+          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              role="tab"
+              aria-selected={active === i}
+              aria-label={`Go to slide ${i + 1}`}
+              className={active === i ? 'is-active' : ''}
+              onClick={() => setActive(i)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -149,11 +234,7 @@ export default function Testimonials() {
           <h2 className="placedly-genz-title">Real People. Real Growth.</h2>
         </motion.div>
 
-        <div className="placedly-testimonials-grid">
-          {items.map((t, i) => (
-            <TestimonialCard key={`${t.name}-${i}`} t={t} index={i} />
-          ))}
-        </div>
+        <TestimonialsCarousel items={items} />
       </div>
     </section>
   );

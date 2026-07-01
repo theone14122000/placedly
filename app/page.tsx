@@ -9,9 +9,6 @@ import AboutUs from './components/AboutUs';
 import HowItWorks from './components/HowItWorks';
 import Industries from './components/Industries';
 import StudyDestinationsMarquee from './components/StudyDestinationsMarquee';
-import CeoQuote from './components/CeoQuote';
-import Events from './components/Events';
-import UtilityToolsSection from './components/UtilityToolsSection';
 import Testimonials from './components/Testimonials';
 import Faq from './components/Faq';
 import Cta from './components/Cta';
@@ -122,9 +119,6 @@ export default async function Home() {
         <HowItWorks cms={cms} />
         <Industries />
         <StudyDestinationsMarquee />
-        <CeoQuote cms={cms} />
-        <Events />
-        <UtilityToolsSection />
         <Testimonials />
         <Faq />
         <Cta cms={cms} />

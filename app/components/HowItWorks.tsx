@@ -5,8 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
   BadgeCheck,
-  ChevronLeft,
-  ChevronRight,
   FileText,
   GraduationCap,
   Plane,
@@ -251,92 +249,59 @@ function buildTabs(cms: Cms): TabDef[] {
 }
 
 const AUTO_TAB_MS = 4000;
-const PROGRESS_RADIUS = 20;
-const PROGRESS_CIRC = 2 * Math.PI * PROGRESS_RADIUS;
 
 function TabBar({
   tabs,
   activeId,
-  progress,
   onSelect,
-  onPrev,
-  onNext,
 }: {
   tabs: TabDef[];
   activeId: string;
-  progress: number;
   onSelect: (id: string) => void;
-  onPrev: () => void;
-  onNext: () => void;
 }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const progressOffset = PROGRESS_CIRC * (1 - progress);
+  const activeIndex = Math.max(0, tabs.findIndex((t) => t.id === activeId));
+  const trackRef = useRef<HTMLDivElement>(null);
+  const activeBtnRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    const btn = activeBtnRef.current;
+    if (!track || !btn) return;
+    const target = btn.offsetLeft - (track.clientWidth - btn.clientWidth) / 2;
+    track.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+  }, [activeIndex]);
 
   return (
-    <div className="placedly-hiw-tabbar">
-      <button
-        type="button"
-        className="placedly-hiw-tabbar-arrow"
-        aria-label="Previous tab"
-        onClick={onPrev}
+    <div className="placedly-hiw-tabs-wrap">
+      <div
+        className="placedly-hiw-tabs"
+        role="tablist"
+        aria-label="How Placedly works"
+        style={{ ['--hiw-tab-count' as string]: tabs.length }}
+        ref={trackRef}
       >
-        <ChevronLeft size={20} strokeWidth={2} />
-      </button>
-
-      <div className="placedly-hiw-tabbar-shell">
-        <div
-          className="placedly-hiw-tabbar-track"
-          ref={scrollRef}
-          role="tablist"
-          aria-label="How Placedly works"
-        >
-          {tabs.map((tab) => {
-            const active = tab.id === activeId;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                className={`placedly-hiw-tab ${active ? 'is-active' : ''}`}
-                onClick={() => onSelect(tab.id)}
-              >
-                <tab.Icon size={16} strokeWidth={2} aria-hidden />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <button
-        type="button"
-        className="placedly-hiw-tabbar-arrow placedly-hiw-tabbar-arrow--next"
-        aria-label="Next tab"
-        onClick={onNext}
-      >
-        <svg
-          className="placedly-hiw-tabbar-progress"
-          viewBox="0 0 48 48"
+        <span
+          className="placedly-hiw-tabs-indicator"
           aria-hidden
-        >
-          <circle
-            className="placedly-hiw-tabbar-progress-bg"
-            cx="24"
-            cy="24"
-            r={PROGRESS_RADIUS}
-          />
-          <circle
-            className="placedly-hiw-tabbar-progress-fill"
-            cx="24"
-            cy="24"
-            r={PROGRESS_RADIUS}
-            strokeDasharray={PROGRESS_CIRC}
-            strokeDashoffset={progressOffset}
-          />
-        </svg>
-        <ChevronRight size={20} strokeWidth={2} />
-      </button>
+          style={{ transform: `translateX(${activeIndex * 100}%)` }}
+        />
+        {tabs.map((tab) => {
+          const active = tab.id === activeId;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              ref={active ? activeBtnRef : undefined}
+              className={`placedly-hiw-tab ${active ? 'is-active' : ''}`}
+              onClick={() => onSelect(tab.id)}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -369,7 +334,6 @@ function TabPanel({ tab }: { tab: TabDef }) {
 export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
   const tabs = useMemo(() => buildTabs(cms), [cms]);
   const [activeId, setActiveId] = useState(tabs[0]?.id ?? 'consult');
-  const [progress, setProgress] = useState(0);
   const activeTab = tabs.find((t) => t.id === activeId) ?? tabs[0];
 
   const goToIndex = useCallback(
@@ -377,52 +341,26 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
       if (!tabs.length) return;
       const next = tabs[((index % tabs.length) + tabs.length) % tabs.length];
       setActiveId(next.id);
-      setProgress(0);
     },
     [tabs],
   );
 
-  const goNext = useCallback(() => {
-    const idx = tabs.findIndex((t) => t.id === activeId);
-    goToIndex(idx + 1);
-  }, [activeId, goToIndex, tabs]);
-
-  const goPrev = useCallback(() => {
-    const idx = tabs.findIndex((t) => t.id === activeId);
-    goToIndex(idx - 1);
-  }, [activeId, goToIndex, tabs]);
-
-  const handleSelect = useCallback(
-    (id: string) => {
-      setActiveId(id);
-      setProgress(0);
-    },
-    [],
-  );
+  const handleSelect = useCallback((id: string) => {
+    setActiveId(id);
+  }, []);
 
   useEffect(() => {
     if (!tabs.length) return;
 
-    setProgress(0);
-    const started = performance.now();
-    let raf = 0;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
 
-    const tick = (now: number) => {
-      const elapsed = now - started;
-      const p = Math.min(elapsed / AUTO_TAB_MS, 1);
-      setProgress(p);
+    const timer = window.setTimeout(() => {
+      const idx = tabs.findIndex((t) => t.id === activeId);
+      goToIndex(idx + 1);
+    }, AUTO_TAB_MS);
 
-      if (p >= 1) {
-        const idx = tabs.findIndex((t) => t.id === activeId);
-        goToIndex(idx + 1);
-        return;
-      }
-
-      raf = requestAnimationFrame(tick);
-    };
-
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => window.clearTimeout(timer);
   }, [activeId, goToIndex, tabs]);
 
   const title =
@@ -443,10 +381,7 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           <TabBar
             tabs={tabs}
             activeId={activeId}
-            progress={progress}
             onSelect={handleSelect}
-            onPrev={goPrev}
-            onNext={goNext}
           />
 
           <div className="placedly-hiw-panel">

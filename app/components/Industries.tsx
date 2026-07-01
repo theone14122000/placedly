@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, ClipboardList, Stethoscope, Wallet, type LucideIcon } from 'lucide-react';
@@ -73,6 +74,27 @@ const industries: Industry[] = [
 ];
 
 export default function Industries() {
+  const [activeStep, setActiveStep] = useState(0);
+
+  useEffect(() => {
+    const cards = document.querySelectorAll<HTMLElement>('[data-domain-step]');
+    if (!cards.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const idx = Number(entry.target.getAttribute('data-domain-step'));
+          if (!Number.isNaN(idx)) setActiveStep(idx);
+        });
+      },
+      { threshold: 0.5, rootMargin: '-44% 0px -44% 0px' },
+    );
+
+    cards.forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className="placedly-genz-section placedly-domains-section" id="domains">
       <GenZBlobs />
@@ -90,49 +112,54 @@ export default function Industries() {
           </h2>
         </motion.div>
 
-        <div className="placedly-domains-grid">
-          {industries.map((ind, i) => (
-            <motion.article
-              key={ind.serial}
-              className="placedly-genz-glass placedly-domain-card"
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.55, delay: i * 0.1 }}
-              whileHover={{ y: -4 }}
-            >
-              <div className="placedly-domain-img-wrap">
-                <img src={ind.img} alt={ind.name} className="placedly-domain-img" loading="lazy" />
-                <span className="placedly-domain-serial">{ind.serial}</span>
-              </div>
-              <div className="placedly-domain-body">
-                <span className="placedly-domain-tag" style={{ color: ind.accent, borderColor: `${ind.accent}44`, background: `${ind.accent}14` }}>
-                  <ind.Icon size={12} strokeWidth={2.5} />
-                  {ind.tag}
-                </span>
-                <h3 className="placedly-domain-name">
-                  <span className="placedly-domain-icon" style={{ background: ind.grad }}>
-                    <ind.Icon size={16} strokeWidth={2.25} color="#fff" />
+        <div className="placedly-domains-list">
+          {industries.map((ind, i) => {
+            const depth = Math.min(Math.max(0, activeStep - i), 4);
+            return (
+              <article
+                key={ind.serial}
+                data-domain-step={i}
+                className={`placedly-domain-row${activeStep === i ? ' is-active' : ''}`}
+                style={{
+                  ['--accent' as string]: ind.accent,
+                  zIndex: i + 1,
+                  transform: depth > 0
+                    ? `translateY(${-depth * 14}px) scale(${1 - depth * 0.045})`
+                    : undefined,
+                }}
+              >
+                <div className="placedly-domain-media">
+                  <img src={ind.img} alt={ind.name} className="placedly-domain-img" loading="lazy" />
+                  <span className="placedly-domain-serial">{ind.serial}</span>
+                </div>
+                <div className="placedly-domain-content">
+                  <span className="placedly-domain-tag">
+                    <span className="placedly-domain-tag-icon">
+                      <ind.Icon size={14} strokeWidth={2.5} />
+                    </span>
+                    {ind.tag}
                   </span>
-                  {ind.name}
-                </h3>
-                <p className="placedly-domain-details">{ind.details}</p>
-                <div className="placedly-domain-stat">
-                  <strong style={{ color: ind.accent }}>{ind.stat}</strong>
-                  <span>{ind.statLabel}</span>
+                  <h3 className="placedly-domain-name">{ind.name}</h3>
+                  <p className="placedly-domain-details">{ind.details}</p>
+                  <div className="placedly-domain-chips">
+                    {ind.companies.map((c) => (
+                      <span key={c}>{c}</span>
+                    ))}
+                  </div>
+                  <div className="placedly-domain-footer">
+                    <div className="placedly-domain-stat">
+                      <strong>{ind.stat}</strong>
+                      <span>{ind.statLabel}</span>
+                    </div>
+                    <Link href={ind.href} className="placedly-domain-cta">
+                      {ind.linkText}
+                      <ArrowUpRight size={16} strokeWidth={2.5} />
+                    </Link>
+                  </div>
                 </div>
-                <div className="placedly-domain-chips">
-                  {ind.companies.map((c) => (
-                    <span key={c}>{c}</span>
-                  ))}
-                </div>
-                <Link href={ind.href} className="placedly-genz-link">
-                  {ind.linkText}
-                  <ArrowUpRight size={15} strokeWidth={2.5} />
-                </Link>
-              </div>
-            </motion.article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>
