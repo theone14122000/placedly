@@ -26,6 +26,37 @@ interface VerticalContent {
   accent: { from: string; to: string; soft: string };
 }
 
+/* ---------- shared heading gradient (blue → indigo → orange → rose → purple → blue) ---------- */
+
+const HEADING_GRADIENT =
+  'linear-gradient(270deg, #2563eb 0%, #4f46e5 20%, #f97316 45%, #f43f5e 65%, #9333ea 85%, #2563eb 100%)';
+
+const headingGradientStyle: React.CSSProperties = {
+  backgroundImage: HEADING_GRADIENT,
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  color: 'transparent',
+};
+
+/* ---------- default hiring partners (mirrors HiringPartnersMarquee defaults) ---------- */
+
+const DEFAULT_COMPANIES = [
+  'EXL Services',
+  'Quatrro',
+  'eBiz Solutions',
+  'WNS Global',
+  'Optum',
+  'Cognizant',
+  'Wipro',
+  'Infosys BPM',
+  'Mphasis',
+  'HCL',
+  'Genpact',
+  'Access Healthcare',
+  'Conifer Health',
+];
+
 const VERTICALS: VerticalContent[] = [
   {
     id: 'cap',
@@ -478,10 +509,77 @@ function dotStyle(color: string): React.CSSProperties {
   };
 }
 
+/* ---------- compact hiring-partners strip (Get Placed only) ---------- */
+
+function PartnersStrip({ companies }: { companies: string[] }) {
+  const list = [...companies, ...companies]; // duplicated for seamless loop
+
+  return (
+    <div
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        borderRadius: '999px',
+        background: 'rgba(255,255,255,0.65)',
+        border: '1px solid rgba(37,99,235,0.14)',
+        boxShadow: '0 4px 18px rgba(37,99,235,0.06)',
+        backdropFilter: 'blur(6px)',
+        padding: '9px 0',
+      }}
+    >
+      {/* edge fade masks so logos scroll in/out smoothly */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 2,
+          pointerEvents: 'none',
+          background:
+            'linear-gradient(90deg, rgba(255,255,255,0.95) 0%, transparent 8%, transparent 92%, rgba(255,255,255,0.95) 100%)',
+        }}
+      />
+      <motion.div
+        style={{ display: 'flex', gap: '30px', width: 'max-content', paddingLeft: '20px' }}
+        animate={{ x: ['0%', '-50%'] }}
+        transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
+      >
+        {list.map((name, i) => (
+          <span
+            key={`${name}-${i}`}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '7px',
+              fontSize: '12.5px',
+              fontWeight: 700,
+              color: '#334155',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <span
+              aria-hidden
+              style={{
+                width: '5px',
+                height: '5px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #2563eb, #f97316)',
+                flexShrink: 0,
+              }}
+            />
+            {name}
+          </span>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
 export default function Services({ cms = {} }: { cms?: Cms }) {
   const [active, setActive] = useState(0);
   const current = VERTICALS[active];
   const isDark = current.id === 'study';
+  const isGetPlaced = current.id === 'cap';
 
   const tagline = cms['hp:servicesTagline'] ?? 'What We Do';
   const title =
@@ -489,6 +587,11 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
   const subtitle =
     cms['hp:servicesSubtitle'] ??
     'Both Designed Around Your Growth — Not Our Revenue.';
+
+  const rawList = cms['hp:marqueeCompanies'] ?? '';
+  const partnerCompanies = rawList
+    ? rawList.split(',').map((s) => s.trim()).filter(Boolean)
+    : DEFAULT_COMPANIES;
 
   return (
     <section
@@ -499,18 +602,19 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
         overflow: 'hidden',
       }}
     >
-      {/* Base background layer — always light */}
+      {/* Base background layer — light blue → light orange (visible for Get Placed) */}
       <div
         aria-hidden
         style={{
           position: 'absolute',
           inset: 0,
-          background: '#ffffff',
+          background:
+            'linear-gradient(135deg, #eaf2ff 0%, #ffffff 45%, #fff2e4 100%)',
           zIndex: 0,
         }}
       />
 
-      {/* Dark theme overlay — crossfades in on Study Abroad */}
+      {/* Dark theme overlay — crossfades in on Study Abroad (unchanged) */}
       <motion.div
         aria-hidden
         style={{
@@ -650,10 +754,9 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
               fontSize: 'clamp(1.8rem, 4vw, 3.4rem)',
               fontWeight: '800',
               lineHeight: '1.1',
-              color: isDark ? '#f8fafc' : '#111',
               marginBottom: '18px',
               letterSpacing: '-0.02em',
-              transition: 'color 0.4s ease',
+              ...headingGradientStyle,
             }}
           >
             {title}
@@ -677,8 +780,9 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           style={{
             display: 'flex',
             justifyContent: 'center',
-            marginBottom: 'clamp(48px, 6vw, 76px)',
+            marginBottom: isGetPlaced ? 'clamp(20px, 3vw, 28px)' : 'clamp(48px, 6vw, 76px)',
             padding: '0 12px',
+            transition: 'margin-bottom 0.4s ease',
           }}
         >
           <motion.div
@@ -747,6 +851,51 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           </motion.div>
         </div>
 
+        {/* Compact hiring-partners strip — Get Placed only, collapses away for Study Abroad */}
+        <AnimatePresence initial={false}>
+          {isGetPlaced && (
+            <motion.div
+              key="services-partners-strip"
+              initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+              animate={{
+                opacity: 1,
+                height: 'auto',
+                marginBottom: 'clamp(32px, 5vw, 56px)',
+              }}
+              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              style={{ overflow: 'hidden' }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '14px',
+                  flexWrap: 'wrap',
+                  padding: '0 4px',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '11.5px',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                    color: '#64748b',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
+                  }}
+                >
+                  Hiring Network
+                </span>
+                <div style={{ flex: 1, minWidth: '220px' }}>
+                  <PartnersStrip companies={partnerCompanies} />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Main Content Grid */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -793,9 +942,9 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                   fontSize: 'clamp(1.5rem, 2.6vw, 2.3rem)',
                   fontWeight: '800',
                   lineHeight: '1.2',
-                  color: '#111',
                   marginBottom: '16px',
                   letterSpacing: '-0.01em',
+                  ...headingGradientStyle,
                 }}
               >
                 {current.title}
