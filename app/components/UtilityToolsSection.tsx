@@ -33,6 +33,19 @@ type Tool = {
 
 type Accent = { from: string; to: string; soft: string };
 
+/* ---------- shared heading gradient (blue → indigo → orange → rose → purple → blue) ---------- */
+
+const HEADING_GRADIENT =
+  'linear-gradient(270deg, #2563eb 0%, #4f46e5 20%, #f97316 45%, #f43f5e 65%, #9333ea 85%, #2563eb 100%)';
+
+const headingGradientStyle: React.CSSProperties = {
+  backgroundImage: HEADING_GRADIENT,
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  color: 'transparent',
+};
+
 const CATEGORY_META: Record<Category | 'all', { label: string } & Accent> = {
   all: { label: 'All Tools', from: '#6366f1', to: '#8b5cf6', soft: 'rgba(99,102,241,0.12)' },
   career: { label: 'Career & Resume', from: '#6366f1', to: '#8b5cf6', soft: 'rgba(99,102,241,0.12)' },
@@ -280,12 +293,7 @@ function RotatingHeadlineBanner() {
                 left: 0,
                 top: 0,
                 whiteSpace: 'nowrap',
-                backgroundImage: current.emphasis
-                  ? 'linear-gradient(135deg, #2563eb 0%, #fb923c 100%)'
-                  : 'linear-gradient(135deg, #2563eb 0%, #60a5fa 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
+                ...headingGradientStyle,
                 fontSize: current.emphasis ? '1.06em' : '1em',
               }}
             >
@@ -469,9 +477,9 @@ export default function UtilityToolsSection() {
               fontSize: 'clamp(1.8rem, 4vw, 3rem)',
               fontWeight: 800,
               lineHeight: 1.1,
-              color: '#111',
               marginBottom: '12px',
               letterSpacing: '-0.02em',
+              ...headingGradientStyle,
             }}
           >
             AI-Powered Tools Built for Real Career Decisions
@@ -603,8 +611,16 @@ export default function UtilityToolsSection() {
           </div>
         </div>
 
-        {/* Layout: grid + aside */}
-        <div className="tools-layout" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 'clamp(20px, 2.5vw, 32px)', alignItems: 'start' }}>
+        {/* Layout: grid + aside — rebalanced so the right column stops ballooning */}
+        <div
+          className="tools-layout"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 1.6fr) minmax(280px, 380px)',
+            gap: 'clamp(18px, 2.2vw, 28px)',
+            alignItems: 'start',
+          }}
+        >
           {/* Cards grid */}
           <motion.div layout className="tools-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px' }}>
             <AnimatePresence mode="popLayout">
@@ -702,9 +718,18 @@ export default function UtilityToolsSection() {
             </AnimatePresence>
           </motion.div>
 
-          {/* Desktop sticky aside */}
+          {/* Desktop sticky aside — capped width, no longer stretches into dead space */}
           {!isMobile && (
-            <div className="tools-aside" style={{ position: 'sticky', top: '90px' }}>
+            <div
+              className="tools-aside"
+              style={{
+                position: 'sticky',
+                top: '90px',
+                width: '100%',
+                maxWidth: '380px',
+                justifySelf: 'end',
+              }}
+            >
               <ToolPanel
                 active={active}
                 accent={accent}
@@ -878,7 +903,16 @@ function ToolPanel({
                 <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: accent.from, marginBottom: '2px' }}>
                   Placedly AI
                 </p>
-                <h3 style={{ fontSize: '17px', fontWeight: 800, color: '#111', lineHeight: 1.3 }}>{active.title}</h3>
+                <h3
+                  style={{
+                    fontSize: '17px',
+                    fontWeight: 800,
+                    lineHeight: 1.3,
+                    ...headingGradientStyle,
+                  }}
+                >
+                  {active.title}
+                </h3>
               </div>
             </div>
             {variant === 'desktop' && (
@@ -1031,7 +1065,7 @@ function ToolPanel({
             style={{
               background: '#fff',
               borderRadius: '22px',
-              padding: '36px 24px',
+              padding: '32px 22px',
               border: '1px dashed rgba(0,0,0,0.12)',
               textAlign: 'center',
             }}
@@ -1054,7 +1088,14 @@ function ToolPanel({
             <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: accent.from, marginBottom: '6px' }}>
               Placedly AI
             </p>
-            <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#111', marginBottom: '8px' }}>
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: 800,
+                marginBottom: '8px',
+                ...headingGradientStyle,
+              }}
+            >
               Select a tool to begin
             </h3>
             <p style={{ fontSize: '13.5px', color: '#777', lineHeight: 1.6 }}>

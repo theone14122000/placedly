@@ -10,42 +10,26 @@ import HiringPartnersMarquee from './HiringPartnersMarquee';
 
 type HeroCms = { [k: string]: string };
 
-/** Static portrait URLs — loose zig-zag spacing like reference hero */
 const SCATTER_AVATARS = [
   {
     src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face',
-    top: '0%',
-    left: '0%',
-    size: 46,
-    badge: false,
+    top: '0%', left: '0%', size: 46, badge: false,
   },
   {
     src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&crop=face',
-    top: '2%',
-    left: '72%',
-    size: 44,
-    badge: true,
+    top: '2%', left: '72%', size: 44, badge: true,
   },
   {
     src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&crop=face',
-    top: '38%',
-    left: '6%',
-    size: 50,
-    badge: true,
+    top: '38%', left: '6%', size: 50, badge: true,
   },
   {
     src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop&crop=face',
-    top: '70%',
-    left: '0%',
-    size: 44,
-    badge: false,
+    top: '70%', left: '0%', size: 44, badge: false,
   },
   {
     src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&crop=face',
-    top: '66%',
-    left: '74%',
-    size: 48,
-    badge: true,
+    top: '66%', left: '74%', size: 48, badge: true,
   },
 ] as const;
 
@@ -54,8 +38,57 @@ const HERO_CARD_AVATARS = {
   right: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face',
 } as const;
 
+/* ─── Animated gradient heading ─── */
+function AnimatedGradientText({
+  children,
+  className,
+  as: Tag = 'span',
+}: {
+  children: React.ReactNode;
+  className?: string;
+  as?: 'span' | 'h1' | 'h2' | 'h3';
+}) {
+  return (
+    <>
+      <Tag
+        className={className}
+        style={{
+          backgroundImage: [
+            'linear-gradient(',
+            '270deg,',
+            '#2563eb,',   /* blue        */
+            '#7c8ff0,',   /* indigo      */
+            '#fb923c,',   /* orange      */
+            '#f43f5e,',   /* rose        */
+            '#a855f7,',   /* purple      */
+            '#2563eb',    /* back to blue — seamless loop */
+            ')',
+          ].join(' '),
+          backgroundSize: '300% 300%',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          animation: 'placedly-gradient-shift 6s ease infinite',
+          display: 'inline',
+        }}
+      >
+        {children}
+      </Tag>
+
+      {/* keyframes — injected once, harmless if duplicated */}
+      <style>{`
+        @keyframes placedly-gradient-shift {
+          0%   { background-position: 0%   50%; }
+          50%  { background-position: 100% 50%; }
+          100% { background-position: 0%   50%; }
+        }
+      `}</style>
+    </>
+  );
+}
+
 export default function Hero({ cms = {} }: { cms?: HeroCms }) {
-  const offerRole = cms['hp:heroOfferRole'] ?? 'Senior Claims Analyst';
+  const offerRole      = cms['hp:heroOfferRole']      ?? 'Senior Claims Analyst';
   const admitProgramme = cms['hp:heroAdmitProgramme'] ?? "MSc International Business · Fall '25";
 
   return (
@@ -64,160 +97,174 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         <HeroGradientBg />
         <HeroBgVideo />
       </div>
+
       <div className="placedly-hero-desktop-only">
-      <div className="placedly-lift-hero-copy">
-        <motion.h1
-          className="placedly-lift-hero-title"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55 }}
-        >
-          Grow your career,
-          <br />
-          through people you trust.
-        </motion.h1>
+        {/* ── Copy ── */}
+        <div className="placedly-lift-hero-copy">
+          <motion.h1
+            className="placedly-lift-hero-title"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+            /* reset any colour the CSS class sets so gradient shows through */
+            style={{ color: 'inherit', WebkitTextFillColor: 'initial' }}
+          >
+            {/* plain line */}
+            Grow your career,
+            <br />
+            {/* gradient line */}
+            <AnimatedGradientText>
+              through people you trust.
+            </AnimatedGradientText>
+          </motion.h1>
 
-        <motion.p
-          className="placedly-lift-hero-sub"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.08 }}
-        >
-          {cms['hp:heroSubline'] ??
-            'Career Placement & Global Education Consultancy — Delhi NCR.'}
-        </motion.p>
+          <motion.p
+            className="placedly-lift-hero-sub"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.08 }}
+          >
+            {cms['hp:heroSubline'] ??
+              'Career Placement & Global Education Consultancy — Delhi NCR.'}
+          </motion.p>
 
+          <motion.div
+            className="placedly-lift-hero-ctas"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.16 }}
+          >
+            <Link href="/study-visa" className="placedly-lift-hero-btn">
+              {cms['hp:heroSecondaryCtaText'] ?? 'Study Abroad'}
+            </Link>
+          </motion.div>
+        </div>
+
+        {/* ── Stage ── */}
         <motion.div
-          className="placedly-lift-hero-ctas"
-          initial={{ opacity: 0, y: 12 }}
+          className="placedly-lift-hero-stage"
+          initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.16 }}
+          transition={{ duration: 0.65, delay: 0.28 }}
         >
-          <Link href="/study-visa" className="placedly-lift-hero-btn">
-            {cms['hp:heroSecondaryCtaText'] ?? 'Study Abroad'}
-          </Link>
+          <div className="placedly-lift-network">
+            {/* Left card */}
+            <motion.div
+              className="placedly-lift-card placedly-lift-card--left"
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <div className="placedly-lift-card-profile">
+                <img
+                  src={HERO_CARD_AVATARS.left}
+                  alt=""
+                  className="placedly-lift-avatar placedly-lift-avatar--photo"
+                  width={48}
+                  height={48}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="placedly-lift-card-identity">
+                  <p className="placedly-lift-name">
+                    {cms['hp:heroOfferName'] ?? 'Priya'}
+                  </p>
+                  <p className="placedly-lift-role">CAP · India careers</p>
+                </div>
+              </div>
+              <p className="placedly-lift-card-line">
+                Targeting <strong>{offerRole}</strong>
+              </p>
+            </motion.div>
+
+            {/* Centre scatter */}
+            <div className="placedly-lift-connect" aria-hidden>
+              <div className="placedly-lift-scatter">
+                {SCATTER_AVATARS.map((person, i) => (
+                  <div
+                    key={person.src}
+                    className="placedly-lift-scatter-avatar-wrap"
+                    style={{
+                      top: person.top,
+                      left: person.left,
+                      width: person.size,
+                      height: person.size,
+                      zIndex: i + 1,
+                    }}
+                  >
+                    <img
+                      src={person.src}
+                      alt=""
+                      className="placedly-lift-scatter-avatar"
+                      width={person.size}
+                      height={person.size}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    {person.badge && (
+                      <span className="placedly-lift-scatter-badge">
+                        <Share2 size={11} strokeWidth={2.5} />
+                      </span>
+                    )}
+                  </div>
+                ))}
+
+                <div className="placedly-lift-glass-pill placedly-lift-glass-pill--share">
+                  <span className="placedly-lift-glass-pill-icon">
+                    <Share2 size={14} strokeWidth={2.25} />
+                  </span>
+                  <span className="placedly-lift-glass-pill-text">
+                    <strong>Shared</strong>
+                    <span>CAP roadmap</span>
+                  </span>
+                </div>
+
+                <div className="placedly-lift-glass-pill placedly-lift-glass-pill--rec">
+                  <span className="placedly-lift-glass-pill-icon">
+                    <Sparkles size={14} strokeWidth={2.25} />
+                  </span>
+                  <span className="placedly-lift-glass-pill-text">
+                    <strong>Recommended</strong>
+                    <span>Admit path</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right card */}
+            <motion.div
+              className="placedly-lift-card placedly-lift-card--right"
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+            >
+              <div className="placedly-lift-card-profile">
+                <img
+                  src={HERO_CARD_AVATARS.right}
+                  alt=""
+                  className="placedly-lift-avatar placedly-lift-avatar--photo"
+                  width={48}
+                  height={48}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="placedly-lift-card-identity">
+                  <p className="placedly-lift-name">
+                    {cms['hp:heroAdmitName'] ?? 'Arjun'}
+                  </p>
+                  <p className="placedly-lift-role">Study abroad track</p>
+                </div>
+              </div>
+              <p className="placedly-lift-card-line">
+                Interested in{' '}
+                <strong>
+                  {admitProgramme.split('·')[0]?.trim() ?? 'UK Masters'}
+                </strong>
+              </p>
+            </motion.div>
+          </div>
         </motion.div>
       </div>
 
-      <motion.div
-        className="placedly-lift-hero-stage"
-        initial={{ opacity: 0, y: 28 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.65, delay: 0.28 }}
-      >
-        <div className="placedly-lift-network">
-          <motion.div
-            className="placedly-lift-card placedly-lift-card--left"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <div className="placedly-lift-card-profile">
-              <img
-                src={HERO_CARD_AVATARS.left}
-                alt=""
-                className="placedly-lift-avatar placedly-lift-avatar--photo"
-                width={48}
-                height={48}
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="placedly-lift-card-identity">
-                <p className="placedly-lift-name">
-                  {cms['hp:heroOfferName'] ?? 'Priya'}
-                </p>
-                <p className="placedly-lift-role">CAP · India careers</p>
-              </div>
-            </div>
-            <p className="placedly-lift-card-line">
-              Targeting <strong>{offerRole}</strong>
-            </p>
-          </motion.div>
-
-          <div className="placedly-lift-connect" aria-hidden>
-            <div className="placedly-lift-scatter">
-              {SCATTER_AVATARS.map((person, i) => (
-                <div
-                  key={person.src}
-                  className="placedly-lift-scatter-avatar-wrap"
-                  style={{
-                    top: person.top,
-                    left: person.left,
-                    width: person.size,
-                    height: person.size,
-                    zIndex: i + 1,
-                  }}
-                >
-                  <img
-                    src={person.src}
-                    alt=""
-                    className="placedly-lift-scatter-avatar"
-                    width={person.size}
-                    height={person.size}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  {person.badge && (
-                    <span className="placedly-lift-scatter-badge">
-                      <Share2 size={11} strokeWidth={2.5} />
-                    </span>
-                  )}
-                </div>
-              ))}
-
-              <div className="placedly-lift-glass-pill placedly-lift-glass-pill--share">
-                <span className="placedly-lift-glass-pill-icon">
-                  <Share2 size={14} strokeWidth={2.25} />
-                </span>
-                <span className="placedly-lift-glass-pill-text">
-                  <strong>Shared</strong>
-                  <span>CAP roadmap</span>
-                </span>
-              </div>
-
-              <div className="placedly-lift-glass-pill placedly-lift-glass-pill--rec">
-                <span className="placedly-lift-glass-pill-icon">
-                  <Sparkles size={14} strokeWidth={2.25} />
-                </span>
-                <span className="placedly-lift-glass-pill-text">
-                  <strong>Recommended</strong>
-                  <span>Admit path</span>
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <motion.div
-            className="placedly-lift-card placedly-lift-card--right"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
-          >
-            <div className="placedly-lift-card-profile">
-              <img
-                src={HERO_CARD_AVATARS.right}
-                alt=""
-                className="placedly-lift-avatar placedly-lift-avatar--photo"
-                width={48}
-                height={48}
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="placedly-lift-card-identity">
-                <p className="placedly-lift-name">
-                  {cms['hp:heroAdmitName'] ?? 'Arjun'}
-                </p>
-                <p className="placedly-lift-role">Study abroad track</p>
-              </div>
-            </div>
-            <p className="placedly-lift-card-line">
-              Interested in <strong>{admitProgramme.split('·')[0]?.trim() ?? 'UK Masters'}</strong>
-            </p>
-          </motion.div>
-        </div>
-      </motion.div>
-      </div>
-
       <HeroMobileBrief cms={cms} />
-
       <HiringPartnersMarquee cms={cms} />
     </section>
   );
