@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { FadeUp } from './motion';
@@ -61,48 +61,145 @@ const DEFAULT_STEPS: JourneyStep[] = [
   },
 ];
 
-const STICKY_TOP = 112;
+/** Where cards pin in the viewport, in px from the top */
+const PIN_BASE_TOP = 100;
+/** Each subsequent card pins slightly lower, revealing a sliver of the one behind it */
+const PIN_STACK_STEP = 18;
+/** Extra scroll runway per card, in px, beyond its own height */
+const SLOT_BUFFER = 420;
 const SECTION_ID = 'cap-journey-section';
 
 export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   const [activeStep, setActiveStep] = useState(0);
   const [fillProgress, setFillProgress] = useState(0);
   const [markerTops, setMarkerTops] = useState<number[]>([]);
+  const [cardTransforms, setCardTransforms] = useState<CSSProperties[]>(
+    () => DEFAULT_STEPS.map(() => ({})),
+  );
   const [showFloatingCta, setShowFloatingCta] = useState(false);
 
-  const cardsColRef = useRef<HTMLDivElement>(null);
-  const cardsTrackRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLElement>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const cardsColRef = useRef<HTMLDivElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const slotRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const cardHeightsRef = useRef<number[]>(DEFAULT_STEPS.map(() => 0));
+  const [slotHeights, setSlotHeights] = useState<number[]>(
+    () => DEFAULT_STEPS.map(() => 0),
+  );
 
   const kicker = cms['hp:capJourneyKicker'] ?? 'Career Assistance Programme';
   const title = cms['hp:capJourneyTitle'] ?? 'Your CAP Journey — From Resume to Offer';
-  const subtitle = cms['hp:capJourneySubtitle'] ?? 'Scroll through each stage of the programme. Every step is advisor-led, transparent, and built to get you placed — not just applied.';
+  const subtitle =
+    cms['hp:capJourneySubtitle'] ??
+    'Scroll through each stage of the programme. Every step is advisor-led, transparent, and built to get you placed — not just applied.';
 
-  /* ====================== SCROLL & MARKER LOGIC ====================== */
-  const updateMarkerPositions = useCallback(() => {
-    const track = cardsTrackRef.current;
+  /* ====================== MEASURE CARD + SLOT HEIGHTS ====================== */
+  const measure = useCallback(() => {
+    const heights = cardRefs.current.map((el) => el?.offsetHeight ?? 0);
+    cardHeightsRef.current = heights;
+    setSlotHeights(heights.map((h) => h + SLOT_BUFFER));
+
+    // update rail marker positions based on SLOT centers (not card offsetTop,
+    // since cards are transformed and slots are the real layout anchors)
+    const track = trackRef.current;
     if (!track) return;
-    const cards = track.querySelectorAll<HTMLElement>('[data-cap-step]');
     const trackHeight = track.offsetHeight;
-    if (!trackHeight || !cards.length) return;
+    if (!trackHeight) return;
 
-    const tops = Array.from(cards).map((card) => {
-      const center = card.offsetTop + card.offsetHeight / 2;
+    const tops = slotRefs.current.map((slot) => {
+      if (!slot) return 0;
+      const center = slot.offsetTop + slot.offsetHeight / 2;
       return (center / trackHeight) * 100;
     });
     setMarkerTops(tops);
   }, []);
 
+  useEffect(() => {
+    measure();
+
+    // re-measure after images load (they affect card height)
+    const imgs = document.querySelectorAll<HTMLImageElement>(
+      '.placedly-cap-journey-card-img',
+    );
+    imgs.forEach((img) => {
+      if (!img.complete) {
+        img.addEventListener('load', measure, { once: true });
+      }
+    });
+
+    window.addEventListener('resize', measure);
+    return () => {
+      window.removeEventListener('resize', measure);
+      imgs.forEach((img) => img.removeEventListener('load', measure));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* ====================== SCROLL-DRIVEN PIN + STACK (transform-based) ====================== */
+  useEffect(() => {
+    let rafId: number | null = null;
+
+    const clamp = (val: number, min: number, max: number) =>
+      Math.min(Math.max(val, min), max);
+
+    const update = () => {
+      rafId = null;
+
+      const nextTransforms: CSSProperties[] = DEFAULT_STEPS.map((_, i) => {
+        const slot = slotRefs.current[i];
+        if (!slot) return {};
+
+        const slotRect = slot.getBoundingClientRect();
+        const cardH = cardHeightsRef.current[i] || slotRect.height;
+        const pinTop = PIN_BASE_TOP + i * PIN_STACK_STEP;
+        const maxTranslate = Math.max(slotRect.height - cardH, 0);
+
+        // How far we'd need to shift the card down to keep it visually
+        // pinned at `pinTop`, clamped so it never leaves its own slot.
+        const translateY = clamp(pinTop - slotRect.top, 0, maxTranslate);
+
+        return {
+          transform: `translateY(${translateY}px)`,
+          zIndex: 10 + i,
+        };
+      });
+
+      setCardTransforms(nextTransforms);
+      updateScrollProgress();
+    };
+
+    const onScroll = () => {
+      if (rafId == null) rafId = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slotHeights]);
+
+  /* ====================== PROGRESS RAIL FILL ====================== */
   const updateScrollProgress = useCallback(() => {
     const col = cardsColRef.current;
     if (!col) return;
     const rect = col.getBoundingClientRect();
-    const scrollable = col.offsetHeight - window.innerHeight + STICKY_TOP;
-    const scrolled = -rect.top + STICKY_TOP;
+    const scrollable = col.offsetHeight - window.innerHeight + PIN_BASE_TOP;
+    if (scrollable <= 0) {
+      setFillProgress(rect.top <= PIN_BASE_TOP ? 1 : 0);
+      return;
+    }
+    const scrolled = -rect.top + PIN_BASE_TOP;
     setFillProgress(Math.min(1, Math.max(0, scrolled / scrollable)));
   }, []);
 
-  /* ====================== INTERSECTION OBSERVER FOR CARDS ====================== */
+  /* ====================== ACTIVE STEP DETECTION ====================== */
   useEffect(() => {
     const cards = document.querySelectorAll<HTMLElement>('[data-cap-step]');
     if (!cards.length) return;
@@ -110,41 +207,17 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const idx = Number(entry.target.getAttribute('data-cap-step'));
-            if (!Number.isNaN(idx)) setActiveStep(idx);
-          }
+          if (!entry.isIntersecting) return;
+          const idx = Number(entry.target.getAttribute('data-cap-step'));
+          if (!Number.isNaN(idx)) setActiveStep(idx);
         });
       },
-      { threshold: 0.52, rootMargin: '-42% 0px -42% 0px' }
+      { threshold: 0.52, rootMargin: '-42% 0px -42% 0px' },
     );
 
     cards.forEach((card) => observer.observe(card));
     return () => observer.disconnect();
-  }, []);
-
-  /* ====================== SCROLL & RESIZE ====================== */
-  useEffect(() => {
-    const onScroll = () => updateScrollProgress();
-    const onResize = () => {
-      updateMarkerPositions();
-      updateScrollProgress();
-    };
-
-    onResize();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize);
-
-    const track = cardsTrackRef.current;
-    const resizeObserver = track ? new ResizeObserver(onResize) : null;
-    if (track && resizeObserver) resizeObserver.observe(track);
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
-      resizeObserver?.disconnect();
-    };
-  }, [updateMarkerPositions, updateScrollProgress]);
+  }, [slotHeights]);
 
   /* ====================== FLOATING CTA VISIBILITY ====================== */
   useEffect(() => {
@@ -153,7 +226,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
 
     const observer = new IntersectionObserver(
       ([entry]) => setShowFloatingCta(entry.isIntersecting),
-      { threshold: 0.08 }
+      { threshold: 0.08 },
     );
 
     observer.observe(section);
@@ -167,21 +240,27 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
       className="placedly-cap-journey"
       aria-labelledby="cap-journey-title"
     >
-      {/* ==================== ALL STYLES INSIDE COMPONENT ==================== */}
       <style jsx global>{`
         .placedly-cap-journey {
           position: relative;
           padding: clamp(56px, 8vw, 96px) clamp(20px, 4vw, 40px);
-          background: #FFFBF4;
+          background: #fffbf4;
           overflow: visible;
         }
         .placedly-cap-journey-bg {
           position: absolute;
           inset: 0;
           pointer-events: none;
-          background: 
-            radial-gradient(ellipse 70% 45% at 50% 0%, rgba(255,255,255,0.95), transparent 65%),
-            radial-gradient(ellipse 40% 30% at 8% 85%, rgba(15,23,42,0.03), transparent 55%);
+          background: radial-gradient(
+              ellipse 70% 45% at 50% 0%,
+              rgba(255, 255, 255, 0.95),
+              transparent 65%
+            ),
+            radial-gradient(
+              ellipse 40% 30% at 8% 85%,
+              rgba(15, 23, 42, 0.03),
+              transparent 55%
+            );
         }
         .placedly-cap-journey-wrap {
           position: relative;
@@ -281,41 +360,31 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           transform: scale(1.4);
         }
 
-        /* ====================== OVERLAPPING STICKY CARDS ====================== */
+        /* ====================== SLOTS + TRANSFORM-BASED STACKING ====================== */
         .placedly-cap-journey-track {
           position: relative;
-          display: flex;
-          flex-direction: column;
-          gap: 0;
-          padding-bottom: min(36vh, 280px);
         }
-        
+
+        .placedly-cap-journey-slot {
+          position: relative;
+        }
+
         .placedly-cap-journey-card {
-          position: sticky;
-          margin-bottom: 24px;
+          position: relative;
           border-radius: 28px;
-          background: #FFFBF4;
+          background: #fffbf4;
           border: 1px solid rgba(0, 0, 0, 0.06);
           box-shadow: 0 12px 40px rgba(249, 115, 22, 0.12);
-          transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
-                      box-shadow 0.4s ease,
-                      opacity 0.3s ease;
           will-change: transform;
           overflow: hidden;
         }
 
-        /* Overlap effect - each card sticks a bit higher than the previous */
         .placedly-cap-journey-card:not(.is-active) {
-          opacity: 0.92;
-          transform: scale(0.985);
           box-shadow: 0 8px 30px rgba(249, 115, 22, 0.08);
         }
 
         .placedly-cap-journey-card.is-active {
-          opacity: 1;
-          transform: scale(1);
           box-shadow: 0 25px 60px -12px rgba(249, 115, 22, 0.25);
-          z-index: 20;
         }
 
         .placedly-cap-journey-card-inner {
@@ -432,7 +501,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           right: 0;
           bottom: 0;
           height: 14px;
-          background: #FFFBF4;
+          background: #fffbf4;
           border-top: 1px solid rgba(15, 23, 42, 0.08);
           box-shadow: 0 -8px 28px rgba(15, 23, 42, 0.08);
           z-index: -1;
@@ -458,20 +527,25 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           white-space: nowrap;
           border: 1px solid rgba(255, 255, 255, 0.35);
           box-shadow: 0 10px 30px rgba(234, 88, 12, 0.35),
-                      0 20px 50px rgba(234, 88, 12, 0.25),
-                      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            0 20px 50px rgba(234, 88, 12, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
           transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1),
-                      box-shadow 0.25s ease;
+            box-shadow 0.25s ease;
         }
         .placedly-cap-floating-cta-btn:hover {
           transform: translateY(-4px) scale(1.03);
           box-shadow: 0 15px 40px rgba(234, 88, 12, 0.45),
-                      0 25px 60px rgba(234, 88, 12, 0.35);
+            0 25px 60px rgba(234, 88, 12, 0.35);
         }
 
         @keyframes float-bob {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-9px); }
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-9px);
+          }
         }
 
         @media (max-width: 768px) {
@@ -497,9 +571,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
             width: min(72vw, 260px);
             transform: rotate(-4deg);
           }
-          .placedly-cap-journey-track {
-            padding-bottom: 24vh;
-          }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -508,6 +579,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           }
           .placedly-cap-journey-card {
             transition: none !important;
+            will-change: auto;
           }
         }
       `}</style>
@@ -535,12 +607,17 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
               </div>
               <div className="placedly-cap-journey-rail-markers">
                 {DEFAULT_STEPS.map((step, index) => {
-                  const top = markerTops[index] ?? (index / (DEFAULT_STEPS.length - 1)) * 100;
-                  const isLit = fillProgress >= top / 100 - 0.02 || activeStep >= index;
+                  const top =
+                    markerTops[index] ??
+                    (index / (DEFAULT_STEPS.length - 1)) * 100;
+                  const isLit =
+                    fillProgress >= top / 100 - 0.02 || activeStep >= index;
                   return (
                     <span
                       key={step.id}
-                      className={`placedly-cap-journey-rail-marker ${isLit ? 'is-lit' : ''} ${activeStep === index ? 'is-active' : ''}`}
+                      className={`placedly-cap-journey-rail-marker ${
+                        isLit ? 'is-lit' : ''
+                      } ${activeStep === index ? 'is-active' : ''}`}
                       style={{ top: `${top}%` }}
                     />
                   );
@@ -549,29 +626,36 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
             </div>
           </div>
 
-          {/* Cards with Overlapping Effect */}
+          {/* Stacking Cards */}
           <div ref={cardsColRef} className="placedly-cap-journey-cards-col">
-            <div ref={cardsTrackRef} className="placedly-cap-journey-track">
-              {DEFAULT_STEPS.map((step, index) => {
-                // Staggered top values for overlapping effect
-                const stickyTop = STICKY_TOP + index * 18;
-
-                return (
+            <div ref={trackRef} className="placedly-cap-journey-track">
+              {DEFAULT_STEPS.map((step, index) => (
+                <div
+                  key={step.id}
+                  ref={(el) => {
+                    slotRefs.current[index] = el;
+                  }}
+                  className="placedly-cap-journey-slot"
+                  style={{ height: slotHeights[index] || undefined }}
+                >
                   <article
-                    key={step.id}
-                    data-cap-step={index}
-                    className={`placedly-cap-journey-card ${activeStep === index ? 'is-active' : ''}`}
-                    style={{ 
-                      top: `${stickyTop}px`,
-                      zIndex: activeStep === index ? 20 : 10 - index 
+                    ref={(el) => {
+                      cardRefs.current[index] = el;
                     }}
+                    data-cap-step={index}
+                    className={`placedly-cap-journey-card ${
+                      activeStep === index ? 'is-active' : ''
+                    }`}
+                    style={cardTransforms[index]}
                   >
                     <div className="placedly-cap-journey-card-inner">
                       <div className="placedly-cap-journey-card-left">
                         <span className="placedly-cap-journey-card-badge">
                           {String(index + 1).padStart(3, '0')}
                         </span>
-                        <h3 className="placedly-cap-journey-card-title">{step.title}</h3>
+                        <h3 className="placedly-cap-journey-card-title">
+                          {step.title}
+                        </h3>
                       </div>
 
                       <div className="placedly-cap-journey-card-media">
@@ -584,15 +668,20 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                       </div>
 
                       <div className="placedly-cap-journey-card-right">
-                        <p className="placedly-cap-journey-card-body">{step.body}</p>
-                        <Link href={step.href} className="placedly-cap-journey-card-link">
+                        <p className="placedly-cap-journey-card-body">
+                          {step.body}
+                        </p>
+                        <Link
+                          href={step.href}
+                          className="placedly-cap-journey-card-link"
+                        >
                           Read More <ArrowRight size={16} strokeWidth={2.5} />
                         </Link>
                       </div>
                     </div>
                   </article>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
         </div>
