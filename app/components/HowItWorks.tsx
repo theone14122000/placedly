@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
   BadgeCheck,
@@ -18,18 +12,11 @@ import {
   Plane,
   Send,
   Users,
-  Sparkles,
-  ArrowRight,
-  Pause,
-  Play,
   type LucideIcon,
 } from 'lucide-react';
 import { FadeUp } from './motion';
 import SeeDemoButton from './SeeDemoButton';
 
-/* ─────────────────────────────────────────────────────────────────
-   TYPES
-───────────────────────────────────────────────────────────────── */
 type Cms = Record<string, string>;
 
 type TabDef = {
@@ -38,17 +25,10 @@ type TabDef = {
   Icon: LucideIcon;
   title: string;
   details: string;
-  accent: string;
-  category: 'career' | 'study';
-  step: number;
-  totalSteps: number;
   cta?: { label: string; href: string };
   Visual: () => React.ReactNode;
 };
 
-/* ─────────────────────────────────────────────────────────────────
-   DEFAULTS
-───────────────────────────────────────────────────────────────── */
 const CAREER_DEFAULTS = [
   {
     title: 'Understand You First',
@@ -87,343 +67,169 @@ const STUDY_DEFAULTS = [
   },
 ];
 
-/* ─────────────────────────────────────────────────────────────────
-   SHARED VISUAL ATOMS
-───────────────────────────────────────────────────────────────── */
-function MockCard({
-  children,
-  style,
-}: {
-  children: React.ReactNode;
-  style?: React.CSSProperties;
-}) {
-  return (
-    <div
-      style={{
-        background: '#fff',
-        borderRadius: 16,
-        padding: '14px 16px',
-        boxShadow: '0 2px 12px rgba(15,23,42,0.07)',
-        border: '1px solid rgba(15,23,42,0.06)',
-        ...style,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function Tag({ children, color = '#f97316' }: { children: React.ReactNode; color?: string }) {
-  return (
-    <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        padding: '4px 10px',
-        borderRadius: 999,
-        fontSize: 11,
-        fontWeight: 600,
-        background: `${color}18`,
-        color,
-        border: `1px solid ${color}30`,
-        whiteSpace: 'nowrap',
-      }}
-    >
-      {children}
-    </span>
-  );
-}
-
-function Avatar({
-  size = 32,
-  color = '#f97316',
-  letter,
-}: {
-  size?: number;
-  color?: string;
-  letter?: string;
-}) {
-  return (
-    <div
-      style={{
-        width: size,
-        height: size,
-        borderRadius: '50%',
-        background: `linear-gradient(135deg, ${color}40, ${color}20)`,
-        border: `2px solid ${color}40`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: size * 0.38,
-        fontWeight: 700,
-        color,
-        flexShrink: 0,
-      }}
-    >
-      {letter}
-    </div>
-  );
-}
-
-function VisualShell({ gradient, children }: { gradient: string; children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        minHeight: 260,
-        borderRadius: 20,
-        background: gradient,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px 20px',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute', top: -40, right: -40,
-          width: 140, height: 140, borderRadius: '50%',
-          background: 'rgba(255,255,255,0.12)', pointerEvents: 'none',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute', bottom: -30, left: -30,
-          width: 100, height: 100, borderRadius: '50%',
-          background: 'rgba(255,255,255,0.08)', pointerEvents: 'none',
-        }}
-      />
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 320 }}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-/* ── Career visuals ── */
 function VisualCareer1() {
   return (
-    <VisualShell gradient="linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <MockCard>
-          <p style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-            I&apos;m targeting
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+    <div className="placedly-hiw-visual placedly-hiw-visual--warm">
+      <div className="placedly-hiw-mock placedly-hiw-mock--stack">
+        <div className="placedly-hiw-mock-card">
+          <p className="placedly-hiw-mock-label">I&apos;m targeting:</p>
+          <div className="placedly-hiw-tags">
             {['Claims & Insurance', 'BPO / MNC', '₹8–12 LPA'].map((t) => (
-              <Tag key={t} color="#f97316">{t}</Tag>
+              <span key={t} className="placedly-hiw-tag">{t}</span>
             ))}
           </div>
-        </MockCard>
-        <MockCard>
-          <p style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', margin: '0 0 10px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-            My Placedly roadmap
-          </p>
-          {[
-            { dot: '#f97316', name: 'EXL', role: 'Senior Analyst' },
-            { dot: '#2563eb', name: 'Optum', role: 'Claims Lead' },
-            { dot: '#7c3aed', name: 'WNS', role: 'Operations' },
-          ].map((row) => (
-            <div key={row.name} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', borderBottom: '1px solid rgba(15,23,42,0.04)' }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: row.dot, flexShrink: 0 }} />
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{row.name}</span>
-              <span style={{ fontSize: 12, color: '#64748b', marginLeft: 2 }}>· {row.role}</span>
-            </div>
-          ))}
-        </MockCard>
+        </div>
+        <div className="placedly-hiw-mock-card">
+          <p className="placedly-hiw-mock-label">My Placedly roadmap</p>
+          <ul className="placedly-hiw-mock-list">
+            <li><span className="placedly-hiw-mock-dot placedly-hiw-mock-dot--exl" />EXL · Senior Analyst</li>
+            <li><span className="placedly-hiw-mock-dot placedly-hiw-mock-dot--optum" />Optum · Claims Lead</li>
+            <li><span className="placedly-hiw-mock-dot placedly-hiw-mock-dot--wns" />WNS · Operations</li>
+          </ul>
       </div>
-    </VisualShell>
+      </div>
+    </div>
   );
 }
 
 function VisualCareer2() {
   return (
-    <VisualShell gradient="linear-gradient(135deg, #fef3c7 0%, #fde68a 40%, #fcd34d 100%)">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <MockCard style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Avatar size={32} color="#f97316" letter="P" />
-          <span style={{ fontSize: 12, color: '#64748b', fontWeight: 500 }}>Placedly shared with you</span>
-        </MockCard>
-        <MockCard>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-            <Avatar size={40} color="#2563eb" letter="E" />
+    <div className="placedly-hiw-visual placedly-hiw-visual--sunset">
+      <div className="placedly-hiw-mock placedly-hiw-mock--feed">
+        <div className="placedly-hiw-mock-card placedly-hiw-mock-card--sm">
+          <span className="placedly-hiw-mock-avatar" />
+          <span className="placedly-hiw-mock-meta">Placedly shared with you</span>
+        </div>
+        <div className="placedly-hiw-mock-card placedly-hiw-mock-card--hero">
+          <div className="placedly-hiw-mock-row">
+            <span className="placedly-hiw-mock-avatar placedly-hiw-mock-avatar--md" />
             <div>
-              <p style={{ fontSize: 11, color: '#94a3b8', margin: '0 0 2px' }}>Your advisor connected you to</p>
-              <p style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', margin: '0 0 2px' }}>Senior Claims Analyst</p>
-              <p style={{ fontSize: 12, color: '#64748b', margin: 0 }}>EXL Service · Noida</p>
+              <p className="placedly-hiw-mock-sub">Your advisor connected you to</p>
+              <p className="placedly-hiw-mock-title">Senior Claims Analyst</p>
+              <p className="placedly-hiw-mock-co">EXL Service · Noida</p>
             </div>
           </div>
-        </MockCard>
-        <MockCard style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'linear-gradient(135deg,#0f172a,#1e293b)' }}>
-          <Sparkles size={16} style={{ color: '#f97316', flexShrink: 0 }} />
-          <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: '0 0 2px' }}>Interview prep booked</p>
-            <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>Mock round with industry coach</p>
+        </div>
+        <div className="placedly-hiw-mock-card placedly-hiw-mock-card--cta">
+          <span className="placedly-hiw-mock-spark">✦</span>
+          <div>
+            <p className="placedly-hiw-mock-cta-title">Interview prep booked</p>
+            <p className="placedly-hiw-mock-cta-sub">Mock round with industry coach</p>
           </div>
-          <ArrowRight size={14} style={{ color: '#f97316', flexShrink: 0 }} />
-        </MockCard>
+          <span className="placedly-hiw-mock-arrow">→</span>
+        </div>
       </div>
-    </VisualShell>
+    </div>
   );
 }
 
 function VisualCareer3() {
   return (
-    <VisualShell gradient="linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)">
-      <MockCard style={{ textAlign: 'center', padding: '24px 20px' }}>
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          padding: '4px 12px', borderRadius: 999,
-          background: '#dcfce7', color: '#16a34a',
-          fontSize: 11, fontWeight: 700, marginBottom: 12,
-          border: '1px solid #bbf7d0',
-        }}>
-          <BadgeCheck size={12} /> You received
+    <div className="placedly-hiw-visual placedly-hiw-visual--peach">
+      <div className="placedly-hiw-mock placedly-hiw-mock--success">
+        <div className="placedly-hiw-mock-card placedly-hiw-mock-card--center">
+          <p className="placedly-hiw-mock-chip">You received</p>
+          <p className="placedly-hiw-mock-offer">Offer Letter · ₹9.2 LPA</p>
+          <div className="placedly-hiw-mock-avatars">
+            {['P', 'A', 'M'].map((l) => (
+              <span key={l} className="placedly-hiw-mock-avatar placedly-hiw-mock-avatar--sm">{l}</span>
+            ))}
+          </div>
+          <p className="placedly-hiw-mock-thanks">Placedly team sent congratulations 🎉</p>
+          <div className="placedly-hiw-mock-bubble">
+            &ldquo;Zero upfront until this moment — that&apos;s the Placedly promise.&rdquo;
+          </div>
         </div>
-        <p style={{ fontSize: 20, fontWeight: 800, color: '#0f172a', margin: '0 0 16px', letterSpacing: '-0.02em' }}>
-          Offer Letter · ₹9.2 LPA
-        </p>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
-          {['P', 'A', 'M'].map((l, i) => (
-            <div key={l} style={{ marginLeft: i === 0 ? 0 : -8, zIndex: 3 - i }}>
-              <Avatar size={32} color={['#f97316','#2563eb','#7c3aed'][i]} letter={l} />
-            </div>
-          ))}
-        </div>
-        <p style={{ fontSize: 12, color: '#64748b', margin: '0 0 12px' }}>
-          Placedly team sent congratulations 🎉
-        </p>
-        <div style={{
-          background: 'linear-gradient(135deg,#0f172a,#1e293b)',
-          borderRadius: 12, padding: '10px 14px',
-          fontSize: 12, color: '#e2e8f0', lineHeight: 1.5,
-          fontStyle: 'italic',
-        }}>
-          &ldquo;Zero upfront until this moment — that&apos;s the Placedly promise.&rdquo;
-        </div>
-      </MockCard>
-    </VisualShell>
+      </div>
+    </div>
   );
 }
 
-/* ── Study visuals ── */
 function VisualStudy1() {
   return (
-    <VisualShell gradient="linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <MockCard>
-          <p style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-            Dream destinations
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {[
-              { label: '🇬🇧 UK', color: '#2563eb' },
-              { label: '🇫🇷 France', color: '#7c3aed' },
-              { label: '🇩🇪 Germany', color: '#0891b2' },
-              { label: '🇦🇪 Dubai', color: '#16a34a' },
-            ].map(({ label, color }) => (
-              <Tag key={label} color={color}>{label}</Tag>
+    <div className="placedly-hiw-visual placedly-hiw-visual--warm">
+      <div className="placedly-hiw-mock placedly-hiw-mock--stack">
+        <div className="placedly-hiw-mock-card">
+          <p className="placedly-hiw-mock-label">Dream destinations:</p>
+          <div className="placedly-hiw-tags">
+            {['United Kingdom', 'France', 'Germany', 'Dubai'].map((t) => (
+              <span key={t} className="placedly-hiw-tag placedly-hiw-tag--study">{t}</span>
             ))}
           </div>
-        </MockCard>
-        <MockCard>
-          <p style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', margin: '0 0 10px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-            My profile focus
-          </p>
-          {[
-            { dot: '#2563eb', prog: 'MSc Business', dest: 'UK' },
-            { dot: '#7c3aed', prog: 'MBA', dest: 'France' },
-            { dot: '#0891b2', prog: 'Engineering', dest: 'Germany' },
-          ].map((row) => (
-            <div key={row.prog} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', borderBottom: '1px solid rgba(15,23,42,0.04)' }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: row.dot, flexShrink: 0 }} />
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{row.prog}</span>
-              <span style={{ fontSize: 12, color: '#64748b', marginLeft: 2 }}>· {row.dest}</span>
-            </div>
-          ))}
-        </MockCard>
+        </div>
+        <div className="placedly-hiw-mock-card">
+          <p className="placedly-hiw-mock-label">My profile focus</p>
+          <ul className="placedly-hiw-mock-list">
+            <li><span className="placedly-hiw-mock-dot placedly-hiw-mock-dot--uk" />MSc Business · UK</li>
+            <li><span className="placedly-hiw-mock-dot placedly-hiw-mock-dot--fr" />MBA · France</li>
+            <li><span className="placedly-hiw-mock-dot placedly-hiw-mock-dot--de" />Engineering · Germany</li>
+          </ul>
+        </div>
       </div>
-    </VisualShell>
+    </div>
   );
 }
 
 function VisualStudy2() {
   return (
-    <VisualShell gradient="linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <MockCard style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Avatar size={32} color="#7c3aed" letter="U" />
-          <span style={{ fontSize: 12, color: '#64748b', fontWeight: 500 }}>Application update</span>
-        </MockCard>
-        <MockCard>
-          <p style={{ fontSize: 12, color: '#7c3aed', fontWeight: 600, margin: '0 0 2px' }}>University of Manchester</p>
-          <p style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', margin: '0 0 2px' }}>MSc International Business</p>
-          <p style={{ fontSize: 12, color: '#64748b', margin: 0 }}>Fall &apos;25 intake · Offer received</p>
-        </MockCard>
-        <MockCard style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'linear-gradient(135deg,#4c1d95,#5b21b6)' }}>
-          <Sparkles size={16} style={{ color: '#a78bfa', flexShrink: 0 }} />
-          <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: '0 0 2px' }}>SOP & documents complete</p>
-            <p style={{ fontSize: 11, color: '#c4b5fd', margin: 0 }}>Ready for visa filing</p>
+    <div className="placedly-hiw-visual placedly-hiw-visual--sunset">
+      <div className="placedly-hiw-mock placedly-hiw-mock--feed">
+        <div className="placedly-hiw-mock-card placedly-hiw-mock-card--sm">
+          <span className="placedly-hiw-mock-avatar placedly-hiw-mock-avatar--study" />
+          <span className="placedly-hiw-mock-meta">Application update</span>
+        </div>
+        <div className="placedly-hiw-mock-card placedly-hiw-mock-card--hero">
+          <p className="placedly-hiw-mock-sub">University of Manchester</p>
+          <p className="placedly-hiw-mock-title">MSc International Business</p>
+          <p className="placedly-hiw-mock-co">Fall &apos;25 intake · Offer received</p>
+        </div>
+        <div className="placedly-hiw-mock-card placedly-hiw-mock-card--cta">
+          <span className="placedly-hiw-mock-spark">✦</span>
+          <div>
+            <p className="placedly-hiw-mock-cta-title">SOP & documents complete</p>
+            <p className="placedly-hiw-mock-cta-sub">Ready for visa filing</p>
           </div>
-          <ArrowRight size={14} style={{ color: '#a78bfa', flexShrink: 0 }} />
-        </MockCard>
+          <span className="placedly-hiw-mock-arrow">→</span>
+        </div>
       </div>
-    </VisualShell>
+    </div>
   );
 }
 
 function VisualStudy3() {
   return (
-    <VisualShell gradient="linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)">
-      <MockCard style={{ textAlign: 'center', padding: '24px 20px' }}>
-        <Avatar size={56} color="#16a34a" letter="P" />
-        <p style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: '12px 0 2px' }}>Priya Sharma</p>
-        <p style={{ fontSize: 12, color: '#64748b', margin: '0 0 14px' }}>MSc Admit · UK 🇬🇧</p>
-        <div style={{
-          background: 'linear-gradient(135deg,#14532d,#166534)',
-          borderRadius: 12, padding: '10px 14px',
-          fontSize: 12, color: '#bbf7d0',
-          lineHeight: 1.5, marginBottom: 12,
-        }}>
-          ✈️ Visa approved · Flying September 2025
+    <div className="placedly-hiw-visual placedly-hiw-visual--peach">
+      <div className="placedly-hiw-mock placedly-hiw-mock--success">
+        <div className="placedly-hiw-mock-card placedly-hiw-mock-card--center">
+          <span className="placedly-hiw-mock-avatar placedly-hiw-mock-avatar--lg" />
+          <p className="placedly-hiw-mock-name">Priya Sharma</p>
+          <p className="placedly-hiw-mock-role">MSc Admit · UK</p>
+          <div className="placedly-hiw-mock-bubble placedly-hiw-mock-bubble--purple">
+            Visa approved · Flying September 2025
+          </div>
+          <p className="placedly-hiw-mock-thanks">Your advisor: pre-departure checklist sent ✓</p>
         </div>
-        <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>
-          Your advisor: pre-departure checklist sent ✓
-        </p>
-      </MockCard>
-    </VisualShell>
+      </div>
+    </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   TAB META (flat, ordered career → study)
-───────────────────────────────────────────────────────────────── */
 const TAB_META: {
   id: string;
   label: string;
   Icon: LucideIcon;
-  accent: string;
-  category: 'career' | 'study';
-  step: number;
   cmsKey: string;
   defaultIndex: number;
   defaults: typeof CAREER_DEFAULTS;
   Visual: () => React.ReactNode;
 }[] = [
-  { id: 'consult', label: 'Free Session', Icon: Users, accent: '#f97316', category: 'career', step: 1, cmsKey: '1', defaultIndex: 0, defaults: CAREER_DEFAULTS, Visual: VisualCareer1 },
-  { id: 'prep', label: 'Interview Prep', Icon: FileText, accent: '#f59e0b', category: 'career', step: 2, cmsKey: '3', defaultIndex: 1, defaults: CAREER_DEFAULTS, Visual: VisualCareer2 },
-  { id: 'offer', label: 'Offer & Fee', Icon: BadgeCheck, accent: '#16a34a', category: 'career', step: 3, cmsKey: '5', defaultIndex: 2, defaults: CAREER_DEFAULTS, Visual: VisualCareer3 },
-  { id: 'counsel', label: 'Counselling', Icon: GraduationCap, accent: '#2563eb', category: 'study', step: 1, cmsKey: 'Study1', defaultIndex: 0, defaults: STUDY_DEFAULTS, Visual: VisualStudy1 },
-  { id: 'apply', label: 'Applications', Icon: Send, accent: '#7c3aed', category: 'study', step: 2, cmsKey: 'Study2', defaultIndex: 1, defaults: STUDY_DEFAULTS, Visual: VisualStudy2 },
-  { id: 'visa', label: 'Visa Support', Icon: Plane, accent: '#0891b2', category: 'study', step: 3, cmsKey: 'Study3', defaultIndex: 2, defaults: STUDY_DEFAULTS, Visual: VisualStudy3 },
+  { id: 'consult', label: 'Free Session', Icon: Users, cmsKey: '1', defaultIndex: 0, defaults: CAREER_DEFAULTS, Visual: VisualCareer1 },
+  { id: 'prep', label: 'Interview Prep', Icon: FileText, cmsKey: '3', defaultIndex: 1, defaults: CAREER_DEFAULTS, Visual: VisualCareer2 },
+  { id: 'offer', label: 'Offer & Fee', Icon: BadgeCheck, cmsKey: '5', defaultIndex: 2, defaults: CAREER_DEFAULTS, Visual: VisualCareer3 },
+  { id: 'counsel', label: 'Counselling', Icon: GraduationCap, cmsKey: 'Study1', defaultIndex: 0, defaults: STUDY_DEFAULTS, Visual: VisualStudy1 },
+  { id: 'apply', label: 'Applications', Icon: Send, cmsKey: 'Study2', defaultIndex: 1, defaults: STUDY_DEFAULTS, Visual: VisualStudy2 },
+  { id: 'visa', label: 'Visa Support', Icon: Plane, cmsKey: 'Study3', defaultIndex: 2, defaults: STUDY_DEFAULTS, Visual: VisualStudy3 },
 ];
-
-const CAREER_TOTAL = TAB_META.filter((t) => t.category === 'career').length;
-const STUDY_TOTAL = TAB_META.filter((t) => t.category === 'study').length;
 
 function buildTabs(cms: Cms): TabDef[] {
   return TAB_META.map((meta) => {
@@ -431,16 +237,11 @@ function buildTabs(cms: Cms): TabDef[] {
     const isStudy = meta.cmsKey.startsWith('Study');
     const prefix = isStudy ? 'hp:hiwStudy' : 'hp:hiw';
     const key = isStudy ? meta.cmsKey.replace('Study', '') : meta.cmsKey;
-    const totalSteps = meta.category === 'career' ? CAREER_TOTAL : STUDY_TOTAL;
 
     return {
       id: meta.id,
       label: meta.label,
       Icon: meta.Icon,
-      accent: meta.accent,
-      category: meta.category,
-      step: meta.step,
-      totalSteps,
       title: cms[`${prefix}${key}Title`] || def.title,
       details: cms[`${prefix}${key}Details`] || def.details,
       cta: def.cta,
@@ -449,574 +250,215 @@ function buildTabs(cms: Cms): TabDef[] {
   });
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   TIMING — 5 to 8 seconds, randomised for organic feel
-───────────────────────────────────────────────────────────────── */
-const MIN_DURATION = 5000;
-const MAX_DURATION = 8000;
-
-function randomDuration() {
-  return MIN_DURATION + Math.random() * (MAX_DURATION - MIN_DURATION);
-}
-
+const AUTO_TAB_MS = 4000;
 const PROGRESS_RADIUS = 20;
 const PROGRESS_CIRC = 2 * Math.PI * PROGRESS_RADIUS;
 
-/* ─────────────────────────────────────────────────────────────────
-   CATEGORY SWITCHER — sliding highlight via layoutId
-───────────────────────────────────────────────────────────────── */
-function CategorySwitcher({
-  active,
-  onChange,
-}: {
-  active: 'career' | 'study';
-  onChange: (c: 'career' | 'study') => void;
-}) {
-  return (
-    <LayoutGroup id="category-switcher">
-      <div
-        style={{
-          position: 'relative',
-          display: 'inline-flex',
-          background: 'rgba(15,23,42,0.05)',
-          borderRadius: 999,
-          padding: 4,
-          gap: 2,
-          marginBottom: 24,
-        }}
-      >
-        {(
-          [
-            { id: 'career', label: '💼 Career', color: '#f97316' },
-            { id: 'study', label: '🎓 Study Abroad', color: '#2563eb' },
-          ] as const
-        ).map((cat) => {
-          const isActive = active === cat.id;
-          return (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => onChange(cat.id)}
-              style={{
-                position: 'relative',
-                padding: '8px 20px',
-                borderRadius: 999,
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 13,
-                fontWeight: 700,
-                letterSpacing: '0.01em',
-                background: 'transparent',
-                color: isActive ? cat.color : '#64748b',
-                zIndex: 1,
-                transition: 'color 0.25s ease',
-              }}
-            >
-              {isActive && (
-                <motion.span
-                  layoutId="category-pill"
-                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: 999,
-                    background: '#fff',
-                    boxShadow: '0 2px 8px rgba(15,23,42,0.10)',
-                    zIndex: -1,
-                  }}
-                />
-              )}
-              {cat.label}
-            </button>
-          );
-        })}
-      </div>
-    </LayoutGroup>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   TAB BAR
-───────────────────────────────────────────────────────────────── */
 function TabBar({
   tabs,
   activeId,
   progress,
-  isPaused,
   onSelect,
   onPrev,
   onNext,
-  onTogglePause,
 }: {
   tabs: TabDef[];
   activeId: string;
   progress: number;
-  isPaused: boolean;
   onSelect: (id: string) => void;
   onPrev: () => void;
   onNext: () => void;
-  onTogglePause: () => void;
 }) {
-  const activeTab = tabs.find((t) => t.id === activeId);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const progressOffset = PROGRESS_CIRC * (1 - progress);
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+    <div className="placedly-hiw-tabbar">
       <button
         type="button"
-        aria-label="Previous step"
+        className="placedly-hiw-tabbar-arrow"
+        aria-label="Previous tab"
         onClick={onPrev}
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          width: 36, height: 36, borderRadius: '50%',
-          border: '1px solid rgba(15,23,42,0.10)', background: '#fff',
-          cursor: 'pointer', color: '#64748b', flexShrink: 0,
-          boxShadow: '0 1px 4px rgba(15,23,42,0.06)',
-        }}
       >
-        <ChevronLeft size={18} strokeWidth={2} />
+        <ChevronLeft size={20} strokeWidth={2} />
       </button>
 
-      <LayoutGroup id="tab-pills">
+      <div className="placedly-hiw-tabbar-shell">
         <div
-          style={{
-            display: 'flex', gap: 6, flex: 1, overflowX: 'auto',
-            scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', padding: '2px 0',
-          }}
+          className="placedly-hiw-tabbar-track"
+          ref={scrollRef}
           role="tablist"
           aria-label="How Placedly works"
         >
           {tabs.map((tab) => {
-            const isActive = tab.id === activeId;
+            const active = tab.id === activeId;
             return (
               <button
                 key={tab.id}
                 type="button"
                 role="tab"
-                aria-selected={isActive}
+                aria-selected={active}
+                className={`placedly-hiw-tab ${active ? 'is-active' : ''}`}
                 onClick={() => onSelect(tab.id)}
-                style={{
-                  position: 'relative',
-                  display: 'inline-flex', alignItems: 'center', gap: 6,
-                  padding: '8px 14px', borderRadius: 999,
-                  border: isActive ? `1.5px solid ${tab.accent}40` : '1.5px solid rgba(15,23,42,0.08)',
-                  background: 'transparent',
-                  color: isActive ? tab.accent : '#64748b',
-                  fontSize: 13, fontWeight: isActive ? 700 : 500,
-                  cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
-                  zIndex: 1,
-                  transition: 'color 0.25s ease, border-color 0.25s ease',
-                }}
               >
-                {isActive && (
-                  <motion.span
-                    layoutId="tab-pill-bg"
-                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                    style={{
-                      position: 'absolute', inset: 0, borderRadius: 999,
-                      background: `${tab.accent}12`,
-                      boxShadow: `0 0 0 3px ${tab.accent}18`,
-                      zIndex: -1,
-                    }}
-                  />
-                )}
-                <tab.Icon size={14} strokeWidth={2} aria-hidden />
-                {tab.label}
+                <tab.Icon size={16} strokeWidth={2} aria-hidden />
+                <span>{tab.label}</span>
               </button>
             );
           })}
         </div>
-      </LayoutGroup>
-
-      {/* Pause / play toggle */}
-      <button
-        type="button"
-        aria-label={isPaused ? 'Resume autoplay' : 'Pause autoplay'}
-        onClick={onTogglePause}
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          width: 32, height: 32, borderRadius: '50%',
-          border: '1px solid rgba(15,23,42,0.10)', background: '#fff',
-          cursor: 'pointer', color: '#94a3b8', flexShrink: 0,
-        }}
-      >
-        {isPaused ? <Play size={13} strokeWidth={2.5} /> : <Pause size={13} strokeWidth={2.5} />}
-      </button>
+      </div>
 
       <button
         type="button"
-        aria-label="Next step"
+        className="placedly-hiw-tabbar-arrow placedly-hiw-tabbar-arrow--next"
+        aria-label="Next tab"
         onClick={onNext}
-        style={{
-          position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          width: 40, height: 40, borderRadius: '50%', border: 'none',
-          background: activeTab?.accent ?? '#f97316', cursor: 'pointer',
-          color: '#fff', flexShrink: 0,
-          boxShadow: `0 4px 12px ${activeTab?.accent ?? '#f97316'}40`,
-          transition: 'background 0.3s ease',
-        }}
       >
         <svg
-          style={{ position: 'absolute', inset: -3, width: 46, height: 46, transform: 'rotate(-90deg)', pointerEvents: 'none' }}
+          className="placedly-hiw-tabbar-progress"
           viewBox="0 0 48 48"
           aria-hidden
         >
-          <circle cx="24" cy="24" r={PROGRESS_RADIUS} fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="2" />
           <circle
-            cx="24" cy="24" r={PROGRESS_RADIUS} fill="none"
-            stroke="rgba(255,255,255,0.9)" strokeWidth="2" strokeLinecap="round"
-            strokeDasharray={PROGRESS_CIRC} strokeDashoffset={progressOffset}
-            style={{ transition: isPaused ? 'none' : 'stroke-dashoffset 0.1s linear' }}
+            className="placedly-hiw-tabbar-progress-bg"
+            cx="24"
+            cy="24"
+            r={PROGRESS_RADIUS}
+          />
+          <circle
+            className="placedly-hiw-tabbar-progress-fill"
+            cx="24"
+            cy="24"
+            r={PROGRESS_RADIUS}
+            strokeDasharray={PROGRESS_CIRC}
+            strokeDashoffset={progressOffset}
           />
         </svg>
-        <ChevronRight size={18} strokeWidth={2.5} />
+        <ChevronRight size={20} strokeWidth={2} />
       </button>
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   STEP INDICATOR
-───────────────────────────────────────────────────────────────── */
-function StepIndicator({ tab }: { tab: TabDef }) {
-  return (
-    <div
-      style={{
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-        padding: '4px 12px', borderRadius: 999,
-        background: `${tab.accent}14`, border: `1px solid ${tab.accent}30`,
-        fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
-        color: tab.accent, textTransform: 'uppercase', marginBottom: 12,
-        width: 'fit-content',
-      }}
-    >
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: tab.accent, flexShrink: 0 }} />
-      {tab.category === 'career' ? 'Career' : 'Study Abroad'} · Step {tab.step} of {tab.totalSteps}
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   PANEL BODY (shared copy block)
-───────────────────────────────────────────────────────────────── */
-function PanelCopy({ tab }: { tab: TabDef }) {
-  return (
-    <>
-      <StepIndicator tab={tab} />
-      <h3
-        style={{
-          fontFamily: 'Inter, sans-serif',
-          fontSize: 'clamp(1.35rem,2.6vw,1.9rem)',
-          fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.15,
-          color: '#0f172a', margin: '0 0 12px',
-        }}
-      >
-        {tab.title}
-      </h3>
-      <p style={{ fontSize: 'clamp(14px,1.2vw,15px)', lineHeight: 1.72, color: '#64748b', margin: '0 0 16px' }}>
-        {tab.details}
-      </p>
-      <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: tab.cta ? 20 : 0 }}>
-        {Array.from({ length: tab.totalSteps }).map((_, i) => (
-          <div
-            key={i}
-            style={{
-              width: i + 1 === tab.step ? 20 : 6, height: 6, borderRadius: 999,
-              background: i + 1 <= tab.step ? tab.accent : 'rgba(15,23,42,0.10)',
-              transition: 'all 0.35s cubic-bezier(0.22,1,0.36,1)',
-            }}
-          />
-        ))}
-        <span style={{ fontSize: 11, color: '#94a3b8', marginLeft: 4, fontWeight: 600 }}>
-          {tab.step}/{tab.totalSteps}
-        </span>
-      </div>
-      {tab.cta && (
-        <Link
-          href={tab.cta.href}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            padding: '11px 22px', borderRadius: 999, background: tab.accent,
-            color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none',
-            width: 'fit-content', boxShadow: `0 4px 14px ${tab.accent}40`,
-          }}
-        >
-          {tab.cta.label}
-          <ArrowRight size={15} strokeWidth={2.25} aria-hidden />
-        </Link>
-      )}
-    </>
-  );
-}
-
-function DesktopPanel({ tab }: { tab: TabDef }) {
+function TabPanel({ tab }: { tab: TabDef }) {
   return (
     <motion.div
-      key={tab.id}
-      initial={{ opacity: 0, y: 14 }}
+      className="placedly-hiw-panel-inner"
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)',
-        gap: 'clamp(20px,3vw,40px)',
-        alignItems: 'center',
-      }}
+      exit={{ opacity: 0, y: -6 }}
+      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div style={{ borderRadius: 20, overflow: 'hidden' }}>
+      <div className="placedly-hiw-panel-visual">
         <tab.Visual />
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <PanelCopy tab={tab} />
+      <div className="placedly-hiw-panel-copy">
+        <h3 className="placedly-hiw-panel-title">{tab.title}</h3>
+        <p className="placedly-hiw-panel-desc">{tab.details}</p>
+        {tab.cta && (
+          <Link href={tab.cta.href} className="placedly-hiw-step-cta">
+            {tab.cta.label}
+          </Link>
+        )}
       </div>
     </motion.div>
   );
 }
 
-function MobilePanel({ tab }: { tab: TabDef }) {
-  return (
-    <motion.div
-      key={tab.id}
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-      style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
-    >
-      <div style={{ borderRadius: 16, overflow: 'hidden' }}>
-        <tab.Visual />
-      </div>
-      <PanelCopy tab={tab} />
-    </motion.div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   ROOT COMPONENT
-───────────────────────────────────────────────────────────────── */
 export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
   const tabs = useMemo(() => buildTabs(cms), [cms]);
-
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeId, setActiveId] = useState(tabs[0]?.id ?? 'consult');
   const [progress, setProgress] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const elapsedRef = useRef(0);
-  const isPausedRef = useRef(false);
-
-  const activeTab = tabs[activeIndex] ?? tabs[0];
-  const activeCategory = activeTab.category;
-  // Tabs shown in the pill bar — filtered to current category, order preserved
-  const displayedTabs = tabs.filter((t) => t.category === activeCategory);
-
-  useEffect(() => {
-    isPausedRef.current = isPaused;
-  }, [isPaused]);
-
-  // SSR-safe mobile detection
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener('resize', check, { passive: true });
-    return () => window.removeEventListener('resize', check);
-  }, []);
+  const activeTab = tabs.find((t) => t.id === activeId) ?? tabs[0];
 
   const goToIndex = useCallback(
     (index: number) => {
       if (!tabs.length) return;
-      const next = ((index % tabs.length) + tabs.length) % tabs.length;
-      setActiveIndex(next);
+      const next = tabs[((index % tabs.length) + tabs.length) % tabs.length];
+      setActiveId(next.id);
       setProgress(0);
-      elapsedRef.current = 0;
     },
-    [tabs.length],
+    [tabs],
   );
 
-  const goNext = useCallback(() => goToIndex(activeIndex + 1), [activeIndex, goToIndex]);
-  const goPrev = useCallback(() => goToIndex(activeIndex - 1), [activeIndex, goToIndex]);
+  const goNext = useCallback(() => {
+    const idx = tabs.findIndex((t) => t.id === activeId);
+    goToIndex(idx + 1);
+  }, [activeId, goToIndex, tabs]);
+
+  const goPrev = useCallback(() => {
+    const idx = tabs.findIndex((t) => t.id === activeId);
+    goToIndex(idx - 1);
+  }, [activeId, goToIndex, tabs]);
 
   const handleSelect = useCallback(
     (id: string) => {
-      const idx = tabs.findIndex((t) => t.id === id);
-      if (idx >= 0) goToIndex(idx);
+      setActiveId(id);
+      setProgress(0);
     },
-    [tabs, goToIndex],
+    [],
   );
 
-  // Manual category switch — jump to that category's first tab
-  const handleCategoryChange = useCallback(
-    (cat: 'career' | 'study') => {
-      const idx = tabs.findIndex((t) => t.category === cat);
-      if (idx >= 0) goToIndex(idx);
-    },
-    [tabs, goToIndex],
-  );
-
-  const togglePause = useCallback(() => setIsPaused((p) => !p), []);
-
-  /* ── Auto-advance: 5–8s per step, wraps career → study automatically ── */
   useEffect(() => {
     if (!tabs.length) return;
 
     setProgress(0);
-    elapsedRef.current = 0;
-    const duration = randomDuration();
-    let start = performance.now();
+    const started = performance.now();
     let raf = 0;
 
     const tick = (now: number) => {
-      if (isPausedRef.current) {
-        // Freeze progress: shift the reference start forward each frame
-        start = now - elapsedRef.current;
-      }
-      const elapsed = now - start;
-      elapsedRef.current = elapsed;
-
-      const p = Math.min(elapsed / duration, 1);
+      const elapsed = now - started;
+      const p = Math.min(elapsed / AUTO_TAB_MS, 1);
       setProgress(p);
 
       if (p >= 1) {
-        goToIndex(activeIndex + 1);
+        const idx = tabs.findIndex((t) => t.id === activeId);
+        goToIndex(idx + 1);
         return;
       }
+
       raf = requestAnimationFrame(tick);
     };
 
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeIndex]);
+  }, [activeId, goToIndex, tabs]);
 
-  const title = cms['hp:hiwTitle'] ?? 'How Placedly Works — Simple, Transparent, Proven';
+  const title =
+    cms['hp:hiwTitle'] ?? 'How Placedly Works — Simple, Transparent, Proven';
   const subtitle =
     cms['hp:hiwSubtitle'] ??
     'Placedly connects ambitious professionals to careers and global education. Built for candidates who want clarity, warm guidance, and results — not generic agency noise.';
 
   return (
-    <section
-      id="how"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      style={{
-        position: 'relative',
-        padding: isMobile ? 'clamp(48px,8vw,72px) clamp(16px,4vw,24px)' : 'clamp(64px,9vw,104px) clamp(20px,4vw,48px)',
-        background: '#f8fafc',
-        overflow: 'hidden',
-      }}
-    >
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: `
-            radial-gradient(ellipse 60% 50% at 80% 20%, rgba(249,115,22,0.05), transparent 60%),
-            radial-gradient(ellipse 50% 40% at 20% 80%, rgba(37,99,235,0.05), transparent 60%)
-          `,
-        }}
-      />
-
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: 1100, margin: '0 auto' }}>
-        <FadeUp style={{ textAlign: 'center', marginBottom: isMobile ? 32 : 48 }}>
-          <div
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '5px 14px', borderRadius: 999,
-              background: 'rgba(15,23,42,0.05)', border: '1px solid rgba(15,23,42,0.08)',
-              fontSize: 11, fontWeight: 700, letterSpacing: '0.12em',
-              textTransform: 'uppercase', color: '#64748b', marginBottom: 16,
-            }}
-          >
-            <Sparkles size={12} aria-hidden />
-            How it works
-          </div>
-
-          <h2
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: isMobile ? 'clamp(1.65rem,7vw,2.1rem)' : 'clamp(1.9rem,3.5vw,2.8rem)',
-              fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.1,
-              color: '#0f172a', margin: '0 0 14px',
-            }}
-          >
-            {title}
-          </h2>
-
-          <p
-            style={{
-              fontSize: isMobile ? 14 : 'clamp(15px,1.3vw,17px)',
-              lineHeight: 1.72, color: '#64748b', maxWidth: 600, margin: '0 auto 24px',
-            }}
-          >
-            {subtitle}
-          </p>
-
-          <CategorySwitcher active={activeCategory} onChange={handleCategoryChange} />
+    <section className="placedly-hiw-section" id="how">
+      <div className="placedly-hiw-container">
+        <FadeUp className="placedly-hiw-header">
+          <h2 className="placedly-hiw-title">{title}</h2>
+          <p className="placedly-hiw-subtitle">{subtitle}</p>
         </FadeUp>
 
-        <div
-          style={{
-            background: '#fff',
-            borderRadius: isMobile ? 20 : 28,
-            border: '1px solid rgba(15,23,42,0.07)',
-            boxShadow: '0 4px 6px rgba(15,23,42,0.04), 0 20px 60px rgba(15,23,42,0.08)',
-            padding: isMobile ? '20px 16px 24px' : 'clamp(28px,3vw,40px) clamp(24px,3vw,36px)',
-            overflow: 'hidden',
-          }}
-        >
+        <div className="placedly-hiw-showcase">
           <TabBar
-            tabs={displayedTabs}
-            activeId={activeTab.id}
+            tabs={tabs}
+            activeId={activeId}
             progress={progress}
-            isPaused={isPaused}
             onSelect={handleSelect}
             onPrev={goPrev}
             onNext={goNext}
-            onTogglePause={togglePause}
           />
 
-          <AnimatePresence mode="wait">
-            {isMobile ? (
-              <MobilePanel key={activeTab.id} tab={activeTab} />
-            ) : (
-              <DesktopPanel key={activeTab.id} tab={activeTab} />
-            )}
-          </AnimatePresence>
-
-          <div
-            style={{
-              marginTop: isMobile ? 20 : 28,
-              paddingTop: isMobile ? 16 : 20,
-              borderTop: '1px solid rgba(15,23,42,0.06)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              flexWrap: 'wrap', gap: 12,
-            }}
-          >
-            <p style={{ fontSize: 12, color: '#94a3b8', margin: 0, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span
-                style={{
-                  width: 6, height: 6, borderRadius: '50%',
-                  background: isPaused ? '#cbd5e1' : '#16a34a',
-                  animation: isPaused ? 'none' : 'hiwPulse 2s ease-in-out infinite',
-                  flexShrink: 0,
-                }}
-              />
-              {activeCategory === 'career'
-                ? '500+ professionals placed · Zero upfront fee'
-                : '140+ partner universities · End-to-end support'}
-            </p>
-            <SeeDemoButton variant="panel" />
+          <div className="placedly-hiw-panel">
+            <AnimatePresence mode="wait">
+              {activeTab && <TabPanel key={activeTab.id} tab={activeTab} />}
+            </AnimatePresence>
+            <div className="placedly-hiw-panel-footer">
+              <SeeDemoButton variant="panel" />
+            </div>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes hiwPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.35); }
-          50% { box-shadow: 0 0 0 5px rgba(22,163,74,0); }
-        }
-      `}</style>
     </section>
   );
 }

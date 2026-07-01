@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { motion } from 'framer-motion';
 import { ArrowUpRight, Building2, Handshake, Sparkles, Target, Trophy } from 'lucide-react';
 
 type Cms = Record<string, string>;
@@ -14,14 +13,6 @@ const FEAT_META = [
 ];
 
 export default function AboutUs({ cms = {} }: { cms?: Cms }) {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start end', 'end start'],
-  });
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, 28]);
-  const cardY = useTransform(scrollYProgress, [0, 1], [0, -12]);
-
   const tagline = cms['hp:aboutTagline'] ?? 'About Us';
   const heading =
     cms['hp:aboutHeading'] ?? 'Behind Every Career Success Is a Team That Truly Cares.';
@@ -67,13 +58,13 @@ export default function AboutUs({ cms = {} }: { cms?: Cms }) {
   const bodyParagraphs = body.split(/\n\n/).filter(Boolean);
 
   return (
-    <section className="placedly-about-section" id="about" ref={sectionRef}>
-      <motion.div className="placedly-about-bg" aria-hidden style={{ y: bgY }}>
+    <section className="placedly-about-section" id="about">
+      <div className="placedly-about-bg" aria-hidden>
         <div className="placedly-about-blob placedly-about-blob--coral" />
         <div className="placedly-about-blob placedly-about-blob--blue" />
         <div className="placedly-about-blob placedly-about-blob--violet" />
         <div className="placedly-about-blob placedly-about-blob--mint" />
-      </motion.div>
+      </div>
 
       <div className="placedly-about-inner">
         <motion.div
@@ -83,12 +74,7 @@ export default function AboutUs({ cms = {} }: { cms?: Cms }) {
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <motion.div
-            className="placedly-about-visual-frame"
-            style={{ y: cardY }}
-            whileHover={{ scale: 1.01, y: -4, rotate: -0.8 }}
-            transition={{ type: 'spring', stiffness: 220, damping: 20 }}
-          >
+          <div className="placedly-about-visual-frame">
             <img src={teamImg} alt="Placedly team" className="placedly-about-img placedly-about-img--main" />
             <img
               src={consultImg}
@@ -123,7 +109,7 @@ export default function AboutUs({ cms = {} }: { cms?: Cms }) {
               <Sparkles size={14} strokeWidth={2.25} />
               Built for Gen-Z ambition
             </div>
-          </motion.div>
+          </div>
         </motion.div>
 
         <motion.div
@@ -151,7 +137,6 @@ export default function AboutUs({ cms = {} }: { cms?: Cms }) {
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
-                whileHover={{ y: -4, scale: 1.01 }}
                 transition={{ duration: 0.45, delay: 0.12 + i * 0.08 }}
                 style={{ boxShadow: `0 12px 40px ${f.glow}` }}
               >
@@ -166,14 +151,12 @@ export default function AboutUs({ cms = {} }: { cms?: Cms }) {
             ))}
           </div>
 
-          <motion.div whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Link href="/about-us" className="placedly-about-cta">
-              {ctaText}
-              <span className="placedly-about-cta-icon">
-                <ArrowUpRight size={16} strokeWidth={2.5} />
-              </span>
-            </Link>
-          </motion.div>
+          <Link href="/about-us" className="placedly-about-cta">
+            {ctaText}
+            <span className="placedly-about-cta-icon">
+              <ArrowUpRight size={16} strokeWidth={2.5} />
+            </span>
+          </Link>
         </motion.div>
       </div>
     </section>

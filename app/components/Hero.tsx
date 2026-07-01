@@ -1,7 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { motion } from 'framer-motion';
 import { Share2, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import HeroMobileBrief from './HeroMobileBrief';
@@ -56,60 +55,27 @@ const HERO_CARD_AVATARS = {
 } as const;
 
 export default function Hero({ cms = {} }: { cms?: HeroCms }) {
-  const heroRef = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ['start end', 'end start'],
-  });
-  const prefersReducedMotion = useReducedMotion();
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 70]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.6, 1], [1, 0.96, 0.86]);
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.02]);
-  const copyY = useTransform(scrollYProgress, [0, 1], [0, -18]);
-  const stageY = useTransform(scrollYProgress, [0, 1], [0, 22]);
-
   const offerRole = cms['hp:heroOfferRole'] ?? 'Senior Claims Analyst';
   const admitProgramme = cms['hp:heroAdmitProgramme'] ?? "MSc International Business · Fall '25";
-  const heroTitleLines = [
-    ['Grow', 'your', 'career,'],
-    ['through', 'people', 'you', 'trust.'],
-  ];
 
   return (
-    <section id="Top" className="placedly-lift-hero" ref={heroRef}>
-      <div className="placedly-hero-split-surface" aria-hidden />
-      <motion.div className="placedly-hero-desktop-gradient" aria-hidden style={{ y: prefersReducedMotion ? 0 : heroY, opacity: prefersReducedMotion ? 1 : heroOpacity, scale: prefersReducedMotion ? 1 : heroScale }}>
+    <section id="Top" className="placedly-lift-hero">
+      <div className="placedly-hero-desktop-gradient" aria-hidden>
         <HeroGradientBg />
         <HeroBgVideo />
-      </motion.div>
+      </div>
       <div className="placedly-hero-desktop-only">
-        <motion.div className="placedly-lift-hero-copy" style={{ y: prefersReducedMotion ? 0 : copyY }}>
-        <motion.div
-          className="placedly-lift-hero-title-wrap"
+      <div className="placedly-lift-hero-copy">
+        <motion.h1
+          className="placedly-lift-hero-title"
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55 }}
         >
-          <h1 className="placedly-lift-hero-title">
-            {heroTitleLines.map((line, lineIndex) => (
-              <span key={`line-${lineIndex}`} className="placedly-hero-line">
-                {line.map((word, wordIndex) => (
-                  <motion.span
-                    key={`${word}-${wordIndex}`}
-                    className="placedly-hero-word"
-                    initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
-                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    transition={{ duration: 0.62, delay: 0.06 + wordIndex * 0.04 + lineIndex * 0.08 }}
-                  >
-                    {word}
-                    {wordIndex < line.length - 1 ? '\u00A0' : ''}
-                  </motion.span>
-                ))}
-                {lineIndex < heroTitleLines.length - 1 ? <br /> : null}
-              </span>
-            ))}
-          </h1>
-        </motion.div>
+          Grow your career,
+          <br />
+          through people you trust.
+        </motion.h1>
 
         <motion.p
           className="placedly-lift-hero-sub"
@@ -127,31 +93,23 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.16 }}
         >
-          <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.98 }}>
-            <Link href="/study-visa" className="placedly-lift-hero-btn">
-              {cms['hp:heroSecondaryCtaText'] ?? 'Study Abroad'}
-            </Link>
-          </motion.div>
+          <Link href="/study-visa" className="placedly-lift-hero-btn">
+            {cms['hp:heroSecondaryCtaText'] ?? 'Study Abroad'}
+          </Link>
         </motion.div>
-      </motion.div>
+      </div>
 
       <motion.div
         className="placedly-lift-hero-stage"
-        style={{ y: prefersReducedMotion ? 0 : stageY }}
         initial={{ opacity: 0, y: 28 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, delay: 0.28 }}
       >
-        <motion.div
-          className="placedly-lift-network"
-          animate={prefersReducedMotion ? { opacity: 1, y: 0, x: 0, scale: 1 } : { y: [0, -6, 0], x: [0, 2, 0], scale: [1, 1.004, 1] }}
-          transition={{ duration: 8, repeat: prefersReducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
-        >
+        <div className="placedly-lift-network">
           <motion.div
             className="placedly-lift-card placedly-lift-card--left"
-            animate={prefersReducedMotion ? { y: 0 } : { y: [0, -8, 0] }}
-            whileHover={{ scale: 1.015, y: -6, rotate: -1 }}
-            transition={{ duration: 5.5, repeat: prefersReducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
           >
             <div className="placedly-lift-card-profile">
               <img
@@ -230,9 +188,8 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
           <motion.div
             className="placedly-lift-card placedly-lift-card--right"
-            animate={prefersReducedMotion ? { y: 0 } : { y: [0, 8, 0] }}
-            whileHover={{ scale: 1.015, y: 4, rotate: 1 }}
-            transition={{ duration: 6, repeat: prefersReducedMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.4 }}
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
           >
             <div className="placedly-lift-card-profile">
               <img
@@ -255,7 +212,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
               Interested in <strong>{admitProgramme.split('·')[0]?.trim() ?? 'UK Masters'}</strong>
             </p>
           </motion.div>
-        </motion.div>
+        </div>
       </motion.div>
       </div>
 

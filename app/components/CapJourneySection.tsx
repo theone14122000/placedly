@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
 import { FadeUp } from './motion';
+import { CAP_JOURNEY_SECTION_ID } from './CapFloatingCta';
 
 type Cms = Record<string, string>;
 
@@ -67,346 +67,15 @@ const DEFAULT_STEPS: JourneyStep[] = [
   },
 ];
 
-/** Distance from viewport top where each card pins. */
-const PIN_BASE_TOP = 100;
-/** Each next card pins slightly lower so the previous one peeks out. */
-const PIN_STACK_STEP = 16;
-/** Fixed scroll runway per card (also drives the overlap timing). */
-const SLOT_RUNWAY = 340;
-const SECTION_ID = 'cap-journey-section';
-const MOBILE_BREAKPOINT = 768;
-
-const clamp = (v: number, min: number, max: number): number =>
-  Math.min(Math.max(v, min), max);
-
-const STYLES = `
-.placedly-cap-journey {
-  position: relative;
-  padding: clamp(56px, 8vw, 96px) clamp(20px, 4vw, 40px);
-  background: #fffbf4;
-  overflow: visible;
-}
-.placedly-cap-journey-bg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(255,255,255,0.95), transparent 65%),
-    radial-gradient(ellipse 40% 30% at 8% 85%, rgba(15,23,42,0.03), transparent 55%);
-}
-.placedly-cap-journey-wrap {
-  position: relative;
-  z-index: 1;
-  max-width: 1180px;
-  margin: 0 auto;
-}
-.placedly-cap-journey-header {
-  text-align: center;
-  margin-bottom: clamp(36px, 5vw, 52px);
-}
-.placedly-cap-journey-kicker {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #94a3b8;
-  margin: 0 0 12px;
-}
-.placedly-cap-journey-title {
-  font-family: Inter, var(--font), sans-serif !important;
-  font-size: clamp(1.85rem, 3.4vw, 2.65rem) !important;
-  font-weight: 600 !important;
-  letter-spacing: -0.03em !important;
-  line-height: 1.12 !important;
-  color: #181229 !important;
-  margin: 0 0 14px !important;
-}
-.placedly-cap-journey-sub {
-  font-size: clamp(15px, 1.35vw, 17px);
-  line-height: 1.65;
-  color: #64748b;
-  max-width: 620px;
-  margin: 0 auto;
-}
-.placedly-cap-journey-scroll-layout {
-  display: grid;
-  grid-template-columns: 48px minmax(0, 1fr);
-  gap: clamp(20px, 3vw, 36px);
-}
-.placedly-cap-journey-rail-col {
-  position: relative;
-}
-.placedly-cap-journey-rail {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-}
-.placedly-cap-journey-rail-track {
-  position: relative;
-  width: 2px;
-  height: 100%;
-  background: #e2e8f0;
-  border-radius: 999px;
-  overflow: hidden;
-}
-.placedly-cap-journey-rail-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 0%;
-  background: linear-gradient(#181229, #f97316);
-  border-radius: 999px;
-  box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
-}
-.placedly-cap-journey-rail-markers {
-  position: absolute;
-  inset: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 10px;
-  pointer-events: none;
-}
-.placedly-cap-journey-rail-marker {
-  position: absolute;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  margin: -5px 0 0 -5px;
-  border-radius: 999px;
-  background: #fff;
-  border: 2.5px solid #e2e8f0;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-}
-.placedly-cap-journey-rail-marker.is-lit {
-  border-color: #f97316;
-  background: #fff7ed;
-  transform: scale(1.2);
-}
-.placedly-cap-journey-rail-marker.is-active {
-  border-color: #181229;
-  background: #181229;
-  transform: scale(1.4);
-}
-.placedly-cap-journey-track {
-  position: relative;
-}
-.placedly-cap-journey-slot {
-  position: relative;
-  padding-bottom: ${SLOT_RUNWAY}px;
-}
-.placedly-cap-journey-card {
-  position: relative;
-  border-radius: 28px;
-  background: #fffbf4;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 12px 40px rgba(249, 115, 22, 0.12);
-  will-change: transform;
-  overflow: hidden;
-  transition: box-shadow 0.35s ease;
-  transform: translate3d(0, 0, 0);
-}
-.placedly-cap-journey-card:not(.is-active) {
-  box-shadow: 0 8px 30px rgba(249, 115, 22, 0.08);
-}
-.placedly-cap-journey-card.is-active {
-  box-shadow: 0 25px 60px -12px rgba(249, 115, 22, 0.25);
-}
-.placedly-cap-journey-card-inner {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(160px, 220px) minmax(0, 1fr);
-  gap: clamp(20px, 3vw, 40px);
-  align-items: stretch;
-  min-height: clamp(220px, 24vw, 280px);
-  padding: clamp(28px, 3.5vw, 44px) clamp(24px, 3vw, 40px);
-}
-.placedly-cap-journey-card-left {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-.placedly-cap-journey-card-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 7px 16px;
-  border-radius: 999px;
-  border: 1px solid #334155;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  color: #334155;
-  background: transparent;
-}
-.placedly-cap-journey-card-title {
-  font-family: Inter, var(--font), sans-serif !important;
-  font-size: clamp(1.75rem, 3vw, 2.5rem) !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.03em !important;
-  line-height: 1.08 !important;
-  color: #0f172a !important;
-  max-width: 14ch;
-  margin: 0 !important;
-}
-.placedly-cap-journey-card-media {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 0;
-}
-.placedly-cap-journey-card-img {
-  display: block;
-  width: min(100%, 220px);
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 16px;
-  transform: rotate(-7deg);
-  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.14);
-  transition: transform 0.4s ease;
-}
-.placedly-cap-journey-card.is-active .placedly-cap-journey-card-img {
-  transform: rotate(-3deg);
-}
-.placedly-cap-journey-card-right {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  gap: clamp(16px, 2vw, 22px);
-  max-width: 320px;
-  margin-left: auto;
-}
-.placedly-cap-journey-card-body {
-  font-size: clamp(14px, 1.2vw, 15px);
-  line-height: 1.65;
-  color: #64748b;
-  margin: 0;
-}
-.placedly-cap-journey-card-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #2563eb !important;
-  text-decoration: none;
-  transition: gap 0.2s ease, color 0.2s ease;
-}
-.placedly-cap-journey-card-link:hover {
-  color: #1d4ed8 !important;
-  gap: 12px;
-}
-.placedly-cap-floating-cta {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 8995;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  pointer-events: none;
-  padding: 0 16px calc(12px + env(safe-area-inset-bottom, 0px));
-}
-.placedly-cap-floating-cta::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 14px;
-  background: #fffbf4;
-  border-top: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 -8px 28px rgba(15, 23, 42, 0.08);
-  z-index: -1;
-}
-.placedly-cap-floating-cta-float {
-  pointer-events: auto;
-  position: relative;
-  z-index: 2;
-  animation: float-bob 3.2s ease-in-out infinite;
-}
-.placedly-cap-floating-cta-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 15px 28px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #fb923c 0%, #f97316 45%, #ea580c 100%);
-  color: #fff !important;
-  text-decoration: none;
-  font-size: 15px;
-  font-weight: 700;
-  white-space: nowrap;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow:
-    0 10px 30px rgba(234, 88, 12, 0.35),
-    0 20px 50px rgba(234, 88, 12, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.25s ease;
-}
-.placedly-cap-floating-cta-btn:hover {
-  transform: translateY(-4px) scale(1.03);
-  box-shadow:
-    0 15px 40px rgba(234, 88, 12, 0.45),
-    0 25px 60px rgba(234, 88, 12, 0.35);
-}
-@keyframes float-bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-9px); }
-}
-@media (max-width: 768px) {
-  .placedly-cap-journey-scroll-layout {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-  .placedly-cap-journey-rail-col { display: none; }
-  .placedly-cap-journey-slot { padding-bottom: 0; }
-  .placedly-cap-journey-card-inner {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    min-height: 0;
-    gap: 20px;
-    padding: 24px 20px 28px;
-  }
-  .placedly-cap-journey-card-title {
-    width: 100%;
-    max-width: none;
-  }
-  .placedly-cap-journey-card-img {
-    width: min(72vw, 260px);
-    transform: rotate(-4deg);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .placedly-cap-floating-cta-float { animation: none !important; }
-  .placedly-cap-journey-card {
-    transition: none !important;
-    will-change: auto;
-    transform: none !important;
-  }
-  .placedly-cap-journey-slot { padding-bottom: 0 !important; }
-}
-`;
+const STICKY_TOP = 112;
 
 export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
-  const [activeStep, setActiveStep] = useState<number>(0);
-  const [markerFlags, setMarkerFlags] = useState<boolean[]>(() =>
-    DEFAULT_STEPS.map(() => false),
-  );
-  const [showFloatingCta, setShowFloatingCta] = useState<boolean>(false);
+  const [activeStep, setActiveStep] = useState(0);
+  const [fillProgress, setFillProgress] = useState(0);
+  const [markerTops, setMarkerTops] = useState<number[]>([]);
 
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const railFillRef = useRef<HTMLDivElement | null>(null);
-  const slotRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const cardRefs = useRef<Array<HTMLElement | null>>([]);
-
-  // Keep latest activeStep in a ref so the rAF loop (defined once) can read
-  // it without needing to be re-created every render.
-  const activeStepRef = useRef<number>(0);
+  const cardsColRef = useRef<HTMLDivElement>(null);
+  const cardsTrackRef = useRef<HTMLDivElement>(null);
 
   const kicker = cms['hp:capJourneyKicker'] ?? 'Career Assistance Programme';
   const title =
@@ -415,159 +84,90 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
     cms['hp:capJourneySubtitle'] ??
     'Scroll through each stage of the programme. Every step is advisor-led, transparent, and built to get you placed — not just applied.';
 
-  /* ============================================================
-   * CORE ENGINE — continuous rAF polling of getBoundingClientRect().
-   * This does NOT rely on the 'scroll' event or 'position: sticky',
-   * so it works correctly even with smooth-scroll libraries (Lenis,
-   * GSAP ScrollSmoother, etc.) that intercept native scrolling.
-   * Only runs while the section is near the viewport.
-   * ============================================================ */
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
+  const updateMarkerPositions = useCallback(() => {
+    const track = cardsTrackRef.current;
+    if (!track) return;
 
-    let running = false;
-    let rafId: number | null = null;
+    const cards = track.querySelectorAll<HTMLElement>('[data-cap-step]');
+    const trackHeight = track.offsetHeight;
+    if (!trackHeight || !cards.length) return;
 
-    const tick = (): void => {
-      if (!running) return;
+    const tops = Array.from(cards).map((card) => {
+      const center = card.offsetTop + card.offsetHeight / 2;
+      return (center / trackHeight) * 100;
+    });
 
-      const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
-
-      if (!isMobile) {
-        DEFAULT_STEPS.forEach((_, i) => {
-          const slot = slotRefs.current[i];
-          const card = cardRefs.current[i];
-          if (!slot || !card) return;
-
-          const slotRect = slot.getBoundingClientRect();
-          const cardH = card.offsetHeight;
-          const slotH = slot.offsetHeight;
-          const pinTop = PIN_BASE_TOP + i * PIN_STACK_STEP;
-          const maxTranslate = Math.max(slotH - cardH, 0);
-          const translateY = clamp(pinTop - slotRect.top, 0, maxTranslate);
-
-          card.style.transform = `translate3d(0, ${translateY}px, 0)`;
-          card.style.zIndex = String(10 + i);
-        });
-      } else {
-        DEFAULT_STEPS.forEach((_, i) => {
-          const card = cardRefs.current[i];
-          if (!card) return;
-          card.style.transform = 'translate3d(0, 0, 0)';
-        });
-      }
-
-      // Rail fill progress, driven off the first/last slot positions.
-      const firstSlot = slotRefs.current[0];
-      const lastSlot = slotRefs.current[DEFAULT_STEPS.length - 1];
-      if (firstSlot && lastSlot && railFillRef.current) {
-        const startTop = firstSlot.getBoundingClientRect().top;
-        const lastRect = lastSlot.getBoundingClientRect();
-        const totalRange =
-          lastRect.top + lastRect.height - startTop - window.innerHeight * 0.4;
-        const progressed = clamp(
-          (PIN_BASE_TOP - startTop) / Math.max(totalRange, 1),
-          0,
-          1,
-        );
-        railFillRef.current.style.height = `${progressed * 100}%`;
-      }
-
-      // Determine which card is "active" (closest to the pin line).
-      let closestIndex = 0;
-      let closestDistance = Infinity;
-      DEFAULT_STEPS.forEach((_, i) => {
-        const card = cardRefs.current[i];
-        if (!card) return;
-        const rect = card.getBoundingClientRect();
-        const distance = Math.abs(rect.top - PIN_BASE_TOP);
-        if (rect.top <= PIN_BASE_TOP + 4 && distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = i;
-        }
-      });
-
-      if (closestIndex !== activeStepRef.current) {
-        activeStepRef.current = closestIndex;
-        setActiveStep(closestIndex);
-      }
-
-      setMarkerFlags((prev) => {
-        const next = prev.map((_, i) => i <= closestIndex);
-        // Avoid redundant state updates.
-        if (next.every((v, i) => v === prev[i])) return prev;
-        return next;
-      });
-
-      rafId = window.requestAnimationFrame(tick);
-    };
-
-    const start = (): void => {
-      if (running) return;
-      running = true;
-      rafId = window.requestAnimationFrame(tick);
-    };
-
-    const stop = (): void => {
-      running = false;
-      if (rafId !== null) {
-        window.cancelAnimationFrame(rafId);
-        rafId = null;
-      }
-    };
-
-    // Only run the loop while the section is anywhere near the viewport.
-    let observer: IntersectionObserver | null = null;
-    if (sectionRef.current && typeof IntersectionObserver !== 'undefined') {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) start();
-          else stop();
-        },
-        { rootMargin: '200px 0px 200px 0px', threshold: 0 },
-      );
-      observer.observe(sectionRef.current);
-    } else {
-      // Fallback: always run.
-      start();
-    }
-
-    return () => {
-      stop();
-      observer?.disconnect();
-    };
+    setMarkerTops(tops);
   }, []);
 
-  /* -------------------- FLOATING CTA VISIBILITY -------------------- */
-  useEffect(() => {
-    if (
-      typeof window === 'undefined' ||
-      typeof IntersectionObserver === 'undefined'
-    ) {
+  const updateScrollProgress = useCallback(() => {
+    const col = cardsColRef.current;
+    if (!col) return;
+
+    const rect = col.getBoundingClientRect();
+    const scrollable = col.offsetHeight - window.innerHeight + STICKY_TOP;
+    if (scrollable <= 0) {
+      setFillProgress(rect.top <= STICKY_TOP ? 1 : 0);
       return;
     }
 
-    const section = sectionRef.current;
-    if (!section) return;
+    const scrolled = -rect.top + STICKY_TOP;
+    setFillProgress(Math.min(1, Math.max(0, scrolled / scrollable)));
+  }, []);
+
+  useEffect(() => {
+    const cards = document.querySelectorAll<HTMLElement>('[data-cap-step]');
+    if (!cards.length) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => setShowFloatingCta(entry.isIntersecting),
-      { threshold: 0.08 },
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const idx = Number(entry.target.getAttribute('data-cap-step'));
+          if (!Number.isNaN(idx)) setActiveStep(idx);
+        });
+      },
+      { threshold: 0.52, rootMargin: '-42% 0px -42% 0px' },
     );
 
-    observer.observe(section);
+    cards.forEach((card) => observer.observe(card));
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => {
+      updateScrollProgress();
+    };
+
+    const onResize = () => {
+      updateMarkerPositions();
+      updateScrollProgress();
+    };
+
+    onResize();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+
+    const track = cardsTrackRef.current;
+    const resizeObserver =
+      track && typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(onResize)
+        : null;
+    if (track && resizeObserver) resizeObserver.observe(track);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      resizeObserver?.disconnect();
+    };
+  }, [updateMarkerPositions, updateScrollProgress]);
+
   return (
     <section
-      ref={sectionRef}
-      id={SECTION_ID}
       className="placedly-cap-journey"
+      id={CAP_JOURNEY_SECTION_ID}
       aria-labelledby="cap-journey-title"
     >
-      <style dangerouslySetInnerHTML={{ __html: STYLES }} />
-
       <div className="placedly-cap-journey-bg" aria-hidden />
 
       <div className="placedly-cap-journey-wrap">
@@ -580,25 +180,28 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
         </FadeUp>
 
         <div className="placedly-cap-journey-scroll-layout">
-          {/* Progress Rail */}
-          <div className="placedly-cap-journey-rail-col" aria-hidden>
+          <div
+            className="placedly-cap-journey-rail-col"
+            aria-hidden
+          >
             <div className="placedly-cap-journey-rail">
               <div className="placedly-cap-journey-rail-track">
-                <div ref={railFillRef} className="placedly-cap-journey-rail-fill" />
+                <div
+                  className="placedly-cap-journey-rail-fill"
+                  style={{ height: `${fillProgress * 100}%` }}
+                />
               </div>
+
               <div className="placedly-cap-journey-rail-markers">
                 {DEFAULT_STEPS.map((step, index) => {
-                  const top = ((index + 0.5) / DEFAULT_STEPS.length) * 100;
-                  const isLit = markerFlags[index] ?? false;
-                  const isActive = activeStep === index;
+                  const top = markerTops[index] ?? (index / (DEFAULT_STEPS.length - 1)) * 100;
+                  const isLit =
+                    fillProgress >= top / 100 - 0.02 || activeStep >= index;
+
                   return (
                     <span
                       key={step.id}
-                      className={
-                        'placedly-cap-journey-rail-marker' +
-                        (isLit ? ' is-lit' : '') +
-                        (isActive ? ' is-active' : '')
-                      }
+                      className={`placedly-cap-journey-rail-marker${isLit ? ' is-lit' : ''}${activeStep === index ? ' is-active' : ''}`}
                       style={{ top: `${top}%` }}
                     />
                   );
@@ -607,85 +210,46 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
             </div>
           </div>
 
-          {/* Stacking Cards */}
-          <div className="placedly-cap-journey-cards-col">
-            <div className="placedly-cap-journey-track">
+          <div ref={cardsColRef} className="placedly-cap-journey-cards-col">
+            <div ref={cardsTrackRef} className="placedly-cap-journey-track">
               {DEFAULT_STEPS.map((step, index) => (
-                <div
+                <article
                   key={step.id}
-                  ref={(el) => {
-                    slotRefs.current[index] = el;
-                  }}
-                  className="placedly-cap-journey-slot"
+                  data-cap-step={index}
+                  className={`placedly-cap-journey-card${activeStep === index ? ' is-active' : ''}`}
+                  style={{ zIndex: index + 1 }}
                 >
-                  <article
-                    ref={(el) => {
-                      cardRefs.current[index] = el;
-                    }}
-                    data-cap-step={index}
-                    className={
-                      'placedly-cap-journey-card' +
-                      (activeStep === index ? ' is-active' : '')
-                    }
-                  >
-                    <div className="placedly-cap-journey-card-inner">
-                      <div className="placedly-cap-journey-card-left">
-                        <span className="placedly-cap-journey-card-badge">
-                          {String(index + 1).padStart(3, '0')}
-                        </span>
-                        <h3 className="placedly-cap-journey-card-title">
-                          {step.title}
-                        </h3>
-                      </div>
-
-                      <div className="placedly-cap-journey-card-media">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={step.image}
-                          alt={step.title}
-                          className="placedly-cap-journey-card-img"
-                          loading={index < 2 ? 'eager' : 'lazy'}
-                        />
-                      </div>
-
-                      <div className="placedly-cap-journey-card-right">
-                        <p className="placedly-cap-journey-card-body">
-                          {step.body}
-                        </p>
-                        <Link
-                          href={step.href}
-                          className="placedly-cap-journey-card-link"
-                        >
-                          Read More <ArrowRight size={16} strokeWidth={2.5} />
-                        </Link>
-                      </div>
+                  <div className="placedly-cap-journey-card-inner">
+                    <div className="placedly-cap-journey-card-left">
+                      <span className="placedly-cap-journey-card-badge">
+                        {String(index + 1).padStart(3, '0')}
+                      </span>
+                      <h3 className="placedly-cap-journey-card-title">{step.title}</h3>
                     </div>
-                  </article>
-                </div>
+
+                    <div className="placedly-cap-journey-card-media">
+                      <img
+                        src={step.image}
+                        alt=""
+                        className="placedly-cap-journey-card-img"
+                        loading={index < 2 ? 'eager' : 'lazy'}
+                      />
+                    </div>
+
+                    <div className="placedly-cap-journey-card-right">
+                      <p className="placedly-cap-journey-card-body">{step.body}</p>
+                      <Link href={step.href} className="placedly-cap-journey-card-link">
+                        Read More
+                        <ArrowRight size={16} strokeWidth={2.25} aria-hidden />
+                      </Link>
+                    </div>
+                  </div>
+                </article>
               ))}
             </div>
           </div>
         </div>
       </div>
-
-      {/* Floating CTA — visible while CAP section is in view */}
-      <AnimatePresence>
-        {showFloatingCta && (
-          <motion.div
-            className="placedly-cap-floating-cta"
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 80 }}
-            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-          >
-            <div className="placedly-cap-floating-cta-float">
-              <Link href="/cap/apply" className="placedly-cap-floating-cta-btn">
-                Apply for CAP <ArrowRight size={18} />
-              </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }
