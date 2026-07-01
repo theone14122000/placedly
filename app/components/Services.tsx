@@ -1,7 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { useEffect, useRef, useState, useCallback, type CSSProperties } from 'react';
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from 'framer-motion';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -25,12 +31,11 @@ type Vertical = {
   headline: string;
   description: string;
   bullets: string[];
-  stats: { value: string; numeric: number; suffix: string; label: string }[];
+  stats: { numeric: number; suffix: string; label: string }[];
   ctaLabel: string;
   ctaHref: string;
   accent: string;
   accentSoft: string;
-  gradient: string;
 };
 
 const VERTICALS: Vertical[] = [
@@ -51,15 +56,14 @@ const VERTICALS: Vertical[] = [
       'Zero cost until you sign your offer letter',
     ],
     stats: [
-      { value: '48h', numeric: 48, suffix: 'h', label: 'Resume turnaround' },
-      { value: '12%', numeric: 12, suffix: '%', label: 'Fee, only post-offer' },
-      { value: '15', numeric: 15, suffix: '+', label: 'Warm referrals' },
+      { numeric: 48, suffix: 'h', label: 'Resume turnaround' },
+      { numeric: 12, suffix: '%', label: 'Fee, only post-offer' },
+      { numeric: 15, suffix: '+', label: 'Warm referrals' },
     ],
     ctaLabel: 'Start My CAP Journey',
     ctaHref: '/cap',
     accent: '#f97316',
     accentSoft: 'rgba(249,115,22,0.12)',
-    gradient: 'linear-gradient(135deg, #f97316 0%, #fb923c 50%, #fdba74 100%)',
   },
   {
     id: 'study',
@@ -78,36 +82,43 @@ const VERTICALS: Vertical[] = [
       'End-to-end visa filing support',
     ],
     stats: [
-      { value: '6', numeric: 6, suffix: '', label: 'Study destinations' },
-      { value: '95%', numeric: 95, suffix: '%', label: 'Visa success rate' },
-      { value: '1:1', numeric: 1, suffix: ':1', label: 'Dedicated advisor' },
+      { numeric: 6, suffix: '', label: 'Study destinations' },
+      { numeric: 95, suffix: '%', label: 'Visa success rate' },
+      { numeric: 1, suffix: ':1', label: 'Dedicated advisor' },
     ],
     ctaLabel: 'Explore Study Abroad',
     ctaHref: '/study-abroad',
     accent: '#2563eb',
     accentSoft: 'rgba(37,99,235,0.12)',
-    gradient: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%)',
   },
 ];
 
-/* ============ Animated Counter ============ */
-function AnimatedCounter({ target, suffix, color }: { target: number; suffix: string; color: string }) {
+/* ============================================================
+ * Animated counter — counts up once when scrolled into view
+ * ============================================================ */
+function AnimatedCounter({
+  target,
+  suffix,
+}: {
+  target: number;
+  suffix: string;
+}) {
   const [display, setDisplay] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated.current) {
           hasAnimated.current = true;
-          const duration = 1200;
+          const duration = 1100;
           const start = performance.now();
 
-          const step = (now: number) => {
+          const step = (now: number): void => {
             const progress = Math.min((now - start) / duration, 1);
             const eased = 1 - Math.pow(1 - progress, 3);
             setDisplay(Math.round(eased * target));
@@ -116,7 +127,7 @@ function AnimatedCounter({ target, suffix, color }: { target: number; suffix: st
           requestAnimationFrame(step);
         }
       },
-      { threshold: 0.5 },
+      { threshold: 0.4 },
     );
 
     observer.observe(el);
@@ -124,15 +135,23 @@ function AnimatedCounter({ target, suffix, color }: { target: number; suffix: st
   }, [target]);
 
   return (
-    <span ref={ref} style={{ color }}>
+    <span ref={ref}>
       {display}
       {suffix}
     </span>
   );
 }
 
-/* ============ Video with 3D tilt ============ */
-function VerticalScrollVideo({ src, ariaLabel }: { src: string; ariaLabel: string }) {
+/* ============================================================
+ * Video with autoplay/sound-unlock logic + live indicator
+ * ============================================================ */
+function VerticalScrollVideo({
+  src,
+  ariaLabel,
+}: {
+  src: string;
+  ariaLabel: string;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const isVisibleRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -141,8 +160,11 @@ function VerticalScrollVideo({ src, ariaLabel }: { src: string; ariaLabel: strin
     const video = videoRef.current;
     if (!video) return;
 
-    const canPlayWithSound = () => {
-      if (typeof navigator !== 'undefined' && navigator.userActivation?.hasBeenActive) {
+    const canPlayWithSound = (): boolean => {
+      if (
+        typeof navigator !== 'undefined' &&
+        navigator.userActivation?.hasBeenActive
+      ) {
         return true;
       }
       return false;
@@ -150,12 +172,18 @@ function VerticalScrollVideo({ src, ariaLabel }: { src: string; ariaLabel: strin
 
     const playMuted = () => {
       video.muted = true;
-      return video.play().then(() => setIsPlaying(true)).catch(() => undefined);
+      return video
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => undefined);
     };
 
     const playWithSound = () => {
       video.muted = false;
-      return video.play().then(() => setIsPlaying(true)).catch(() => playMuted());
+      return video
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => playMuted());
     };
 
     const unlockSound = () => {
@@ -188,7 +216,9 @@ function VerticalScrollVideo({ src, ariaLabel }: { src: string; ariaLabel: strin
     observer.observe(video);
     return () => {
       observer.disconnect();
-      document.removeEventListener('pointerdown', unlockSound, { capture: true });
+      document.removeEventListener('pointerdown', unlockSound, {
+        capture: true,
+      });
       document.removeEventListener('keydown', unlockSound, { capture: true });
     };
   }, []);
@@ -208,9 +238,10 @@ function VerticalScrollVideo({ src, ariaLabel }: { src: string; ariaLabel: strin
         {isPlaying && (
           <motion.div
             className="pv-live-pulse"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.3 }}
           >
             <span className="pv-live-dot" />
             LIVE
@@ -227,55 +258,68 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
   const Icon = current.icon;
 
   const tagline = cms['hp:servicesTagline'] ?? 'What We Do';
-  const title = cms['hp:servicesTitle'] ?? 'One Platform. Two Powerful Verticals.';
+  const title =
+    cms['hp:servicesTitle'] ?? 'One Platform. Two Powerful Verticals.';
   const subtitle =
-    cms['hp:servicesSubtitle'] ?? 'Both Designed Around Your Growth — Not Our Revenue.';
+    cms['hp:servicesSubtitle'] ??
+    'Both Designed Around Your Growth — Not Our Revenue.';
 
-  /* ---- 3D tilt for media card ---- */
+  /* ---------------- 3D tilt for the media card ---------------- */
   const cardRef = useRef<HTMLDivElement>(null);
   const mvX = useMotionValue(0);
   const mvY = useMotionValue(0);
-  const rotateX = useSpring(useTransform(mvY, [-0.5, 0.5], [10, -10]), {
+  const rotateX = useSpring(useTransform(mvY, [-0.5, 0.5], [9, -9]), {
     stiffness: 220,
     damping: 22,
   });
-  const rotateY = useSpring(useTransform(mvX, [-0.5, 0.5], [-10, 10]), {
+  const rotateY = useSpring(useTransform(mvX, [-0.5, 0.5], [-9, 9]), {
     stiffness: 220,
     damping: 22,
   });
   const glowX = useTransform(mvX, [-0.5, 0.5], ['0%', '100%']);
   const glowY = useTransform(mvY, [-0.5, 0.5], ['0%', '100%']);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = cardRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    mvX.set((e.clientX - rect.left) / rect.width - 0.5);
-    mvY.set((e.clientY - rect.top) / rect.height - 0.5);
-  }, [mvX, mvY]);
+  const handleCardMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const rect = cardRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      mvX.set((e.clientX - rect.left) / rect.width - 0.5);
+      mvY.set((e.clientY - rect.top) / rect.height - 0.5);
+    },
+    [mvX, mvY],
+  );
 
-  const handleMouseLeave = useCallback(() => {
+  const handleCardLeave = useCallback(() => {
     mvX.set(0);
     mvY.set(0);
   }, [mvX, mvY]);
 
-  /* ---- magnetic CTA button ---- */
-  const ctaRef = useRef<HTMLAnchorElement>(null);
+  /* ---------------- Magnetic CTA button ---------------- */
+  const ctaWrapRef = useRef<HTMLDivElement>(null);
   const ctaX = useSpring(0, { stiffness: 300, damping: 20 });
   const ctaY = useSpring(0, { stiffness: 300, damping: 20 });
 
-  const handleCtaMove = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    const rect = ctaRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const relX = e.clientX - rect.left - rect.width / 2;
-    const relY = e.clientY - rect.top - rect.height / 2;
-    ctaX.set(relX * 0.25);
-    ctaY.set(relY * 0.35);
-  }, [ctaX, ctaY]);
+  const handleCtaMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const rect = ctaWrapRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const relX = e.clientX - rect.left - rect.width / 2;
+      const relY = e.clientY - rect.top - rect.height / 2;
+      ctaX.set(relX * 0.22);
+      ctaY.set(relY * 0.32);
+    },
+    [ctaX, ctaY],
+  );
 
   const handleCtaLeave = useCallback(() => {
     ctaX.set(0);
     ctaY.set(0);
   }, [ctaX, ctaY]);
+
+  const glowStyle = {
+    '--gx': glowX,
+    '--gy': glowY,
+  } as CSSProperties;
 
   return (
     <section className="pv-section" data-active={current.id} id="services">
@@ -304,7 +348,11 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
               rgba(249, 115, 22, 0.14),
               transparent 65%
             ),
-            radial-gradient(ellipse 45% 40% at 5% 90%, rgba(249, 115, 22, 0.08), transparent 60%);
+            radial-gradient(
+              ellipse 45% 40% at 5% 90%,
+              rgba(249, 115, 22, 0.08),
+              transparent 60%
+            );
         }
         .pv-bg-layer--study {
           background: radial-gradient(
@@ -312,14 +360,19 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
               rgba(37, 99, 235, 0.14),
               transparent 65%
             ),
-            radial-gradient(ellipse 45% 40% at 5% 90%, rgba(37, 99, 235, 0.08), transparent 60%);
+            radial-gradient(
+              ellipse 45% 40% at 5% 90%,
+              rgba(37, 99, 235, 0.08),
+              transparent 60%
+            );
         }
         .pv-orb {
           position: absolute;
           border-radius: 50%;
-          filter: blur(50px);
-          opacity: 0.35;
+          filter: blur(54px);
+          opacity: 0.32;
           pointer-events: none;
+          transition: background 0.6s ease;
         }
         .pv-orb-1 {
           width: 280px;
@@ -336,18 +389,27 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           animation: pv-float-2 11s ease-in-out infinite;
         }
         @keyframes pv-float-1 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(-24px, 30px) scale(1.08); }
+          0%,
+          100% {
+            transform: translate(0, 0) scale(1);
+          }
+          50% {
+            transform: translate(-24px, 30px) scale(1.08);
+          }
         }
         @keyframes pv-float-2 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(20px, -24px) scale(1.1); }
+          0%,
+          100% {
+            transform: translate(0, 0) scale(1);
+          }
+          50% {
+            transform: translate(20px, -24px) scale(1.1);
+          }
         }
-
         .pv-grain {
           position: absolute;
           inset: 0;
-          opacity: 0.025;
+          opacity: 0.02;
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
           mix-blend-mode: overlay;
           pointer-events: none;
@@ -376,12 +438,16 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           color: #94a3b8;
           margin: 0 0 12px;
         }
-        .pv-kicker svg {
+        .pv-kicker :global(svg) {
           animation: pv-spin-slow 6s linear infinite;
         }
         @keyframes pv-spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
         }
         .pv-title {
           font-family: Inter, var(--font), sans-serif;
@@ -413,15 +479,25 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           min-height: 56px;
           padding: 4px;
           border-radius: 999px;
-          background: linear-gradient(90deg, #a8d8f8 0%, #d5c8f5 50%, #f8c9a8 100%);
+          background: linear-gradient(
+            90deg,
+            #a8d8f8 0%,
+            #d5c8f5 50%,
+            #f8c9a8 100%
+          );
           background-size: 200% 100%;
           animation: pv-gradient-shift 6s ease infinite;
           isolation: isolate;
           box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
         }
         @keyframes pv-gradient-shift {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
+          0%,
+          100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
         }
         .pv-tabs::before {
           content: '';
@@ -440,23 +516,31 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           width: calc(50% - 16px);
           border-radius: 999px;
           background: #0a1225;
-          transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
-                      background 0.4s ease;
+          transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
           transform: translateX(0);
-          box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+          overflow: hidden;
         }
         .pv-tabs-indicator::after {
           content: '';
           position: absolute;
           inset: 0;
-          border-radius: inherit;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.16),
+            transparent
+          );
           background-size: 200% 100%;
-          animation: pv-shimmer 2.5s linear infinite;
+          animation: pv-shimmer 2.6s linear infinite;
         }
         @keyframes pv-shimmer {
-          0% { background-position: -100% 0; }
-          100% { background-position: 200% 0; }
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 200% 0;
+          }
         }
         .pv-tabs.is-right .pv-tabs-indicator {
           transform: translateX(calc(100% + 16px));
@@ -510,8 +594,6 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           letter-spacing: 0.04em;
           margin-bottom: 18px;
           transition: background 0.4s ease, color 0.4s ease;
-          position: relative;
-          overflow: hidden;
         }
         .pv-copy-eyebrow-icon {
           display: inline-flex;
@@ -521,7 +603,6 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           height: 20px;
           border-radius: 50%;
           position: relative;
-          z-index: 1;
         }
         .pv-copy-eyebrow-icon::after {
           content: '';
@@ -530,15 +611,18 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           border-radius: 50%;
           border: 1.5px solid currentColor;
           opacity: 0.5;
-          animation: pv-ping 2s cubic-bezier(0,0,0.2,1) infinite;
+          animation: pv-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
         @keyframes pv-ping {
-          0% { transform: scale(1); opacity: 0.5; }
-          75%, 100% { transform: scale(1.6); opacity: 0; }
-        }
-
-        .pv-headline-wrap {
-          overflow: hidden;
+          0% {
+            transform: scale(1);
+            opacity: 0.5;
+          }
+          75%,
+          100% {
+            transform: scale(1.7);
+            opacity: 0;
+          }
         }
         .pv-headline {
           font-family: Inter, var(--font), sans-serif;
@@ -575,10 +659,6 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           color: #334155;
           line-height: 1.5;
         }
-        .pv-bullet svg {
-          flex-shrink: 0;
-          margin-top: 1px;
-        }
         .pv-bullet-check {
           display: inline-flex;
           align-items: center;
@@ -598,9 +678,6 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           border-top: 1px solid rgba(15, 23, 42, 0.08);
           width: 100%;
         }
-        .pv-stat {
-          position: relative;
-        }
         .pv-stat strong {
           display: block;
           font-family: Inter, var(--font), sans-serif;
@@ -618,6 +695,9 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           letter-spacing: 0.02em;
         }
 
+        .pv-cta-wrap {
+          display: inline-block;
+        }
         .pv-cta {
           position: relative;
           display: inline-flex;
@@ -632,12 +712,21 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           text-decoration: none;
           box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
           overflow: hidden;
+          transition: box-shadow 0.25s ease;
+        }
+        .pv-cta:hover {
+          box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
         }
         .pv-cta::before {
           content: '';
           position: absolute;
           inset: 0;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.18),
+            transparent
+          );
           transform: translateX(-100%);
           transition: transform 0.6s ease;
         }
@@ -654,8 +743,12 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           background: rgba(255, 255, 255, 0.16);
           position: relative;
           z-index: 1;
+          transition: transform 0.25s ease;
         }
-        .pv-cta span:not(.pv-cta-icon) {
+        .pv-cta:hover .pv-cta-icon {
+          transform: translateX(3px);
+        }
+        .pv-cta > span:not(.pv-cta-icon) {
           position: relative;
           z-index: 1;
         }
@@ -689,7 +782,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
             currentColor,
             transparent 60%
           );
-          opacity: 0.55;
+          opacity: 0.5;
           pointer-events: none;
           z-index: -1;
           filter: blur(2px);
@@ -742,7 +835,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           gap: 6px;
           padding: 5px 10px;
           border-radius: 999px;
-          background: rgba(0,0,0,0.5);
+          background: rgba(0, 0, 0, 0.5);
           backdrop-filter: blur(6px);
           font-size: 10px;
           font-weight: 800;
@@ -757,8 +850,15 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           animation: pv-live-blink 1.4s ease-in-out infinite;
         }
         @keyframes pv-live-blink {
-          0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
-          50% { opacity: 0.4; box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+          0%,
+          100% {
+            opacity: 1;
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+          }
+          50% {
+            opacity: 0.4;
+            box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+          }
         }
         .pv-media-overlay {
           position: absolute;
@@ -770,7 +870,11 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           gap: 10px;
           padding: 12px 14px;
           border-radius: 16px;
-          background: linear-gradient(180deg, rgba(2, 6, 23, 0.1), rgba(2, 6, 23, 0.78));
+          background: linear-gradient(
+            180deg,
+            rgba(2, 6, 23, 0.1),
+            rgba(2, 6, 23, 0.78)
+          );
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
           color: #fff;
@@ -824,19 +928,19 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
 
         .pv-float-chip {
           position: absolute;
+          z-index: 4;
           display: flex;
           align-items: center;
           gap: 8px;
           padding: 10px 14px;
           border-radius: 16px;
-          background: rgba(255,255,255,0.9);
+          background: rgba(255, 255, 255, 0.92);
           backdrop-filter: blur(10px);
-          border: 1px solid rgba(15,23,42,0.06);
-          box-shadow: 0 16px 34px rgba(15,23,42,0.14);
+          border: 1px solid rgba(15, 23, 42, 0.06);
+          box-shadow: 0 16px 34px rgba(15, 23, 42, 0.14);
           font-size: 12px;
           font-weight: 700;
           color: #0f172a;
-          z-index: 4;
         }
         .pv-float-chip--left {
           bottom: 32px;
@@ -882,9 +986,14 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .pv-orb-1, .pv-orb-2, .pv-tabs, .pv-tabs-indicator::after,
-          .pv-copy-eyebrow-icon::after, .pv-live-dot, .pv-media-badge-dot,
-          .pv-kicker svg {
+          .pv-orb-1,
+          .pv-orb-2,
+          .pv-tabs,
+          .pv-tabs-indicator::after,
+          .pv-copy-eyebrow-icon::after,
+          .pv-live-dot,
+          .pv-media-badge-dot,
+          .pv-kicker :global(svg) {
             animation: none !important;
           }
         }
@@ -924,11 +1033,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
             role="tablist"
             aria-label="Placedly verticals"
           >
-            <span
-              className="pv-tabs-indicator"
-              style={{ background: current.id === 'cap' ? '#0a1225' : '#0a1225' }}
-              aria-hidden
-            />
+            <span className="pv-tabs-indicator" aria-hidden />
             {VERTICALS.map((v, i) => (
               <motion.button
                 key={v.id}
@@ -972,16 +1077,18 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                 {current.eyebrow}
               </motion.span>
 
-              <div className="pv-headline-wrap">
-                <motion.h3
-                  className="pv-headline"
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  {current.headline}
-                </motion.h3>
-              </div>
+              <motion.h3
+                className="pv-headline"
+                initial={{ opacity: 0, y: 22 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.1,
+                  duration: 0.5,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                {current.headline}
+              </motion.h3>
 
               <motion.p
                 className="pv-desc"
@@ -999,13 +1106,21 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                     className="pv-bullet"
                     initial={{ opacity: 0, x: -14 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.24 + i * 0.06, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{
+                      delay: 0.24 + i * 0.06,
+                      duration: 0.35,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
                   >
                     <span
                       className="pv-bullet-check"
                       style={{ background: current.accentSoft }}
                     >
-                      <CheckCircle2 size={13} strokeWidth={2.5} color={current.accent} />
+                      <CheckCircle2
+                        size={13}
+                        strokeWidth={2.5}
+                        color={current.accent}
+                      />
                     </span>
                     {b}
                   </motion.li>
@@ -1020,8 +1135,8 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
               >
                 {current.stats.map((s) => (
                   <div key={s.label} className="pv-stat">
-                    <strong>
-                      <AnimatedCounter target={s.numeric} suffix={s.suffix} color={current.accent} />
+                    <strong style={{ color: current.accent }}>
+                      <AnimatedCounter target={s.numeric} suffix={s.suffix} />
                     </strong>
                     <span>{s.label}</span>
                   </div>
@@ -1033,14 +1148,14 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.58, duration: 0.4 }}
               >
-                <motion.div style={{ x: ctaX, y: ctaY, display: 'inline-block' }}>
-                  <Link
-                    ref={ctaRef}
-                    href={current.ctaHref}
-                    className="pv-cta"
-                    onMouseMove={handleCtaMove}
-                    onMouseLeave={handleCtaLeave}
-                  >
+                <motion.div
+                  ref={ctaWrapRef}
+                  className="pv-cta-wrap"
+                  style={{ x: ctaX, y: ctaY }}
+                  onMouseMove={handleCtaMove}
+                  onMouseLeave={handleCtaLeave}
+                >
+                  <Link href={current.ctaHref} className="pv-cta">
                     <span>{current.ctaLabel}</span>
                     <span className="pv-cta-icon">
                       <ArrowRight size={14} strokeWidth={2.5} />
@@ -1058,7 +1173,12 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
               style={{ color: current.accent }}
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, type: 'spring', stiffness: 260, damping: 20 }}
+              transition={{
+                delay: 0.3,
+                type: 'spring',
+                stiffness: 260,
+                damping: 20,
+              }}
             >
               <span
                 className="pv-media-badge-dot"
@@ -1077,18 +1197,10 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -10 }}
                 transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
+                onMouseMove={handleCardMove}
+                onMouseLeave={handleCardLeave}
               >
-                <div
-                  className="pv-media-glow"
-                  style={
-                    {
-                      '--gx': glowX,
-                      '--gy': glowY,
-                    } as React.CSSProperties
-                  }
-                />
+                <div className="pv-media-glow" style={glowStyle} />
 
                 <div className="pv-media-toolbar">
                   <div className="pv-media-dots">
@@ -1100,12 +1212,18 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                 </div>
 
                 <div className="pv-media-stage">
-                  <VerticalScrollVideo src={current.videoSrc} ariaLabel={current.ariaLabel} />
+                  <VerticalScrollVideo
+                    src={current.videoSrc}
+                    ariaLabel={current.ariaLabel}
+                  />
 
                   <div className="pv-media-overlay">
                     <span
                       className="pv-media-overlay-icon"
-                      style={{ background: current.accentSoft, color: current.accent }}
+                      style={{
+                        background: current.accentSoft,
+                        color: current.accent,
+                      }}
                     >
                       <Icon size={16} strokeWidth={2.5} />
                     </span>
@@ -1120,9 +1238,18 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                   className="pv-float-chip pv-float-chip--left"
                   initial={{ opacity: 0, scale: 0.8, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ delay: 0.4, type: 'spring', stiffness: 240, damping: 18 }}
+                  transition={{
+                    delay: 0.4,
+                    type: 'spring',
+                    stiffness: 240,
+                    damping: 18,
+                  }}
                 >
-                  <Play size={12} fill={current.accent} color={current.accent} />
+                  <Play
+                    size={12}
+                    fill={current.accent}
+                    color={current.accent}
+                  />
                   Autoplaying preview
                 </motion.div>
               </motion.div>
