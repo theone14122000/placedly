@@ -184,16 +184,13 @@ function TiltVideoCard({ current }: { current: VerticalContent }) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(y, [-60, 60], [10, -10]), {
+  const rotateX = useSpring(useTransform(y, [-80, 80], [8, -8]), {
     stiffness: 200,
     damping: 20,
   });
-  const rotateY = useSpring(useTransform(x, [-60, 60], [-10, 10]), {
+  const rotateY = useSpring(useTransform(x, [-80, 80], [-8, 8]), {
     stiffness: 200,
     damping: 20,
-  });
-  const translateZ = useSpring(useTransform(x, [-60, 60], [0, 0]), {
-    stiffness: 200,
   });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -215,27 +212,43 @@ function TiltVideoCard({ current }: { current: VerticalContent }) {
       ref={wrapRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      initial={{ opacity: 0, scale: 0.92, rotate: -2 }}
+      initial={{ opacity: 0, scale: 0.94, rotate: -2 }}
       animate={{ opacity: 1, scale: 1, rotate: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="services-video-wrap"
       style={{
         position: 'relative',
         width: '100%',
-        perspective: '1200px',
+        perspective: '1400px',
       }}
     >
+      {/* Rotating dashed accent ring */}
+      <motion.div
+        aria-hidden
+        className="services-orbit-ring"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+        style={{
+          position: 'absolute',
+          inset: '-26px',
+          borderRadius: '32px',
+          border: `1.5px dashed ${current.accent.from}44`,
+          zIndex: 0,
+          pointerEvents: 'none',
+        }}
+      />
+
       {/* Glow behind card */}
       <div
         aria-hidden
         style={{
           position: 'absolute',
-          inset: '-30px',
+          inset: '-40px',
           background: `linear-gradient(135deg, ${current.accent.from}55, ${current.accent.to}55)`,
-          filter: 'blur(60px)',
-          borderRadius: '32px',
+          filter: 'blur(80px)',
+          borderRadius: '36px',
           zIndex: 0,
-          opacity: 0.7,
+          opacity: 0.75,
         }}
       />
 
@@ -244,70 +257,100 @@ function TiltVideoCard({ current }: { current: VerticalContent }) {
         style={{
           position: 'relative',
           zIndex: 1,
-          borderRadius: '28px',
+          borderRadius: '30px',
           padding: '3px',
           background: `linear-gradient(140deg, ${current.accent.from}, ${current.accent.to})`,
-          boxShadow: '0 30px 70px rgba(0, 0, 0, 0.28)',
+          boxShadow: '0 40px 90px rgba(0, 0, 0, 0.3)',
           rotateX,
           rotateY,
-          translateZ,
           transformStyle: 'preserve-3d',
         }}
       >
         <div
           style={{
             position: 'relative',
-            borderRadius: '25px',
+            borderRadius: '27px',
             overflow: 'hidden',
             background: '#0a0a0a',
-            aspectRatio: '9 / 16',
           }}
           className="services-video-inner"
         >
-          <VideoCard src={current.videoSrc} ariaLabel={current.ariaLabel} />
-
-          {/* subtle inner vignette */}
+          {/* Toolbar strip — makes it read as a "player" not a raw clip */}
           <div
-            aria-hidden
+            className="services-video-toolbar"
             style={{
-              position: 'absolute',
-              inset: 0,
-              background:
-                'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 25%, transparent 70%, rgba(0,0,0,0.35) 100%)',
-              pointerEvents: 'none',
-            }}
-          />
-
-          {/* Live badge */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '16px',
-              left: '16px',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              background: 'rgba(0, 0, 0, 0.55)',
-              backdropFilter: 'blur(10px)',
-              padding: '7px 14px',
-              borderRadius: '20px',
-              color: '#fff',
-              fontSize: '12px',
-              fontWeight: 600,
+              justifyContent: 'space-between',
+              padding: '12px 16px',
+              background: 'rgba(255,255,255,0.05)',
+              borderBottom: '1px solid rgba(255,255,255,0.08)',
             }}
           >
-            <motion.span
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ duration: 1.6, repeat: Infinity }}
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <span style={dotStyle('#ff5f57')} />
+              <span style={dotStyle('#febc2e')} />
+              <span style={dotStyle('#28c840')} />
+            </div>
+            <span
               style={{
-                width: '7px',
-                height: '7px',
-                borderRadius: '50%',
-                background: '#22c55e',
-                display: 'inline-block',
+                fontSize: '10.5px',
+                fontWeight: 700,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.55)',
+              }}
+            >
+              {current.kicker}
+            </span>
+          </div>
+
+          <div className="services-video-stage">
+            <VideoCard src={current.videoSrc} ariaLabel={current.ariaLabel} />
+
+            {/* subtle inner vignette */}
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background:
+                  'linear-gradient(180deg, rgba(0,0,0,0.18) 0%, transparent 22%, transparent 68%, rgba(0,0,0,0.4) 100%)',
+                pointerEvents: 'none',
               }}
             />
-            Real Story
+
+            {/* Live badge */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '16px',
+                left: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'rgba(0, 0, 0, 0.55)',
+                backdropFilter: 'blur(10px)',
+                padding: '7px 14px',
+                borderRadius: '20px',
+                color: '#fff',
+                fontSize: '12px',
+                fontWeight: 600,
+              }}
+            >
+              <motion.span
+                animate={{ opacity: [1, 0.3, 1] }}
+                transition={{ duration: 1.6, repeat: Infinity }}
+                style={{
+                  width: '7px',
+                  height: '7px',
+                  borderRadius: '50%',
+                  background: '#22c55e',
+                  display: 'inline-block',
+                }}
+              />
+              Real Story
+            </div>
           </div>
         </div>
       </motion.div>
@@ -319,20 +362,20 @@ function TiltVideoCard({ current }: { current: VerticalContent }) {
         className="services-floating-chip services-floating-chip--top"
         style={{
           position: 'absolute',
-          top: '-18px',
-          right: '-18px',
+          top: '-20px',
+          right: '-22px',
           zIndex: 2,
           background: '#fff',
-          borderRadius: '16px',
-          padding: '12px 18px',
-          boxShadow: '0 14px 34px rgba(0, 0, 0, 0.16)',
+          borderRadius: '18px',
+          padding: '14px 20px',
+          boxShadow: '0 18px 40px rgba(0, 0, 0, 0.18)',
           textAlign: 'center',
-          minWidth: '90px',
+          minWidth: '100px',
         }}
       >
         <p
           style={{
-            fontSize: '1.2rem',
+            fontSize: '1.35rem',
             fontWeight: 800,
             backgroundImage: `linear-gradient(135deg, ${current.accent.from}, ${current.accent.to})`,
             WebkitBackgroundClip: 'text',
@@ -343,7 +386,7 @@ function TiltVideoCard({ current }: { current: VerticalContent }) {
         >
           {current.stats[0].value}
         </p>
-        <p style={{ fontSize: '10px', color: '#888', marginTop: '3px' }}>
+        <p style={{ fontSize: '10.5px', color: '#888', marginTop: '4px', fontWeight: 600 }}>
           {current.stats[0].label}
         </p>
       </motion.div>
@@ -355,28 +398,28 @@ function TiltVideoCard({ current }: { current: VerticalContent }) {
         className="services-floating-chip services-floating-chip--bottom"
         style={{
           position: 'absolute',
-          bottom: '30px',
-          left: '-32px',
+          bottom: '38px',
+          left: '-36px',
           zIndex: 2,
           background: '#fff',
-          borderRadius: '16px',
-          padding: '10px 16px',
-          boxShadow: '0 14px 34px rgba(0, 0, 0, 0.16)',
+          borderRadius: '18px',
+          padding: '12px 18px',
+          boxShadow: '0 18px 40px rgba(0, 0, 0, 0.18)',
           display: 'flex',
           alignItems: 'center',
-          gap: '10px',
+          gap: '12px',
         }}
       >
         <span
           style={{
-            width: '30px',
-            height: '30px',
-            borderRadius: '9px',
+            width: '34px',
+            height: '34px',
+            borderRadius: '10px',
             background: current.accent.soft,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '15px',
+            fontSize: '16px',
             flexShrink: 0,
           }}
         >
@@ -385,7 +428,7 @@ function TiltVideoCard({ current }: { current: VerticalContent }) {
         <div style={{ textAlign: 'left' }}>
           <p
             style={{
-              fontSize: '0.85rem',
+              fontSize: '0.9rem',
               fontWeight: 800,
               color: '#111',
               lineHeight: 1,
@@ -393,13 +436,46 @@ function TiltVideoCard({ current }: { current: VerticalContent }) {
           >
             {current.stats[1].value}
           </p>
-          <p style={{ fontSize: '10px', color: '#888', marginTop: '2px' }}>
+          <p style={{ fontSize: '10.5px', color: '#888', marginTop: '3px' }}>
             {current.stats[1].label}
           </p>
         </div>
       </motion.div>
+
+      {/* Bottom info strip — extra dynamism under the card */}
+      <div className="services-video-footer">
+        {current.stats.map((s, i) => (
+          <div key={i} className="services-video-footer-item">
+            <span
+              style={{
+                background: `linear-gradient(135deg, ${current.accent.from}, ${current.accent.to})`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                fontWeight: 800,
+                fontSize: '15px',
+              }}
+            >
+              {s.value}
+            </span>
+            <span style={{ fontSize: '10.5px', color: '#94a3b8', fontWeight: 600 }}>
+              {s.label}
+            </span>
+          </div>
+        ))}
+      </div>
     </motion.div>
   );
+}
+
+function dotStyle(color: string): React.CSSProperties {
+  return {
+    width: '9px',
+    height: '9px',
+    borderRadius: '50%',
+    background: color,
+    display: 'inline-block',
+  };
 }
 
 export default function Services({ cms = {} }: { cms?: Cms }) {
@@ -418,7 +494,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
       id="services"
       style={{
         position: 'relative',
-        padding: 'clamp(64px, 9vw, 140px) clamp(16px, 5vw, 24px)',
+        padding: 'clamp(72px, 10vw, 160px) clamp(16px, 5vw, 24px)',
         overflow: 'hidden',
       }}
     >
@@ -445,18 +521,18 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
         style={{
           position: 'absolute',
           top: '-10%',
-          left: '-10%',
-          width: '480px',
-          height: '480px',
+          left: '-12%',
+          width: '560px',
+          height: '560px',
           borderRadius: '50%',
-          filter: 'blur(90px)',
+          filter: 'blur(100px)',
           zIndex: 0,
           pointerEvents: 'none',
         }}
         animate={{
-          background: `radial-gradient(circle, ${current.accent.from}33 0%, transparent 70%)`,
-          x: [0, 30, 0],
-          y: [0, 20, 0],
+          background: `radial-gradient(circle, ${current.accent.from}38 0%, transparent 70%)`,
+          x: [0, 35, 0],
+          y: [0, 25, 0],
         }}
         transition={{
           background: { duration: 0.9, ease: [0.4, 0, 0.2, 1] },
@@ -469,19 +545,19 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
         className="services-blob"
         style={{
           position: 'absolute',
-          bottom: '-15%',
-          right: '-10%',
-          width: '520px',
-          height: '520px',
+          bottom: '-18%',
+          right: '-12%',
+          width: '600px',
+          height: '600px',
           borderRadius: '50%',
-          filter: 'blur(100px)',
+          filter: 'blur(110px)',
           zIndex: 0,
           pointerEvents: 'none',
         }}
         animate={{
-          background: `radial-gradient(circle, ${current.accent.to}2e 0%, transparent 70%)`,
-          x: [0, -25, 0],
-          y: [0, -15, 0],
+          background: `radial-gradient(circle, ${current.accent.to}32 0%, transparent 70%)`,
+          x: [0, -30, 0],
+          y: [0, -20, 0],
         }}
         transition={{
           background: { duration: 0.9, ease: [0.4, 0, 0.2, 1] },
@@ -489,12 +565,32 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           y: { duration: 9, repeat: Infinity, ease: 'easeInOut' },
         }}
       />
+      {/* Third accent blob, center, very soft — adds depth */}
+      <motion.div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: '35%',
+          left: '50%',
+          width: '700px',
+          height: '360px',
+          borderRadius: '50%',
+          filter: 'blur(140px)',
+          zIndex: 0,
+          pointerEvents: 'none',
+          transform: 'translateX(-50%)',
+        }}
+        animate={{
+          background: `radial-gradient(ellipse, ${current.accent.from}14 0%, transparent 70%)`,
+        }}
+        transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
+      />
 
       <div
         style={{
           position: 'relative',
           zIndex: 1,
-          maxWidth: '1280px',
+          maxWidth: '1320px',
           margin: '0 auto',
         }}
       >
@@ -621,8 +717,8 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 'clamp(32px, 5vw, 90px)',
+              gridTemplateColumns: '1.05fr 0.95fr',
+              gap: 'clamp(32px, 5vw, 80px)',
               alignItems: 'center',
             }}
             className="services-grid"
@@ -827,12 +923,41 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
       <style>{`
         .services-video-shell {
           width: 100%;
-          max-width: clamp(300px, 26vw, 400px);
+          max-width: clamp(380px, 34vw, 480px);
           margin: 0 auto;
         }
 
         .services-video-inner {
-          max-height: 560px;
+          width: 100%;
+        }
+
+        .services-video-stage {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 4 / 5;
+        }
+
+        .services-video-footer {
+          margin-top: 26px;
+          display: flex;
+          justify-content: space-between;
+          background: #fff;
+          border-radius: 18px;
+          padding: 14px 20px;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+          border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .services-video-footer-item {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          align-items: center;
+          flex: 1;
+        }
+
+        .services-video-footer-item:not(:last-child) {
+          border-right: 1px solid rgba(0, 0, 0, 0.06);
         }
 
         .services-floating-chip--bottom {
@@ -841,7 +966,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
 
         @media (max-width: 1100px) {
           .services-video-shell {
-            max-width: 340px;
+            max-width: 400px;
           }
         }
 
@@ -850,19 +975,22 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
             grid-template-columns: 1fr !important;
           }
           .services-video-shell {
-            max-width: 260px !important;
+            max-width: 340px !important;
           }
-          .services-video-inner {
-            max-height: 420px;
+          .services-video-stage {
+            aspect-ratio: 4 / 5;
           }
           .services-floating-chip--bottom {
             display: none;
           }
           .services-floating-chip--top {
-            top: -12px !important;
-            right: -8px !important;
-            padding: 8px 12px !important;
-            min-width: 68px !important;
+            top: -14px !important;
+            right: -10px !important;
+            padding: 10px 14px !important;
+            min-width: 76px !important;
+          }
+          .services-orbit-ring {
+            display: none;
           }
           .services-pattern {
             display: none;
@@ -870,17 +998,23 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           .services-content-card {
             padding: 24px !important;
           }
+          .services-video-footer {
+            padding: 12px 14px;
+          }
         }
 
         @media (max-width: 480px) {
           .services-toggle button {
             padding: 10px 12px !important;
           }
+          .services-video-shell {
+            max-width: 300px !important;
+          }
         }
 
         @media (min-width: 1400px) {
           .services-video-shell {
-            max-width: 420px;
+            max-width: 520px;
           }
         }
 
