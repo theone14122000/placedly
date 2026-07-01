@@ -61,8 +61,7 @@ const DEFAULT_STEPS: JourneyStep[] = [
   },
 ];
 
-const BASE_STICKY_TOP = 96;   // px — top offset for first card
-const STACK_OFFSET = 14;      // px — increment per card (creates the "peek")
+const STICKY_TOP = 112;
 const SECTION_ID = 'cap-journey-section';
 
 export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
@@ -79,7 +78,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   const title = cms['hp:capJourneyTitle'] ?? 'Your CAP Journey — From Resume to Offer';
   const subtitle = cms['hp:capJourneySubtitle'] ?? 'Scroll through each stage of the programme. Every step is advisor-led, transparent, and built to get you placed — not just applied.';
 
-  /* ====================== MARKER + PROGRESS ====================== */
+  /* ====================== SCROLL & MARKER LOGIC ====================== */
   const updateMarkerPositions = useCallback(() => {
     const track = cardsTrackRef.current;
     if (!track) return;
@@ -98,15 +97,12 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
     const col = cardsColRef.current;
     if (!col) return;
     const rect = col.getBoundingClientRect();
-    const scrollable = col.offsetHeight - window.innerHeight + BASE_STICKY_TOP;
-    if (scrollable <= 0) {
-      setFillProgress(rect.top <= BASE_STICKY_TOP ? 1 : 0);
-      return;
-    }
-    const scrolled = -rect.top + BASE_STICKY_TOP;
+    const scrollable = col.offsetHeight - window.innerHeight + STICKY_TOP;
+    const scrolled = -rect.top + STICKY_TOP;
     setFillProgress(Math.min(1, Math.max(0, scrolled / scrollable)));
   }, []);
 
+  /* ====================== INTERSECTION OBSERVER FOR CARDS ====================== */
   useEffect(() => {
     const cards = document.querySelectorAll<HTMLElement>('[data-cap-step]');
     if (!cards.length) return;
@@ -127,6 +123,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
     return () => observer.disconnect();
   }, []);
 
+  /* ====================== SCROLL & RESIZE ====================== */
   useEffect(() => {
     const onScroll = () => updateScrollProgress();
     const onResize = () => {
@@ -170,10 +167,11 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
       className="placedly-cap-journey"
       aria-labelledby="cap-journey-title"
     >
+      {/* ==================== ALL STYLES INSIDE COMPONENT ==================== */}
       <style jsx global>{`
         .placedly-cap-journey {
           position: relative;
-          padding: var(--placedly-section-pad, clamp(56px, 8vw, 96px)) clamp(20px, 4vw, 40px);
+          padding: clamp(56px, 8vw, 96px) clamp(20px, 4vw, 40px);
           background: #FFFBF4;
           overflow: visible;
         }
@@ -181,14 +179,27 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           position: absolute;
           inset: 0;
           pointer-events: none;
-          background: radial-gradient(ellipse 70% 45% at 50% 0%, rgba(255,255,255,0.95), transparent 65%),
-                      radial-gradient(ellipse 40% 30% at 8% 85%, rgba(15,23,42,0.03), transparent 55%);
+          background: 
+            radial-gradient(ellipse 70% 45% at 50% 0%, rgba(255,255,255,0.95), transparent 65%),
+            radial-gradient(ellipse 40% 30% at 8% 85%, rgba(15,23,42,0.03), transparent 55%);
         }
-        .placedly-cap-journey-wrap { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; }
-        .placedly-cap-journey-header { text-align: center; margin-bottom: clamp(36px, 5vw, 52px); }
+        .placedly-cap-journey-wrap {
+          position: relative;
+          z-index: 1;
+          max-width: 1180px;
+          margin: 0 auto;
+        }
+        .placedly-cap-journey-header {
+          text-align: center;
+          margin-bottom: clamp(36px, 5vw, 52px);
+        }
         .placedly-cap-journey-kicker {
-          font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
-          text-transform: uppercase; color: #94a3b8; margin: 0 0 12px;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: #94a3b8;
+          margin: 0 0 12px;
         }
         .placedly-cap-journey-title {
           font-family: Inter, var(--font), sans-serif !important;
@@ -201,83 +212,142 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
         }
         .placedly-cap-journey-sub {
           font-size: clamp(15px, 1.35vw, 17px);
-          line-height: 1.65; color: #64748b;
-          max-width: 620px; margin: 0 auto;
+          line-height: 1.65;
+          color: #64748b;
+          max-width: 620px;
+          margin: 0 auto;
         }
 
-        /* ===== Layout ===== */
         .placedly-cap-journey-scroll-layout {
           display: grid;
           grid-template-columns: 48px minmax(0, 1fr);
           gap: clamp(20px, 3vw, 36px);
-          align-items: stretch;
         }
-        .placedly-cap-journey-rail-col { position: relative; min-height: 100%; }
-        .placedly-cap-journey-rail { position: absolute; inset: 0; display: flex; justify-content: center; }
+        .placedly-cap-journey-rail-col {
+          position: relative;
+          min-height: 100%;
+        }
+        .placedly-cap-journey-rail {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          justify-content: center;
+        }
         .placedly-cap-journey-rail-track {
-          position: relative; width: 2px; height: 100%;
-          background: #e2e8f0; border-radius: 999px; overflow: hidden;
+          position: relative;
+          width: 2px;
+          height: 100%;
+          background: #e2e8f0;
+          border-radius: 999px;
+          overflow: hidden;
         }
         .placedly-cap-journey-rail-fill {
-          position: absolute; top: 0; left: 0; right: 0; width: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
           background: linear-gradient(#181229, #f97316);
-          border-radius: 999px; transition: height .12s linear;
-          will-change: height;
+          border-radius: 999px;
+          transition: height 0.1s linear;
+          box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
         }
         .placedly-cap-journey-rail-markers {
-          position: absolute; inset: 0; left: 50%; transform: translateX(-50%);
-          width: 10px; pointer-events: none;
+          position: absolute;
+          inset: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 10px;
+          pointer-events: none;
         }
         .placedly-cap-journey-rail-marker {
-          position: absolute; left: 50%; width: 9px; height: 9px;
-          margin: -4.5px 0 0 -4.5px; border-radius: 999px;
-          background: #fff; border: 2px solid #e2e8f0;
+          position: absolute;
+          left: 50%;
+          width: 10px;
+          height: 10px;
+          margin: -5px 0 0 -5px;
+          border-radius: 999px;
+          background: #fff;
+          border: 2.5px solid #e2e8f0;
           transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        .placedly-cap-journey-rail-marker.is-lit { border-color: #fdba74; background: #fff7ed; }
+        .placedly-cap-journey-rail-marker.is-lit {
+          border-color: #f97316;
+          background: #fff7ed;
+          transform: scale(1.2);
+        }
         .placedly-cap-journey-rail-marker.is-active {
-          border-color: #181229; background: #181229; transform: scale(1.35);
+          border-color: #181229;
+          background: #181229;
+          transform: scale(1.4);
         }
 
-        /* ===== STACKING CARDS (the overlap effect) ===== */
-        .placedly-cap-journey-cards-col { min-width: 0; }
+        /* ====================== OVERLAPPING STICKY CARDS ====================== */
         .placedly-cap-journey-track {
           position: relative;
           display: flex;
           flex-direction: column;
-          padding-bottom: min(50vh, 360px);
+          gap: 0;
+          padding-bottom: min(36vh, 280px);
         }
+        
         .placedly-cap-journey-card {
           position: sticky;
-          border-radius: clamp(24px, 3vw, 36px);
+          margin-bottom: 24px;
+          border-radius: 28px;
           background: #FFFBF4;
-          border: 1px solid rgba(0,0,0,0.07);
-          box-shadow:
-            0 30px 70px -16px rgba(249,115,22,0.22),
-            0 10px 30px -10px rgba(15,23,42,0.08);
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          box-shadow: 0 12px 40px rgba(249, 115, 22, 0.12);
+          transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                      box-shadow 0.4s ease,
+                      opacity 0.3s ease;
           will-change: transform;
+          overflow: hidden;
         }
-        /* No scaling/fading — pure document-flow stacking creates the overlap.
-           Each card's top + z-index is set inline per index. */
+
+        /* Overlap effect - each card sticks a bit higher than the previous */
+        .placedly-cap-journey-card:not(.is-active) {
+          opacity: 0.92;
+          transform: scale(0.985);
+          box-shadow: 0 8px 30px rgba(249, 115, 22, 0.08);
+        }
+
+        .placedly-cap-journey-card.is-active {
+          opacity: 1;
+          transform: scale(1);
+          box-shadow: 0 25px 60px -12px rgba(249, 115, 22, 0.25);
+          z-index: 20;
+        }
 
         .placedly-cap-journey-card-inner {
           display: grid;
-          grid-template-columns: minmax(0,1fr) minmax(160px,220px) minmax(0,1fr);
+          grid-template-columns: minmax(0, 1fr) minmax(160px, 220px) minmax(0, 1fr);
           gap: clamp(20px, 3vw, 40px);
           align-items: stretch;
           min-height: clamp(220px, 24vw, 280px);
           padding: clamp(28px, 3.5vw, 44px) clamp(24px, 3vw, 40px);
         }
+
         .placedly-cap-journey-card-left {
-          display: flex; flex-direction: column;
-          justify-content: space-between; align-items: flex-start;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: flex-start;
         }
+
         .placedly-cap-journey-card-badge {
-          display: inline-flex; align-items: center; justify-content: center;
-          padding: 7px 16px; border-radius: 999px; border: 1px solid #334155;
-          font-size: 13px; font-weight: 500; letter-spacing: 0.02em;
-          color: #334155; background: transparent;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 7px 16px;
+          border-radius: 999px;
+          border: 1px solid #334155;
+          font-size: 13px;
+          font-weight: 500;
+          letter-spacing: 0.02em;
+          color: #334155;
+          background: transparent;
         }
+
         .placedly-cap-journey-card-title {
           font-family: Inter, var(--font), sans-serif !important;
           font-size: clamp(1.75rem, 3vw, 2.5rem) !important;
@@ -287,50 +357,116 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           color: #0f172a !important;
           max-width: 14ch;
         }
-        .placedly-cap-journey-card-media { display: flex; align-items: center; justify-content: center; padding: 8px 0; }
-        .placedly-cap-journey-card-img {
-          display: block; width: min(100%, 220px); aspect-ratio: 4/3;
-          object-fit: cover; border-radius: 16px;
-          transform: rotate(-7deg);
-          box-shadow: 0 14px 40px rgba(15,23,42,0.14), 0 4px 12px rgba(15,23,42,0.08);
-        }
-        .placedly-cap-journey-card-right {
-          display: flex; flex-direction: column; justify-content: center;
-          align-items: flex-start; gap: clamp(16px, 2vw, 22px);
-          max-width: 320px; margin-left: auto;
-        }
-        .placedly-cap-journey-card-body { font-size: clamp(14px, 1.2vw, 15px); line-height: 1.65; color: #64748b; margin: 0; }
-        .placedly-cap-journey-card-link {
-          display: inline-flex; align-items: center; gap: 8px;
-          font-size: 15px; font-weight: 600; color: #2563eb !important;
-          text-decoration: none; transition: gap .2s ease, color .2s ease;
-        }
-        .placedly-cap-journey-card-link:hover { color: #1d4ed8 !important; gap: 12px; }
 
-        /* ===== Floating CTA ===== */
+        .placedly-cap-journey-card-media {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 8px 0;
+        }
+
+        .placedly-cap-journey-card-img {
+          display: block;
+          width: min(100%, 220px);
+          aspect-ratio: 4/3;
+          object-fit: cover;
+          border-radius: 16px;
+          transform: rotate(-7deg);
+          box-shadow: 0 14px 40px rgba(15, 23, 42, 0.14);
+          transition: transform 0.4s ease;
+        }
+
+        .placedly-cap-journey-card.is-active .placedly-cap-journey-card-img {
+          transform: rotate(-3deg);
+        }
+
+        .placedly-cap-journey-card-right {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-start;
+          gap: clamp(16px, 2vw, 22px);
+          max-width: 320px;
+          margin-left: auto;
+        }
+
+        .placedly-cap-journey-card-body {
+          font-size: clamp(14px, 1.2vw, 15px);
+          line-height: 1.65;
+          color: #64748b;
+          margin: 0;
+        }
+
+        .placedly-cap-journey-card-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 15px;
+          font-weight: 600;
+          color: #2563eb !important;
+          text-decoration: none;
+          transition: gap 0.2s ease, color 0.2s ease;
+        }
+        .placedly-cap-journey-card-link:hover {
+          color: #1d4ed8 !important;
+          gap: 12px;
+        }
+
+        /* Floating CTA */
         .placedly-cap-floating-cta {
-          position: fixed; left: 0; right: 0; bottom: 0; z-index: 8995;
-          display: flex; justify-content: center; align-items: flex-end;
+          position: fixed;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 8995;
+          display: flex;
+          justify-content: center;
+          align-items: flex-end;
           pointer-events: none;
           padding: 0 16px calc(12px + env(safe-area-inset-bottom, 0px));
         }
+        .placedly-cap-floating-cta::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 14px;
+          background: #FFFBF4;
+          border-top: 1px solid rgba(15, 23, 42, 0.08);
+          box-shadow: 0 -8px 28px rgba(15, 23, 42, 0.08);
+          z-index: -1;
+        }
         .placedly-cap-floating-cta-float {
-          pointer-events: auto; position: relative; z-index: 2;
+          pointer-events: auto;
+          position: relative;
+          z-index: 2;
           animation: float-bob 3.2s ease-in-out infinite;
         }
         .placedly-cap-floating-cta-btn {
-          display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-          padding: 15px 28px; border-radius: 999px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 15px 28px;
+          border-radius: 999px;
           background: linear-gradient(135deg, #fb923c 0%, #f97316 45%, #ea580c 100%);
-          color: #fff !important; text-decoration: none;
-          font-size: 15px; font-weight: 700; white-space: nowrap;
-          border: 1px solid rgba(255,255,255,0.35);
-          box-shadow: 0 10px 30px rgba(234,88,12,0.35), 0 20px 50px rgba(234,88,12,0.25), inset 0 1px 0 rgba(255,255,255,0.3);
-          transition: transform 0.25s cubic-bezier(0.23,1,0.32,1), box-shadow 0.25s ease;
+          color: #fff !important;
+          text-decoration: none;
+          font-size: 15px;
+          font-weight: 700;
+          white-space: nowrap;
+          border: 1px solid rgba(255, 255, 255, 0.35);
+          box-shadow: 0 10px 30px rgba(234, 88, 12, 0.35),
+                      0 20px 50px rgba(234, 88, 12, 0.25),
+                      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+          transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1),
+                      box-shadow 0.25s ease;
         }
         .placedly-cap-floating-cta-btn:hover {
           transform: translateY(-4px) scale(1.03);
-          box-shadow: 0 15px 40px rgba(234,88,12,0.45), 0 25px 60px rgba(234,88,12,0.35);
+          box-shadow: 0 15px 40px rgba(234, 88, 12, 0.45),
+                      0 25px 60px rgba(234, 88, 12, 0.35);
         }
 
         @keyframes float-bob {
@@ -339,23 +475,40 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
         }
 
         @media (max-width: 768px) {
-          .placedly-cap-journey-scroll-layout { grid-template-columns: 1fr; gap: 0; }
-          .placedly-cap-journey-rail-col { display: none; }
+          .placedly-cap-journey-scroll-layout {
+            grid-template-columns: 1fr;
+            gap: 0;
+          }
+          .placedly-cap-journey-rail-col {
+            display: none;
+          }
           .placedly-cap-journey-card-inner {
             grid-template-columns: 1fr;
             grid-template-rows: auto auto auto;
-            min-height: 0; gap: 20px;
+            min-height: 0;
+            gap: 20px;
             padding: 24px 20px 28px;
           }
-          .placedly-cap-journey-card-title { width: 100%; max-width: none; }
-          .placedly-cap-journey-card-img { width: min(72vw, 260px); transform: rotate(-4deg); }
-          .placedly-cap-journey-track { padding-bottom: 30vh; }
-          .placedly-cap-floating-cta-btn { padding: 12px 20px; font-size: 14px; }
+          .placedly-cap-journey-card-title {
+            width: 100%;
+            max-width: none;
+          }
+          .placedly-cap-journey-card-img {
+            width: min(72vw, 260px);
+            transform: rotate(-4deg);
+          }
+          .placedly-cap-journey-track {
+            padding-bottom: 24vh;
+          }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .placedly-cap-floating-cta-float { animation: none !important; }
-          .placedly-cap-journey-rail-fill { transition: none !important; }
+          .placedly-cap-floating-cta-float {
+            animation: none !important;
+          }
+          .placedly-cap-journey-card {
+            transition: none !important;
+          }
         }
       `}</style>
 
@@ -380,7 +533,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                   style={{ height: `${fillProgress * 100}%` }}
                 />
               </div>
-
               <div className="placedly-cap-journey-rail-markers">
                 {DEFAULT_STEPS.map((step, index) => {
                   const top = markerTops[index] ?? (index / (DEFAULT_STEPS.length - 1)) * 100;
@@ -397,51 +549,56 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
             </div>
           </div>
 
-          {/* Cards Column — STACKING OVERLAP EFFECT */}
+          {/* Cards with Overlapping Effect */}
           <div ref={cardsColRef} className="placedly-cap-journey-cards-col">
             <div ref={cardsTrackRef} className="placedly-cap-journey-track">
-              {DEFAULT_STEPS.map((step, index) => (
-                <article
-                  key={step.id}
-                  data-cap-step={index}
-                  className={`placedly-cap-journey-card ${activeStep === index ? 'is-active' : ''}`}
-                  style={{
-                    top: `${BASE_STICKY_TOP + index * STACK_OFFSET}px`,
-                    zIndex: index + 1,
-                  }}
-                >
-                  <div className="placedly-cap-journey-card-inner">
-                    <div className="placedly-cap-journey-card-left">
-                      <span className="placedly-cap-journey-card-badge">
-                        {String(index + 1).padStart(3, '0')}
-                      </span>
-                      <h3 className="placedly-cap-journey-card-title">{step.title}</h3>
-                    </div>
+              {DEFAULT_STEPS.map((step, index) => {
+                // Staggered top values for overlapping effect
+                const stickyTop = STICKY_TOP + index * 18;
 
-                    <div className="placedly-cap-journey-card-media">
-                      <img
-                        src={step.image}
-                        alt={step.title}
-                        className="placedly-cap-journey-card-img"
-                        loading={index < 2 ? 'eager' : 'lazy'}
-                      />
-                    </div>
+                return (
+                  <article
+                    key={step.id}
+                    data-cap-step={index}
+                    className={`placedly-cap-journey-card ${activeStep === index ? 'is-active' : ''}`}
+                    style={{ 
+                      top: `${stickyTop}px`,
+                      zIndex: activeStep === index ? 20 : 10 - index 
+                    }}
+                  >
+                    <div className="placedly-cap-journey-card-inner">
+                      <div className="placedly-cap-journey-card-left">
+                        <span className="placedly-cap-journey-card-badge">
+                          {String(index + 1).padStart(3, '0')}
+                        </span>
+                        <h3 className="placedly-cap-journey-card-title">{step.title}</h3>
+                      </div>
 
-                    <div className="placedly-cap-journey-card-right">
-                      <p className="placedly-cap-journey-card-body">{step.body}</p>
-                      <Link href={step.href} className="placedly-cap-journey-card-link">
-                        Read More <ArrowRight size={16} strokeWidth={2.5} />
-                      </Link>
+                      <div className="placedly-cap-journey-card-media">
+                        <img
+                          src={step.image}
+                          alt={step.title}
+                          className="placedly-cap-journey-card-img"
+                          loading={index < 2 ? 'eager' : 'lazy'}
+                        />
+                      </div>
+
+                      <div className="placedly-cap-journey-card-right">
+                        <p className="placedly-cap-journey-card-body">{step.body}</p>
+                        <Link href={step.href} className="placedly-cap-journey-card-link">
+                          Read More <ArrowRight size={16} strokeWidth={2.5} />
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
           </div>
         </div>
       </div>
 
-      {/* ====================== FLOATING CTA ====================== */}
+      {/* Floating CTA */}
       <AnimatePresence>
         {showFloatingCta && (
           <motion.div
@@ -453,8 +610,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           >
             <div className="placedly-cap-floating-cta-float">
               <Link href="/cap/apply" className="placedly-cap-floating-cta-btn">
-                Apply for CAP
-                <ArrowRight size={18} />
+                Apply for CAP <ArrowRight size={18} />
               </Link>
             </div>
           </motion.div>
