@@ -54,21 +54,6 @@ const HP_DEFAULTS: Record<string, string> = {
   'hp:marqueeLabel':     'Our cap candiate have landed roles at',
   'hp:marqueeSub':       'Through our placement network — roles sourced via trusted recruitment partners',
   'hp:marqueeCompanies': 'EXL Services,Quatrro,eBiz Solutions,WNS Global,Optum,Cognizant,Wipro,Infosys BPM,Mphasis,HCL,Genpact,Access Healthcare,Conifer Health',
-  /* About Us */
-  'hp:aboutTagline':    'About Us',
-  'hp:aboutHeading':    'Behind Every Career Success Is a Team That Truly Cares.',
-  'hp:aboutBody':       "Placedly was built in India for one reason — most career consultants work for employers, not for you. We flipped the model.\n\nWe are a Career Assistance Programme (CAP) provider and Study Abroad consultancy — both built around the same belief: invest in the person first, earn only when we deliver.\n\nWhether you're a claims analyst targeting your first MNC role, or a student planning a Master's in the UK — our team brings the strategy, connections, and coaching to make it happen. Our 12% Career Assistance Fee applies only after your offer letter is in your hands.",
-  'hp:aboutTeamImg':    '/img/team.png',
-  'hp:aboutConsultImg': '/img/aboutt us consultancy.png',
-  'hp:aboutBadge1Num':  '300+', 'hp:aboutBadge1Label': 'Careers Transformed',
-  'hp:aboutBadge2Num':  '100+', 'hp:aboutBadge2Label': 'Hiring Partners',
-  'hp:aboutFeat1Title': 'Personalised, Not Templated',
-  'hp:aboutFeat1Desc':  'Every candidate and every student gets a roadmap built specifically around their background, goals, and budget — not a generic shortlist.',
-  'hp:aboutFeat2Title': 'End-to-End Support',
-  'hp:aboutFeat2Desc':  'From CV to offer letter for careers. From counselling to visa filing for study abroad. We stay with you at every step.',
-  'hp:aboutFeat3Title': '100+ Hiring Partners + 140+ Universities',
-  'hp:aboutFeat3Desc':  'Direct connects to MNCs actively hiring across India, and university partnerships across UK, France, Germany & Dubai.',
-  'hp:aboutCtaText':    'Our Story →',
   /* How It Works */
   'hp:hiwTagline': 'How It Works',
   'hp:hiwTitle':   'How Placedly Works — Simple, Transparent, Proven',
@@ -115,7 +100,6 @@ export default async function Home() {
         <Hero cms={cms} />
         <Services cms={cms} />
         <CapJourneySection cms={cms} />
-        <AboutUs cms={cms} />
         <HowItWorks cms={cms} />
         <Industries />
         <StudyDestinationsMarquee />
@@ -123,10 +107,11 @@ export default async function Home() {
         <Faq />
         <Cta cms={cms} />
         <Footer cms={cms} />
+      
+        <FloatingWhatsApp cms={cms} />
+        <CapFloatingCta label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'} />
+        <PlacedlyFixes />
       </div>
-      <FloatingWhatsApp cms={cms} />
-      <CapFloatingCta label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'} />
-      <PlacedlyFixes />
     </>
   );
 }
