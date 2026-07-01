@@ -3,399 +3,1097 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import {
+  BadgeCheck,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  GraduationCap,
+  Plane,
+  Send,
+  Users,
+  Sparkles,
+  ArrowRight,
+  type LucideIcon,
+} from 'lucide-react';
 import { FadeUp } from './motion';
-import { CAP_JOURNEY_SECTION_ID } from './CapFloatingCta';
+import SeeDemoButton from './SeeDemoButton';
 
 /* ─────────────────────────────────────────────────────────────────
    TYPES
 ───────────────────────────────────────────────────────────────── */
 type Cms = Record<string, string>;
 
-type JourneyStep = {
+type TabDef = {
   id: string;
-  badge: string;
+  label: string;
+  Icon: LucideIcon;
   title: string;
-  body: string;
-  image: string;
-  href: string;
-  accent: string; // per-card accent colour
+  details: string;
+  accent: string;
+  category: 'career' | 'study';
+  step: number;
+  totalSteps: number;
+  cta?: { label: string; href: string };
+  Visual: () => React.ReactNode;
 };
 
 /* ─────────────────────────────────────────────────────────────────
-   DATA
+   DEFAULTS
 ───────────────────────────────────────────────────────────────── */
-const DEFAULT_STEPS: JourneyStep[] = [
+const CAREER_DEFAULTS = [
   {
-    id: 'resume',
-    badge: 'Step 01',
-    title: 'Resume Rebuild',
-    body: 'ATS-friendly resume with achievement-based bullets, domain keywords, and a narrative that positions you for MNC roles — ready in 48 hours.',
-    image: '/img/hero%20feature%20img.png',
-    href: '/cap',
-    accent: '#f97316',
+    title: 'Understand You First',
+    details:
+      'A free 45-minute session where we actually listen. We understand your current role, your target outcome, and what you truly want — not just what looks good on paper.',
   },
   {
-    id: 'linkedin',
-    badge: 'Step 02',
-    title: 'LinkedIn Overhaul',
-    body: 'Headline, summary, and experience aligned to the roles you want — so recruiters and hiring managers see a consistent, credible profile.',
-    image: '/img/hero%20feature%20img%202.png',
-    href: '/cap',
-    accent: '#2563eb',
+    title: 'Resume + Interview Prep',
+    details:
+      'Complete ATS-optimised resume rebuild, LinkedIn profile overhaul, and live mock interviews with real feedback. You walk into every interview knowing exactly what to say.',
   },
   {
-    id: 'mock',
-    badge: 'Step 03',
-    title: 'Mock Interview Sprint',
-    body: 'Three live coaching rounds — HR, technical/domain, and a full mock with salary negotiation scripting before you ever enter the real room.',
-    image: '/img/team.png',
-    href: '/cap',
-    accent: '#7c3aed',
+    title: 'Offer Received. Then We Invoice.',
+    details:
+      "When you have your offer letter in hand, only then does our 12% Career Assistance Fee apply. That's our entire model — zero upfront, zero risk.",
+    cta: { label: 'Apply for CAP', href: '/cap/apply' },
+  },
+];
+
+const STUDY_DEFAULTS = [
+  {
+    title: 'Free Counselling Session',
+    details:
+      'We understand your academic background, budget, and destination goals — UK, France, Germany, or Dubai — before recommending a single university.',
   },
   {
-    id: 'referral',
-    badge: 'Step 04',
-    title: 'Warm Referrals',
-    body: 'Your profile goes directly to hiring managers at 10–15 target companies — with a warm introduction from Placedly, not a mass blast.',
-    image: '/img/career%20fair.png',
-    href: '/cap',
-    accent: '#0891b2',
+    title: 'University Shortlist & Applications',
+    details:
+      'Course shortlisting, SOP writing, and applications to 140+ partner universities — handled end to end by one dedicated advisor.',
   },
   {
-    id: 'offer',
-    badge: 'Step 05',
-    title: 'Offer Letter',
-    body: 'When your offer arrives, the journey completes — and only then does our 12% Career Assistance Fee apply. Zero upfront, zero risk.',
-    image: '/img/placed.jpg',
-    href: '/cap/apply',
-    accent: '#16a34a',
-  },
-  {
-    id: 'launch',
-    badge: 'Step 06',
-    title: 'Career Launch',
-    body: 'Post-offer onboarding prep, salary negotiation support, and first-90-days check-ins so your new role starts strong.',
-    image: '/img/hero%20feaure%20img%203.png',
-    href: '/cap',
-    accent: '#db2777',
+    title: 'Visa & Pre-Departure Support',
+    details:
+      'Documentation, visa filing, and pre-departure checklist so you land abroad prepared — not overwhelmed.',
+    cta: { label: 'Explore Study Abroad', href: '/study-visa' },
   },
 ];
 
 /* ─────────────────────────────────────────────────────────────────
-   CONSTANTS
+   VISUAL COMPONENTS
 ───────────────────────────────────────────────────────────────── */
-const STICKY_TOP_DESKTOP = 100;
-const STICKY_TOP_MOBILE = 72;
-const OVERLAP_THRESHOLD = 0.72; // fraction of vh
+
+/* Shared reusable atoms */
+function MockCard({
+  children,
+  style,
+}: {
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <div
+      style={{
+        background: '#fff',
+        borderRadius: 16,
+        padding: '14px 16px',
+        boxShadow: '0 2px 12px rgba(15,23,42,0.07)',
+        border: '1px solid rgba(15,23,42,0.06)',
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function Tag({
+  children,
+  color = '#f97316',
+}: {
+  children: React.ReactNode;
+  color?: string;
+}) {
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        padding: '4px 10px',
+        borderRadius: 999,
+        fontSize: 11,
+        fontWeight: 600,
+        background: `${color}18`,
+        color,
+        border: `1px solid ${color}30`,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+function Avatar({
+  size = 32,
+  color = '#f97316',
+  letter,
+}: {
+  size?: number;
+  color?: string;
+  letter?: string;
+}) {
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        borderRadius: '50%',
+        background: `linear-gradient(135deg, ${color}40, ${color}20)`,
+        border: `2px solid ${color}40`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: size * 0.38,
+        fontWeight: 700,
+        color,
+        flexShrink: 0,
+      }}
+    >
+      {letter}
+    </div>
+  );
+}
+
+function VisualShell({
+  gradient,
+  children,
+}: {
+  gradient: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        minHeight: 260,
+        borderRadius: 20,
+        background: gradient,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px 20px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Decorative blobs */}
+      <div
+        style={{
+          position: 'absolute',
+          top: -40,
+          right: -40,
+          width: 140,
+          height: 140,
+          borderRadius: '50%',
+          background: 'rgba(255,255,255,0.12)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: -30,
+          left: -30,
+          width: 100,
+          height: 100,
+          borderRadius: '50%',
+          background: 'rgba(255,255,255,0.08)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 320 }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* Career Visuals */
+function VisualCareer1() {
+  return (
+    <VisualShell gradient="linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <MockCard>
+          <p style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            I&apos;m targeting
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {['Claims & Insurance', 'BPO / MNC', '₹8–12 LPA'].map((t) => (
+              <Tag key={t} color="#f97316">{t}</Tag>
+            ))}
+          </div>
+        </MockCard>
+        <MockCard>
+          <p style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', margin: '0 0 10px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            My Placedly roadmap
+          </p>
+          {[
+            { dot: '#f97316', name: 'EXL', role: 'Senior Analyst' },
+            { dot: '#2563eb', name: 'Optum', role: 'Claims Lead' },
+            { dot: '#7c3aed', name: 'WNS', role: 'Operations' },
+          ].map((row) => (
+            <div key={row.name} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', borderBottom: '1px solid rgba(15,23,42,0.04)' }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: row.dot, flexShrink: 0 }} />
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{row.name}</span>
+              <span style={{ fontSize: 12, color: '#64748b', marginLeft: 2 }}>· {row.role}</span>
+            </div>
+          ))}
+        </MockCard>
+      </div>
+    </VisualShell>
+  );
+}
+
+function VisualCareer2() {
+  return (
+    <VisualShell gradient="linear-gradient(135deg, #fef3c7 0%, #fde68a 40%, #fcd34d 100%)">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <MockCard style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Avatar size={32} color="#f97316" letter="P" />
+          <span style={{ fontSize: 12, color: '#64748b', fontWeight: 500 }}>Placedly shared with you</span>
+        </MockCard>
+        <MockCard>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+            <Avatar size={40} color="#2563eb" letter="E" />
+            <div>
+              <p style={{ fontSize: 11, color: '#94a3b8', margin: '0 0 2px' }}>Your advisor connected you to</p>
+              <p style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', margin: '0 0 2px' }}>Senior Claims Analyst</p>
+              <p style={{ fontSize: 12, color: '#64748b', margin: 0 }}>EXL Service · Noida</p>
+            </div>
+          </div>
+        </MockCard>
+        <MockCard style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'linear-gradient(135deg,#0f172a,#1e293b)' }}>
+          <Sparkles size={16} style={{ color: '#f97316', flexShrink: 0 }} />
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: '0 0 2px' }}>Interview prep booked</p>
+            <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>Mock round with industry coach</p>
+          </div>
+          <ArrowRight size={14} style={{ color: '#f97316', flexShrink: 0 }} />
+        </MockCard>
+      </div>
+    </VisualShell>
+  );
+}
+
+function VisualCareer3() {
+  return (
+    <VisualShell gradient="linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)">
+      <MockCard style={{ textAlign: 'center', padding: '24px 20px' }}>
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          padding: '4px 12px', borderRadius: 999,
+          background: '#dcfce7', color: '#16a34a',
+          fontSize: 11, fontWeight: 700, marginBottom: 12,
+          border: '1px solid #bbf7d0',
+        }}>
+          <BadgeCheck size={12} /> You received
+        </div>
+        <p style={{ fontSize: 20, fontWeight: 800, color: '#0f172a', margin: '0 0 16px', letterSpacing: '-0.02em' }}>
+          Offer Letter · ₹9.2 LPA
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: -6, marginBottom: 12 }}>
+          {['P', 'A', 'M'].map((l, i) => (
+            <div key={l} style={{ marginLeft: i === 0 ? 0 : -8, zIndex: 3 - i }}>
+              <Avatar size={32} color={['#f97316','#2563eb','#7c3aed'][i]} letter={l} />
+            </div>
+          ))}
+        </div>
+        <p style={{ fontSize: 12, color: '#64748b', margin: '0 0 12px' }}>
+          Placedly team sent congratulations 🎉
+        </p>
+        <div style={{
+          background: 'linear-gradient(135deg,#0f172a,#1e293b)',
+          borderRadius: 12, padding: '10px 14px',
+          fontSize: 12, color: '#e2e8f0', lineHeight: 1.5,
+          fontStyle: 'italic',
+        }}>
+          &ldquo;Zero upfront until this moment — that&apos;s the Placedly promise.&rdquo;
+        </div>
+      </MockCard>
+    </VisualShell>
+  );
+}
+
+function VisualStudy1() {
+  return (
+    <VisualShell gradient="linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <MockCard>
+          <p style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Dream destinations
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {[
+              { label: '🇬🇧 UK', color: '#2563eb' },
+              { label: '🇫🇷 France', color: '#7c3aed' },
+              { label: '🇩🇪 Germany', color: '#0891b2' },
+              { label: '🇦🇪 Dubai', color: '#16a34a' },
+            ].map(({ label, color }) => (
+              <Tag key={label} color={color}>{label}</Tag>
+            ))}
+          </div>
+        </MockCard>
+        <MockCard>
+          <p style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', margin: '0 0 10px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            My profile focus
+          </p>
+          {[
+            { dot: '#2563eb', prog: 'MSc Business', dest: 'UK' },
+            { dot: '#7c3aed', prog: 'MBA', dest: 'France' },
+            { dot: '#0891b2', prog: 'Engineering', dest: 'Germany' },
+          ].map((row) => (
+            <div key={row.prog} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', borderBottom: '1px solid rgba(15,23,42,0.04)' }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: row.dot, flexShrink: 0 }} />
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{row.prog}</span>
+              <span style={{ fontSize: 12, color: '#64748b', marginLeft: 2 }}>· {row.dest}</span>
+            </div>
+          ))}
+        </MockCard>
+      </div>
+    </VisualShell>
+  );
+}
+
+function VisualStudy2() {
+  return (
+    <VisualShell gradient="linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <MockCard style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Avatar size={32} color="#7c3aed" letter="U" />
+          <span style={{ fontSize: 12, color: '#64748b', fontWeight: 500 }}>Application update</span>
+        </MockCard>
+        <MockCard>
+          <p style={{ fontSize: 12, color: '#7c3aed', fontWeight: 600, margin: '0 0 2px' }}>University of Manchester</p>
+          <p style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', margin: '0 0 2px' }}>MSc International Business</p>
+          <p style={{ fontSize: 12, color: '#64748b', margin: 0 }}>Fall &apos;25 intake · Offer received</p>
+        </MockCard>
+        <MockCard style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'linear-gradient(135deg,#4c1d95,#5b21b6)' }}>
+          <Sparkles size={16} style={{ color: '#a78bfa', flexShrink: 0 }} />
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: '0 0 2px' }}>SOP & documents complete</p>
+            <p style={{ fontSize: 11, color: '#c4b5fd', margin: 0 }}>Ready for visa filing</p>
+          </div>
+          <ArrowRight size={14} style={{ color: '#a78bfa', flexShrink: 0 }} />
+        </MockCard>
+      </div>
+    </VisualShell>
+  );
+}
+
+function VisualStudy3() {
+  return (
+    <VisualShell gradient="linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)">
+      <MockCard style={{ textAlign: 'center', padding: '24px 20px' }}>
+        <Avatar size={56} color="#16a34a" letter="P" />
+        <p style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: '12px 0 2px' }}>Priya Sharma</p>
+        <p style={{ fontSize: 12, color: '#64748b', margin: '0 0 14px' }}>MSc Admit · UK 🇬🇧</p>
+        <div style={{
+          background: 'linear-gradient(135deg,#14532d,#166534)',
+          borderRadius: 12, padding: '10px 14px',
+          fontSize: 12, color: '#bbf7d0',
+          lineHeight: 1.5, marginBottom: 12,
+        }}>
+          ✈️ Visa approved · Flying September 2025
+        </div>
+        <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>
+          Your advisor: pre-departure checklist sent ✓
+        </p>
+      </MockCard>
+    </VisualShell>
+  );
+}
 
 /* ─────────────────────────────────────────────────────────────────
-   HOOK — viewport width (SSR-safe)
+   TAB META
 ───────────────────────────────────────────────────────────────── */
-function useIsMobile(breakpoint = 768) {
+const TAB_META: {
+  id: string;
+  label: string;
+  Icon: LucideIcon;
+  accent: string;
+  category: 'career' | 'study';
+  step: number;
+  cmsKey: string;
+  defaultIndex: number;
+  defaults: typeof CAREER_DEFAULTS;
+  Visual: () => React.ReactNode;
+}[] = [
+  {
+    id: 'consult',
+    label: 'Free Session',
+    Icon: Users,
+    accent: '#f97316',
+    category: 'career',
+    step: 1,
+    cmsKey: '1',
+    defaultIndex: 0,
+    defaults: CAREER_DEFAULTS,
+    Visual: VisualCareer1,
+  },
+  {
+    id: 'prep',
+    label: 'Interview Prep',
+    Icon: FileText,
+    accent: '#f59e0b',
+    category: 'career',
+    step: 2,
+    cmsKey: '3',
+    defaultIndex: 1,
+    defaults: CAREER_DEFAULTS,
+    Visual: VisualCareer2,
+  },
+  {
+    id: 'offer',
+    label: 'Offer & Fee',
+    Icon: BadgeCheck,
+    accent: '#16a34a',
+    category: 'career',
+    step: 3,
+    cmsKey: '5',
+    defaultIndex: 2,
+    defaults: CAREER_DEFAULTS,
+    Visual: VisualCareer3,
+  },
+  {
+    id: 'counsel',
+    label: 'Counselling',
+    Icon: GraduationCap,
+    accent: '#2563eb',
+    category: 'study',
+    step: 1,
+    cmsKey: 'Study1',
+    defaultIndex: 0,
+    defaults: STUDY_DEFAULTS,
+    Visual: VisualStudy1,
+  },
+  {
+    id: 'apply',
+    label: 'Applications',
+    Icon: Send,
+    accent: '#7c3aed',
+    category: 'study',
+    step: 2,
+    cmsKey: 'Study2',
+    defaultIndex: 1,
+    defaults: STUDY_DEFAULTS,
+    Visual: VisualStudy2,
+  },
+  {
+    id: 'visa',
+    label: 'Visa Support',
+    Icon: Plane,
+    accent: '#0891b2',
+    category: 'study',
+    step: 3,
+    cmsKey: 'Study3',
+    defaultIndex: 2,
+    defaults: STUDY_DEFAULTS,
+    Visual: VisualStudy3,
+  },
+];
+
+const CAREER_TOTAL = TAB_META.filter((t) => t.category === 'career').length;
+const STUDY_TOTAL = TAB_META.filter((t) => t.category === 'study').length;
+
+/* ─────────────────────────────────────────────────────────────────
+   BUILD TABS
+───────────────────────────────────────────────────────────────── */
+function buildTabs(cms: Cms): TabDef[] {
+  return TAB_META.map((meta) => {
+    const def = meta.defaults[meta.defaultIndex];
+    const isStudy = meta.cmsKey.startsWith('Study');
+    const prefix = isStudy ? 'hp:hiwStudy' : 'hp:hiw';
+    const key = isStudy ? meta.cmsKey.replace('Study', '') : meta.cmsKey;
+    const totalSteps =
+      meta.category === 'career' ? CAREER_TOTAL : STUDY_TOTAL;
+
+    return {
+      id: meta.id,
+      label: meta.label,
+      Icon: meta.Icon,
+      accent: meta.accent,
+      category: meta.category,
+      step: meta.step,
+      totalSteps,
+      title: cms[`${prefix}${key}Title`] || def.title,
+      details: cms[`${prefix}${key}Details`] || def.details,
+      cta: def.cta,
+      Visual: meta.Visual,
+    };
+  });
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   CONSTANTS
+───────────────────────────────────────────────────────────────── */
+const AUTO_TAB_MS = 4500;
+const PROGRESS_RADIUS = 20;
+const PROGRESS_CIRC = 2 * Math.PI * PROGRESS_RADIUS;
+
+/* ─────────────────────────────────────────────────────────────────
+   CATEGORY SWITCHER
+───────────────────────────────────────────────────────────────── */
+function CategorySwitcher({
+  active,
+  onChange,
+}: {
+  active: 'career' | 'study';
+  onChange: (c: 'career' | 'study') => void;
+}) {
+  return (
+    <div
+      style={{
+        display: 'inline-flex',
+        background: 'rgba(15,23,42,0.05)',
+        borderRadius: 999,
+        padding: 4,
+        gap: 2,
+        marginBottom: 24,
+      }}
+    >
+      {(
+        [
+          { id: 'career', label: '💼 Career', color: '#f97316' },
+          { id: 'study', label: '🎓 Study Abroad', color: '#2563eb' },
+        ] as const
+      ).map((cat) => {
+        const isActive = active === cat.id;
+        return (
+          <button
+            key={cat.id}
+            type="button"
+            onClick={() => onChange(cat.id)}
+            style={{
+              padding: '8px 20px',
+              borderRadius: 999,
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: '0.01em',
+              background: isActive ? '#fff' : 'transparent',
+              color: isActive ? cat.color : '#64748b',
+              boxShadow: isActive
+                ? '0 2px 8px rgba(15,23,42,0.10)'
+                : 'none',
+              transition: 'all 0.25s cubic-bezier(0.22,1,0.36,1)',
+            }}
+          >
+            {cat.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   TAB BAR
+───────────────────────────────────────────────────────────────── */
+function TabBar({
+  tabs,
+  activeId,
+  progress,
+  onSelect,
+  onPrev,
+  onNext,
+}: {
+  tabs: TabDef[];
+  activeId: string;
+  progress: number;
+  onSelect: (id: string) => void;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  const activeTab = tabs.find((t) => t.id === activeId);
+  const progressOffset = PROGRESS_CIRC * (1 - progress);
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        marginBottom: 20,
+      }}
+    >
+      {/* Prev arrow */}
+      <button
+        type="button"
+        aria-label="Previous tab"
+        onClick={onPrev}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 36,
+          height: 36,
+          borderRadius: '50%',
+          border: '1px solid rgba(15,23,42,0.10)',
+          background: '#fff',
+          cursor: 'pointer',
+          color: '#64748b',
+          flexShrink: 0,
+          boxShadow: '0 1px 4px rgba(15,23,42,0.06)',
+          transition: 'all 0.2s ease',
+        }}
+      >
+        <ChevronLeft size={18} strokeWidth={2} />
+      </button>
+
+      {/* Tab pills */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 6,
+          flex: 1,
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          WebkitOverflowScrolling: 'touch',
+          padding: '2px 0',
+        }}
+        role="tablist"
+        aria-label="How Placedly works"
+      >
+        {tabs.map((tab) => {
+          const isActive = tab.id === activeId;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => onSelect(tab.id)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '8px 14px',
+                borderRadius: 999,
+                border: isActive
+                  ? `1.5px solid ${tab.accent}40`
+                  : '1.5px solid rgba(15,23,42,0.08)',
+                background: isActive
+                  ? `${tab.accent}12`
+                  : '#fff',
+                color: isActive ? tab.accent : '#64748b',
+                fontSize: 13,
+                fontWeight: isActive ? 700 : 500,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                boxShadow: isActive
+                  ? `0 0 0 3px ${tab.accent}18`
+                  : '0 1px 3px rgba(15,23,42,0.05)',
+                transition: 'all 0.25s cubic-bezier(0.22,1,0.36,1)',
+              }}
+            >
+              <tab.Icon size={14} strokeWidth={2} aria-hidden />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Next arrow with progress ring */}
+      <button
+        type="button"
+        aria-label="Next tab"
+        onClick={onNext}
+        style={{
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 40,
+          height: 40,
+          borderRadius: '50%',
+          border: 'none',
+          background: activeTab?.accent ?? '#f97316',
+          cursor: 'pointer',
+          color: '#fff',
+          flexShrink: 0,
+          boxShadow: `0 4px 12px ${activeTab?.accent ?? '#f97316'}40`,
+          transition: 'all 0.25s ease',
+        }}
+      >
+        <svg
+          style={{
+            position: 'absolute',
+            inset: -3,
+            width: 46,
+            height: 46,
+            transform: 'rotate(-90deg)',
+            pointerEvents: 'none',
+          }}
+          viewBox="0 0 48 48"
+          aria-hidden
+        >
+          <circle
+            cx="24" cy="24" r={PROGRESS_RADIUS}
+            fill="none"
+            stroke="rgba(255,255,255,0.25)"
+            strokeWidth="2"
+          />
+          <circle
+            cx="24" cy="24" r={PROGRESS_RADIUS}
+            fill="none"
+            stroke="rgba(255,255,255,0.85)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray={PROGRESS_CIRC}
+            strokeDashoffset={progressOffset}
+            style={{ transition: 'stroke-dashoffset 0.1s linear' }}
+          />
+        </svg>
+        <ChevronRight size={18} strokeWidth={2.5} />
+      </button>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   STEP INDICATOR
+───────────────────────────────────────────────────────────────── */
+function StepIndicator({ tab }: { tab: TabDef }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
+      <div
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          padding: '4px 12px',
+          borderRadius: 999,
+          background: `${tab.accent}14`,
+          border: `1px solid ${tab.accent}30`,
+          fontSize: 11,
+          fontWeight: 700,
+          letterSpacing: '0.08em',
+          color: tab.accent,
+          textTransform: 'uppercase',
+        }}
+      >
+        <span
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: '50%',
+            background: tab.accent,
+            flexShrink: 0,
+          }}
+        />
+        {tab.category === 'career' ? 'Career' : 'Study Abroad'}
+        {' · '}Step {tab.step} of {tab.totalSteps}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   TAB PANEL
+───────────────────────────────────────────────────────────────── */
+function TabPanel({ tab }: { tab: TabDef }) {
+  return (
+    <motion.div
+      key={tab.id}
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)',
+        gap: 'clamp(20px,3vw,40px)',
+        alignItems: 'center',
+      }}
+    >
+      {/* Visual */}
+      <div style={{ borderRadius: 20, overflow: 'hidden' }}>
+        <tab.Visual />
+      </div>
+
+      {/* Copy */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <StepIndicator tab={tab} />
+
+        <h3
+          style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: 'clamp(1.4rem,2.5vw,1.9rem)',
+            fontWeight: 700,
+            letterSpacing: '-0.03em',
+            lineHeight: 1.15,
+            color: '#0f172a',
+            margin: 0,
+          }}
+        >
+          {tab.title}
+        </h3>
+
+        <p
+          style={{
+            fontSize: 'clamp(14px,1.2vw,15px)',
+            lineHeight: 1.72,
+            color: '#64748b',
+            margin: 0,
+          }}
+        >
+          {tab.details}
+        </p>
+
+        {/* Progress dots */}
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          {Array.from({ length: tab.totalSteps }).map((_, i) => (
+            <div
+              key={i}
+              style={{
+                width: i + 1 === tab.step ? 20 : 6,
+                height: 6,
+                borderRadius: 999,
+                background:
+                  i + 1 <= tab.step
+                    ? tab.accent
+                    : 'rgba(15,23,42,0.10)',
+                transition: 'all 0.35s cubic-bezier(0.22,1,0.36,1)',
+              }}
+            />
+          ))}
+          <span style={{ fontSize: 11, color: '#94a3b8', marginLeft: 4, fontWeight: 600 }}>
+            {tab.step}/{tab.totalSteps}
+          </span>
+        </div>
+
+        {tab.cta && (
+          <Link
+            href={tab.cta.href}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '11px 22px',
+              borderRadius: 999,
+              background: tab.accent,
+              color: '#fff',
+              fontSize: 14,
+              fontWeight: 700,
+              textDecoration: 'none',
+              width: 'fit-content',
+              boxShadow: `0 4px 14px ${tab.accent}40`,
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+            }}
+          >
+            {tab.cta.label}
+            <ArrowRight size={15} strokeWidth={2.25} aria-hidden />
+          </Link>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   MOBILE PANEL
+───────────────────────────────────────────────────────────────── */
+function MobilePanel({ tab }: { tab: TabDef }) {
+  return (
+    <motion.div
+      key={tab.id}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+    >
+      <div style={{ borderRadius: 16, overflow: 'hidden' }}>
+        <tab.Visual />
+      </div>
+
+      <StepIndicator tab={tab} />
+
+      <h3
+        style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: 'clamp(1.3rem,5.5vw,1.6rem)',
+          fontWeight: 700,
+          letterSpacing: '-0.03em',
+          lineHeight: 1.15,
+          color: '#0f172a',
+          margin: 0,
+        }}
+      >
+        {tab.title}
+      </h3>
+
+      <p style={{ fontSize: 14, lineHeight: 1.7, color: '#64748b', margin: 0 }}>
+        {tab.details}
+      </p>
+
+      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+        {Array.from({ length: tab.totalSteps }).map((_, i) => (
+          <div
+            key={i}
+            style={{
+              width: i + 1 === tab.step ? 20 : 6,
+              height: 6,
+              borderRadius: 999,
+              background:
+                i + 1 <= tab.step ? tab.accent : 'rgba(15,23,42,0.10)',
+              transition: 'all 0.35s cubic-bezier(0.22,1,0.36,1)',
+            }}
+          />
+        ))}
+      </div>
+
+      {tab.cta && (
+        <Link
+          href={tab.cta.href}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '11px 22px',
+            borderRadius: 999,
+            background: tab.accent,
+            color: '#fff',
+            fontSize: 14,
+            fontWeight: 700,
+            textDecoration: 'none',
+            width: 'fit-content',
+            boxShadow: `0 4px 14px ${tab.accent}40`,
+          }}
+        >
+          {tab.cta.label}
+          <ArrowRight size={15} strokeWidth={2.25} aria-hidden />
+        </Link>
+      )}
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   ROOT COMPONENT
+───────────────────────────────────────────────────────────────── */
+export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
+  const tabs = useMemo(() => buildTabs(cms), [cms]);
+  const [activeId, setActiveId] = useState(tabs[0]?.id ?? 'consult');
+  const [progress, setProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+
+  const activeTab = tabs.find((t) => t.id === activeId) ?? tabs[0];
+  const [activeCategory, setActiveCategory] = useState<'career' | 'study'>('career');
+  const filteredTabs = tabs.filter((t) => t.category === activeCategory);
+
+  // SSR-safe mobile detection
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < breakpoint);
+    const check = () => setIsMobile(window.innerWidth < 768);
     check();
     window.addEventListener('resize', check, { passive: true });
     return () => window.removeEventListener('resize', check);
-  }, [breakpoint]);
-  return isMobile;
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   STYLE HELPERS
-───────────────────────────────────────────────────────────────── */
-function hexToRgb(hex: string) {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `${r},${g},${b}`;
-}
-
-function getCardStyle(
-  index: number,
-  isActive: boolean,
-  isOverlapped: boolean,
-  isDeep: boolean,
-  accent: string,
-  isMobile: boolean,
-): React.CSSProperties {
-  const rgb = hexToRgb(accent);
-  const stickyTop = isMobile ? STICKY_TOP_MOBILE : STICKY_TOP_DESKTOP;
-
-  // Stack offset — each overlapped card peeks below the one above
-  const peekPx = isMobile ? 14 : 22;
-
-  let transform = 'scale(0.995)';
-  let opacity = 0.97;
-  let boxShadow = `0 8px 32px rgba(${rgb},0.13), 0 2px 8px rgba(15,23,42,0.06)`;
-  let borderColor = 'rgba(0,0,0,0.06)';
-
-  if (isDeep) {
-    transform = isMobile
-      ? 'scale(0.93) translateY(-6px)'
-      : 'scale(0.90) translateY(-14px)';
-    opacity = 0.52;
-    boxShadow = '0 2px 8px rgba(15,23,42,0.05)';
-    borderColor = 'rgba(0,0,0,0.04)';
-  } else if (isOverlapped) {
-    transform = isMobile
-      ? 'scale(0.96) translateY(-4px)'
-      : 'scale(0.955) translateY(-8px)';
-    opacity = 0.76;
-    boxShadow = '0 4px 16px rgba(15,23,42,0.07)';
-    borderColor = 'rgba(0,0,0,0.05)';
-  } else if (isActive) {
-    transform = 'scale(1) translateY(0)';
-    opacity = 1;
-    boxShadow = `
-      0 0 0 1px rgba(${rgb},0.18),
-      0 8px 24px rgba(${rgb},0.18),
-      0 24px 64px rgba(${rgb},0.14),
-      0 2px 8px rgba(15,23,42,0.06)
-    `;
-    borderColor = `rgba(${rgb},0.22)`;
-  }
-
-  return {
-    position: 'sticky',
-    top: stickyTop,
-    zIndex: index + 1,
-    // bottom margin = scroll breathing room for this card
-    marginBottom: isMobile
-      ? 'clamp(56px,10vh,80px)'
-      : 'clamp(80px,14vh,120px)',
-    borderRadius: isMobile ? 20 : 'clamp(24px,3vw,36px)',
-    background: '#FFFBF4',
-    border: `1px solid ${borderColor}`,
-    boxShadow,
-    opacity,
-    transform,
-    willChange: 'transform, opacity',
-    transition: [
-      'transform 0.42s cubic-bezier(0.22,1,0.36,1)',
-      'opacity 0.42s ease',
-      'box-shadow 0.42s ease',
-      'border-color 0.42s ease',
-    ].join(', '),
-    overflow: 'hidden',
-    // Subtle per-card coloured top stripe when active
-    backgroundImage: isActive
-      ? `linear-gradient(135deg, rgba(${rgb},0.06) 0%, transparent 60%)`
-      : 'none',
-  };
-}
-
-function getImageStyle(
-  isActive: boolean,
-  isOverlapped: boolean,
-  isMobile: boolean,
-): React.CSSProperties {
-  const base: React.CSSProperties = {
-    display: 'block',
-    width: isMobile ? 'min(60vw, 200px)' : 'min(100%, 220px)',
-    aspectRatio: '4/3',
-    objectFit: 'cover',
-    borderRadius: isMobile ? 14 : 16,
-    transition: 'transform 0.42s ease, box-shadow 0.42s ease',
-  };
-
-  if (isActive) {
-    return {
-      ...base,
-      transform: isMobile
-        ? 'rotate(-4deg) translateY(-4px) scale(1.03)'
-        : 'rotate(-6deg) translateY(-6px) scale(1.03)',
-      boxShadow:
-        '0 20px 52px rgba(15,23,42,0.18), 0 6px 16px rgba(15,23,42,0.10)',
-    };
-  }
-  if (isOverlapped) {
-    return {
-      ...base,
-      transform: isMobile ? 'rotate(-3deg) scale(0.96)' : 'rotate(-7deg) scale(0.96)',
-      boxShadow: '0 6px 18px rgba(15,23,42,0.07)',
-    };
-  }
-  return {
-    ...base,
-    transform: isMobile ? 'rotate(-4deg)' : 'rotate(-7deg)',
-    boxShadow:
-      '0 14px 40px rgba(15,23,42,0.14), 0 4px 12px rgba(15,23,42,0.08)',
-  };
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   FLOATING KEYFRAME INJECTION (once, client-side)
-───────────────────────────────────────────────────────────────── */
-function useFloatAnimation() {
-  useEffect(() => {
-    if (document.getElementById('cap-float-keyframes')) return;
-    const style = document.createElement('style');
-    style.id = 'cap-float-keyframes';
-    style.textContent = `
-      @keyframes capFloat {
-        0%,100% { transform: translateY(0); }
-        50%      { transform: translateY(-7px); }
-      }
-      @keyframes capPulse {
-        0%,100% { box-shadow: 0 0 0 0 rgba(249,115,22,0.3); }
-        50%      { box-shadow: 0 0 0 6px rgba(249,115,22,0); }
-      }
-    `;
-    document.head.appendChild(style);
   }, []);
-}
 
-/* ─────────────────────────────────────────────────────────────────
-   MAIN COMPONENT
-───────────────────────────────────────────────────────────────── */
-export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
-  useFloatAnimation();
+  const goToIndex = useCallback(
+    (index: number) => {
+      if (!filteredTabs.length) return;
+      const next =
+        filteredTabs[
+          ((index % filteredTabs.length) + filteredTabs.length) %
+            filteredTabs.length
+        ];
+      setActiveId(next.id);
+      setProgress(0);
+    },
+    [filteredTabs],
+  );
 
-  const isMobile = useIsMobile();
+  const goNext = useCallback(() => {
+    const idx = filteredTabs.findIndex((t) => t.id === activeId);
+    goToIndex(idx + 1);
+  }, [activeId, filteredTabs, goToIndex]);
 
-  const [activeStep, setActiveStep] = useState(0);
-  const [fillProgress, setFillProgress] = useState(0);
-  const [markerTops, setMarkerTops] = useState<number[]>([]);
-  const [overlappedSteps, setOverlappedSteps] = useState<Set<number>>(new Set());
-  const [deepSteps, setDeepSteps] = useState<Set<number>>(new Set());
+  const goPrev = useCallback(() => {
+    const idx = filteredTabs.findIndex((t) => t.id === activeId);
+    goToIndex(idx - 1);
+  }, [activeId, filteredTabs, goToIndex]);
 
-  const cardsColRef = useRef<HTMLDivElement>(null);
-  const cardsTrackRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLElement | null)[]>([]);
+  const handleSelect = useCallback((id: string) => {
+    setActiveId(id);
+    setProgress(0);
+  }, []);
 
-  const kicker =
-    cms['hp:capJourneyKicker'] ?? 'Career Assistance Programme';
+  // When category changes, jump to first tab in that category
+  const handleCategoryChange = useCallback(
+    (cat: 'career' | 'study') => {
+      setActiveCategory(cat);
+      const first = tabs.find((t) => t.category === cat);
+      if (first) {
+        setActiveId(first.id);
+        setProgress(0);
+      }
+    },
+    [tabs],
+  );
+
+  // Auto-advance
+  useEffect(() => {
+    if (!filteredTabs.length) return;
+    setProgress(0);
+    const started = performance.now();
+    let raf = 0;
+
+    const tick = (now: number) => {
+      const p = Math.min((now - started) / AUTO_TAB_MS, 1);
+      setProgress(p);
+      if (p >= 1) {
+        const idx = filteredTabs.findIndex((t) => t.id === activeId);
+        goToIndex(idx + 1);
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [activeId, filteredTabs, goToIndex]);
+
   const title =
-    cms['hp:capJourneyTitle'] ??
-    'Your CAP Journey — From Resume to Offer';
+    cms['hp:hiwTitle'] ??
+    'How Placedly Works — Simple, Transparent, Proven';
   const subtitle =
-    cms['hp:capJourneySubtitle'] ??
-    'Scroll through each stage of the programme. Every step is advisor-led, transparent, and built to get you placed — not just applied.';
+    cms['hp:hiwSubtitle'] ??
+    'Placedly connects ambitious professionals to careers and global education. Built for candidates who want clarity, warm guidance, and results — not generic agency noise.';
 
-  /* ── Marker positions ── */
-  const updateMarkerPositions = useCallback(() => {
-    const track = cardsTrackRef.current;
-    if (!track) return;
-    const cards = track.querySelectorAll<HTMLElement>('[data-cap-step]');
-    const trackH = track.offsetHeight;
-    if (!trackH || !cards.length) return;
-    setMarkerTops(
-      Array.from(cards).map((c) => {
-        const center = c.offsetTop + c.offsetHeight / 2;
-        return (center / trackH) * 100;
-      }),
-    );
-  }, []);
-
-  /* ── Rail fill ── */
-  const updateScrollProgress = useCallback(() => {
-    const col = cardsColRef.current;
-    if (!col) return;
-    const rect = col.getBoundingClientRect();
-    const stickyTop = isMobile ? STICKY_TOP_MOBILE : STICKY_TOP_DESKTOP;
-    const scrollable = col.offsetHeight - window.innerHeight + stickyTop;
-    if (scrollable <= 0) {
-      setFillProgress(rect.top <= stickyTop ? 1 : 0);
-      return;
-    }
-    setFillProgress(
-      Math.min(1, Math.max(0, (-rect.top + stickyTop) / scrollable)),
-    );
-  }, [isMobile]);
-
-  /* ── Overlap detection ── */
-  const updateOverlapState = useCallback(() => {
-    const cards = cardRefs.current.filter(Boolean) as HTMLElement[];
-    if (!cards.length) return;
-    const vh = window.innerHeight;
-    const newOverlapped = new Set<number>();
-    const newDeep = new Set<number>();
-
-    cards.forEach((_, i) => {
-      const next = cards[i + 1];
-      const nextNext = cards[i + 2];
-      if (next && next.getBoundingClientRect().top < vh * OVERLAP_THRESHOLD) {
-        newOverlapped.add(i);
-      }
-      if (nextNext && nextNext.getBoundingClientRect().top < vh * OVERLAP_THRESHOLD) {
-        newDeep.add(i);
-      }
-    });
-
-    setOverlappedSteps(newOverlapped);
-    setDeepSteps(newDeep);
-  }, []);
-
-  /* ── IntersectionObserver for active step ── */
-  useEffect(() => {
-    const cards = document.querySelectorAll<HTMLElement>('[data-cap-step]');
-    if (!cards.length) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (!e.isIntersecting) return;
-          const idx = Number(e.target.getAttribute('data-cap-step'));
-          if (!Number.isNaN(idx)) setActiveStep(idx);
-        });
-      },
-      { threshold: 0.52, rootMargin: '-42% 0px -42% 0px' },
-    );
-    cards.forEach((c) => observer.observe(c));
-    return () => observer.disconnect();
-  }, []);
-
-  /* ── Scroll / resize ── */
-  useEffect(() => {
-    const onScroll = () => {
-      updateScrollProgress();
-      updateOverlapState();
-    };
-    const onResize = () => {
-      updateMarkerPositions();
-      updateScrollProgress();
-      updateOverlapState();
-    };
-
-    onResize();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize);
-
-    const track = cardsTrackRef.current;
-    const ro =
-      track && typeof ResizeObserver !== 'undefined'
-        ? new ResizeObserver(onResize)
-        : null;
-    ro?.observe(track!);
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
-      ro?.disconnect();
-    };
-  }, [updateMarkerPositions, updateScrollProgress, updateOverlapState]);
-
-  /* ── Render ── */
   return (
     <section
-      id={CAP_JOURNEY_SECTION_ID}
-      aria-labelledby="cap-journey-title"
+      id="how"
       style={{
         position: 'relative',
         padding: isMobile
           ? 'clamp(48px,8vw,72px) clamp(16px,4vw,24px)'
-          : 'clamp(56px,8vw,96px) clamp(20px,4vw,40px)',
-        background: '#FFFBF4',
-        overflow: 'visible',
+          : 'clamp(64px,9vw,104px) clamp(20px,4vw,48px)',
+        background: '#f8fafc',
+        overflow: 'hidden',
       }}
     >
-      {/* Background blobs */}
+      {/* Background decoration */}
       <div
         aria-hidden
         style={{
@@ -403,69 +1101,49 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           inset: 0,
           pointerEvents: 'none',
           background: `
-            radial-gradient(ellipse 70% 45% at 50% 0%, rgba(255,255,255,0.95), transparent 65%),
-            radial-gradient(ellipse 40% 30% at 8% 85%, rgba(15,23,42,0.03), transparent 55%)
+            radial-gradient(ellipse 60% 50% at 80% 20%, rgba(249,115,22,0.05), transparent 60%),
+            radial-gradient(ellipse 50% 40% at 20% 80%, rgba(37,99,235,0.05), transparent 60%)
           `,
         }}
       />
 
-      {/* Wrap */}
       <div
         style={{
           position: 'relative',
           zIndex: 1,
-          maxWidth: 1180,
+          maxWidth: 1100,
           margin: '0 auto',
         }}
       >
-        {/* ── Header ── */}
-        <FadeUp
-          style={{
-            textAlign: 'center',
-            marginBottom: isMobile
-              ? 'clamp(28px,5vw,40px)'
-              : 'clamp(36px,5vw,52px)',
-          }}
-        >
-          {/* Kicker pill */}
+        {/* Header */}
+        <FadeUp style={{ textAlign: 'center', marginBottom: isMobile ? 32 : 48 }}>
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 8,
-              padding: '6px 16px',
+              gap: 6,
+              padding: '5px 14px',
               borderRadius: 999,
-              background: 'rgba(249,115,22,0.09)',
-              border: '1px solid rgba(249,115,22,0.2)',
+              background: 'rgba(15,23,42,0.05)',
+              border: '1px solid rgba(15,23,42,0.08)',
               fontSize: 11,
               fontWeight: 700,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: '#ea580c',
+              color: '#64748b',
               marginBottom: 16,
             }}
           >
-            {/* Small dot */}
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                background: '#f97316',
-                animation: 'capPulse 2s ease-in-out infinite',
-                flexShrink: 0,
-              }}
-            />
-            {kicker}
+            <Sparkles size={12} aria-hidden />
+            How it works
           </div>
 
           <h2
-            id="cap-journey-title"
             style={{
               fontFamily: 'Inter, sans-serif',
               fontSize: isMobile
                 ? 'clamp(1.65rem,7vw,2.1rem)'
-                : 'clamp(1.85rem,3.4vw,2.65rem)',
+                : 'clamp(1.9rem,3.5vw,2.8rem)',
               fontWeight: 700,
               letterSpacing: '-0.035em',
               lineHeight: 1.1,
@@ -478,481 +1156,83 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
 
           <p
             style={{
-              fontSize: isMobile ? 14 : 'clamp(15px,1.35vw,17px)',
-              lineHeight: 1.7,
+              fontSize: isMobile ? 14 : 'clamp(15px,1.3vw,17px)',
+              lineHeight: 1.72,
               color: '#64748b',
-              maxWidth: 580,
-              margin: '0 auto',
+              maxWidth: 600,
+              margin: '0 auto 24px',
             }}
           >
             {subtitle}
           </p>
+
+          {/* Category switcher */}
+          <CategorySwitcher
+            active={activeCategory}
+            onChange={handleCategoryChange}
+          />
         </FadeUp>
 
-        {/* ── Scroll layout ── */}
+        {/* Showcase card */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '44px minmax(0,1fr)',
-            gap: isMobile ? 0 : 'clamp(20px,3vw,36px)',
-            alignItems: 'stretch',
+            background: '#fff',
+            borderRadius: isMobile ? 20 : 28,
+            border: '1px solid rgba(15,23,42,0.07)',
+            boxShadow:
+              '0 4px 6px rgba(15,23,42,0.04), 0 20px 60px rgba(15,23,42,0.08)',
+            padding: isMobile
+              ? '20px 16px 24px'
+              : 'clamp(28px,3vw,40px) clamp(24px,3vw,36px)',
+            overflow: 'hidden',
           }}
         >
-          {/* ── Rail (desktop only) ── */}
-          {!isMobile && (
-            <div
-              aria-hidden
-              style={{ position: 'relative', minHeight: '100%' }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  display: 'flex',
-                  justifyContent: 'center',
-                }}
-              >
-                {/* Track */}
-                <div
-                  style={{
-                    position: 'relative',
-                    width: 2,
-                    height: '100%',
-                    background: '#e2e8f0',
-                    borderRadius: 999,
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      width: '100%',
-                      height: `${fillProgress * 100}%`,
-                      background: `linear-gradient(180deg, ${DEFAULT_STEPS[activeStep]?.accent ?? '#f97316'}, #181229)`,
-                      borderRadius: 999,
-                      transition: 'height 0.12s linear, background 0.4s ease',
-                      willChange: 'height',
-                    }}
-                  />
-                </div>
+          {/* Tab bar */}
+          <TabBar
+            tabs={filteredTabs}
+            activeId={activeId}
+            progress={progress}
+            onSelect={handleSelect}
+            onPrev={goPrev}
+            onNext={goNext}
+          />
 
-                {/* Markers */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: 10,
-                    pointerEvents: 'none',
-                  }}
-                >
-                  {DEFAULT_STEPS.map((step, index) => {
-                    const top =
-                      markerTops[index] ??
-                      (index / (DEFAULT_STEPS.length - 1)) * 100;
-                    const isLit =
-                      fillProgress >= top / 100 - 0.02 ||
-                      activeStep >= index;
-                    const isMarkerActive = activeStep === index;
-                    const rgb = hexToRgb(step.accent);
+          {/* Panel */}
+          <AnimatePresence mode="wait">
+            {activeTab &&
+              (isMobile ? (
+                <MobilePanel key={activeTab.id} tab={activeTab} />
+              ) : (
+                <TabPanel key={activeTab.id} tab={activeTab} />
+              ))}
+          </AnimatePresence>
 
-                    return (
-                      <span
-                        key={step.id}
-                        style={{
-                          position: 'absolute',
-                          left: '50%',
-                          top: `${top}%`,
-                          width: isMarkerActive ? 12 : 8,
-                          height: isMarkerActive ? 12 : 8,
-                          marginLeft: isMarkerActive ? -6 : -4,
-                          marginTop: isMarkerActive ? -6 : -4,
-                          borderRadius: '50%',
-                          background: isMarkerActive
-                            ? step.accent
-                            : isLit
-                            ? '#94a3b8'
-                            : '#fff',
-                          border: isMarkerActive
-                            ? `2px solid ${step.accent}`
-                            : isLit
-                            ? '2px solid #94a3b8'
-                            : '2px solid #e2e8f0',
-                          boxShadow: isMarkerActive
-                            ? `0 0 0 4px rgba(${rgb},0.18)`
-                            : 'none',
-                          transition:
-                            'all 0.3s cubic-bezier(0.22,1,0.36,1)',
-                        }}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ── Cards column ── */}
-          <div ref={cardsColRef} style={{ minWidth: 0 }}>
-            {/* Mobile step counter */}
-            {isMobile && (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  marginBottom: 20,
-                  padding: '0 4px',
-                }}
-              >
-                {DEFAULT_STEPS.map((step, i) => (
-                  <div
-                    key={step.id}
-                    style={{
-                      flex: i === activeStep ? '0 0 24px' : '0 0 6px',
-                      height: 6,
-                      borderRadius: 999,
-                      background:
-                        i === activeStep
-                          ? step.accent
-                          : i < activeStep
-                          ? '#cbd5e1'
-                          : '#e2e8f0',
-                      transition: 'all 0.35s cubic-bezier(0.22,1,0.36,1)',
-                    }}
-                  />
-                ))}
-                <span
-                  style={{
-                    marginLeft: 'auto',
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: '#94a3b8',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  {activeStep + 1} / {DEFAULT_STEPS.length}
-                </span>
-              </div>
-            )}
-
-            <div
-              ref={cardsTrackRef}
+          {/* Footer */}
+          <div
+            style={{
+              marginTop: isMobile ? 20 : 28,
+              paddingTop: isMobile ? 16 : 20,
+              borderTop: '1px solid rgba(15,23,42,0.06)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: 12,
+            }}
+          >
+            <p
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 0,
-                paddingBottom: isMobile ? '22vh' : 'min(36vh,320px)',
+                fontSize: 12,
+                color: '#94a3b8',
+                margin: 0,
+                fontWeight: 500,
               }}
             >
-              {DEFAULT_STEPS.map((step, index) => {
-                const isActive = activeStep === index;
-                const isOverlapped = overlappedSteps.has(index);
-                const isDeep = deepSteps.has(index);
-                const rgb = hexToRgb(step.accent);
-
-                return (
-                  <article
-                    key={step.id}
-                    data-cap-step={index}
-                    ref={(el) => { cardRefs.current[index] = el; }}
-                    style={getCardStyle(
-                      index,
-                      isActive,
-                      isOverlapped,
-                      isDeep,
-                      step.accent,
-                      isMobile,
-                    )}
-                  >
-                    {/* Active card glow blob */}
-                    {isActive && (
-                      <div
-                        aria-hidden
-                        style={{
-                          position: 'absolute',
-                          inset: 'auto -10% -30% auto',
-                          width: 220,
-                          height: 220,
-                          background: `radial-gradient(circle, rgba(${rgb},0.18), transparent 70%)`,
-                          filter: 'blur(32px)',
-                          pointerEvents: 'none',
-                          zIndex: 0,
-                        }}
-                      />
-                    )}
-
-                    {isMobile ? (
-                      /* ════════════════════════════════
-                         MOBILE CARD LAYOUT
-                      ════════════════════════════════ */
-                      <div
-                        style={{
-                          position: 'relative',
-                          zIndex: 1,
-                          padding: '22px 20px 26px',
-                        }}
-                      >
-                        {/* Top row: badge + image */}
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'space-between',
-                            gap: 12,
-                            marginBottom: 18,
-                          }}
-                        >
-                          {/* Left: badge + title */}
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: 10,
-                              flex: 1,
-                              minWidth: 0,
-                            }}
-                          >
-                            <span
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 6,
-                                padding: '5px 12px',
-                                borderRadius: 999,
-                                background: `rgba(${rgb},0.10)`,
-                                border: `1px solid rgba(${rgb},0.22)`,
-                                fontSize: 11,
-                                fontWeight: 700,
-                                letterSpacing: '0.08em',
-                                color: step.accent,
-                                width: 'fit-content',
-                              }}
-                            >
-                              {step.badge}
-                            </span>
-
-                            <h3
-                              style={{
-                                fontFamily: 'Inter, sans-serif',
-                                fontSize: 'clamp(1.4rem,5.5vw,1.75rem)',
-                                fontWeight: 700,
-                                letterSpacing: '-0.03em',
-                                lineHeight: 1.1,
-                                color: '#0f172a',
-                                margin: 0,
-                                opacity: isDeep ? 0.55 : isOverlapped ? 0.78 : 1,
-                                transition: 'opacity 0.4s ease',
-                              }}
-                            >
-                              {step.title}
-                            </h3>
-                          </div>
-
-                          {/* Right: tilted image */}
-                          <div
-                            style={{
-                              flexShrink: 0,
-                              animation: isActive
-                                ? 'capFloat 3.8s ease-in-out infinite'
-                                : 'none',
-                            }}
-                          >
-                            <img
-                              src={step.image}
-                              alt=""
-                              loading={index < 2 ? 'eager' : 'lazy'}
-                              style={getImageStyle(isActive, isOverlapped, true)}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Body */}
-                        <p
-                          style={{
-                            fontSize: 14,
-                            lineHeight: 1.68,
-                            color: '#64748b',
-                            margin: '0 0 16px',
-                            opacity: isDeep ? 0.5 : isOverlapped ? 0.72 : 1,
-                            transition: 'opacity 0.4s ease',
-                          }}
-                        >
-                          {step.body}
-                        </p>
-
-                        {/* Link */}
-                        <Link
-                          href={step.href}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 6,
-                            fontSize: 14,
-                            fontWeight: 600,
-                            color: step.accent,
-                            textDecoration: 'none',
-                            padding: '8px 16px',
-                            borderRadius: 999,
-                            background: `rgba(${rgb},0.08)`,
-                            border: `1px solid rgba(${rgb},0.18)`,
-                            transition: 'background 0.2s ease, gap 0.2s ease',
-                          }}
-                        >
-                          Read More
-                          <ArrowRight size={14} strokeWidth={2.25} aria-hidden />
-                        </Link>
-                      </div>
-                    ) : (
-                      /* ════════════════════════════════
-                         DESKTOP CARD LAYOUT
-                      ════════════════════════════════ */
-                      <div
-                        style={{
-                          position: 'relative',
-                          zIndex: 1,
-                          display: 'grid',
-                          gridTemplateColumns:
-                            'minmax(0,1fr) minmax(160px,220px) minmax(0,1fr)',
-                          gap: 'clamp(20px,3vw,40px)',
-                          alignItems: 'stretch',
-                          minHeight: 'clamp(220px,24vw,280px)',
-                          padding:
-                            'clamp(28px,3.5vw,44px) clamp(24px,3vw,40px)',
-                        }}
-                      >
-                        {/* LEFT */}
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            alignItems: 'flex-start',
-                            minHeight: '100%',
-                          }}
-                        >
-                          <span
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 6,
-                              padding: '6px 14px',
-                              borderRadius: 999,
-                              background: `rgba(${rgb},0.09)`,
-                              border: `1px solid rgba(${rgb},0.2)`,
-                              fontSize: 12,
-                              fontWeight: 700,
-                              letterSpacing: '0.08em',
-                              color: step.accent,
-                            }}
-                          >
-                            {step.badge}
-                          </span>
-
-                          <h3
-                            style={{
-                              fontFamily: 'Inter, sans-serif',
-                              fontSize: 'clamp(1.75rem,3vw,2.5rem)',
-                              fontWeight: 700,
-                              letterSpacing: '-0.03em',
-                              lineHeight: 1.08,
-                              color: '#0f172a',
-                              margin: 0,
-                              maxWidth: '14ch',
-                              opacity:
-                                isDeep ? 0.55 : isOverlapped ? 0.78 : 1,
-                              transition: 'opacity 0.4s ease',
-                            }}
-                          >
-                            {step.title}
-                          </h3>
-                        </div>
-
-                        {/* CENTRE — image */}
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: '8px 0',
-                            animation: isActive
-                              ? 'capFloat 3.8s ease-in-out infinite'
-                              : 'none',
-                          }}
-                        >
-                          <img
-                            src={step.image}
-                            alt=""
-                            loading={index < 2 ? 'eager' : 'lazy'}
-                            style={getImageStyle(
-                              isActive,
-                              isOverlapped,
-                              false,
-                            )}
-                          />
-                        </div>
-
-                        {/* RIGHT */}
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'flex-start',
-                            gap: 'clamp(16px,2vw,22px)',
-                            maxWidth: 320,
-                            marginLeft: 'auto',
-                            opacity:
-                              isDeep ? 0.5 : isOverlapped ? 0.72 : 1,
-                            transition: 'opacity 0.4s ease',
-                          }}
-                        >
-                          <p
-                            style={{
-                              fontSize: 'clamp(14px,1.2vw,15px)',
-                              lineHeight: 1.68,
-                              color: '#64748b',
-                              margin: 0,
-                            }}
-                          >
-                            {step.body}
-                          </p>
-
-                          <Link
-                            href={step.href}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 8,
-                              fontSize: 15,
-                              fontWeight: 600,
-                              color: step.accent,
-                              textDecoration: 'none',
-                              padding: '9px 18px',
-                              borderRadius: 999,
-                              background: `rgba(${rgb},0.08)`,
-                              border: `1px solid rgba(${rgb},0.18)`,
-                              transition: 'background 0.2s ease',
-                            }}
-                          >
-                            Read More
-                            <ArrowRight
-                              size={16}
-                              strokeWidth={2.25}
-                              aria-hidden
-                            />
-                          </Link>
-                        </div>
-                      </div>
-                    )}
-                  </article>
-                );
-              })}
-            </div>
+              {activeCategory === 'career'
+                ? '500+ professionals placed · Zero upfront fee'
+                : '140+ partner universities · End-to-end support'}
+            </p>
+            <SeeDemoButton variant="panel" />
           </div>
         </div>
       </div>
