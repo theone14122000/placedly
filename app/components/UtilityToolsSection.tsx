@@ -13,6 +13,7 @@ import {
   Search,
   Sparkles,
   Target,
+  Upload,
   X,
   ChevronDown,
   type LucideIcon,
@@ -59,7 +60,7 @@ const TOOLS: Tool[] = [
     title: 'ATS Resume Score Checker',
     description: 'Instant AI scan for keyword match, formatting, and ATS readability.',
     Icon: FileSearch,
-    placeholder: 'Paste your resume text or upload a summary…',
+    placeholder: 'Paste your resume text or upload a file below…',
     cta: 'Check ATS Score',
     sampleResult:
       'ATS Score: 82/100 — Strong keyword alignment for Claims Analyst roles. Improve metrics in experience bullets and add a skills block for ICD-10 / CPT.',
@@ -71,7 +72,7 @@ const TOOLS: Tool[] = [
     title: 'Resume Analyzer',
     description: 'Deep AI review of impact, clarity, and role positioning.',
     Icon: FileText,
-    placeholder: 'Describe your current role and target job title…',
+    placeholder: 'Paste your resume text or upload a file below…',
     cta: 'Analyze Resume',
     sampleResult:
       'Priority fixes: lead with quantified outcomes, tighten summary to 3 lines, and mirror JD language for senior analyst keywords.',
@@ -149,6 +150,9 @@ const TOOLS: Tool[] = [
 
 const FILTERS: (Category | 'all')[] = ['all', 'career', 'study'];
 
+/* upload is only offered for these two tools */
+const UPLOAD_ENABLED_IDS = ['ats', 'resume'];
+
 /* ---------- rotating headline config ---------- */
 
 const HEADLINE_WORDS: { text: string; emphasis: boolean; dwell: number }[] = [
@@ -171,7 +175,7 @@ function useIsMobile(breakpoint = 900) {
   return isMobile;
 }
 
-function useTypewriter(text: string, active: boolean, speed = 14) {
+function useTypewriter(text: string, active: boolean, speed = 10) {
   const [output, setOutput] = useState('');
   useEffect(() => {
     if (!active || !text) {
@@ -181,7 +185,7 @@ function useTypewriter(text: string, active: boolean, speed = 14) {
     let i = 0;
     setOutput('');
     const id = window.setInterval(() => {
-      i += 1;
+      i += 2;
       setOutput(text.slice(0, i));
       if (i >= text.length) window.clearInterval(id);
     }, speed);
@@ -190,7 +194,407 @@ function useTypewriter(text: string, active: boolean, speed = 14) {
   return output;
 }
 
-/* ---------- rotating headline banner ---------- */
+/* ============================================================
+   REAL FILE TEXT EXTRACTION (no design impact — logic only)
+   Loads pdf.js / mammoth.js from CDN on demand, no npm install needed.
+============================================================ */
+
+function loadScriptOnce(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[data-loaded-src="${src}"]`)) {
+      resolve();
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = src;
+    s.async = true;
+    s.dataset.loadedSrc = src;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('Failed to load required library.'));
+    document.body.appendChild(s);
+  });
+}
+
+async function extractPdfText(file: File): Promise<string> {
+  await loadScriptOnce('https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js');
+  const pdfjsLib = (window as any).pdfjsLib;
+  if (!pdfjsLib) throw new Error('PDF reader failed to load. Please paste your resume text instead.');
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.worker.min.js';
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+  let text = '';
+  for (let i = 1; i <= pdf.numPages; i += 1) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    text += content.items.map((it: any) => it.str).join(' ') + '\n';
+  }
+  return text.trim();
+}
+
+async function extractDocxText(file: File): Promise<string> {
+  await loadScriptOnce('https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js');
+  const mammoth = (window as any).mammoth;
+  if (!mammoth) throw new Error('DOCX reader failed to load. Please paste your resume text instead.');
+  const arrayBuffer = await file.arrayBuffer();
+  const result = await mammoth.extractRawText({ arrayBuffer });
+  return (result.value as string).trim();
+}
+
+async function extractTextFromFile(file: File): Promise<string> {
+  if (file.size > 8 * 1024 * 1024) {
+    throw new Error('File is too large (max 8MB). Please upload a smaller file or paste text directly.');
+  }
+  const name = file.name.toLowerCase();
+  const type = file.type;
+
+  if (type === 'text/plain' || name.endsWith('.txt')) {
+    return (await file.text()).trim();
+  }
+  if (type === 'application/pdf' || name.endsWith('.pdf')) {
+    return extractPdfText(file);
+  }
+  if (name.endsWith('.docx')) {
+    return extractDocxText(file);
+  }
+  if (name.endsWith('.doc')) {
+    throw new Error('Legacy .doc files are not supported — please save as .docx or .pdf, or paste your resume text directly.');
+  }
+  // best-effort fallback
+  const text = await file.text().catch(() => '');
+  if (text && /[a-zA-Z]{20,}/.test(text)) return text.trim();
+  throw new Error('Unsupported file format. Please upload a .pdf, .docx, or .txt file.');
+}
+
+/* ============================================================
+   REAL ANALYSIS ENGINES (deterministic, input-driven — no mocks)
+============================================================ */
+
+const ACTION_VERBS = [
+  'managed', 'led', 'built', 'created', 'improved', 'increased', 'reduced', 'achieved',
+  'developed', 'implemented', 'designed', 'coordinated', 'negotiated', 'resolved',
+  'streamlined', 'automated', 'delivered', 'launched', 'trained', 'mentored',
+  'analyzed', 'optimized', 'generated', 'processed', 'handled', 'executed',
+  'supervised', 'drove', 'spearheaded', 'collaborated',
+];
+
+const DOMAIN_KEYWORDS: Record<string, string[]> = {
+  healthcare: ['claims', 'icd-10', 'cpt', 'denial', 'healthcare', 'medical billing', 'prior authorization', 'hipaa'],
+  insurance: ['insurance', 'underwriting', 'policy', 'premium', "lloyd's", 'reinsurance', 'actuarial', 'claims adjuster'],
+  finance: ['accounts', 'reconciliation', 'audit', 'gaap', 'forecasting', 'budgeting', 'accounts payable', 'accounts receivable'],
+  bpo: ['bpo', 'kpo', 'call center', 'call centre', 'customer service', 'sla', 'process improvement'],
+};
+
+const SECTION_HEADERS = ['summary', 'objective', 'experience', 'work experience', 'education', 'skills', 'certifications', 'projects', 'achievements'];
+
+function analyzeAts(text: string): string {
+  const clean = text.trim();
+  if (clean.length < 50) {
+    return 'Please paste at least a few sentences of resume content — or upload a .pdf/.docx/.txt file above — so we can generate an accurate ATS score.';
+  }
+  const lower = clean.toLowerCase();
+  const wordCount = clean.split(/\s+/).filter(Boolean).length;
+  const hasEmail = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i.test(clean);
+  const hasPhone = /(\+?\d[\d\s-]{8,}\d)/.test(clean);
+  const foundSections = SECTION_HEADERS.filter((s) => lower.includes(s));
+  const bulletCount = (clean.match(/(^|\n)\s*[•\-*]/g) || []).length;
+  const verbHits = ACTION_VERBS.filter((v) => lower.includes(v));
+  const quantHits = (clean.match(/(\d+%|₹\s?\d|\$\s?\d|\d+\s?(lpa|lakh|crore|hours|days|months|years|clients|agents))/gi) || []).length;
+
+  const domainMatches: { domain: string; hits: string[] }[] = [];
+  Object.entries(DOMAIN_KEYWORDS).forEach(([domain, words]) => {
+    const hits = words.filter((w) => lower.includes(w));
+    if (hits.length) domainMatches.push({ domain, hits });
+  });
+
+  let score = 0;
+  score += hasEmail ? 8 : 0;
+  score += hasPhone ? 7 : 0;
+  score += Math.min(foundSections.length, 5) * 6;
+  score += Math.min(bulletCount, 8) * 2.5;
+  score += Math.min(verbHits.length, 8) * 2;
+  score += Math.min(quantHits, 6) * 2.5;
+  score += domainMatches.length ? Math.min(domainMatches.reduce((a, d) => a + d.hits.length, 0), 4) * 2 : 0;
+  score += wordCount >= 250 && wordCount <= 900 ? 4 : 0;
+  score = Math.max(8, Math.min(97, Math.round(score)));
+
+  const missingSections = SECTION_HEADERS.filter((s) => !foundSections.includes(s)).slice(0, 3);
+  const domainLabel = domainMatches.length ? domainMatches.map((d) => d.domain).join(', ') : 'no specific domain detected';
+  const contactNote = hasEmail && hasPhone
+    ? 'complete'
+    : `incomplete (add ${[!hasEmail && 'email', !hasPhone && 'phone'].filter(Boolean).join(' & ')})`;
+
+  return `ATS Score: ${score}/100 — Word count: ${wordCount}. Contact info: ${contactNote}. Sections found: ${foundSections.length ? foundSections.join(', ') : 'none clearly detected'}. Bullet points: ${bulletCount}. Action verbs used: ${verbHits.length}${verbHits.length ? ` (${verbHits.slice(0, 5).join(', ')})` : ''}. Quantified achievements: ${quantHits}. Domain match: ${domainLabel}.${missingSections.length ? ` Consider adding: ${missingSections.join(', ')}.` : ''}`;
+}
+
+function analyzeResume(text: string): string {
+  const clean = text.trim();
+  if (clean.length < 50) {
+    return 'Paste your resume text — or upload a .pdf/.docx/.txt file above — so we can run a structural analysis.';
+  }
+  const lower = clean.toLowerCase();
+  const wordCount = clean.split(/\s+/).filter(Boolean).length;
+  const sentences = clean.split(/[.!?]+/).filter((s) => s.trim().length > 2);
+  const bulletLines = clean.split('\n').filter((l) => /^\s*[•\-*]/.test(l));
+  const quantifiedBullets = bulletLines.filter((l) => /\d/.test(l));
+  const foundSections = SECTION_HEADERS.filter((s) => lower.includes(s));
+  const missing = SECTION_HEADERS.filter((s) => !foundSections.includes(s));
+  const avgSentenceLen = sentences.length ? Math.round(wordCount / sentences.length) : 0;
+  const weakPhrases = ['responsible for', 'worked on', 'helped with', 'duties included', 'tasked with'];
+  const weakHits = weakPhrases.filter((w) => lower.includes(w));
+  const quantRate = bulletLines.length ? Math.round((quantifiedBullets.length / bulletLines.length) * 100) : 0;
+
+  const notes: string[] = [];
+  notes.push(`Length: ${wordCount} words across ${sentences.length} sentences (avg ${avgSentenceLen} words/sentence).`);
+  notes.push(`Sections detected: ${foundSections.length ? foundSections.join(', ') : 'none clearly labeled'}.`);
+  if (missing.length) notes.push(`Consider adding: ${missing.slice(0, 3).join(', ')}.`);
+  notes.push(`Bullet points: ${bulletLines.length}, of which ${quantifiedBullets.length} (${quantRate}%) include a number or metric.`);
+  if (quantRate < 40) notes.push('Add more quantified outcomes (%, ₹, time saved, volume handled) to strengthen impact.');
+  if (weakHits.length) notes.push(`Replace passive phrasing found (${weakHits.join(', ')}) with strong action verbs.`);
+  if (avgSentenceLen > 28) notes.push('Some lines run long — tighten bullets to under ~20 words for readability.');
+
+  return notes.join(' ');
+}
+
+const QUESTION_BANK: Record<string, string[]> = {
+  healthcare: [
+    'Walk me through how you handle a denied claim from identification to resolution.',
+    'How do you ensure HIPAA compliance while processing claims data?',
+    'Describe a time you reduced claim processing turnaround time.',
+  ],
+  insurance: [
+    'How do you assess risk when underwriting a new policy?',
+    "Explain how you would handle a high-value Lloyd's market claim dispute.",
+    'What KPIs do you track in your current claims/underwriting role?',
+  ],
+  finance: [
+    'Walk me through a month-end reconciliation process you have owned.',
+    'How do you handle a discrepancy found during an audit?',
+    'Describe your approach to variance analysis in budgeting.',
+  ],
+  bpo: [
+    'How do you manage SLA pressure during high call volume periods?',
+    'Describe a time you improved a process that boosted team efficiency.',
+    'How do you handle an escalated, dissatisfied customer?',
+  ],
+  generic: [
+    'Tell me about a challenge you faced in your current role and how you resolved it.',
+    'Why are you looking to make a move at this point in your career?',
+    'Describe a time you exceeded a target or KPI.',
+  ],
+};
+
+function generateInterviewQuestions(input: string): string {
+  const clean = input.trim();
+  if (!clean) {
+    return 'Enter a job title, company, or domain (e.g. "US Healthcare Claims Analyst") so we can tailor real interview questions.';
+  }
+  const lower = clean.toLowerCase();
+  let pool = QUESTION_BANK.generic;
+  let domainLabel = 'general professional';
+
+  if (/(claim|healthcare|medical|icd|cpt|denial)/.test(lower)) {
+    pool = QUESTION_BANK.healthcare;
+    domainLabel = 'US Healthcare Claims';
+  } else if (/(insur|underwrit|lloyd|policy|premium)/.test(lower)) {
+    pool = QUESTION_BANK.insurance;
+    domainLabel = 'Insurance & Underwriting';
+  } else if (/(financ|account|audit|reconcil|budget)/.test(lower)) {
+    pool = QUESTION_BANK.finance;
+    domainLabel = 'Finance & Accounts';
+  } else if (/(bpo|kpo|call cent|customer service|operations)/.test(lower)) {
+    pool = QUESTION_BANK.bpo;
+    domainLabel = 'BPO/KPO Operations';
+  }
+
+  const behavioral = 'Tell me about a time you dealt with a tight deadline under pressure — what was your approach? (STAR format recommended)';
+  const questions = [...pool, behavioral].slice(0, 5);
+  const numbered = questions.map((q, i) => `${i + 1}. ${q}`).join(' ');
+  return `${questions.length} questions generated for ${domainLabel}: ${numbered}`;
+}
+
+const SALARY_BASE: Record<string, number> = {
+  healthcare: 4.8, insurance: 5.2, finance: 5.0, bpo: 3.6, generic: 4.0,
+};
+const CITY_MULTIPLIER: Record<string, number> = {
+  noida: 1.05, delhi: 1.1, gurugram: 1.12, gurgaon: 1.12, mumbai: 1.2, bangalore: 1.18,
+  bengaluru: 1.18, pune: 1.08, hyderabad: 1.1, chennai: 1.05, kolkata: 0.92,
+};
+
+function estimateSalary(input: string): string {
+  const clean = input.trim();
+  if (!clean) {
+    return 'Enter role, years of experience, and location (e.g. "Senior Claims Analyst, 4 years, Noida") so we can compute a real range.';
+  }
+  const lower = clean.toLowerCase();
+  const expMatch = lower.match(/(\d+(\.\d+)?)\s*(\+)?\s*(yrs?|years?)/);
+  const years = expMatch ? parseFloat(expMatch[1]) : 1;
+
+  let domain = 'generic';
+  if (/(claim|healthcare|medical)/.test(lower)) domain = 'healthcare';
+  else if (/(insur|underwrit)/.test(lower)) domain = 'insurance';
+  else if (/(financ|account)/.test(lower)) domain = 'finance';
+  else if (/(bpo|kpo|call cent|operations)/.test(lower)) domain = 'bpo';
+
+  const city = Object.keys(CITY_MULTIPLIER).find((c) => lower.includes(c));
+  const cityMultiplier = city ? CITY_MULTIPLIER[city] : 1;
+  const seniorityMultiplier = /senior|lead|manager/.test(lower) ? 1.25 : /junior|associate|fresher/.test(lower) ? 0.85 : 1;
+
+  const base = SALARY_BASE[domain];
+  const expMultiplier = 1 + Math.min(years, 10) * 0.13;
+  const low = +(base * expMultiplier * cityMultiplier * seniorityMultiplier * 0.88).toFixed(1);
+  const high = +(base * expMultiplier * cityMultiplier * seniorityMultiplier * 1.18).toFixed(1);
+  const cityLabel = city ? city.charAt(0).toUpperCase() + city.slice(1) : null;
+
+  return `Estimated range: ₹${low} – ₹${high} LPA for a ${domain !== 'generic' ? domain : 'general'} profile with ~${years} yrs experience${cityLabel ? ` in ${cityLabel}` : ''}. Based on domain base rate, experience curve, and location cost-of-living multiplier.`;
+}
+
+const CAREER_LADDERS: Record<string, string[]> = {
+  healthcare: ['Claims Associate', 'Claims Analyst', 'Senior Claims Analyst', 'Claims Team Lead', 'Claims Manager'],
+  insurance: ['Underwriting Associate', 'Underwriter', 'Senior Underwriter', 'Underwriting Team Lead', 'Underwriting Manager'],
+  finance: ['Accounts Executive', 'Senior Accounts Executive', 'Finance Analyst', 'Finance Team Lead', 'Finance Manager'],
+  bpo: ['Process Associate', 'Senior Process Associate', 'Team Lead', 'Assistant Manager - Operations', 'Operations Manager'],
+  generic: ['Associate', 'Senior Associate', 'Team Lead', 'Manager', 'Senior Manager'],
+};
+
+function buildCareerPath(input: string): string {
+  const clean = input.trim();
+  if (!clean) {
+    return 'Describe your current role and where you want to be in 12–24 months so we can map a real path.';
+  }
+  const lower = clean.toLowerCase();
+  let domain = 'generic';
+  if (/(claim|healthcare|medical)/.test(lower)) domain = 'healthcare';
+  else if (/(insur|underwrit)/.test(lower)) domain = 'insurance';
+  else if (/(financ|account)/.test(lower)) domain = 'finance';
+  else if (/(bpo|kpo|call cent|operations)/.test(lower)) domain = 'bpo';
+
+  const ladder = CAREER_LADDERS[domain];
+  let currentIndex = 0;
+  if (/manager/.test(lower)) currentIndex = 3;
+  else if (/lead/.test(lower)) currentIndex = 2;
+  else if (/senior/.test(lower)) currentIndex = 1;
+
+  const nextSteps = ladder.slice(currentIndex + 1, currentIndex + 3);
+  const currentRole = ladder[currentIndex];
+
+  return `Detected current level: ${currentRole} (${domain} track). Suggested next steps: ${nextSteps.length ? nextSteps.join(' → ') : 'you are near the top of this ladder — consider a lateral domain move or people-management track'}. Recommended actions: strengthen quantified achievements on your resume, complete 2–3 mock interviews, and pursue 1–2 warm referrals in the next quarter.`;
+}
+
+const COUNTRY_THRESHOLDS: Record<string, number> = {
+  uk: 60, germany: 65, france: 55, dubai: 50, uae: 50, canada: 65, australia: 60, singapore: 70,
+};
+
+function checkEligibility(input: string): string {
+  const clean = input.trim();
+  if (!clean) {
+    return 'Enter your degree, GPA/percentage, target country, and intake so we can check real eligibility thresholds.';
+  }
+  const lower = clean.toLowerCase();
+  const pctMatch = lower.match(/(\d{2,3}(\.\d+)?)\s*%/);
+  const gpaMatch = lower.match(/(\d(\.\d{1,2})?)\s*(cgpa|gpa)/);
+  let percentage: number | null = null;
+  if (pctMatch) percentage = parseFloat(pctMatch[1]);
+  else if (gpaMatch) percentage = parseFloat(gpaMatch[1]) * 10;
+
+  const country = Object.keys(COUNTRY_THRESHOLDS).find((c) => lower.includes(c));
+  const threshold = country ? COUNTRY_THRESHOLDS[country] : null;
+
+  if (!percentage) {
+    return `Please include your percentage or CGPA (e.g. "72%" or "7.5 CGPA") so we can compare against ${country ? country.toUpperCase() : 'destination'} entry thresholds.`;
+  }
+  if (!country || !threshold) {
+    return `Detected academic score: ${percentage}%. Please mention a target country (UK, Germany, France, Dubai, Canada, Australia, or Singapore) for a precise threshold comparison.`;
+  }
+
+  return percentage >= threshold
+    ? `Eligible — your ${percentage}% clears the typical ${threshold}%+ requirement for ${country.toUpperCase()} postgraduate programmes.`
+    : `Below typical threshold — ${country.toUpperCase()} programmes generally look for ${threshold}%+, and you're at ${percentage}%. A strong SOP, relevant work experience, or a foundation year could still make you competitive.`;
+}
+
+const UNIVERSITIES = [
+  { name: 'University of Manchester', country: 'uk', programme: 'business', budgetLPA: 28 },
+  { name: 'Aston University', country: 'uk', programme: 'business', budgetLPA: 22 },
+  { name: 'University of Sheffield', country: 'uk', programme: 'engineering', budgetLPA: 24 },
+  { name: 'ESSEC Business School', country: 'france', programme: 'business', budgetLPA: 26 },
+  { name: 'EM Lyon', country: 'france', programme: 'business', budgetLPA: 24 },
+  { name: 'TU Munich', country: 'germany', programme: 'engineering', budgetLPA: 8 },
+  { name: 'RWTH Aachen', country: 'germany', programme: 'engineering', budgetLPA: 7 },
+  { name: 'University of Wollongong Dubai', country: 'dubai', programme: 'business', budgetLPA: 18 },
+  { name: 'Heriot-Watt Dubai', country: 'dubai', programme: 'engineering', budgetLPA: 16 },
+  { name: 'University of Toronto', country: 'canada', programme: 'business', budgetLPA: 32 },
+  { name: 'University of Melbourne', country: 'australia', programme: 'business', budgetLPA: 30 },
+  { name: 'NUS Singapore', country: 'singapore', programme: 'business', budgetLPA: 27 },
+];
+
+function matchUniversities(input: string): string {
+  const clean = input.trim();
+  if (!clean) {
+    return 'Enter programme interest, budget range, and preferred countries so we can filter real matches.';
+  }
+  const lower = clean.toLowerCase();
+  const budgetMatch = lower.match(/(\d{1,3})\s*(lpa|lakh)/);
+  const budget = budgetMatch ? parseFloat(budgetMatch[1]) : null;
+  const programme = /engineer/.test(lower) ? 'engineering' : /business|mba|management/.test(lower) ? 'business' : null;
+  const countries = Object.keys(COUNTRY_THRESHOLDS).filter((c) => lower.includes(c));
+
+  let matches = UNIVERSITIES.filter((u) => {
+    const countryOk = countries.length ? countries.includes(u.country) : true;
+    const programmeOk = programme ? u.programme === programme : true;
+    const budgetOk = budget ? u.budgetLPA <= budget * 1.15 : true;
+    return countryOk && programmeOk && budgetOk;
+  });
+
+  if (!matches.length) {
+    matches = UNIVERSITIES.filter((u) => (countries.length ? countries.includes(u.country) : true)).slice(0, 4);
+  }
+
+  const list = matches.slice(0, 6).map((u) => `${u.name} (${u.country.toUpperCase()}, ~₹${u.budgetLPA}L total cost)`).join(', ');
+  return `${matches.length} universities matched: ${list || 'No exact matches — try broadening your budget or country.'}`;
+}
+
+const SOP_CLICHES = ['since childhood', 'passion for', 'from a young age', 'always dreamed', "in today's world", 'i am writing this'];
+
+function analyzeSop(input: string): string {
+  const clean = input.trim();
+  if (clean.length < 80) {
+    return 'Paste your draft SOP (at least a paragraph) so we can give real, text-based feedback.';
+  }
+  const lower = clean.toLowerCase();
+  const wordCount = clean.split(/\s+/).filter(Boolean).length;
+  const paragraphs = clean.split(/\n\s*\n/).filter(Boolean);
+  const clicheHits = SOP_CLICHES.filter((c) => lower.includes(c));
+  const mentionsGoals = /(goal|aspir|aim to|plan to|career objective)/.test(lower);
+  const mentionsWhyUniversity = /(why i (chose|am applying)|this university|this programme|this program)/.test(lower);
+  const mentionsFuture = /(after (graduat|completing)|post-study|upon completion|return to)/.test(lower);
+
+  const notes: string[] = [];
+  notes.push(`Length: ${wordCount} words across ${paragraphs.length || 1} paragraph(s).`);
+  if (wordCount < 400) notes.push('SOPs typically run 500–1000 words — consider expanding your narrative.');
+  if (wordCount > 1200) notes.push('This is on the longer side — tighten to keep the admissions reader engaged.');
+  if (clicheHits.length) notes.push(`Remove generic openers found: "${clicheHits.join('", "')}" — replace with a specific moment or achievement.`);
+  notes.push(mentionsGoals ? 'Career goals are clearly stated.' : 'Career goals are not clearly stated — add a specific objective.');
+  notes.push(mentionsWhyUniversity ? 'Good — you explain why this university/programme.' : 'Add a paragraph on why this specific university/programme fits your goals.');
+  notes.push(mentionsFuture ? 'Closing ties to post-study plans — good.' : 'Add a closing line connecting the degree to your future plans.');
+
+  return notes.join(' ');
+}
+
+function computeToolResult(tool: Tool, input: string): string {
+  switch (tool.id) {
+    case 'ats': return analyzeAts(input);
+    case 'resume': return analyzeResume(input);
+    case 'interview': return generateInterviewQuestions(input);
+    case 'salary': return estimateSalary(input);
+    case 'career-path': return buildCareerPath(input);
+    case 'eligibility': return checkEligibility(input);
+    case 'university': return matchUniversities(input);
+    case 'sop': return analyzeSop(input);
+    default: return 'Analysis complete.';
+  }
+}
+
+/* ---------- rotating headline banner (unchanged) ---------- */
 
 function RotatingHeadlineBanner() {
   const [index, setIndex] = useState(0);
@@ -227,7 +631,6 @@ function RotatingHeadlineBanner() {
         overflow: 'hidden',
       }}
     >
-      {/* soft animated glow sweep */}
       <motion.div
         aria-hidden
         animate={{ x: ['-30%', '130%'] }}
@@ -330,6 +733,11 @@ export default function UtilityToolsSection() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [phase, setPhase] = useState<'idle' | 'loading' | 'done'>('idle');
+  const [resultText, setResultText] = useState('');
+
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [fileName, setFileName] = useState('');
+  const [fileError, setFileError] = useState('');
 
   const isMobile = useIsMobile();
 
@@ -345,26 +753,51 @@ export default function UtilityToolsSection() {
     });
   }, [category]);
 
-  const typedResult = useTypewriter(active?.sampleResult ?? '', phase === 'done');
+  const typedResult = useTypewriter(resultText, phase === 'done');
 
   const runTool = useCallback(() => {
     if (!active) return;
     setPhase('loading');
     window.setTimeout(() => {
+      const computed = computeToolResult(active, input);
+      setResultText(computed);
       setPhase('done');
-    }, 1100);
-  }, [active]);
+    }, 900);
+  }, [active, input]);
+
+  const handleFileUpload = useCallback(async (file: File) => {
+    setFileError('');
+    setFileName(file.name);
+    setIsExtracting(true);
+    try {
+      const text = await extractTextFromFile(file);
+      if (!text || text.trim().length < 20) {
+        throw new Error('Could not extract readable text from this file. Please paste your resume text instead.');
+      }
+      setInput(text);
+    } catch (err: any) {
+      setFileError(err?.message || 'Could not read this file. Please paste your resume text instead.');
+    } finally {
+      setIsExtracting(false);
+    }
+  }, []);
 
   const openTool = (tool: Tool) => {
     setActiveId(tool.id);
     setInput('');
     setPhase('idle');
+    setResultText('');
+    setFileName('');
+    setFileError('');
   };
 
   const closePanel = () => {
     setActiveId(null);
     setPhase('idle');
     setInput('');
+    setResultText('');
+    setFileName('');
+    setFileError('');
   };
 
   // lock body scroll when mobile modal open
@@ -513,7 +946,7 @@ export default function UtilityToolsSection() {
               gap: '4px',
               background: '#fff',
               padding: '6px',
-              borderRadius: '999px', // Pill shape
+              borderRadius: '999px',
               boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
               border: '1px solid rgba(0,0,0,0.05)',
               flexWrap: 'wrap',
@@ -532,7 +965,7 @@ export default function UtilityToolsSection() {
                   style={{
                     position: 'relative',
                     padding: '10px 20px',
-                    borderRadius: '999px', // Pill shape for buttons
+                    borderRadius: '999px',
                     border: 'none',
                     fontWeight: 600,
                     fontSize: '13.5px',
@@ -574,7 +1007,6 @@ export default function UtilityToolsSection() {
             marginBottom: 'clamp(20px, 3vw, 28px)',
           }}
         >
-          {/* NOTE: wrapper only adds mobile scroll-fade hints — no desktop visual change */}
           <div className="tools-toggle-wrap">
             <div
               className="tools-toggle-bar"
@@ -648,9 +1080,7 @@ export default function UtilityToolsSection() {
                         size={14}
                         strokeWidth={2.5}
                         className="tool-chevron"
-                        style={{
-                          marginLeft: '2px',
-                        }}
+                        style={{ marginLeft: '2px' }}
                       />
                     )}
                   </motion.button>
@@ -658,7 +1088,6 @@ export default function UtilityToolsSection() {
               })}
             </div>
 
-            {/* mobile-only scroll affordance (hidden on desktop) */}
             <span className="tools-toggle-fade tools-toggle-fade--left" aria-hidden />
             <span className="tools-toggle-fade tools-toggle-fade--right" aria-hidden />
           </div>
@@ -673,9 +1102,7 @@ export default function UtilityToolsSection() {
               animate={{ opacity: 1, y: 0, height: 'auto' }}
               exit={{ opacity: 0, y: -10, height: 0 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              style={{
-                overflow: 'hidden',
-              }}
+              style={{ overflow: 'hidden' }}
             >
               <div
                 style={{
@@ -697,6 +1124,10 @@ export default function UtilityToolsSection() {
                   typedResult={typedResult}
                   runTool={runTool}
                   closePanel={closePanel}
+                  onFileUpload={handleFileUpload}
+                  isExtracting={isExtracting}
+                  fileName={fileName}
+                  fileError={fileError}
                 />
               </div>
             </motion.div>
@@ -716,7 +1147,6 @@ export default function UtilityToolsSection() {
             display: inline;
           }
 
-          /* ── Mobile-only toggle bar redesign: single-row horizontal scroll ── */
           .tools-toggle-wrap {
             position: relative;
           }
@@ -791,6 +1221,10 @@ function ToolPanel({
   typedResult,
   runTool,
   closePanel,
+  onFileUpload,
+  isExtracting,
+  fileName,
+  fileError,
 }: {
   active: Tool | null;
   accent: Accent;
@@ -800,8 +1234,14 @@ function ToolPanel({
   typedResult: string;
   runTool: () => void;
   closePanel: () => void;
+  onFileUpload: (file: File) => void;
+  isExtracting: boolean;
+  fileName: string;
+  fileError: string;
 }) {
   if (!active) return null;
+
+  const supportsUpload = UPLOAD_ENABLED_IDS.includes(active.id);
 
   return (
     <div style={{ position: 'relative' }}>
@@ -893,6 +1333,51 @@ function ToolPanel({
           <X size={18} strokeWidth={2.5} />
         </button>
       </div>
+
+      {supportsUpload && (
+        <div style={{ marginBottom: '14px' }}>
+          <input
+            type="file"
+            id={`resume-upload-${active.id}`}
+            accept=".pdf,.doc,.docx,.txt"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) onFileUpload(file);
+              e.target.value = '';
+            }}
+          />
+          <label
+            htmlFor={`resume-upload-${active.id}`}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '9px 16px',
+              borderRadius: '999px',
+              border: `1.5px dashed ${accent.from}55`,
+              background: accent.soft,
+              color: accent.from,
+              fontSize: '13px',
+              fontWeight: 600,
+              cursor: isExtracting ? 'wait' : 'pointer',
+              transition: 'border-color 0.25s ease, background 0.25s ease',
+            }}
+          >
+            <Upload size={15} strokeWidth={2.25} aria-hidden />
+            {isExtracting
+              ? 'Reading file…'
+              : fileName
+              ? `Uploaded: ${fileName}`
+              : 'Upload Resume (.pdf, .docx, .txt)'}
+          </label>
+          {fileError && (
+            <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '6px', lineHeight: 1.5 }}>
+              {fileError}
+            </p>
+          )}
+        </div>
+      )}
 
       <textarea
         rows={5}
