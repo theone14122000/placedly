@@ -17,6 +17,7 @@ interface VerticalContent {
   highlights: { icon: string; text: string }[];
   cta: string;
   stats: { value: string; label: string }[];
+  accent: { from: string; to: string; soft: string };
 }
 
 const VERTICALS: VerticalContent[] = [
@@ -49,6 +50,7 @@ const VERTICALS: VerticalContent[] = [
       { value: '6 LPA', label: 'Avg CTC' },
       { value: '400+', label: 'Hiring Partners' },
     ],
+    accent: { from: '#6366f1', to: '#8b5cf6', soft: 'rgba(99, 102, 241, 0.12)' },
   },
   {
     id: 'study',
@@ -79,17 +81,16 @@ const VERTICALS: VerticalContent[] = [
       { value: '95%', label: 'Acceptance Rate' },
       { value: '50+', label: 'Countries' },
     ],
+    accent: { from: '#3b82f6', to: '#06b6d4', soft: 'rgba(59, 130, 246, 0.12)' },
   },
 ];
 
 function VideoCard({
   src,
   ariaLabel,
-  isActive,
 }: {
   src: string;
   ariaLabel: string;
-  isActive: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const isVisibleRef = useRef(false);
@@ -152,45 +153,23 @@ function VideoCard({
       });
       document.removeEventListener('keydown', unlockSound, { capture: true });
     };
-  }, []);
+  }, [src]);
 
   return (
-    <div
+    <video
+      ref={videoRef}
+      src={src}
+      loop
+      playsInline
+      preload="auto"
+      aria-label={ariaLabel}
       style={{
-        position: 'relative',
         width: '100%',
-        borderRadius: '20px',
-        overflow: 'hidden',
-        background: '#111',
-        aspectRatio: '9 / 16',
-        maxHeight: '480px',
-        boxShadow: '0 25px 80px rgba(0, 0, 0, 0.35)',
+        height: '100%',
+        objectFit: 'cover',
+        display: 'block',
       }}
-    >
-      <video
-        ref={videoRef}
-        src={src}
-        loop
-        playsInline
-        preload="auto"
-        aria-label={ariaLabel}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          display: 'block',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          borderRadius: '20px',
-          border: '2px solid rgba(255, 255, 255, 0.1)',
-          pointerEvents: 'none',
-        }}
-      />
-    </div>
+    />
   );
 }
 
@@ -210,36 +189,60 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
       id="services"
       style={{
         position: 'relative',
-        padding: '100px 24px',
+        padding: 'clamp(64px, 10vw, 100px) clamp(16px, 5vw, 24px)',
         overflow: 'hidden',
       }}
     >
-      {/* Background gradients */}
+      {/* Ambient animated background blobs */}
       <motion.div
         aria-hidden
+        className="services-blob"
         style={{
           position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%)',
+          top: '-10%',
+          left: '-10%',
+          width: '480px',
+          height: '480px',
+          borderRadius: '50%',
+          filter: 'blur(90px)',
           zIndex: 0,
+          pointerEvents: 'none',
         }}
-        initial={false}
-        animate={{ opacity: active === 0 ? 1 : 0.5 }}
-        transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
+        animate={{
+          background: `radial-gradient(circle, ${current.accent.from}33 0%, transparent 70%)`,
+          x: [0, 30, 0],
+          y: [0, 20, 0],
+        }}
+        transition={{
+          background: { duration: 0.9, ease: [0.4, 0, 0.2, 1] },
+          x: { duration: 10, repeat: Infinity, ease: 'easeInOut' },
+          y: { duration: 12, repeat: Infinity, ease: 'easeInOut' },
+        }}
       />
       <motion.div
         aria-hidden
+        className="services-blob"
         style={{
           position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+          bottom: '-15%',
+          right: '-10%',
+          width: '520px',
+          height: '520px',
+          borderRadius: '50%',
+          filter: 'blur(100px)',
           zIndex: 0,
+          pointerEvents: 'none',
         }}
-        initial={false}
-        animate={{ opacity: active === 1 ? 1 : 0.5 }}
-        transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
+        animate={{
+          background: `radial-gradient(circle, ${current.accent.to}2e 0%, transparent 70%)`,
+          x: [0, -25, 0],
+          y: [0, -15, 0],
+        }}
+        transition={{
+          background: { duration: 0.9, ease: [0.4, 0, 0.2, 1] },
+          x: { duration: 11, repeat: Infinity, ease: 'easeInOut' },
+          y: { duration: 9, repeat: Infinity, ease: 'easeInOut' },
+        }}
       />
 
       <div
@@ -254,7 +257,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
         <FadeUp
           style={{
             textAlign: 'center',
-            marginBottom: '60px',
+            marginBottom: 'clamp(40px, 6vw, 60px)',
           }}
         >
           <p
@@ -263,15 +266,16 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
               fontWeight: '600',
               textTransform: 'uppercase',
               letterSpacing: '2px',
-              color: '#6366f1',
+              color: current.accent.from,
               marginBottom: '16px',
+              transition: 'color 0.4s ease',
             }}
           >
             {tagline}
           </p>
           <h2
             style={{
-              fontSize: 'clamp(2rem, 5vw, 3rem)',
+              fontSize: 'clamp(1.8rem, 5vw, 3rem)',
               fontWeight: '800',
               lineHeight: '1.1',
               color: '#111',
@@ -282,31 +286,37 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           </h2>
           <p
             style={{
-              fontSize: '1.1rem',
+              fontSize: 'clamp(0.95rem, 2vw, 1.1rem)',
               color: '#666',
               maxWidth: '600px',
               margin: '0 auto',
+              padding: '0 12px',
             }}
           >
             {subtitle}
           </p>
         </FadeUp>
 
-        {/* Toggle Tabs */}
+        {/* Toggle Tabs — sliding pill */}
         <div
           style={{
             display: 'flex',
             justifyContent: 'center',
-            marginBottom: '60px',
+            marginBottom: 'clamp(40px, 6vw, 60px)',
+            padding: '0 12px',
           }}
         >
           <div
+            className="services-toggle"
             style={{
+              position: 'relative',
               display: 'inline-flex',
+              width: '100%',
+              maxWidth: '420px',
               background: '#fff',
-              borderRadius: '12px',
+              borderRadius: '14px',
               padding: '6px',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+              boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
               border: '1px solid rgba(0, 0, 0, 0.05)',
             }}
             role="tablist"
@@ -320,17 +330,35 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                 aria-selected={active === i}
                 onClick={() => setActive(i)}
                 style={{
-                  padding: '12px 32px',
-                  borderRadius: '8px',
+                  position: 'relative',
+                  flex: 1,
+                  padding: '12px 20px',
+                  borderRadius: '10px',
                   border: 'none',
                   fontWeight: '600',
-                  fontSize: '15px',
+                  fontSize: 'clamp(13px, 2vw, 15px)',
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  background: active === i ? '#111' : 'transparent',
+                  background: 'transparent',
                   color: active === i ? '#fff' : '#666',
+                  transition: 'color 0.3s ease',
+                  zIndex: 1,
+                  whiteSpace: 'nowrap',
                 }}
               >
+                {active === i && (
+                  <motion.span
+                    layoutId="services-pill"
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '10px',
+                      background: `linear-gradient(135deg, ${current.accent.from} 0%, ${current.accent.to} 100%)`,
+                      zIndex: -1,
+                      boxShadow: `0 8px 20px ${current.accent.soft}`,
+                    }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  />
+                )}
                 {v.tabLabel}
               </button>
             ))}
@@ -347,8 +375,8 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '60px',
+              gridTemplateColumns: '1.1fr 0.9fr',
+              gap: 'clamp(32px, 5vw, 60px)',
               alignItems: 'center',
             }}
             className="services-grid"
@@ -359,7 +387,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                 background: 'rgba(255, 255, 255, 0.9)',
                 backdropFilter: 'blur(20px)',
                 borderRadius: '24px',
-                padding: '40px',
+                padding: 'clamp(24px, 4vw, 40px)',
                 border: '1px solid rgba(0, 0, 0, 0.06)',
                 boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08)',
               }}
@@ -370,7 +398,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                   fontWeight: '600',
                   textTransform: 'uppercase',
                   letterSpacing: '1.5px',
-                  color: '#6366f1',
+                  color: current.accent.from,
                   marginBottom: '12px',
                 }}
               >
@@ -379,7 +407,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
 
               <h3
                 style={{
-                  fontSize: '2rem',
+                  fontSize: 'clamp(1.5rem, 4vw, 2rem)',
                   fontWeight: '800',
                   lineHeight: '1.2',
                   color: '#111',
@@ -408,7 +436,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                   margin: '0 0 28px 0',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '16px',
+                  gap: '12px',
                 }}
               >
                 {current.highlights.map((item, idx) => (
@@ -416,26 +444,36 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                     key={idx}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.1, duration: 0.3 }}
+                    transition={{ delay: idx * 0.08, duration: 0.35 }}
                     style={{
                       display: 'flex',
                       alignItems: 'flex-start',
-                      gap: '12px',
+                      gap: '14px',
                       fontSize: '15px',
                       color: '#444',
                       lineHeight: '1.5',
+                      background: current.accent.soft,
+                      borderRadius: '14px',
+                      padding: '12px 14px',
                     }}
                   >
                     <span
                       style={{
                         fontSize: '18px',
                         flexShrink: 0,
-                        marginTop: '2px',
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '10px',
+                        background: '#fff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                       }}
                     >
                       {item.icon}
                     </span>
-                    <span>{item.text}</span>
+                    <span style={{ paddingTop: '4px' }}>{item.text}</span>
                   </motion.li>
                 ))}
               </ul>
@@ -445,19 +483,28 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                 style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: '16px',
+                  gap: '12px',
                   padding: '20px 0',
                   borderTop: '1px solid rgba(0, 0, 0, 0.06)',
                   marginBottom: '24px',
                 }}
               >
                 {current.stats.map((stat, idx) => (
-                  <div key={idx} style={{ textAlign: 'center' }}>
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.15 + idx * 0.08, duration: 0.3 }}
+                    style={{ textAlign: 'center' }}
+                  >
                     <p
                       style={{
-                        fontSize: '1.5rem',
+                        fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
                         fontWeight: '800',
-                        color: '#111',
+                        backgroundImage: `linear-gradient(135deg, ${current.accent.from}, ${current.accent.to})`,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
                         marginBottom: '4px',
                       }}
                     >
@@ -465,7 +512,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                     </p>
                     <p
                       style={{
-                        fontSize: '12px',
+                        fontSize: '11px',
                         color: '#888',
                         textTransform: 'uppercase',
                         letterSpacing: '0.5px',
@@ -473,39 +520,40 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                     >
                       {stat.label}
                     </p>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
 
               {/* CTA Button */}
-              <button
+              <motion.button
+                whileHover={{ y: -2, boxShadow: `0 12px 30px ${current.accent.soft}` }}
+                whileTap={{ scale: 0.97 }}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
                   padding: '14px 28px',
-                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                  background: `linear-gradient(135deg, ${current.accent.from} 0%, ${current.accent.to} 100%)`,
                   color: '#fff',
                   border: 'none',
                   borderRadius: '12px',
                   fontWeight: '600',
                   fontSize: '15px',
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease',
+                  width: '100%',
+                  justifyContent: 'center',
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow =
-                    '0 10px 30px rgba(99, 102, 241, 0.4)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
+                className="services-cta"
               >
                 {current.cta}
-                <span aria-hidden>→</span>
-              </button>
+                <motion.span
+                  aria-hidden
+                  animate={{ x: [0, 4, 0] }}
+                  transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  →
+                </motion.span>
+              </motion.button>
             </div>
 
             {/* Right Side - Video Card */}
@@ -516,11 +564,137 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                 alignItems: 'center',
               }}
             >
-              <VideoCard
-                src={current.videoSrc}
-                ariaLabel={current.ariaLabel}
-                isActive={active === 0}
-              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.92, rotate: -2 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                whileHover={{ scale: 1.02, rotate: 0.3 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="services-video-wrap"
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: '320px',
+                }}
+              >
+                {/* Glow behind card */}
+                <div
+                  aria-hidden
+                  style={{
+                    position: 'absolute',
+                    inset: '-24px',
+                    background: `linear-gradient(135deg, ${current.accent.from}55, ${current.accent.to}55)`,
+                    filter: 'blur(50px)',
+                    borderRadius: '32px',
+                    zIndex: 0,
+                    opacity: 0.7,
+                  }}
+                />
+
+                {/* Gradient border frame */}
+                <div
+                  style={{
+                    position: 'relative',
+                    zIndex: 1,
+                    borderRadius: '28px',
+                    padding: '3px',
+                    background: `linear-gradient(140deg, ${current.accent.from}, ${current.accent.to})`,
+                    boxShadow: '0 25px 60px rgba(0, 0, 0, 0.25)',
+                  }}
+                >
+                  <div
+                    style={{
+                      position: 'relative',
+                      borderRadius: '25px',
+                      overflow: 'hidden',
+                      background: '#0a0a0a',
+                      aspectRatio: '9 / 16',
+                      maxHeight: '460px',
+                    }}
+                  >
+                    <VideoCard src={current.videoSrc} ariaLabel={current.ariaLabel} />
+
+                    {/* subtle inner vignette */}
+                    <div
+                      aria-hidden
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        background:
+                          'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 25%, transparent 70%, rgba(0,0,0,0.35) 100%)',
+                        pointerEvents: 'none',
+                      }}
+                    />
+
+                    {/* Live badge */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '14px',
+                        left: '14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        background: 'rgba(0, 0, 0, 0.55)',
+                        backdropFilter: 'blur(10px)',
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        color: '#fff',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                      }}
+                    >
+                      <motion.span
+                        animate={{ opacity: [1, 0.3, 1] }}
+                        transition={{ duration: 1.6, repeat: Infinity }}
+                        style={{
+                          width: '7px',
+                          height: '7px',
+                          borderRadius: '50%',
+                          background: '#22c55e',
+                          display: 'inline-block',
+                        }}
+                      />
+                      Real Story
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating stat chip */}
+                <motion.div
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+                  className="services-floating-chip"
+                  style={{
+                    position: 'absolute',
+                    top: '-16px',
+                    right: '-16px',
+                    zIndex: 2,
+                    background: '#fff',
+                    borderRadius: '16px',
+                    padding: '10px 16px',
+                    boxShadow: '0 12px 30px rgba(0, 0, 0, 0.15)',
+                    textAlign: 'center',
+                    minWidth: '84px',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: '1.1rem',
+                      fontWeight: 800,
+                      backgroundImage: `linear-gradient(135deg, ${current.accent.from}, ${current.accent.to})`,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      lineHeight: 1,
+                    }}
+                  >
+                    {current.stats[0].value}
+                  </p>
+                  <p style={{ fontSize: '10px', color: '#888', marginTop: '2px' }}>
+                    {current.stats[0].label}
+                  </p>
+                </motion.div>
+              </motion.div>
             </div>
           </motion.div>
         </AnimatePresence>
@@ -531,8 +705,30 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
         @media (max-width: 900px) {
           .services-grid {
             grid-template-columns: 1fr !important;
-            gap: 40px !important;
           }
+          .services-video-wrap {
+            max-width: 260px !important;
+            margin: 0 auto;
+          }
+          .services-floating-chip {
+            top: -12px !important;
+            right: -8px !important;
+            padding: 8px 12px !important;
+            min-width: 68px !important;
+          }
+          .services-blob {
+            display: none;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .services-toggle button {
+            padding: 10px 12px !important;
+          }
+        }
+
+        .services-cta {
+          transition: box-shadow 0.3s ease;
         }
       `}</style>
     </section>
