@@ -320,7 +320,6 @@ function TabBar({
         role="tablist"
         aria-label="How Placedly works"
         style={{
-          display: 'grid',
           gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '8px',
           padding: '6px',
@@ -335,11 +334,22 @@ function TabBar({
       </div>
 
       <style>{`
-        .hiw-tabbar-desktop { display: flex; justify-content: center; margin-bottom: 28px; }
-        .hiw-tabbar-mobile  { display: none; margin-bottom: 24px; }
+        .hiw-tabbar-desktop { 
+          display: flex !important; 
+          justify-content: center; 
+          margin-bottom: 28px; 
+        }
+        .hiw-tabbar-mobile { 
+          display: none !important; 
+          margin-bottom: 24px; 
+        }
         @media (max-width: 639px) {
-          .hiw-tabbar-desktop { display: none; }
-          .hiw-tabbar-mobile  { display: grid; }
+          .hiw-tabbar-desktop { 
+            display: none !important; 
+          }
+          .hiw-tabbar-mobile { 
+            display: grid !important; 
+          }
         }
       `}</style>
     </>
@@ -450,21 +460,15 @@ function TabPanel({ tab }: { tab: TabDef }) {
       </div>
 
       <div className="placedly-hiw-panel-copy" style={{ position: 'relative', zIndex: 1 }}>
-        {/*
-          h3 panel title — accent left-bar kept, text now uses the
-          shared brand gradient instead of the CSS class solid colour.
-        */}
         <h3
           className="placedly-hiw-panel-title"
           style={{
             position: 'relative',
             paddingLeft: '16px',
-            /* reset any solid fill the CSS class may set */
             color: 'inherit',
             WebkitTextFillColor: 'initial',
           }}
         >
-          {/* left accent bar — still uses per-tab accent colour */}
           <span
             aria-hidden
             style={{
@@ -473,7 +477,6 @@ function TabPanel({ tab }: { tab: TabDef }) {
               background: `linear-gradient(180deg, ${tab.accent.from}, ${tab.accent.to})`,
             }}
           />
-          {/* title text — brand gradient */}
           <span style={GRADIENT_STYLE}>{tab.title}</span>
         </h3>
 
@@ -553,11 +556,6 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
     >
       <div className="placedly-hiw-container">
         <FadeUp className="placedly-hiw-header">
-          {/*
-            Section h2 — wrap the whole title in the brand gradient.
-            The CSS class handles font-size / weight / margin.
-            We override only the fill colour here.
-          */}
           <h2
             className="placedly-hiw-title"
             style={{ color: 'inherit', WebkitTextFillColor: 'initial' }}
