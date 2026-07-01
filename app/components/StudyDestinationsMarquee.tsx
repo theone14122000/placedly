@@ -2,6 +2,18 @@
 
 import { FadeUp } from './motion';
 
+const HEADING_GRADIENT =
+  'linear-gradient(270deg, #2563eb 0%, #4f46e5 20%, #f97316 45%, #f43f5e 65%, #9333ea 85%, #2563eb 100%)';
+
+const gradientTextStyle: React.CSSProperties = {
+  backgroundImage: HEADING_GRADIENT,
+  backgroundSize: '200% 200%',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  color: 'transparent',
+};
+
 const UKFlag = () => (
   <svg width="28" height="18" viewBox="0 0 60 40" aria-hidden>
     <rect width="60" height="40" fill="#012169" />
@@ -146,7 +158,9 @@ export default function StudyDestinationsMarquee() {
   return (
     <section className="placedly-destinations-section" aria-label="Study abroad destinations">
       <FadeUp className="placedly-destinations-header">
-        <h2 className="placedly-destinations-title">Study Abroad Destinations We Support</h2>
+        <h2 className="placedly-destinations-title" style={gradientTextStyle}>
+          Study Abroad Destinations We Support
+        </h2>
         <p className="placedly-destinations-sub">
           From UK&apos;s post-study work visa to Germany&apos;s zero tuition fees — we match you
           to the right country, right university, right course.

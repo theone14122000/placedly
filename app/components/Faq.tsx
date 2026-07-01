@@ -3,6 +3,18 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
+const HEADING_GRADIENT =
+  'linear-gradient(270deg, #2563eb 0%, #4f46e5 20%, #f97316 45%, #f43f5e 65%, #9333ea 85%, #2563eb 100%)';
+
+const gradientTextStyle: React.CSSProperties = {
+  backgroundImage: HEADING_GRADIENT,
+  backgroundSize: '200% 200%',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  color: 'transparent',
+};
+
 const DEFAULT_FAQS = [
   {
     q: 'What services does Placedly offer?',
@@ -60,9 +72,15 @@ function FaqItem({
         aria-expanded={open}
       >
         <span className="placedly-faq-question">{q}</span>
-        <span className="placedly-faq-toggle" aria-hidden>
-          {open ? '−' : '+'}
-        </span>
+        <motion.span 
+          className="placedly-faq-toggle" 
+          aria-hidden
+          initial={false}
+          animate={{ rotate: open ? 45 : 0 }}
+          transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+        >
+          +
+        </motion.span>
       </button>
 
       <AnimatePresence initial={false}>
@@ -72,7 +90,7 @@ function FaqItem({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
           >
             <div className="placedly-faq-answer">
               {paragraphs.length > 1 ? (
@@ -115,7 +133,9 @@ export default function Faq() {
       <div className="container placedly-faq-container">
         <div className="placedly-faq-layout">
           <div className="placedly-faq-heading-col">
-            <h2 className="placedly-faq-title">Frequently asked questions</h2>
+            <h2 className="placedly-faq-title" style={gradientTextStyle}>
+              Frequently asked questions
+            </h2>
           </div>
 
           <div className="placedly-faq-list">
@@ -131,6 +151,130 @@ export default function Faq() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        /* --- Scoped Design Improvements --- */
+        
+        .placedly-faq-section {
+          background: #fff;
+          padding: 4rem 1rem;
+        }
+        
+        .placedly-faq-title {
+          font-size: 2.5rem;
+          line-height: 1.1;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+          margin-bottom: 1rem;
+        }
+        
+        /* Layout Grid */
+        .placedly-faq-layout {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+        
+        @media (min-width: 900px) {
+          .placedly-faq-layout {
+            grid-template-columns: 280px 1fr;
+            align-items: start;
+          }
+          .placedly-faq-heading-col {
+            position: sticky;
+            top: 6rem;
+          }
+        }
+
+        /* FAQ Item Card */
+        .placedly-faq-item {
+          border: 1px solid rgba(0, 0, 0, 0.08);
+          border-radius: 16px;
+          background: #fff;
+          margin-bottom: 1rem;
+          overflow: hidden;
+          transition: all 0.25s ease;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        
+        .placedly-faq-item:hover {
+          border-color: rgba(37, 99, 235, 0.15);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+
+        .placedly-faq-item.is-open {
+          border-left: 4px solid #2563eb; /* Matches the start of the gradient */
+          box-shadow: 0 12px 24px rgba(37, 99, 235, 0.08);
+          border-color: transparent;
+        }
+        
+        /* Trigger Button */
+        .placedly-faq-trigger {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          padding: 1.5rem;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          text-align: left;
+          transition: background 0.2s ease;
+        }
+        
+        .placedly-faq-trigger:hover {
+          background: #fafafa;
+        }
+        
+        .placedly-faq-question {
+          font-size: 1.125rem;
+          font-weight: 600;
+          color: #0f172a;
+          line-height: 1.4;
+          padding-right: 1rem;
+        }
+        
+        /* Toggle Icon */
+        .placedly-faq-toggle {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 2rem;
+          height: 2rem;
+          border-radius: 50%;
+          background: #f1f5f9;
+          color: #475569;
+          font-size: 1.25rem;
+          font-weight: 500;
+          flex-shrink: 0;
+          transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .placedly-faq-item.is-open .placedly-faq-toggle {
+          background: #2563eb;
+          color: #fff;
+        }
+
+        /* Answer Area */
+        .placedly-faq-answer-wrap {
+          overflow: hidden;
+        }
+        
+        .placedly-faq-answer {
+          padding: 0 1.5rem 1.5rem 1.5rem;
+        }
+
+        .placedly-faq-answer p {
+          margin: 0 0 1rem 0;
+          color: #475569;
+          line-height: 1.65;
+          font-size: 1rem;
+        }
+        
+        .placedly-faq-answer p:last-child {
+          margin-bottom: 0;
+        }
+      `}</style>
     </section>
   );
 }

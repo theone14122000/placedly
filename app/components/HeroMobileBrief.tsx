@@ -7,16 +7,15 @@ import HeroBgVideo from './HeroBgVideo';
 
 type HeroCms = { [k: string]: string };
 
-/** Five profile circles — 2 tilted left (lower), 1 center, 2 tilted right (higher) */
 const SCATTER_AVATARS = [
   { src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face', top: '52%', left: '12%', size: 26, rotate: -14, blur: true },
-  { src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&crop=face', top: '4%', left: '56%', size: 34, center: true },
+  { src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&crop=face', top: '4%',  left: '56%', size: 34, center: true },
   { src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop&crop=face', top: '70%', left: '26%', size: 24, rotate: -10 },
   { src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&crop=face', top: '16%', left: '89%', size: 24, rotate: 10 },
 ] as const;
 
 const HERO_CARD_AVATARS = {
-  left: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=96&h=96&fit=crop&crop=face',
+  left:  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=96&h=96&fit=crop&crop=face',
   right: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face',
 } as const;
 
@@ -31,25 +30,48 @@ const MOBILE_SUBLINE = (
   </>
 );
 
+/* ─────────────────────────────────────────────────────────
+   Identical gradient to desktop Hero — self-contained so
+   no cross-file import is needed.
+───────────────────────────────────────────────────────── */
+const GRADIENT_STYLE: React.CSSProperties = {
+  backgroundImage:
+    'linear-gradient(270deg, #2563eb, #7c8ff0, #fb923c, #f43f5e, #a855f7, #2563eb)',
+  backgroundSize: '300% 300%',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  animation: 'placedly-gradient-shift 6s ease infinite',
+  display: 'inline',
+};
+
 export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
-  const admitInterest = 'Early stage AI';
-  const offerName = 'Amber';
-  const recommendName = 'Daniel';
+  const admitInterest  = 'Early stage AI';
+  const offerName      = 'Amber';
+  const recommendName  = 'Daniel';
 
   return (
     <div className="placedly-hero-mobile-brief" aria-label="Mobile hero">
       <HeroGradientBg />
       <HeroBgVideo />
+
       <div className="placedly-lift-hero-copy">
         <motion.h1
           className="placedly-liftoff-m-headline"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          /* let the gradient override any solid fill the CSS class sets */
+          style={{ WebkitTextFillColor: 'initial', color: 'inherit' }}
         >
+          {/* plain first line — inherits heading colour from CSS */}
           Grow your career,
           <br />
-          through people you trust.
+
+          {/* gradient second line — matches desktop exactly */}
+          <span style={GRADIENT_STYLE}>
+            through people you trust.
+          </span>
         </motion.h1>
 
         <motion.p
@@ -71,26 +93,36 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
         <div className="placedly-lift-mobile-scene" aria-hidden>
           {SCATTER_AVATARS.map((person, i) => {
             const isCenter = 'center' in person && person.center;
-            const rotate = 'rotate' in person ? person.rotate : 0;
-            const isBlur = 'blur' in person && person.blur;
+            const rotate   = 'rotate' in person ? person.rotate : 0;
+            const isBlur   = 'blur'   in person && person.blur;
             return (
-            <div
-              key={`${person.src}-${i}`}
-              className={`placedly-lift-mobile-bokeh${isCenter ? ' is-center' : ''}${isBlur ? ' is-blur' : ''}`}
-              style={{
-                top: person.top,
-                left: person.left,
-                width: person.size,
-                height: person.size,
-                zIndex: isCenter ? 6 : i + 2,
-                transform: isCenter ? 'translateX(-50%)' : `rotate(${rotate}deg)`,
-              }}
-            >
-              <img src={person.src} alt="" width={person.size} height={person.size} loading="lazy" decoding="async" />
-            </div>
+              <div
+                key={`${person.src}-${i}`}
+                className={`placedly-lift-mobile-bokeh${isCenter ? ' is-center' : ''}${isBlur ? ' is-blur' : ''}`}
+                style={{
+                  top:    person.top,
+                  left:   person.left,
+                  width:  person.size,
+                  height: person.size,
+                  zIndex: isCenter ? 6 : i + 2,
+                  transform: isCenter
+                    ? 'translateX(-50%)'
+                    : `rotate(${rotate}deg)`,
+                }}
+              >
+                <img
+                  src={person.src}
+                  alt=""
+                  width={person.size}
+                  height={person.size}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             );
           })}
 
+          {/* Left floating card */}
           <motion.div
             className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-left"
             animate={{ y: [0, -5, 0] }}
@@ -116,6 +148,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             </p>
           </motion.div>
 
+          {/* Recommendation pill */}
           <motion.div
             className="placedly-lift-mobile-rec"
             animate={{ y: [0, -4, 0] }}
@@ -128,6 +161,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             </span>
           </motion.div>
 
+          {/* Right floating card */}
           <motion.div
             className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-right"
             animate={{ y: [0, 5, 0] }}
@@ -154,6 +188,15 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Keyframe — identical name to desktop, browser deduplicates automatically */}
+      <style>{`
+        @keyframes placedly-gradient-shift {
+          0%   { background-position: 0%   50%; }
+          50%  { background-position: 100% 50%; }
+          100% { background-position: 0%   50%; }
+        }
+      `}</style>
     </div>
   );
 }

@@ -29,6 +29,30 @@ type TabDef = {
   accent: Accent;
 };
 
+/* ══════════════════════════════════════════════════════════
+   Shared brand gradient — Blue → Indigo → Orange → Rose → Purple → Blue
+   Identical to Hero.tsx / HeroMobileBrief.tsx
+══════════════════════════════════════════════════════════ */
+const GRADIENT_STYLE: React.CSSProperties = {
+  backgroundImage:
+    'linear-gradient(270deg, #2563eb, #7c8ff0, #fb923c, #f43f5e, #a855f7, #2563eb)',
+  backgroundSize: '300% 300%',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  animation: 'placedly-gradient-shift 6s ease infinite',
+  display: 'inline',
+};
+
+const GRADIENT_KEYFRAMES = `
+  @keyframes placedly-gradient-shift {
+    0%   { background-position: 0%   50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0%   50%; }
+  }
+`;
+
+/* ─── Defaults ─── */
 const CAREER_DEFAULTS = [
   {
     title: 'Understand You First',
@@ -80,7 +104,7 @@ const ACCENTS: Record<string, Accent> = {
   visa:    makeAccent('#0ea5e9', '#14b8a6', 'rgba(14,165,233,0.10)'),
 };
 
-/* ─── Visuals (unchanged) ─── */
+/* ─── Visuals ─── */
 function VisualCareer1() {
   return (
     <div className="placedly-hiw-visual placedly-hiw-visual--warm">
@@ -251,7 +275,6 @@ function buildTabs(cms: Cms): TabDef[] {
   });
 }
 
-/* ─── How long each tab stays visible ─── */
 const INTERVAL_MS = 2200;
 
 /* ════════════════════════════════════════
@@ -261,131 +284,142 @@ function TabBar({
   tabs,
   activeId,
   onSelect,
-  tickKey,          // bumped every interval → remounts progress bar
+  tickKey,
 }: {
   tabs: TabDef[];
   activeId: string;
   onSelect: (id: string) => void;
   tickKey: number;
 }) {
-  const activeIndex  = Math.max(0, tabs.findIndex((t) => t.id === activeId));
-  const trackRef     = useRef<HTMLDivElement>(null);
-  const activeBtnRef = useRef<HTMLButtonElement>(null);
-
-  /* keep active tab scrolled into view (mobile) */
-  useEffect(() => {
-    const track = trackRef.current;
-    const btn   = activeBtnRef.current;
-    if (!track || !btn) return;
-    track.scrollTo({
-      left: btn.offsetLeft - (track.clientWidth - btn.clientWidth) / 2,
-      behavior: 'smooth',
-    });
-  }, [activeIndex]);
-
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
+    <>
+      {/* Desktop — single pill row */}
+      <div className="hiw-tabbar-desktop">
+        <div
+          role="tablist"
+          aria-label="How Placedly works"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+            padding: '5px',
+            borderRadius: '999px',
+            background: 'rgba(15,23,42,0.05)',
+            border: '1px solid rgba(15,23,42,0.08)',
+          }}
+        >
+          {tabs.map((tab) => (
+            <TabButton key={tab.id} tab={tab} active={tab.id === activeId} tickKey={tickKey} onSelect={onSelect} />
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile — 2-row × 3-col grid */}
       <div
-        ref={trackRef}
+        className="hiw-tabbar-mobile"
         role="tablist"
         aria-label="How Placedly works"
         style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '4px',
-          padding: '5px',
-          borderRadius: '999px',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '8px',
+          padding: '6px',
+          borderRadius: '20px',
           background: 'rgba(15,23,42,0.05)',
           border: '1px solid rgba(15,23,42,0.08)',
-          overflowX: 'auto',
-          scrollbarWidth: 'none',
-          maxWidth: '100%',
         }}
       >
-        {tabs.map((tab) => {
-          const active = tab.id === activeId;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              ref={active ? activeBtnRef : undefined}
-              onClick={() => onSelect(tab.id)}
-              style={{
-                position: 'relative',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '8px 16px',
-                borderRadius: '999px',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: active ? 700 : 500,
-                whiteSpace: 'nowrap',
-                background: active ? '#ffffff' : 'transparent',
-                color: active ? tab.accent.from : 'rgba(15,23,42,0.50)',
-                boxShadow: active
-                  ? `0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px ${tab.accent.border}`
-                  : 'none',
-                transition: 'background 0.3s, color 0.3s, box-shadow 0.3s',
-                overflow: 'hidden',
-              }}
-            >
-              <tab.Icon
-                size={14}
-                strokeWidth={2.2}
-                aria-hidden
-                style={{
-                  color: active ? tab.accent.from : 'rgba(15,23,42,0.35)',
-                  transition: 'color 0.3s',
-                  flexShrink: 0,
-                }}
-              />
-
-              {/* gradient label when active */}
-              <span
-                style={
-                  active
-                    ? {
-                        backgroundImage: `linear-gradient(135deg, ${tab.accent.from}, ${tab.accent.to})`,
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                      }
-                    : undefined
-                }
-              >
-                {tab.label}
-              </span>
-
-              {/* ── progress bar — only on active tab, key forces remount each tick ── */}
-              {active && (
-                <motion.span
-                  key={`${tab.id}-${tickKey}`}
-                  aria-hidden
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: INTERVAL_MS / 1000, ease: 'linear' }}
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    height: '3px',
-                    transformOrigin: 'left',
-                    borderRadius: '0 0 999px 999px',
-                    background: `linear-gradient(90deg, ${tab.accent.from}, ${tab.accent.to})`,
-                    opacity: 0.6,
-                  }}
-                />
-              )}
-            </button>
-          );
-        })}
+        {tabs.map((tab) => (
+          <TabButton key={tab.id} tab={tab} active={tab.id === activeId} tickKey={tickKey} onSelect={onSelect} mobile />
+        ))}
       </div>
-    </div>
+
+      <style>{`
+        .hiw-tabbar-desktop { display: flex; justify-content: center; margin-bottom: 28px; }
+        .hiw-tabbar-mobile  { display: none; margin-bottom: 24px; }
+        @media (max-width: 639px) {
+          .hiw-tabbar-desktop { display: none; }
+          .hiw-tabbar-mobile  { display: grid; }
+        }
+      `}</style>
+    </>
+  );
+}
+
+function TabButton({
+  tab, active, tickKey, onSelect, mobile = false,
+}: {
+  tab: TabDef; active: boolean; tickKey: number;
+  onSelect: (id: string) => void; mobile?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={() => onSelect(tab.id)}
+      style={{
+        position: 'relative',
+        display: 'flex',
+        flexDirection: mobile ? 'column' : 'row',
+        alignItems: 'center',
+        justifyContent: mobile ? 'center' : 'flex-start',
+        gap: mobile ? '4px' : '6px',
+        padding: mobile ? '10px 6px' : '8px 16px',
+        borderRadius: mobile ? '14px' : '999px',
+        border: 'none',
+        cursor: 'pointer',
+        fontSize: mobile ? '11px' : '13px',
+        fontWeight: active ? 700 : 500,
+        whiteSpace: 'nowrap',
+        textAlign: 'center',
+        background: active ? '#ffffff' : 'transparent',
+        color: active ? tab.accent.from : 'rgba(15,23,42,0.50)',
+        boxShadow: active ? `0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px ${tab.accent.border}` : 'none',
+        transition: 'background 0.3s, color 0.3s, box-shadow 0.3s',
+        overflow: 'hidden',
+        width: mobile ? '100%' : undefined,
+      }}
+    >
+      <tab.Icon
+        size={mobile ? 16 : 14}
+        strokeWidth={2.2}
+        aria-hidden
+        style={{ color: active ? tab.accent.from : 'rgba(15,23,42,0.35)', transition: 'color 0.3s', flexShrink: 0 }}
+      />
+      <span
+        style={
+          active
+            ? {
+                backgroundImage: `linear-gradient(135deg, ${tab.accent.from}, ${tab.accent.to})`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                lineHeight: 1.2,
+              }
+            : { lineHeight: 1.2 }
+        }
+      >
+        {tab.label}
+      </span>
+
+      {active && (
+        <motion.span
+          key={`${tab.id}-${tickKey}`}
+          aria-hidden
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: INTERVAL_MS / 1000, ease: 'linear' }}
+          style={{
+            position: 'absolute', left: 0, right: 0, bottom: 0,
+            height: '3px', transformOrigin: 'left',
+            borderRadius: '0 0 999px 999px',
+            background: `linear-gradient(90deg, ${tab.accent.from}, ${tab.accent.to})`,
+            opacity: 0.6,
+          }}
+        />
+      )}
+    </button>
   );
 }
 
@@ -402,16 +436,12 @@ function TabPanel({ tab }: { tab: TabDef }) {
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
       style={{ position: 'relative' }}
     >
-      {/* soft glow behind the panel */}
       <div
         aria-hidden
         style={{
-          position: 'absolute',
-          inset: '-30px',
+          position: 'absolute', inset: '-30px', zIndex: 0, pointerEvents: 'none',
           background: `radial-gradient(circle at 25% 20%, ${tab.accent.from}22, transparent 60%)`,
           filter: 'blur(50px)',
-          zIndex: 0,
-          pointerEvents: 'none',
         }}
       />
 
@@ -420,23 +450,31 @@ function TabPanel({ tab }: { tab: TabDef }) {
       </div>
 
       <div className="placedly-hiw-panel-copy" style={{ position: 'relative', zIndex: 1 }}>
+        {/*
+          h3 panel title — accent left-bar kept, text now uses the
+          shared brand gradient instead of the CSS class solid colour.
+        */}
         <h3
           className="placedly-hiw-panel-title"
-          style={{ position: 'relative', paddingLeft: '16px' }}
+          style={{
+            position: 'relative',
+            paddingLeft: '16px',
+            /* reset any solid fill the CSS class may set */
+            color: 'inherit',
+            WebkitTextFillColor: 'initial',
+          }}
         >
+          {/* left accent bar — still uses per-tab accent colour */}
           <span
             aria-hidden
             style={{
-              position: 'absolute',
-              left: 0,
-              top: '4px',
-              bottom: '4px',
-              width: '4px',
-              borderRadius: '4px',
+              position: 'absolute', left: 0, top: '4px', bottom: '4px',
+              width: '4px', borderRadius: '4px',
               background: `linear-gradient(180deg, ${tab.accent.from}, ${tab.accent.to})`,
             }}
           />
-          {tab.title}
+          {/* title text — brand gradient */}
+          <span style={GRADIENT_STYLE}>{tab.title}</span>
         </h3>
 
         <p className="placedly-hiw-panel-desc">{tab.details}</p>
@@ -466,39 +504,32 @@ function TabPanel({ tab }: { tab: TabDef }) {
 export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
   const tabs = useMemo(() => buildTabs(cms), [cms]);
 
-  /*
-   * activeIndex — drives both the visible tab AND the interval.
-   * We store an index (not id) so the interval arithmetic is trivial.
-   */
   const [activeIndex, setActiveIndex] = useState(0);
-  const [tickKey, setTickKey]         = useState(0);   // incremented every advance
+  const [tickKey, setTickKey]         = useState(0);
   const intervalRef                   = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const activeTab = tabs[activeIndex] ?? tabs[0];
 
-  /* ── start / restart the interval ── */
   const startInterval = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % tabs.length);
-      setTickKey((k) => k + 1);           // remount progress bar
+      setTickKey((k) => k + 1);
     }, INTERVAL_MS);
   };
 
-  /* mount → start; unmount → clear */
   useEffect(() => {
     startInterval();
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabs.length]);
 
-  /* manual tab click — jump to that tab, reset the interval from scratch */
   const handleSelect = (id: string) => {
     const idx = tabs.findIndex((t) => t.id === id);
     if (idx === -1) return;
     setActiveIndex(idx);
     setTickKey((k) => k + 1);
-    startInterval();                       // restart so it counts from NOW
+    startInterval();
   };
 
   const title =
@@ -522,7 +553,17 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
     >
       <div className="placedly-hiw-container">
         <FadeUp className="placedly-hiw-header">
-          <h2 className="placedly-hiw-title">{title}</h2>
+          {/*
+            Section h2 — wrap the whole title in the brand gradient.
+            The CSS class handles font-size / weight / margin.
+            We override only the fill colour here.
+          */}
+          <h2
+            className="placedly-hiw-title"
+            style={{ color: 'inherit', WebkitTextFillColor: 'initial' }}
+          >
+            <span style={GRADIENT_STYLE}>{title}</span>
+          </h2>
           <p className="placedly-hiw-subtitle">{subtitle}</p>
         </FadeUp>
 
@@ -546,7 +587,7 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
       </div>
 
       <style>{`
-        [role="tablist"]::-webkit-scrollbar { display: none; }
+        ${GRADIENT_KEYFRAMES}
 
         .placedly-hiw-mock-tag {
           background: var(--hiw-accent-soft) !important;

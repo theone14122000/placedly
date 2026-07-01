@@ -14,6 +14,7 @@ import {
   Sparkles,
   Target,
   X,
+  ChevronDown,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -326,7 +327,6 @@ function RotatingHeadlineBanner() {
 
 export default function UtilityToolsSection() {
   const [category, setCategory] = useState<Category | 'all'>('all');
-  const [query, setQuery] = useState('');
   const [activeId, setActiveId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [phase, setPhase] = useState<'idle' | 'loading' | 'done'>('idle');
@@ -339,16 +339,11 @@ export default function UtilityToolsSection() {
     : CATEGORY_META[category];
 
   const filteredTools = useMemo(() => {
-    const q = query.trim().toLowerCase();
     return TOOLS.filter((t) => {
       const matchesCategory = category === 'all' || t.category === category;
-      const matchesQuery =
-        !q ||
-        t.title.toLowerCase().includes(q) ||
-        t.description.toLowerCase().includes(q);
-      return matchesCategory && matchesQuery;
+      return matchesCategory;
     });
-  }, [category, query]);
+  }, [category]);
 
   const typedResult = useTypewriter(active?.sampleResult ?? '', phase === 'done');
 
@@ -500,16 +495,12 @@ export default function UtilityToolsSection() {
         {/* Rotating headline banner — Grow Career / Go Global / Go Placedly */}
         <RotatingHeadlineBanner />
 
-        {/* Search + Category filter */}
+        {/* Category filter (only filter bar) */}
         <div
-          className="tools-controls"
           style={{
             display: 'flex',
-            flexWrap: 'wrap',
-            gap: '12px',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 'clamp(20px, 3vw, 28px)',
+            justifyContent: 'center',
+            marginBottom: 'clamp(24px, 3vw, 32px)',
           }}
         >
           <div
@@ -522,7 +513,7 @@ export default function UtilityToolsSection() {
               gap: '4px',
               background: '#fff',
               padding: '6px',
-              borderRadius: '14px',
+              borderRadius: '999px', // Pill shape
               boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
               border: '1px solid rgba(0,0,0,0.05)',
               flexWrap: 'wrap',
@@ -540,8 +531,8 @@ export default function UtilityToolsSection() {
                   onClick={() => setCategory(f)}
                   style={{
                     position: 'relative',
-                    padding: '10px 18px',
-                    borderRadius: '10px',
+                    padding: '10px 20px',
+                    borderRadius: '999px', // Pill shape for buttons
                     border: 'none',
                     fontWeight: 600,
                     fontSize: '13.5px',
@@ -550,6 +541,7 @@ export default function UtilityToolsSection() {
                     color: isActive ? '#fff' : '#666',
                     zIndex: 1,
                     whiteSpace: 'nowrap',
+                    transition: 'color 0.3s ease',
                   }}
                 >
                   {isActive && (
@@ -558,7 +550,7 @@ export default function UtilityToolsSection() {
                       style={{
                         position: 'absolute',
                         inset: 0,
-                        borderRadius: '10px',
+                        borderRadius: '999px',
                         background: `linear-gradient(135deg, ${meta.from}, ${meta.to})`,
                         zIndex: -1,
                         boxShadow: `0 8px 18px ${meta.soft}`,
@@ -571,230 +563,122 @@ export default function UtilityToolsSection() {
               );
             })}
           </div>
-
-          <div
-            className="tools-search"
-            style={{
-              position: 'relative',
-              flex: '1 1 240px',
-              maxWidth: '320px',
-            }}
-          >
-            <Search
-              size={16}
-              strokeWidth={2}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '14px',
-                transform: 'translateY(-50%)',
-                color: '#999',
-                pointerEvents: 'none',
-              }}
-            />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search tools…"
-              style={{
-                width: '100%',
-                padding: '12px 14px 12px 38px',
-                borderRadius: '12px',
-                border: '1px solid rgba(0,0,0,0.08)',
-                background: '#fff',
-                fontSize: '14px',
-                color: '#111',
-                outline: 'none',
-                boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
-              }}
-            />
-          </div>
         </div>
 
-        {/* Layout: grid + aside — rebalanced so the right column stops ballooning */}
-        <div
-          className="tools-layout"
+        {/* Pill-shaped toggle bar with all tools */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1.6fr) minmax(280px, 380px)',
-            gap: 'clamp(18px, 2.2vw, 28px)',
-            alignItems: 'start',
+            marginBottom: 'clamp(20px, 3vw, 28px)',
           }}
         >
-          {/* Cards grid */}
-          <motion.div layout className="tools-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px' }}>
-            <AnimatePresence mode="popLayout">
-              {filteredTools.length === 0 ? (
-                <motion.p
-                  key="empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  style={{ gridColumn: '1 / -1', color: '#888', textAlign: 'center', padding: '32px 0' }}
+          <div
+            className="tools-toggle-bar"
+            style={{
+              background: '#fff',
+              borderRadius: '999px',
+              padding: '8px',
+              boxShadow: '0 6px 24px rgba(0,0,0,0.08)',
+              border: '1px solid rgba(0,0,0,0.06)',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '6px',
+              justifyContent: 'center',
+              alignItems: 'center',
+              maxWidth: '100%',
+              margin: '0 auto',
+            }}
+          >
+            {filteredTools.map((tool) => {
+              const meta = CATEGORY_META[tool.category];
+              const isActive = activeId === tool.id;
+              return (
+                <motion.button
+                  key={tool.id}
+                  type="button"
+                  onClick={() => openTool(tool)}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  style={{
+                    position: 'relative',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '10px 18px',
+                    borderRadius: '999px',
+                    border: 'none',
+                    background: isActive
+                      ? `linear-gradient(135deg, ${meta.from}, ${meta.to})`
+                      : 'rgba(0,0,0,0.02)',
+                    color: isActive ? '#fff' : '#333',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: isActive ? `0 6px 16px ${meta.soft}` : 'none',
+                  }}
                 >
-                  No tools match “{query}”. Try another search.
-                </motion.p>
-              ) : (
-                filteredTools.map((tool, i) => {
-                  const meta = CATEGORY_META[tool.category];
-                  const isActive = activeId === tool.id;
-                  return (
-                    <motion.button
-                      key={tool.id}
-                      layout
-                      type="button"
-                      onClick={() => openTool(tool)}
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.32, delay: i * 0.02 }}
-                      whileHover={{ y: -4 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="tools-card"
+                  <tool.Icon size={16} strokeWidth={2} />
+                  <span className="tool-title-desktop">{tool.title}</span>
+                  <span className="tool-title-mobile">
+                    {tool.title.split(' ')[0]}
+                  </span>
+                  {tool.popular && (
+                    <span
                       style={{
-                        position: 'relative',
-                        textAlign: 'left',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '8px',
-                        padding: '18px',
-                        borderRadius: '18px',
-                        border: isActive
-                          ? `1.5px solid ${meta.from}`
-                          : '1px solid rgba(0,0,0,0.06)',
-                        background: isActive ? meta.soft : '#fff',
-                        cursor: 'pointer',
-                        boxShadow: isActive
-                          ? `0 12px 30px ${meta.soft}`
-                          : '0 4px 16px rgba(0,0,0,0.04)',
-                        transition: 'border 0.25s ease, background 0.25s ease, box-shadow 0.25s ease',
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        letterSpacing: '0.5px',
+                        background: isActive ? 'rgba(255,255,255,0.25)' : meta.soft,
+                        color: isActive ? '#fff' : meta.from,
+                        borderRadius: '999px',
+                        padding: '2px 6px',
                       }}
                     >
-                      {tool.popular && (
-                        <span
-                          style={{
-                            position: 'absolute',
-                            top: '14px',
-                            right: '14px',
-                            fontSize: '10px',
-                            fontWeight: 700,
-                            letterSpacing: '0.5px',
-                            color: meta.from,
-                            background: '#fff',
-                            border: `1px solid ${meta.soft}`,
-                            borderRadius: '999px',
-                            padding: '3px 8px',
-                          }}
-                        >
-                          POPULAR
-                        </span>
-                      )}
-                      <span
-                        aria-hidden
-                        style={{
-                          width: '40px',
-                          height: '40px',
-                          borderRadius: '12px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          background: `linear-gradient(135deg, ${meta.from}, ${meta.to})`,
-                          color: '#fff',
-                          flexShrink: 0,
-                        }}
-                      >
-                        <tool.Icon size={19} strokeWidth={1.9} />
-                      </span>
-                      <span style={{ fontSize: '15px', fontWeight: 700, color: '#111', lineHeight: 1.3 }}>
-                        {tool.title}
-                      </span>
-                      <span style={{ fontSize: '13px', color: '#777', lineHeight: 1.5 }}>
-                        {tool.description}
-                      </span>
-                    </motion.button>
-                  );
-                })
-              )}
-            </AnimatePresence>
-          </motion.div>
+                      HOT
+                    </span>
+                  )}
+                  {isActive && (
+                    <ChevronDown
+                      size={14}
+                      strokeWidth={2.5}
+                      style={{
+                        marginLeft: '2px',
+                      }}
+                    />
+                  )}
+                </motion.button>
+              );
+            })}
+          </div>
+        </motion.div>
 
-          {/* Desktop sticky aside — capped width, no longer stretches into dead space */}
-          {!isMobile && (
-            <div
-              className="tools-aside"
+        {/* Tool panel appears beneath toggle bar */}
+        <AnimatePresence mode="wait">
+          {active && (
+            <motion.div
+              key={active.id}
+              initial={{ opacity: 0, y: -10, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: 'auto' }}
+              exit={{ opacity: 0, y: -10, height: 0 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                position: 'sticky',
-                top: '90px',
-                width: '100%',
-                maxWidth: '380px',
-                justifySelf: 'end',
+                overflow: 'hidden',
               }}
             >
-              <ToolPanel
-                active={active}
-                accent={accent}
-                input={input}
-                setInput={setInput}
-                phase={phase}
-                typedResult={typedResult}
-                runTool={runTool}
-                closePanel={closePanel}
-                variant="desktop"
-              />
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Mobile bottom-sheet modal */}
-      {isMobile && (
-        <AnimatePresence>
-          {active && (
-            <>
-              <motion.div
-                key="backdrop"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={closePanel}
+              <div
                 style={{
-                  position: 'fixed',
-                  inset: 0,
-                  background: 'rgba(0,0,0,0.45)',
-                  backdropFilter: 'blur(2px)',
-                  zIndex: 40,
-                }}
-              />
-              <motion.div
-                key="sheet"
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
-                transition={{ type: 'spring', stiffness: 320, damping: 34 }}
-                style={{
-                  position: 'fixed',
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  zIndex: 41,
-                  maxHeight: '88vh',
-                  overflowY: 'auto',
-                  borderRadius: '24px 24px 0 0',
+                  maxWidth: '900px',
+                  margin: '0 auto',
                   background: '#fff',
-                  padding: '20px 20px calc(24px + env(safe-area-inset-bottom))',
-                  boxShadow: '0 -20px 50px rgba(0,0,0,0.25)',
+                  borderRadius: '24px',
+                  padding: 'clamp(24px, 4vw, 36px)',
+                  boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
+                  border: `2px solid ${accent.from}22`,
                 }}
               >
-                <div
-                  aria-hidden
-                  style={{
-                    width: '40px',
-                    height: '4px',
-                    borderRadius: '2px',
-                    background: '#e5e5e5',
-                    margin: '0 auto 16px',
-                  }}
-                />
                 <ToolPanel
                   active={active}
                   accent={accent}
@@ -804,36 +688,35 @@ export default function UtilityToolsSection() {
                   typedResult={typedResult}
                   runTool={runTool}
                   closePanel={closePanel}
-                  variant="mobile"
                 />
-              </motion.div>
-            </>
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
-      )}
+      </div>
 
       <style>{`
         @media (max-width: 900px) {
-          .tools-layout {
-            grid-template-columns: 1fr !important;
-          }
-          .tools-grid {
-            grid-template-columns: 1fr !important;
-          }
           .tools-blob {
             display: none;
           }
-          .tools-controls {
-            flex-direction: column;
-            align-items: stretch !important;
+          .tools-toggle-bar {
+            padding: 6px !important;
+            gap: 4px !important;
           }
-          .tools-search {
-            max-width: 100% !important;
+          .tool-title-desktop {
+            display: none;
+          }
+          .tool-title-mobile {
+            display: inline;
           }
         }
-        @media (min-width: 601px) and (max-width: 900px) {
-          .tools-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
+        @media (min-width: 901px) {
+          .tool-title-desktop {
+            display: inline;
+          }
+          .tool-title-mobile {
+            display: none;
           }
         }
       `}</style>
@@ -852,7 +735,6 @@ function ToolPanel({
   typedResult,
   runTool,
   closePanel,
-  variant,
 }: {
   active: Tool | null;
   accent: Accent;
@@ -862,264 +744,246 @@ function ToolPanel({
   typedResult: string;
   runTool: () => void;
   closePanel: () => void;
-  variant: 'desktop' | 'mobile';
 }) {
+  if (!active) return null;
+
   return (
-    <AnimatePresence mode="wait">
-      {active ? (
-        <motion.div
-          key={active.id}
-          initial={{ opacity: 0, x: variant === 'desktop' ? 24 : 0, y: variant === 'mobile' ? 8 : 0 }}
-          animate={{ opacity: 1, x: 0, y: 0 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            position: 'relative',
-            background: variant === 'desktop' ? '#fff' : 'transparent',
-            borderRadius: '22px',
-            padding: variant === 'desktop' ? '24px' : '4px',
-            border: variant === 'desktop' ? '1px solid rgba(0,0,0,0.06)' : 'none',
-            boxShadow: variant === 'desktop' ? '0 20px 50px rgba(0,0,0,0.08)' : 'none',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <span
-                style={{
-                  width: '42px',
-                  height: '42px',
-                  borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
-                  color: '#fff',
-                  flexShrink: 0,
-                }}
-              >
-                <active.Icon size={20} strokeWidth={1.9} />
-              </span>
-              <div>
-                <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: accent.from, marginBottom: '2px' }}>
-                  Placedly AI
-                </p>
-                <h3
-                  style={{
-                    fontSize: '17px',
-                    fontWeight: 800,
-                    lineHeight: 1.3,
-                    ...headingGradientStyle,
-                  }}
-                >
-                  {active.title}
-                </h3>
-              </div>
-            </div>
-            {variant === 'desktop' && (
-              <button
-                type="button"
-                onClick={closePanel}
-                aria-label="Close tool"
-                style={{
-                  border: 'none',
-                  background: 'rgba(0,0,0,0.05)',
-                  width: '30px',
-                  height: '30px',
-                  borderRadius: '9px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  color: '#666',
-                  flexShrink: 0,
-                }}
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
-
-          <textarea
-            rows={variant === 'desktop' ? 4 : 3}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={active.placeholder}
+    <div style={{ position: 'relative' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          marginBottom: '20px',
+        }}
+      >
+        <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+          <span
             style={{
-              width: '100%',
-              resize: 'vertical',
-              padding: '14px',
-              borderRadius: '14px',
-              border: '1px solid rgba(0,0,0,0.1)',
-              fontSize: '14px',
-              lineHeight: 1.5,
-              color: '#111',
-              outline: 'none',
-              marginBottom: '12px',
-              fontFamily: 'inherit',
-            }}
-          />
-
-          <motion.button
-            type="button"
-            onClick={runTool}
-            disabled={phase === 'loading'}
-            whileHover={{ y: -2, boxShadow: `0 12px 28px ${accent.soft}` }}
-            whileTap={{ scale: 0.97 }}
-            style={{
-              width: '100%',
-              display: 'inline-flex',
+              width: '50px',
+              height: '50px',
+              borderRadius: '16px',
+              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '8px',
-              padding: '14px 24px',
               background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
               color: '#fff',
-              border: 'none',
-              borderRadius: '12px',
-              fontWeight: 700,
-              fontSize: '14.5px',
-              cursor: phase === 'loading' ? 'wait' : 'pointer',
-              opacity: phase === 'loading' ? 0.85 : 1,
+              flexShrink: 0,
+              boxShadow: `0 8px 20px ${accent.soft}`,
             }}
           >
-            {phase === 'loading' ? (
-              <>
-                <motion.span
-                  aria-hidden
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-                  style={{
-                    width: '15px',
-                    height: '15px',
-                    borderRadius: '50%',
-                    border: '2px solid rgba(255,255,255,0.4)',
-                    borderTopColor: '#fff',
-                    display: 'inline-block',
-                  }}
-                />
-                Analyzing…
-              </>
-            ) : (
-              <>
-                <Sparkles size={16} strokeWidth={2.25} aria-hidden />
-                {active.cta}
-              </>
-            )}
-          </motion.button>
-
-          <AnimatePresence>
-            {(phase === 'loading' || phase === 'done') && (
-              <motion.div
-                initial={{ opacity: 0, y: 10, height: 0 }}
-                animate={{ opacity: 1, y: 0, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-                style={{
-                  marginTop: '14px',
-                  padding: '16px',
-                  borderRadius: '14px',
-                  background: accent.soft,
-                  border: `1px solid ${accent.from}22`,
-                  overflow: 'hidden',
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.6px',
-                    color: accent.from,
-                    marginBottom: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                  }}
-                >
-                  <Sparkles size={12} strokeWidth={2.5} />
-                  AI Insight
-                </p>
-                {phase === 'loading' ? (
-                  <TypingDots />
-                ) : (
-                  <p style={{ fontSize: '14px', lineHeight: 1.6, color: '#222' }}>
-                    {typedResult}
-                    <motion.span
-                      animate={{ opacity: [1, 0] }}
-                      transition={{ duration: 0.6, repeat: Infinity }}
-                      style={{ display: 'inline-block', width: '2px', height: '14px', background: accent.from, marginLeft: '2px', verticalAlign: 'middle' }}
-                    />
-                  </p>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-      ) : (
-        variant === 'desktop' && (
-          <motion.div
-            key="placeholder"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{
-              background: '#fff',
-              borderRadius: '22px',
-              padding: '32px 22px',
-              border: '1px dashed rgba(0,0,0,0.12)',
-              textAlign: 'center',
-            }}
-          >
-            <span
+            <active.Icon size={24} strokeWidth={2} />
+          </span>
+          <div>
+            <p
               style={{
-                width: '52px',
-                height: '52px',
-                borderRadius: '14px',
-                background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 14px',
-                color: '#fff',
+                fontSize: '11px',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '1.2px',
+                color: accent.from,
+                marginBottom: '4px',
               }}
             >
-              <Sparkles size={22} strokeWidth={2} />
-            </span>
-            <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: accent.from, marginBottom: '6px' }}>
-              Placedly AI
+              Placedly AI Tool
             </p>
             <h3
               style={{
-                fontSize: '18px',
+                fontSize: 'clamp(1.1rem, 2vw, 1.4rem)',
                 fontWeight: 800,
-                marginBottom: '8px',
+                lineHeight: 1.3,
                 ...headingGradientStyle,
               }}
             >
-              Select a tool to begin
+              {active.title}
             </h3>
-            <p style={{ fontSize: '13.5px', color: '#777', lineHeight: 1.6 }}>
-              Choose any utility on the left — run a quick AI preview for resumes, interviews,
-              salaries, or study abroad planning.
+            <p
+              style={{
+                fontSize: '13px',
+                color: '#666',
+                marginTop: '4px',
+                lineHeight: 1.5,
+              }}
+            >
+              {active.description}
             </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={closePanel}
+          aria-label="Close tool"
+          style={{
+            border: 'none',
+            background: 'rgba(0,0,0,0.05)',
+            width: '36px',
+            height: '36px',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: '#666',
+            flexShrink: 0,
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(0,0,0,0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
+          }}
+        >
+          <X size={18} strokeWidth={2.5} />
+        </button>
+      </div>
+
+      <textarea
+        rows={5}
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder={active.placeholder}
+        style={{
+          width: '100%',
+          resize: 'vertical',
+          padding: '16px',
+          borderRadius: '16px',
+          border: `2px solid ${accent.from}22`,
+          fontSize: '14px',
+          lineHeight: 1.6,
+          color: '#111',
+          outline: 'none',
+          marginBottom: '16px',
+          fontFamily: 'inherit',
+          background: accent.soft,
+          transition: 'border-color 0.3s ease',
+        }}
+        onFocus={(e) => {
+          e.currentTarget.style.borderColor = accent.from;
+        }}
+        onBlur={(e) => {
+          e.currentTarget.style.borderColor = `${accent.from}22`;
+        }}
+      />
+
+      <motion.button
+        type="button"
+        onClick={runTool}
+        disabled={phase === 'loading'}
+        whileHover={{ y: -2, boxShadow: `0 12px 32px ${accent.soft}` }}
+        whileTap={{ scale: 0.98 }}
+        style={{
+          width: '100%',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '10px',
+          padding: '16px 28px',
+          background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
+          color: '#fff',
+          border: 'none',
+          borderRadius: '14px',
+          fontWeight: 700,
+          fontSize: '15px',
+          cursor: phase === 'loading' ? 'wait' : 'pointer',
+          opacity: phase === 'loading' ? 0.85 : 1,
+          boxShadow: `0 8px 24px ${accent.soft}`,
+        }}
+      >
+        {phase === 'loading' ? (
+          <>
+            <motion.span
+              aria-hidden
+              animate={{ rotate: 360 }}
+              transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+              style={{
+                width: '16px',
+                height: '16px',
+                borderRadius: '50%',
+                border: '2px solid rgba(255,255,255,0.3)',
+                borderTopColor: '#fff',
+                display: 'inline-block',
+              }}
+            />
+            Analyzing…
+          </>
+        ) : (
+          <>
+            <Sparkles size={18} strokeWidth={2.5} aria-hidden />
+            {active.cta}
+          </>
+        )}
+      </motion.button>
+
+      <AnimatePresence>
+        {(phase === 'loading' || phase === 'done') && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              marginTop: '20px',
+              padding: '20px',
+              borderRadius: '16px',
+              background: accent.soft,
+              border: `2px solid ${accent.from}33`,
+              overflow: 'hidden',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.8px',
+                color: accent.from,
+                marginBottom: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <Sparkles size={14} strokeWidth={2.5} />
+              AI Insight
+            </p>
+            {phase === 'loading' ? (
+              <TypingDots />
+            ) : (
+              <p style={{ fontSize: '14.5px', lineHeight: 1.7, color: '#222' }}>
+                {typedResult}
+                <motion.span
+                  animate={{ opacity: [1, 0] }}
+                  transition={{ duration: 0.6, repeat: Infinity }}
+                  style={{
+                    display: 'inline-block',
+                    width: '2px',
+                    height: '16px',
+                    background: accent.from,
+                    marginLeft: '3px',
+                    verticalAlign: 'middle',
+                  }}
+                />
+              </p>
+            )}
           </motion.div>
-        )
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
 function TypingDots() {
   return (
-    <div style={{ display: 'flex', gap: '5px', padding: '4px 0' }}>
+    <div style={{ display: 'flex', gap: '6px', padding: '6px 0' }}>
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
-          animate={{ y: [0, -5, 0] }}
+          animate={{ y: [0, -6, 0] }}
           transition={{ duration: 0.7, repeat: Infinity, delay: i * 0.15 }}
           style={{
-            width: '7px',
-            height: '7px',
+            width: '8px',
+            height: '8px',
             borderRadius: '50%',
             background: '#999',
             display: 'inline-block',

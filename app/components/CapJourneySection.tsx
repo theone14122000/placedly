@@ -280,11 +280,14 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                       <p className="placedly-cap-journey-card-body">{step.body}</p>
                       <Link
                         href={step.href}
-                        className="placedly-cap-journey-card-link"
+                        className="placedly-cap-journey-card-link placedly-cap-readmore"
                         style={gradientButtonStyle}
                       >
-                        Read More
-                        <ArrowRight size={16} strokeWidth={2.25} aria-hidden />
+                        <span className="placedly-cap-readmore-shine" aria-hidden />
+                        <span className="placedly-cap-readmore-label">Read More</span>
+                        <span className="placedly-cap-readmore-icon">
+                          <ArrowRight size={15} strokeWidth={2.5} aria-hidden />
+                        </span>
                       </Link>
                     </div>
                   </div>
@@ -294,6 +297,92 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           </div>
         </div>
       </div>
+
+      <style>{`
+        .placedly-cap-readmore {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 12px 20px 12px 24px;
+          border-radius: 999px;
+          font-weight: 600;
+          font-size: 14.5px;
+          letter-spacing: 0.01em;
+          border: 1px solid rgba(255,255,255,0.25);
+          box-shadow:
+            0 8px 20px rgba(37, 99, 235, 0.28),
+            0 2px 6px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255,255,255,0.25);
+          overflow: hidden;
+          isolation: isolate;
+          transition: transform 0.28s cubic-bezier(0.22,1,0.36,1),
+                      box-shadow 0.28s cubic-bezier(0.22,1,0.36,1),
+                      filter 0.28s ease,
+                      background-position 0.6s ease;
+        }
+
+        .placedly-cap-readmore:hover {
+          transform: translateY(-3px);
+          filter: brightness(1.07) saturate(1.05);
+          box-shadow:
+            0 14px 30px rgba(37, 99, 235, 0.38),
+            0 4px 10px rgba(0, 0, 0, 0.16),
+            inset 0 1px 0 rgba(255,255,255,0.3);
+          background-position: 100% 50%;
+        }
+
+        .placedly-cap-readmore:active {
+          transform: translateY(-1px) scale(0.98);
+          filter: brightness(0.98);
+        }
+
+        .placedly-cap-readmore-label {
+          position: relative;
+          z-index: 1;
+        }
+
+        .placedly-cap-readmore-icon {
+          position: relative;
+          z-index: 1;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.22);
+          transition: transform 0.3s cubic-bezier(0.22,1,0.36,1),
+                      background 0.3s ease;
+        }
+
+        .placedly-cap-readmore:hover .placedly-cap-readmore-icon {
+          transform: translateX(3px);
+          background: rgba(255, 255, 255, 0.32);
+        }
+
+        .placedly-cap-readmore-shine {
+          position: absolute;
+          top: 0;
+          left: -130%;
+          width: 55%;
+          height: 100%;
+          background: linear-gradient(
+            115deg,
+            transparent,
+            rgba(255, 255, 255, 0.5),
+            transparent
+          );
+          transform: skewX(-20deg);
+          transition: left 0.65s ease;
+          z-index: 0;
+          pointer-events: none;
+        }
+
+        .placedly-cap-readmore:hover .placedly-cap-readmore-shine {
+          left: 140%;
+        }
+      `}</style>
     </section>
   );
 }
