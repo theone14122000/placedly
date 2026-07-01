@@ -16,7 +16,6 @@ import { FadeUp } from './motion';
 import SeeDemoButton from './SeeDemoButton';
 
 type Cms = Record<string, string>;
-
 type Accent = { from: string; to: string; soft: string; border: string };
 
 type TabDef = {
@@ -68,21 +67,20 @@ const STUDY_DEFAULTS = [
   },
 ];
 
-/* ---------- accent palette — one distinct scheme per tab ---------- */
-
 function makeAccent(from: string, to: string, soft: string): Accent {
-  return { from, to, soft, border: `${from}40` };
+  return { from, to, soft, border: `${from}30` };
 }
 
 const ACCENTS: Record<string, Accent> = {
-  consult: makeAccent('#6366f1', '#8b5cf6', 'rgba(99,102,241,0.12)'),
-  prep: makeAccent('#3b82f6', '#06b6d4', 'rgba(59,130,246,0.12)'),
-  offer: makeAccent('#10b981', '#22c55e', 'rgba(16,185,129,0.12)'),
-  counsel: makeAccent('#f97316', '#fbbf24', 'rgba(249,115,22,0.12)'),
-  apply: makeAccent('#ec4899', '#f43f5e', 'rgba(236,72,153,0.12)'),
-  visa: makeAccent('#0ea5e9', '#14b8a6', 'rgba(14,165,233,0.12)'),
+  consult: makeAccent('#6366f1', '#8b5cf6', 'rgba(99,102,241,0.10)'),
+  prep:    makeAccent('#3b82f6', '#06b6d4', 'rgba(59,130,246,0.10)'),
+  offer:   makeAccent('#10b981', '#22c55e', 'rgba(16,185,129,0.10)'),
+  counsel: makeAccent('#f97316', '#fbbf24', 'rgba(249,115,22,0.10)'),
+  apply:   makeAccent('#ec4899', '#f43f5e', 'rgba(236,72,153,0.10)'),
+  visa:    makeAccent('#0ea5e9', '#14b8a6', 'rgba(14,165,233,0.10)'),
 };
 
+/* ─── Visuals ─── */
 function VisualCareer1() {
   return (
     <div className="placedly-hiw-visual placedly-hiw-visual--warm">
@@ -102,7 +100,7 @@ function VisualCareer1() {
             <li><span className="placedly-hiw-mock-dot placedly-hiw-mock-dot--optum" />Optum · Claims Lead</li>
             <li><span className="placedly-hiw-mock-dot placedly-hiw-mock-dot--wns" />WNS · Operations</li>
           </ul>
-      </div>
+        </div>
       </div>
     </div>
   );
@@ -239,12 +237,12 @@ const TAB_META: {
   defaults: typeof CAREER_DEFAULTS;
   Visual: () => React.ReactNode;
 }[] = [
-  { id: 'consult', label: 'Free Session', Icon: Users, cmsKey: '1', defaultIndex: 0, defaults: CAREER_DEFAULTS, Visual: VisualCareer1 },
-  { id: 'prep', label: 'Interview Prep', Icon: FileText, cmsKey: '3', defaultIndex: 1, defaults: CAREER_DEFAULTS, Visual: VisualCareer2 },
-  { id: 'offer', label: 'Offer & Fee', Icon: BadgeCheck, cmsKey: '5', defaultIndex: 2, defaults: CAREER_DEFAULTS, Visual: VisualCareer3 },
-  { id: 'counsel', label: 'Counselling', Icon: GraduationCap, cmsKey: 'Study1', defaultIndex: 0, defaults: STUDY_DEFAULTS, Visual: VisualStudy1 },
-  { id: 'apply', label: 'Applications', Icon: Send, cmsKey: 'Study2', defaultIndex: 1, defaults: STUDY_DEFAULTS, Visual: VisualStudy2 },
-  { id: 'visa', label: 'Visa Support', Icon: Plane, cmsKey: 'Study3', defaultIndex: 2, defaults: STUDY_DEFAULTS, Visual: VisualStudy3 },
+  { id: 'consult', label: 'Free Session',    Icon: Users,        cmsKey: '1',      defaultIndex: 0, defaults: CAREER_DEFAULTS, Visual: VisualCareer1 },
+  { id: 'prep',    label: 'Interview Prep',  Icon: FileText,     cmsKey: '3',      defaultIndex: 1, defaults: CAREER_DEFAULTS, Visual: VisualCareer2 },
+  { id: 'offer',   label: 'Offer & Fee',     Icon: BadgeCheck,   cmsKey: '5',      defaultIndex: 2, defaults: CAREER_DEFAULTS, Visual: VisualCareer3 },
+  { id: 'counsel', label: 'Counselling',     Icon: GraduationCap,cmsKey: 'Study1', defaultIndex: 0, defaults: STUDY_DEFAULTS,  Visual: VisualStudy1  },
+  { id: 'apply',   label: 'Applications',    Icon: Send,         cmsKey: 'Study2', defaultIndex: 1, defaults: STUDY_DEFAULTS,  Visual: VisualStudy2  },
+  { id: 'visa',    label: 'Visa Support',    Icon: Plane,        cmsKey: 'Study3', defaultIndex: 2, defaults: STUDY_DEFAULTS,  Visual: VisualStudy3  },
 ];
 
 function buildTabs(cms: Cms): TabDef[] {
@@ -253,7 +251,6 @@ function buildTabs(cms: Cms): TabDef[] {
     const isStudy = meta.cmsKey.startsWith('Study');
     const prefix = isStudy ? 'hp:hiwStudy' : 'hp:hiw';
     const key = isStudy ? meta.cmsKey.replace('Study', '') : meta.cmsKey;
-
     return {
       id: meta.id,
       label: meta.label,
@@ -267,8 +264,10 @@ function buildTabs(cms: Cms): TabDef[] {
   });
 }
 
-const AUTO_TAB_MS = 4000;
+/* 2.5 s auto-advance */
+const AUTO_TAB_MS = 2500;
 
+/* ─── Tab Bar ─── */
 function TabBar({
   tabs,
   activeId,
@@ -281,37 +280,49 @@ function TabBar({
   autoEnabled: boolean;
 }) {
   const activeIndex = Math.max(0, tabs.findIndex((t) => t.id === activeId));
-  const activeTab = tabs[activeIndex];
-  const trackRef = useRef<HTMLDivElement>(null);
+  const activeTab   = tabs[activeIndex];
+  const trackRef    = useRef<HTMLDivElement>(null);
   const activeBtnRef = useRef<HTMLButtonElement>(null);
 
+  /* keep active pill scrolled into view on mobile */
   useEffect(() => {
     const track = trackRef.current;
-    const btn = activeBtnRef.current;
+    const btn   = activeBtnRef.current;
     if (!track || !btn) return;
     const target = btn.offsetLeft - (track.clientWidth - btn.clientWidth) / 2;
     track.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
   }, [activeIndex]);
 
   return (
-    <div className="placedly-hiw-tabs-wrap">
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: '28px',
+        padding: '0 clamp(16px, 4vw, 32px)',
+      }}
+    >
+      {/* pill container */}
       <div
-        className="placedly-hiw-tabs"
+        ref={trackRef}
         role="tablist"
         aria-label="How Placedly works"
-        style={{ ['--hiw-tab-count' as string]: tabs.length }}
-        ref={trackRef}
+        style={{
+          position: 'relative',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '4px',
+          padding: '5px',
+          borderRadius: '999px',
+          background: 'rgba(15,23,42,0.05)',
+          border: '1px solid rgba(15,23,42,0.08)',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          maxWidth: '100%',
+        }}
       >
-        <span
-          className="placedly-hiw-tabs-indicator"
-          aria-hidden
-          style={{
-            transform: `translateX(${activeIndex * 100}%)`,
-            background: `linear-gradient(135deg, ${activeTab.accent.from}, ${activeTab.accent.to})`,
-            boxShadow: `0 8px 20px ${activeTab.accent.soft}`,
-          }}
-        />
-        {tabs.map((tab) => {
+        {tabs.map((tab, i) => {
           const active = tab.id === activeId;
           return (
             <button
@@ -320,26 +331,61 @@ function TabBar({
               role="tab"
               aria-selected={active}
               ref={active ? activeBtnRef : undefined}
-              className={`placedly-hiw-tab ${active ? 'is-active' : ''}`}
               onClick={() => onSelect(tab.id)}
-              style={{ position: 'relative', overflow: 'hidden' }}
+              style={{
+                position: 'relative',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 16px',
+                borderRadius: '999px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: active ? 700 : 500,
+                whiteSpace: 'nowrap',
+                /* active: white pill with gradient text; inactive: transparent */
+                background: active
+                  ? '#ffffff'
+                  : 'transparent',
+                color: active ? tab.accent.from : 'rgba(15,23,42,0.55)',
+                boxShadow: active
+                  ? `0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px ${tab.accent.border}`
+                  : 'none',
+                transition:
+                  'background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, font-weight 0.2s ease',
+                overflow: 'hidden',
+              }}
             >
-              <span
+              <tab.Icon
+                size={14}
+                strokeWidth={2.2}
+                aria-hidden
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  color: active ? '#fff' : tab.accent.from,
-                  transition: 'color 0.35s ease',
+                  color: active ? tab.accent.from : 'rgba(15,23,42,0.4)',
+                  transition: 'color 0.3s ease',
+                  flexShrink: 0,
                 }}
+              />
+              <span
+                style={
+                  active
+                    ? {
+                        backgroundImage: `linear-gradient(135deg, ${tab.accent.from}, ${tab.accent.to})`,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }
+                    : {}
+                }
               >
-                <tab.Icon size={14} strokeWidth={2.1} aria-hidden />
                 {tab.label}
               </span>
 
-              {/* auto-advance progress fill — only on active tab */}
+              {/* progress bar that fills the bottom of the pill */}
               {active && autoEnabled && (
                 <motion.span
+                  key={`${tab.id}-progress`}
                   aria-hidden
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
@@ -351,8 +397,9 @@ function TabBar({
                     bottom: 0,
                     height: '3px',
                     transformOrigin: 'left',
-                    background: 'rgba(255,255,255,0.85)',
                     borderRadius: '0 0 999px 999px',
+                    background: `linear-gradient(90deg, ${tab.accent.from}, ${tab.accent.to})`,
+                    opacity: 0.55,
                   }}
                 />
               )}
@@ -364,6 +411,7 @@ function TabBar({
   );
 }
 
+/* ─── Tab Panel ─── */
 function TabPanel({ tab }: { tab: TabDef }) {
   return (
     <motion.div
@@ -374,14 +422,13 @@ function TabPanel({ tab }: { tab: TabDef }) {
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
       style={{ position: 'relative' }}
     >
-      {/* accent glow — a "block" effect only, not the section background */}
       <div
         aria-hidden
         className="placedly-hiw-panel-glow"
         style={{
           position: 'absolute',
           inset: '-30px',
-          background: `radial-gradient(circle at 25% 20%, ${tab.accent.from}2e, transparent 60%)`,
+          background: `radial-gradient(circle at 25% 20%, ${tab.accent.from}28, transparent 60%)`,
           filter: 'blur(50px)',
           zIndex: 0,
           pointerEvents: 'none',
@@ -391,6 +438,7 @@ function TabPanel({ tab }: { tab: TabDef }) {
       <div className="placedly-hiw-panel-visual" style={{ position: 'relative', zIndex: 1 }}>
         <tab.Visual />
       </div>
+
       <div className="placedly-hiw-panel-copy" style={{ position: 'relative', zIndex: 1 }}>
         <h3
           className="placedly-hiw-panel-title"
@@ -410,7 +458,9 @@ function TabPanel({ tab }: { tab: TabDef }) {
           />
           {tab.title}
         </h3>
+
         <p className="placedly-hiw-panel-desc">{tab.details}</p>
+
         {tab.cta && (
           <Link
             href={tab.cta.href}
@@ -430,10 +480,12 @@ function TabPanel({ tab }: { tab: TabDef }) {
   );
 }
 
+/* ─── Section ─── */
 export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
-  const tabs = useMemo(() => buildTabs(cms), [cms]);
-  const [activeId, setActiveId] = useState(tabs[0]?.id ?? 'consult');
+  const tabs        = useMemo(() => buildTabs(cms), [cms]);
+  const [activeId, setActiveId]       = useState(tabs[0]?.id ?? 'consult');
   const [autoEnabled, setAutoEnabled] = useState(true);
+
   const activeTab = tabs.find((t) => t.id === activeId) ?? tabs[0];
 
   const goToIndex = useCallback(
@@ -447,26 +499,28 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
 
   const handleSelect = useCallback((id: string) => {
     setActiveId(id);
-  }, []);
+    /* pause auto for one full cycle then resume */
+    setAutoEnabled(false);
+    setTimeout(() => setAutoEnabled(true), AUTO_TAB_MS * tabs.length);
+  }, [tabs.length]);
 
+  /* honour prefers-reduced-motion */
   useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setAutoEnabled(!prefersReduced);
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setAutoEnabled(!mq.matches);
   }, []);
 
+  /* auto-advance every AUTO_TAB_MS */
   useEffect(() => {
     if (!tabs.length || !autoEnabled) return;
-
     const timer = window.setTimeout(() => {
       const idx = tabs.findIndex((t) => t.id === activeId);
       goToIndex(idx + 1);
     }, AUTO_TAB_MS);
-
     return () => window.clearTimeout(timer);
   }, [activeId, goToIndex, tabs, autoEnabled]);
 
-  const title =
-    cms['hp:hiwTitle'] ?? 'How Placedly Works — Simple, Transparent, Proven';
+  const title = cms['hp:hiwTitle'] ?? 'How Placedly Works — Simple, Transparent, Proven';
   const subtitle =
     cms['hp:hiwSubtitle'] ??
     'Placedly connects ambitious professionals to careers and global education. Built for candidates who want clarity, warm guidance, and results — not generic agency noise.';
@@ -477,9 +531,9 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
       id="how"
       style={
         {
-          '--hiw-accent-from': activeTab.accent.from,
-          '--hiw-accent-to': activeTab.accent.to,
-          '--hiw-accent-soft': activeTab.accent.soft,
+          '--hiw-accent-from':   activeTab.accent.from,
+          '--hiw-accent-to':     activeTab.accent.to,
+          '--hiw-accent-soft':   activeTab.accent.soft,
           '--hiw-accent-border': activeTab.accent.border,
         } as React.CSSProperties
       }
@@ -509,9 +563,11 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
         </div>
       </div>
 
-      {/* Color-scheme overrides — recolors accent-driven blocks only.
-          Section background, layout, spacing are untouched. */}
       <style>{`
+        /* hide scrollbar on tab track */
+        [role="tablist"]::-webkit-scrollbar { display: none; }
+
+        /* accent-driven mock recolours */
         .placedly-hiw-mock-tag {
           background: var(--hiw-accent-soft) !important;
           color: var(--hiw-accent-from) !important;
@@ -545,15 +601,6 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           color: var(--hiw-accent-from) !important;
           border-color: var(--hiw-accent-border) !important;
           transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
-        }
-        .placedly-hiw-tabs-indicator {
-          transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), background 0.5s ease, box-shadow 0.5s ease;
-        }
-        .placedly-hiw-tab {
-          transition: background 0.35s ease;
-        }
-        .placedly-hiw-tab.is-active {
-          background: transparent;
         }
       `}</style>
     </section>
