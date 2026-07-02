@@ -231,7 +231,7 @@ function SectionLabel({ text, center = false, light = false }: { text: string; c
     <div style={{
       display: 'inline-flex', alignItems: 'center', gap: '8px',
       fontSize: '11px', fontWeight: 800, letterSpacing: '0.12em',
-      textTransform: 'uppercase', marginBottom: '18px',
+      textTransform: 'uppercase', marginBottom: '14px',
       justifyContent: center ? 'center' : 'flex-start',
       width: center ? '100%' : 'auto',
     }}>
@@ -410,12 +410,14 @@ export default async function CapPage() {
               <span className="cap-ticker-text" data-ticker-text>{liveActivity[0]}</span>
             </div>
 
-            <div className="cap-btn-row reveal" data-reveal data-delay="0.28">
-              <a href={hero.ctaLink} className="cap-btn cap-btn-primary" data-magnetic>
-                <Rocket size={15} /> {hero.ctaText}
-                <span className="cap-arrow"><ArrowRight size={14} /></span>
-              </a>
-              <a href={hero.secondaryCtaLink} className="cap-btn cap-btn-ghost">{hero.secondaryCtaText}</a>
+            <div className="cap-btn-row" data-reveal data-delay="0.28" style={{ opacity: 0, transform: 'translateY(40px)' }}>
+              <div className="reveal" data-reveal style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <a href={hero.ctaLink} className="cap-btn cap-btn-primary" data-magnetic>
+                  <Rocket size={15} /> {hero.ctaText}
+                  <span className="cap-arrow"><ArrowRight size={14} /></span>
+                </a>
+                <a href={hero.secondaryCtaLink} className="cap-btn cap-btn-ghost">{hero.secondaryCtaText}</a>
+              </div>
             </div>
           </div>
 
@@ -443,7 +445,7 @@ export default async function CapPage() {
               <h2 className="cap-h2">{included.heading} <GradientText tag="span">{included.headingGradient}</GradientText></h2>
               <p className="cap-body">{included.body}</p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 {included.benefits.map((b, i) => (
                   <div key={`${b}-${i}`} className="cap-benefit reveal" data-reveal data-delay={`${0.1 + i * 0.05}`}>
                     <CheckCircle2 size={18} color={G.blue} className="cap-check" style={{ flexShrink: 0, marginTop: '2px' }} />
@@ -452,7 +454,7 @@ export default async function CapPage() {
                 ))}
               </div>
 
-              <div style={{ marginTop: '32px' }}>
+              <div style={{ marginTop: '24px' }}>
                 <a href={included.ctaLink} className="cap-btn cap-btn-primary" data-magnetic>
                   {included.ctaText}
                   <span className="cap-arrow"><ArrowRight size={14} /></span>
@@ -467,12 +469,12 @@ export default async function CapPage() {
                 <TrendingUp size={22} color={G.orange} />
                 <div style={{ fontSize: '18px', fontWeight: 800 }}>{successShare.title}</div>
               </div>
-              <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginBottom: '22px', position: 'relative', zIndex: 1 }}>
+              <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginBottom: '20px', position: 'relative', zIndex: 1 }}>
                 {successShare.subtitle}
               </p>
 
               {/* ── Interactive calculator (percent + range fully dynamic) ── */}
-              <div className="cap-calc" style={{ position: 'relative', zIndex: 1 }}>
+              <div className="cap-calc" data-no-tilt style={{ position: 'relative', zIndex: 2 }}>
                 <div className="cap-calc-head">
                   <Calculator size={14} color={G.orange} />
                   <span>Drag to calculate your own numbers</span>
@@ -489,6 +491,7 @@ export default async function CapPage() {
                   defaultValue={successShare.calcDefault}
                   className="cap-calc-range"
                   data-ctc-slider
+                  data-no-tilt
                   data-share-percent={sharePercent}
                   aria-label="Annual CTC slider"
                 />
@@ -508,7 +511,7 @@ export default async function CapPage() {
                 </div>
               </div>
 
-              <table className="cap-share-table" style={{ position: 'relative', zIndex: 1, marginTop: '20px' }}>
+              <table className="cap-share-table" style={{ position: 'relative', zIndex: 1, marginTop: '16px' }}>
                 <thead>
                   <tr>
                     {['Annual CTC', 'Service Fee', 'Your Net Gain'].map(h => <th key={h}>{h}</th>)}
@@ -530,7 +533,7 @@ export default async function CapPage() {
                   })}
                 </tbody>
               </table>
-              <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '16px', position: 'relative', zIndex: 1 }}>
+              <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '14px', position: 'relative', zIndex: 1 }}>
                 {successShare.note}
               </p>
             </div>
@@ -571,11 +574,13 @@ export default async function CapPage() {
                       <div className="cap-domain-ghost" style={{ backgroundImage: `linear-gradient(135deg, ${d.iconColor}, transparent)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                         {String(i + 1).padStart(2, '0')}
                       </div>
-                      <div className="cap-domain-icon" style={{ background: d.iconBg, boxShadow: `0 4px 14px ${d.iconColor}20` }}>
-                        <d.Icon size={20} color={d.iconColor} />
-                      </div>
-                      <div className="cap-domain-badge" style={{ background: `${d.badgeColor}12`, border: `1px solid ${d.badgeColor}30`, color: d.badgeColor }}>
-                        {d.badge}
+                      <div className="cap-domain-top">
+                        <div className="cap-domain-icon" style={{ background: d.iconBg, boxShadow: `0 4px 14px ${d.iconColor}20` }}>
+                          <d.Icon size={20} color={d.iconColor} />
+                        </div>
+                        <div className="cap-domain-badge" style={{ background: `${d.badgeColor}12`, border: `1px solid ${d.badgeColor}30`, color: d.badgeColor }}>
+                          {d.badge}
+                        </div>
                       </div>
                       <div className="cap-domain-title">{d.title}</div>
                       <div className="cap-domain-desc">{d.desc}</div>
@@ -712,7 +717,7 @@ export default async function CapPage() {
               <SectionLabel text="Take Action" center light />
               <h2 className="cap-cta-h2"><GradientText tag="span">{cta.title}</GradientText></h2>
               <p className="cap-cta-body">{cta.body}</p>
-              <div className="cap-btn-row" style={{ justifyContent: 'center', marginBottom: 0 }}>
+              <div className="cap-btn-row" style={{ justifyContent: 'center', marginBottom: 0, display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <a href={cta.primaryLink} className="cap-btn cap-btn-warm" data-magnetic>
                   <Rocket size={15} /> {cta.primaryText}
                   <span className="cap-arrow"><ArrowRight size={14} /></span>
@@ -758,7 +763,7 @@ export default async function CapPage() {
         @keyframes cap-fade-slide { from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)} }
         @keyframes cap-sticky-in { from{transform:translateY(120%)} to{transform:translateY(0)} }
 
-        .reveal { opacity:0; transform:translateY(40px); transition:opacity .55s cubic-bezier(.22,1,.36,1), transform .55s cubic-bezier(.22,1,.36,1); }
+        .reveal { opacity:0; transform:translateY(28px); transition:opacity .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1); }
         .reveal.is-visible { opacity:1; transform:translateY(0); }
 
         .cap-progress-track { position:fixed; top:0; left:0; right:0; height:3px; background:transparent; z-index:9999; pointer-events:none; }
@@ -768,24 +773,24 @@ export default async function CapPage() {
         .cap-blob-blue { top:-120px; left:-120px; width:520px; height:520px; background:radial-gradient(circle, ${G.blue}22 0%, transparent 70%); filter:blur(100px); animation:cap-blob-a 14s ease-in-out infinite; }
         .cap-blob-orange { top:15%; right:-140px; width:440px; height:440px; background:radial-gradient(circle, ${G.orange}1e 0%, transparent 70%); filter:blur(110px); animation:cap-blob-b 16s ease-in-out infinite 1s; }
 
-        .cap-hero { position:relative; padding: calc(56px + 72px) 0 0; overflow:hidden; background:#fafbff; }
-        .cap-breadcrumb { display:flex; align-items:center; gap:6px; font-size:13px; color:#94a3b8; margin-bottom:28px; }
+        .cap-hero { position:relative; padding: calc(40px + 72px) 0 0; overflow:hidden; background:#fafbff; }
+        .cap-breadcrumb { display:flex; align-items:center; gap:6px; font-size:13px; color:#94a3b8; margin-bottom:20px; }
         .cap-breadcrumb a { color:#94a3b8; text-decoration:none; }
         .cap-breadcrumb a:hover { color:${G.blue}; }
         .cap-sep { color:#cbd5e1; }
         .cap-current { color:#475569; font-weight:500; }
 
-        .cap-h1 { font-size:clamp(2.2rem, 4.5vw, 3.6rem); font-weight:900; line-height:1.1; letter-spacing:-1.2px; color:#0b0d20; margin-bottom:22px; }
-        .cap-h2 { font-size:clamp(1.8rem, 3vw, 2.6rem); font-weight:900; color:#0b0d20; line-height:1.14; letter-spacing:-0.7px; margin-bottom:18px; }
-        .cap-lead { font-size:16.5px; color:#64748b; line-height:1.75; max-width:560px; margin-bottom:22px; }
-        .cap-body { font-size:15.5px; color:#64748b; line-height:1.8; margin-bottom:24px; }
+        .cap-h1 { font-size:clamp(2.2rem, 4.5vw, 3.6rem); font-weight:900; line-height:1.1; letter-spacing:-1.2px; color:#0b0d20; margin-bottom:18px; }
+        .cap-h2 { font-size:clamp(1.8rem, 3vw, 2.6rem); font-weight:900; color:#0b0d20; line-height:1.14; letter-spacing:-0.7px; margin-bottom:16px; }
+        .cap-lead { font-size:16.5px; color:#64748b; line-height:1.75; max-width:560px; margin-bottom:18px; }
+        .cap-body { font-size:15.5px; color:#64748b; line-height:1.8; margin-bottom:20px; }
 
-        .cap-ticker { display:inline-flex; align-items:center; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:8px 16px 8px 8px; margin-bottom:28px; box-shadow:0 2px 10px rgba(0,0,0,.05); max-width:100%; }
+        .cap-ticker { display:inline-flex; align-items:center; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:8px 16px 8px 8px; margin-bottom:20px; box-shadow:0 2px 10px rgba(0,0,0,.05); max-width:100%; }
         .cap-ticker-live { display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:800; color:#ef4444; background:#fef2f2; padding:4px 8px; border-radius:999px; flex-shrink:0; }
         .cap-ticker-dot { width:6px; height:6px; border-radius:50%; background:#ef4444; animation:cap-ticker-dot-pulse 1.4s ease-in-out infinite; }
         .cap-ticker-text { font-size:12.5px; font-weight:600; color:#374151; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; animation:cap-fade-slide .4s ease; }
 
-        .cap-btn-row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:56px; }
+        .cap-btn-row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:36px; }
         .cap-btn { display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:14px; padding:14px 30px; border-radius:999px; text-decoration:none; transition:transform .15s ease, box-shadow .2s ease; border:none; cursor:pointer; will-change:transform; }
         .cap-btn:hover { box-shadow:0 16px 36px rgba(37,99,235,.4); }
         .cap-btn-primary { background-image:linear-gradient(135deg, ${G.blue}, ${G.indigo}); color:#fff; box-shadow:0 8px 24px ${G.blue}35; }
@@ -797,30 +802,30 @@ export default async function CapPage() {
         .cap-arrow { display:inline-flex; animation:cap-arrow-bounce 1.3s ease-in-out infinite; }
 
         .cap-stats-4 { display:grid; border-top:1px solid #eef2ff; }
-        .cap-stat-cell { text-align:center; padding:28px 20px; background:#fafbff; transition:background .25s ease; }
+        .cap-stat-cell { text-align:center; padding:20px 16px; background:#fafbff; transition:background .25s ease; }
         .cap-stat-cell:hover { background:#fff; }
         .cap-stat-num { font-size:2rem; font-weight:900; line-height:1; margin-bottom:6px; }
         .cap-stat-label { font-size:12px; color:#94a3b8; font-weight:600; }
 
-        .cap-section { padding:clamp(56px, 8vw, 88px) 0; }
-        .cap-center { text-align:center; margin-bottom:48px; }
-        .cap-two-col { display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:start; }
+        .cap-section { padding:clamp(40px, 6vw, 64px) 0; }
+        .cap-center { text-align:center; margin-bottom:32px; }
+        .cap-two-col { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start; }
 
-        .cap-benefit { display:flex; align-items:flex-start; gap:10px; padding:8px 10px; border-radius:12px; transition:background .2s ease, transform .2s ease; }
+        .cap-benefit { display:flex; align-items:flex-start; gap:10px; padding:7px 10px; border-radius:12px; transition:background .2s ease, transform .2s ease; }
         .cap-benefit:hover { background:#f0f6ff; transform:translateX(4px); }
         .cap-benefit span { font-size:15px; color:#374151; line-height:1.55; }
         .cap-check { transition:transform .2s ease; }
         .cap-benefit:hover .cap-check { transform:scale(1.15); }
 
-        .cap-share-card { position:relative; overflow:hidden; background:linear-gradient(160deg, #0b0d20 0%, #14163a 100%); border-radius:24px; color:#fff; padding:36px; transition:transform .3s ease; transform-style:preserve-3d; }
+        .cap-share-card { position:relative; overflow:hidden; background:linear-gradient(160deg, #0b0d20 0%, #14163a 100%); border-radius:24px; color:#fff; padding:32px; transition:transform .3s ease; transform-style:preserve-3d; }
         .cap-share-orb { position:absolute; top:-60px; right:-60px; width:260px; height:260px; border-radius:50%; background:radial-gradient(circle, ${G.blue}30 0%, transparent 70%); pointer-events:none; animation:cap-blob-a 10s ease-in-out infinite; }
 
-        .cap-calc { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:20px; }
-        .cap-calc-head { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:700; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:.5px; margin-bottom:14px; }
+        .cap-calc { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:18px; }
+        .cap-calc-head { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:700; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:.5px; margin-bottom:12px; }
         .cap-calc-value-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
         .cap-calc-value-row span:first-child { font-size:12px; color:rgba(255,255,255,0.5); font-weight:600; }
         .cap-calc-ctc-display { font-size:20px; font-weight:900; color:#fff; }
-        .cap-calc-range { width:100%; -webkit-appearance:none; appearance:none; height:6px; border-radius:99px; background:linear-gradient(90deg, ${G.blue}, ${G.orange}); outline:none; margin-bottom:18px; cursor:pointer; }
+        .cap-calc-range { position:relative; z-index:3; width:100%; -webkit-appearance:none; appearance:none; height:6px; border-radius:99px; background:linear-gradient(90deg, ${G.blue}, ${G.orange}); outline:none; margin-bottom:16px; cursor:pointer; touch-action:none; }
         .cap-calc-range::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%; background:#fff; border:3px solid ${G.blue}; box-shadow:0 2px 8px rgba(0,0,0,.4); cursor:pointer; transition:transform .15s ease; }
         .cap-calc-range::-webkit-slider-thumb:hover { transform:scale(1.15); }
         .cap-calc-range::-moz-range-thumb { width:20px; height:20px; border-radius:50%; background:#fff; border:3px solid ${G.blue}; cursor:pointer; }
@@ -837,45 +842,46 @@ export default async function CapPage() {
         .cap-share-row td { padding:11px 8px; }
         .cap-roi-badge { margin-left:6px; background:rgba(74,222,128,.12); color:#4ade80; border:1px solid rgba(74,222,128,.2); border-radius:999px; padding:2px 8px; font-size:11px; font-weight:700; }
 
-        .cap-domains-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+        .cap-domains-3 { display:grid; grid-template-columns:repeat(3,1fr); grid-auto-rows:1fr; gap:18px; align-items:stretch; }
 
-        .cap-flip-outer { perspective:1400px; }
-        .cap-flip-card { display:block; width:100%; cursor:pointer; outline:none; }
-        .cap-flip-inner { position:relative; width:100%; min-height:260px; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.22,1,.36,1); }
+        .cap-flip-outer { perspective:1400px; height:100%; }
+        .cap-flip-card { display:block; width:100%; height:100%; cursor:pointer; outline:none; }
+        .cap-flip-inner { position:relative; width:100%; height:100%; min-height:290px; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.22,1,.36,1); }
         .cap-flip-inner.is-flipped { transform:rotateY(180deg); }
         .cap-flip-face { position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
         .cap-flip-back { transform:rotateY(180deg); display:flex; flex-direction:column; justify-content:center; color:#fff; text-align:center; }
 
-        .cap-domain-card { position:relative; background:#fff; border-radius:20px; padding:28px; border:1px solid rgba(15,23,42,.06); overflow:hidden; transition:box-shadow .3s ease; box-shadow:0 8px 28px rgba(15,23,42,.05); display:flex; flex-direction:column; gap:12px; height:100%; box-sizing:border-box; }
+        .cap-domain-card { position:relative; background:#fff; border-radius:20px; padding:24px; border:1px solid rgba(15,23,42,.06); overflow:hidden; transition:box-shadow .3s ease; box-shadow:0 8px 28px rgba(15,23,42,.05); display:flex; flex-direction:column; gap:10px; height:100%; box-sizing:border-box; }
         .cap-flip-outer:hover .cap-domain-card:not(.cap-flip-back) { box-shadow:0 24px 60px rgba(37,99,235,.14); }
         .cap-domain-glow { position:absolute; inset:0; border-radius:20px; padding:1.5px; -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite:xor; mask-composite:exclude; opacity:0; transition:opacity .3s ease; pointer-events:none; }
         .cap-flip-outer:hover .cap-domain-glow { opacity:1; }
         .cap-domain-spotlight { position:absolute; inset:0; opacity:0; transition:opacity .3s ease; pointer-events:none; }
         .cap-flip-outer:hover .cap-domain-spotlight { opacity:1; }
         .cap-domain-strip { position:absolute; top:0; left:0; right:0; height:3px; }
-        .cap-domain-ghost { position:absolute; bottom:-18px; right:6px; font-size:88px; font-weight:900; opacity:.06; line-height:1; user-select:none; pointer-events:none; }
-        .cap-domain-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; position:relative; z-index:1; transition:transform .3s ease; }
+        .cap-domain-ghost { position:absolute; bottom:-18px; right:6px; font-size:80px; font-weight:900; opacity:.06; line-height:1; user-select:none; pointer-events:none; }
+        .cap-domain-top { display:flex; align-items:center; justify-content:space-between; gap:10px; position:relative; z-index:1; }
+        .cap-domain-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform .3s ease; }
         .cap-flip-outer:hover .cap-domain-icon { transform:scale(1.1) rotate(-6deg); }
-        .cap-domain-badge { display:inline-flex; align-items:center; gap:6px; width:fit-content; padding:4px 12px; border-radius:999px; font-size:11px; font-weight:700; position:relative; z-index:1; }
-        .cap-domain-title { font-size:15px; font-weight:700; color:#0f172a; position:relative; z-index:1; }
-        .cap-domain-desc { font-size:14px; color:#64748b; line-height:1.65; position:relative; z-index:1; flex:1; }
-        .cap-flip-hint { display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; color:${G.blue}; text-transform:uppercase; letter-spacing:.4px; position:relative; z-index:1; }
+        .cap-domain-badge { display:inline-flex; align-items:center; gap:6px; width:fit-content; padding:4px 12px; border-radius:999px; font-size:11px; font-weight:700; white-space:nowrap; }
+        .cap-domain-title { font-size:15px; font-weight:700; color:#0f172a; position:relative; z-index:1; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
+        .cap-domain-desc { font-size:14px; color:#64748b; line-height:1.6; position:relative; z-index:1; flex:1; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+        .cap-flip-hint { display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; color:${G.blue}; text-transform:uppercase; letter-spacing:.4px; position:relative; z-index:1; margin-top:auto; }
 
-        .cap-domain-back-title { font-size:16px; font-weight:800; margin-bottom:18px; padding:0 20px; }
-        .cap-domain-back-stats { display:flex; flex-direction:column; gap:12px; padding:0 24px; margin-bottom:18px; }
+        .cap-domain-back-title { font-size:16px; font-weight:800; margin-bottom:16px; padding:0 20px; }
+        .cap-domain-back-stats { display:flex; flex-direction:column; gap:10px; padding:0 24px; margin-bottom:16px; }
         .cap-domain-back-stat { display:flex; justify-content:space-between; align-items:baseline; border-bottom:1px solid rgba(255,255,255,.15); padding-bottom:8px; }
         .cap-domain-back-v { font-size:18px; font-weight:900; }
         .cap-domain-back-k { font-size:11px; color:rgba(255,255,255,.7); font-weight:600; }
         .cap-domain-back-cta { display:inline-flex; align-items:center; justify-content:center; gap:6px; margin:0 24px; padding:10px 16px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); border-radius:999px; color:#fff; font-size:12.5px; font-weight:700; text-decoration:none; transition:background .2s ease; }
         .cap-domain-back-cta:hover { background:rgba(255,255,255,.25); }
 
-        .cap-journey-controls { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
+        .cap-journey-controls { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:18px; flex-wrap:wrap; }
         .cap-play-btn { display:inline-flex; align-items:center; gap:8px; padding:9px 18px; border-radius:999px; border:1.5px solid #e2e8f0; background:#fff; cursor:pointer; font-size:13px; font-weight:700; color:#374151; transition:all .2s ease; font-family:inherit; }
         .cap-play-btn:hover { border-color:${G.blue}; color:${G.blue}; }
         .cap-play-btn.is-playing { background:${G.blue}; border-color:${G.blue}; color:#fff; }
         .cap-journey-progress-text { font-size:12.5px; font-weight:600; color:#94a3b8; }
 
-        .cap-step-nav { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:40px; }
+        .cap-step-nav { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:28px; }
         .cap-step-pill { display:flex; align-items:center; gap:8px; padding:8px 14px 8px 8px; border-radius:999px; border:1.5px solid #e2e8f0; background:#fff; cursor:pointer; transition:all .25s ease; font-family:inherit; }
         .cap-step-pill:hover { border-color:var(--pill-color); transform:translateY(-2px); }
         .cap-step-pill.is-active { border-color:var(--pill-color); background:color-mix(in srgb, var(--pill-color) 8%, white); box-shadow:0 4px 14px rgba(0,0,0,.08); }
@@ -887,7 +893,7 @@ export default async function CapPage() {
         .cap-journey-rail { position:absolute; left:21px; top:8px; bottom:8px; width:2px; background:#eef2ff; }
         .cap-journey-rail-fill { position:absolute; left:21px; top:8px; width:2px; height:0%; background:linear-gradient(to bottom, ${G.blue}, ${G.purple}, ${G.orange}); transition:height .25s linear; }
 
-        .cap-journey-item { display:flex; gap:20px; position:relative; padding-bottom:20px; }
+        .cap-journey-item { display:flex; gap:18px; position:relative; padding-bottom:16px; }
         .cap-journey-item:last-child { padding-bottom:0; }
         .cap-journey-dot-wrap { position:relative; width:44px; height:44px; flex-shrink:0; }
         .cap-journey-dot-pulse { position:absolute; inset:0; border-radius:50%; opacity:0; }
@@ -900,7 +906,7 @@ export default async function CapPage() {
         .cap-journey-card-final { background:linear-gradient(135deg, #fff7ed, #fff); border-color:${G.orange}40; }
         .cap-journey-card-glow { position:absolute; top:0; left:0; right:0; height:3px; opacity:.85; }
 
-        .cap-journey-card-head { all:unset; display:flex; align-items:center; gap:10px; padding:20px 24px; flex-wrap:wrap; cursor:pointer; width:100%; box-sizing:border-box; }
+        .cap-journey-card-head { all:unset; display:flex; align-items:center; gap:10px; padding:16px 20px; flex-wrap:wrap; cursor:pointer; width:100%; box-sizing:border-box; }
         .cap-journey-icon { width:32px; height:32px; border-radius:99px; display:flex; align-items:center; justify-content:center; transition:transform .3s ease; flex-shrink:0; }
         .cap-journey-item.is-active .cap-journey-icon { transform:rotate(-8deg) scale(1.08); }
         .cap-journey-title { font-size:15px; font-weight:700; color:#0b0d20; }
@@ -910,19 +916,19 @@ export default async function CapPage() {
 
         .cap-journey-body { display:grid; grid-template-rows:0fr; transition:grid-template-rows .4s ease; }
         .cap-journey-item.is-open .cap-journey-body { grid-template-rows:1fr; }
-        .cap-journey-body-inner { overflow:hidden; min-height:0; padding:0 24px; }
-        .cap-journey-item.is-open .cap-journey-body-inner { padding:0 24px 20px; }
-        .cap-journey-desc { font-size:14px; color:#64748b; line-height:1.65; margin:0 0 12px; }
+        .cap-journey-body-inner { overflow:hidden; min-height:0; padding:0 20px; }
+        .cap-journey-item.is-open .cap-journey-body-inner { padding:0 20px 16px; }
+        .cap-journey-desc { font-size:14px; color:#64748b; line-height:1.65; margin:0 0 10px; }
         .cap-journey-tags { display:flex; flex-wrap:wrap; gap:6px; }
         .cap-journey-tag { font-size:11px; font-weight:600; color:#475569; border:1px solid #e2e8f0; border-radius:999px; padding:3px 10px; opacity:0; animation:cap-tag-in .4s ease forwards; }
         .cap-journey-sparkle { position:absolute; top:16px; right:16px; animation:cap-sparkle-spin 2.4s ease-in-out infinite; }
 
-        .cap-cta { position:relative; border-radius:28px; padding:clamp(48px,8vw,80px) clamp(24px,6vw,72px); text-align:center; overflow:hidden; background:linear-gradient(135deg, #0b0d20 0%, #1a1040 50%, #0d1836 100%); }
+        .cap-cta { position:relative; border-radius:28px; padding:clamp(36px,6vw,56px) clamp(24px,6vw,64px); text-align:center; overflow:hidden; background:linear-gradient(135deg, #0b0d20 0%, #1a1040 50%, #0d1836 100%); }
         .cap-cta-orb { position:absolute; border-radius:50%; filter:blur(60px); pointer-events:none; }
         .cap-cta-orb-blue { top:-80px; left:10%; width:340px; height:340px; background:radial-gradient(circle, ${G.blue}35 0%, transparent 70%); animation:cap-blob-a 12s ease-in-out infinite; }
         .cap-cta-orb-orange { bottom:-60px; right:8%; width:300px; height:300px; background:radial-gradient(circle, ${G.orange}30 0%, transparent 70%); animation:cap-blob-b 14s ease-in-out infinite 1s; }
-        .cap-cta-h2 { font-size:clamp(1.6rem, 3.2vw, 2.4rem); font-weight:900; line-height:1.18; letter-spacing:-0.5px; margin-bottom:14px; }
-        .cap-cta-body { font-size:15px; color:rgba(255,255,255,.6); max-width:460px; margin:0 auto 32px; line-height:1.75; }
+        .cap-cta-h2 { font-size:clamp(1.6rem, 3.2vw, 2.4rem); font-weight:900; line-height:1.18; letter-spacing:-0.5px; margin-bottom:12px; }
+        .cap-cta-body { font-size:15px; color:rgba(255,255,255,.6); max-width:460px; margin:0 auto 24px; line-height:1.75; }
 
         .cap-sticky-cta { position:fixed; bottom:0; left:0; right:0; z-index:998; transform:translateY(120%); transition:transform .4s cubic-bezier(.22,1,.36,1); pointer-events:none; }
         .cap-sticky-cta.is-visible { transform:translateY(0); pointer-events:auto; animation:cap-sticky-in .4s cubic-bezier(.22,1,.36,1); }
@@ -936,7 +942,7 @@ export default async function CapPage() {
 
         @media (max-width: 900px) { .cap-step-nav { display:none; } }
         @media (max-width: 860px) {
-          .cap-two-col { grid-template-columns:1fr !important; gap:36px !important; }
+          .cap-two-col { grid-template-columns:1fr !important; gap:28px !important; }
           .cap-domains-3 { grid-template-columns:1fr 1fr !important; }
         }
         @media (max-width: 640px) {
@@ -945,7 +951,8 @@ export default async function CapPage() {
         }
         @media (max-width: 580px) {
           .cap-stats-4 { grid-template-columns:repeat(2,1fr) !important; }
-          .cap-domains-3 { grid-template-columns:1fr !important; }
+          .cap-domains-3 { grid-template-columns:1fr !important; grid-auto-rows:auto !important; }
+          .cap-flip-inner { min-height:250px; }
           .cap-calc-results { grid-template-columns:1fr !important; }
           .cap-ticker-text { white-space:normal; }
         }
@@ -1045,10 +1052,21 @@ export default async function CapPage() {
                   });
                 });
 
-                /* ── Success-share card tilt ── */
+                /* ── Success-share card tilt ──
+                   FIX: the calculator (and its range slider) lives inside this
+                   tilting card. Re-tilting the whole card on every mousemove
+                   while the user is dragging the slider thumb changes the
+                   coordinate space under the cursor mid-drag, which is what
+                   made the slider feel broken/unresponsive. We now skip the
+                   tilt entirely whenever the pointer is over the calculator
+                   ([data-no-tilt]), so dragging the range input is unaffected. */
                 var tiltCard = document.querySelector('[data-tilt]');
                 if (tiltCard) {
                   tiltCard.addEventListener('mousemove', function (e) {
+                    if (e.target.closest('[data-no-tilt]')) {
+                      tiltCard.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+                      return;
+                    }
                     var rect = tiltCard.getBoundingClientRect();
                     var px = (e.clientX - rect.left) / rect.width - 0.5;
                     var py = (e.clientY - rect.top) / rect.height - 0.5;
@@ -1098,6 +1116,7 @@ export default async function CapPage() {
                 }
                 if (slider) {
                   slider.addEventListener('input', updateCalculator);
+                  slider.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
                   updateCalculator();
                 }
 
