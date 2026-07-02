@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import UtilityToolsSection from './components/UtilityToolsSection';
 import Services from './components/Services';
+import OurProcessSection from './components/OurProcessSection';
 import CapJourneySection from './components/CapJourneySection';
 import CapFloatingCta from './components/CapFloatingCta';
 import AboutUs from './components/AboutUs';
@@ -59,11 +60,11 @@ const HP_DEFAULTS: Record<string, string> = {
   'hp:hiwTagline': 'How It Works',
   'hp:hiwTitle':   'How Placedly Works — Simple, Transparent, Proven',
   'hp:hiwSubtitle': 'Placedly connects ambitious professionals to careers and global education. Built for candidates who want clarity, warm guidance, and results — not generic agency noise.',
-  'hp:hiw1Title': 'Understand You First',         'hp:hiw1Details': 'A free 45-minute session where we actually listen. We understand your current role, your target outcome, your domain expertise, and what you truly want — not just what looks good on paper. No templates. No generic advice.',                                 'hp:hiw1Highlight': 'Zero charge for this session, ever.',
-  'hp:hiw2Title': 'Build Your Roadmap',           'hp:hiw2Details': "We map out 10–15 specific roles or universities that genuinely fit your profile, salary expectations, and growth goals. You get a written roadmap — not a list of job portals to spam.",                                                                             'hp:hiw2Highlight': 'Honest shortlist. We say no to bad fits.',
-  'hp:hiw3Title': 'Resume + Interview Prep',      'hp:hiw3Details': 'Complete ATS-optimised resume rebuild, LinkedIn profile overhaul, and 3 rounds of live mock interviews with real feedback. You walk into every interview knowing exactly what to say and how to position yourself.',                                                 'hp:hiw3Highlight': 'Average 3× more callbacks post-resume rebuild.',
-  'hp:hiw4Title': 'Direct Employer Connect',      'hp:hiw4Details': 'We personally reach out to 10–15 hiring managers at the right companies on your behalf. Not a mass email blast — targeted, warm introductions to people who are actually hiring for your profile.',                                                                  'hp:hiw4Highlight': 'Our direct connects at EXL, Optum, WNS, Genpact & more.',
-  'hp:hiw5Title': 'Offer Received. Then We Invoice.', 'hp:hiw5Details': "When you have your offer letter in hand, only then does our 12% Career Assistance Fee apply. Not before. Not during. Not at any point in the process unless you've actually grown. That's our entire model.",                                                 'hp:hiw5Highlight': '₹0 upfront. 12% only after your offer letter arrives.',
+  'hp:hiw1Title': 'Understand You First',              'hp:hiw1Details': 'A free 45-minute session where we actually listen. We understand your current role, your target outcome, your domain expertise, and what you truly want — not just what looks good on paper. No templates. No generic advice.',                                 'hp:hiw1Highlight': 'Zero charge for this session, ever.',
+  'hp:hiw2Title': 'Build Your Roadmap',                'hp:hiw2Details': "We map out 10–15 specific roles or universities that genuinely fit your profile, salary expectations, and growth goals. You get a written roadmap — not a list of job portals to spam.",                                                                             'hp:hiw2Highlight': 'Honest shortlist. We say no to bad fits.',
+  'hp:hiw3Title': 'Resume + Interview Prep',           'hp:hiw3Details': 'Complete ATS-optimised resume rebuild, LinkedIn profile overhaul, and 3 rounds of live mock interviews with real feedback. You walk into every interview knowing exactly what to say and how to position yourself.',                                                 'hp:hiw3Highlight': 'Average 3× more callbacks post-resume rebuild.',
+  'hp:hiw4Title': 'Direct Employer Connect',           'hp:hiw4Details': 'We personally reach out to 10–15 hiring managers at the right companies on your behalf. Not a mass email blast — targeted, warm introductions to people who are actually hiring for your profile.',                                                                  'hp:hiw4Highlight': 'Our direct connects at EXL, Optum, WNS, Genpact & more.',
+  'hp:hiw5Title': 'Offer Received. Then We Invoice.',  'hp:hiw5Details': "When you have your offer letter in hand, only then does our 12% Career Assistance Fee apply. Not before. Not during. Not at any point in the process unless you've actually grown. That's our entire model.",                                                 'hp:hiw5Highlight': '₹0 upfront. 12% only after your offer letter arrives.',
   /* Why Placedly */
   'hp:whyTitle':    'Why Professionals Choose Placedly',
   'hp:whySubtitle': "We don't just find you a job. We build your career.",
@@ -101,6 +102,7 @@ export default async function Home() {
         <Hero cms={cms} />
         <UtilityToolsSection />
         <Services cms={cms} />
+        <OurProcessSection />          {/* ← added here, directly below Services */}
         <CapJourneySection cms={cms} />
         <HowItWorks cms={cms} />
         <Industries />
@@ -108,7 +110,7 @@ export default async function Home() {
         <Testimonials />
         <Faq />
         <Cta cms={cms} />
-        <Footer cms={cms} />      
+        <Footer cms={cms} />
         <FloatingWhatsApp cms={cms} />
         <CapFloatingCta label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'} />
         <PlacedlyFixes />
