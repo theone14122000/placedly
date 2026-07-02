@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion, useInView } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import {
   MessageSquare,
@@ -20,6 +20,7 @@ import {
   ArrowRight,
   Sparkles,
   ClipboardList,
+  ChevronDown,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -39,10 +40,6 @@ const headingGradientStyle: React.CSSProperties = {
   color: 'transparent',
 };
 
-/* Unique colors extracted from the gradient stops (blue → indigo → orange → rose → purple),
-   cycled across the 6 process steps so the timeline itself "flows" through the same
-   palette as the headings — step 6 loops back to step 1's family, symbolising
-   the journey coming full circle. */
 const GRADIENT_STOPS = ['#2563eb', '#4f46e5', '#f97316', '#f43f5e', '#9333ea'];
 
 function stepAccent(i: number) {
@@ -58,6 +55,7 @@ function stepAccent(i: number) {
 type ProcessStep = {
   id: string;
   number: string;
+  short: string;
   title: string;
   description: string;
   Icon: LucideIcon;
@@ -67,6 +65,7 @@ const PROCESS_STEPS: ProcessStep[] = [
   {
     id: 'counselling',
     number: '01',
+    short: 'Counselling',
     title: 'Free Counselling Session',
     description:
       'We understand your academic background, career goals, budget, and preferred destination. We recommend best-fit countries and programmes.',
@@ -75,6 +74,7 @@ const PROCESS_STEPS: ProcessStep[] = [
   {
     id: 'shortlisting',
     number: '02',
+    short: 'Shortlisting',
     title: 'University Shortlisting',
     description:
       'Based on your profile, we shortlist universities with the highest probability of acceptance — balancing ambition with realism.',
@@ -83,14 +83,16 @@ const PROCESS_STEPS: ProcessStep[] = [
   {
     id: 'application',
     number: '03',
+    short: 'Application',
     title: 'Application Preparation',
     description:
-      'We assist with your Statement of Purpose (SOP), Letters of Recommendation (LOR), and application submissions — ensuring every document reflects your strongest self.',
+      'We assist with your SOP, Letters of Recommendation, and application submissions — ensuring every document reflects your strongest self.',
     Icon: PenLine,
   },
   {
     id: 'offer',
     number: '04',
+    short: 'Admission',
     title: 'Offer & Admission',
     description:
       'Once you receive your admission letter, we guide you through acceptance, conditional fulfilment, and pre-visa requirements.',
@@ -99,6 +101,7 @@ const PROCESS_STEPS: ProcessStep[] = [
   {
     id: 'visa',
     number: '05',
+    short: 'Visa',
     title: 'Visa Documentation & Application',
     description:
       'We prepare and review your complete visa documentation — reducing the risk of rejection through rigorous compliance checking.',
@@ -107,6 +110,7 @@ const PROCESS_STEPS: ProcessStep[] = [
   {
     id: 'predeparture',
     number: '06',
+    short: 'Departure',
     title: 'Pre-Departure Briefing',
     description:
       'Before you fly, we brief you on accommodation, banking, transport, cultural adjustment, and academic expectations.',
@@ -120,182 +124,106 @@ const DOCUMENTS: DocRow[] = [
   { label: 'Valid Passport', note: 'Minimum 18 months validity recommended', Icon: BookOpen },
   { label: 'Academic Transcripts', note: '10th, 12th, and graduation mark sheets', Icon: GraduationCap },
   { label: 'English Proficiency', note: 'IELTS / TOEFL / PTE — as required by institution', Icon: Languages },
-  { label: 'Statement of Purpose (SOP)', note: 'Drafted with Placedly advisory support', Icon: PenLine },
+  { label: 'Statement of Purpose', note: 'Drafted with Placedly advisory support', Icon: PenLine },
   { label: 'Letters of Recommendation', note: 'Typically 2–3 from academic or professional referees', Icon: Users },
   { label: 'Updated CV / Resume', note: 'Professionally formatted', Icon: FileText },
   { label: 'Proof of Funds', note: 'Bank statements — typically 3–6 months', Icon: Wallet },
-  { label: 'University Admission Letter', note: 'Issued upon offer acceptance', Icon: Award },
+  { label: 'Admission Letter', note: 'Issued upon offer acceptance', Icon: Award },
   { label: 'Visa Application Form', note: 'Country and category-specific', Icon: FileSignature },
 ];
 
-/* ────────────────────────────────────────────────────────────
-   Animated counter for the stat strip
-──────────────────────────────────────────────────────────── */
-
-function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.6 });
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-    let frame: number;
-    const duration = 900;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const progress = Math.min(1, (now - start) / duration);
-      setValue(Math.round(progress * target));
-      if (progress < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [inView, target]);
-
-  return (
-    <span ref={ref}>
-      {String(value).padStart(2, '0')}
-      {suffix}
-    </span>
-  );
-}
-
-/* ────────────────────────────────────────────────────────────
-   Scroll-driven timeline hook — tracks fill % + active step
-──────────────────────────────────────────────────────────── */
-
-function useTimelineProgress(count: number) {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [fill, setFill] = useState(0);
-  const [activeStep, setActiveStep] = useState(0);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const el = trackRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const viewportMid = window.innerHeight * 0.5;
-      const progress = (viewportMid - rect.top) / rect.height;
-      setFill(Math.min(1, Math.max(0, progress)));
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-    };
-  }, []);
-
-  useEffect(() => {
-    const nodes = trackRef.current?.querySelectorAll<HTMLElement>('[data-process-step]');
-    if (!nodes || !nodes.length) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const idx = Number(entry.target.getAttribute('data-process-step'));
-          if (!Number.isNaN(idx)) setActiveStep(idx);
-        });
-      },
-      { threshold: 0.5, rootMargin: '-35% 0px -35% 0px' },
-    );
-    nodes.forEach((n) => observer.observe(n));
-    return () => observer.disconnect();
-  }, [count]);
-
-  return { trackRef, fill, activeStep };
-}
+const INTERVAL_MS = 3600;
 
 /* ════════════════════════════════════════════════════════════
    Component
 ════════════════════════════════════════════════════════════ */
 
 export default function OurProcessSection() {
-  const { trackRef, fill, activeStep } = useTimelineProgress(PROCESS_STEPS.length);
-  const activeAccent = stepAccent(activeStep);
+  const [activeStep, setActiveStep] = useState(0);
+  const [expandedDoc, setExpandedDoc] = useState<number | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const accent = stepAccent(activeStep);
+  const active = PROCESS_STEPS[activeStep];
+
+  const startInterval = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setActiveStep((p) => (p + 1) % PROCESS_STEPS.length);
+    }, INTERVAL_MS);
+  };
+
+  useEffect(() => {
+    startInterval();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleStepClick = (i: number) => {
+    setActiveStep(i);
+    startInterval();
+  };
 
   return (
     <section
       id="our-process"
       style={{
         position: 'relative',
-        padding: 'clamp(56px, 8vw, 112px) clamp(16px, 5vw, 24px)',
+        padding: 'clamp(40px, 6vw, 64px) clamp(16px, 5vw, 24px)',
         overflow: 'hidden',
         background: '#fafafa',
       }}
     >
-      {/* ambient recoloring blobs — tie to active step accent */}
+      {/* ambient recoloring blobs — smaller & subtler than a full-length section */}
       <motion.div
         aria-hidden
         className="process-blob"
-        style={{
-          position: 'absolute',
-          top: '-10%',
-          left: '-8%',
-          width: '440px',
-          height: '440px',
-          borderRadius: '50%',
-          filter: 'blur(100px)',
-          zIndex: 0,
-          pointerEvents: 'none',
-        }}
-        animate={{
-          background: `radial-gradient(circle, ${activeAccent.from}28 0%, transparent 70%)`,
-        }}
+        style={{ position: 'absolute', top: '-14%', left: '-8%', width: '320px', height: '320px', borderRadius: '50%', filter: 'blur(90px)', zIndex: 0, pointerEvents: 'none' }}
+        animate={{ background: `radial-gradient(circle, ${accent.from}26 0%, transparent 70%)` }}
         transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
       />
       <motion.div
         aria-hidden
         className="process-blob"
-        style={{
-          position: 'absolute',
-          bottom: '-10%',
-          right: '-8%',
-          width: '480px',
-          height: '480px',
-          borderRadius: '50%',
-          filter: 'blur(110px)',
-          zIndex: 0,
-          pointerEvents: 'none',
-        }}
-        animate={{
-          background: `radial-gradient(circle, ${activeAccent.to}24 0%, transparent 70%)`,
-        }}
+        style={{ position: 'absolute', bottom: '-16%', right: '-8%', width: '340px', height: '340px', borderRadius: '50%', filter: 'blur(100px)', zIndex: 0, pointerEvents: 'none' }}
+        animate={{ background: `radial-gradient(circle, ${accent.to}22 0%, transparent 70%)` }}
         transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
       />
 
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: '1180px', margin: '0 auto' }}>
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: '1080px', margin: '0 auto' }}>
         {/* ── Header ── */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.5 }}
-          style={{ textAlign: 'center', marginBottom: 'clamp(20px, 3vw, 28px)' }}
+          transition={{ duration: 0.45 }}
+          style={{ textAlign: 'center', marginBottom: 'clamp(22px, 3vw, 32px)' }}
         >
           <p
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              fontSize: '13px',
+              fontSize: '12.5px',
               fontWeight: 600,
               textTransform: 'uppercase',
-              letterSpacing: '1.5px',
-              color: activeAccent.from,
-              marginBottom: '14px',
+              letterSpacing: '1.4px',
+              color: accent.from,
+              marginBottom: '10px',
               transition: 'color 0.4s ease',
             }}
           >
-            <Sparkles size={14} strokeWidth={2.25} aria-hidden />
+            <Sparkles size={13} strokeWidth={2.25} aria-hidden />
             Our Process
           </p>
           <h2
             style={{
-              fontSize: 'clamp(1.9rem, 4.2vw, 3.1rem)',
+              fontSize: 'clamp(1.6rem, 3.4vw, 2.4rem)',
               fontWeight: 800,
-              lineHeight: 1.12,
-              marginBottom: '14px',
+              lineHeight: 1.15,
+              marginBottom: '10px',
               letterSpacing: '-0.02em',
               ...headingGradientStyle,
             }}
@@ -304,251 +232,208 @@ export default function OurProcessSection() {
           </h2>
           <p
             style={{
-              fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)',
+              fontSize: 'clamp(0.88rem, 1.2vw, 0.98rem)',
               color: '#666',
-              maxWidth: '640px',
-              margin: '0 auto',
-              lineHeight: 1.6,
+              maxWidth: '540px',
+              margin: '0 auto 12px',
+              lineHeight: 1.55,
             }}
           >
             A structured, six-step journey — guided by a dedicated advisor from your first
             conversation to the day you board your flight.
           </p>
+
+          {/* compact single-line stat badge */}
+          <div className="process-stat-line">
+            <span><strong>06</strong> Steps</span>
+            <span className="process-stat-dot" />
+            <span><strong>09</strong> Documents</span>
+            <span className="process-stat-dot" />
+            <span><strong>100%</strong> Personalised</span>
+          </div>
         </motion.div>
 
-        {/* ── Stat strip ── */}
+        {/* ── Compact interactive stepper ── */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 'clamp(24px, 5vw, 56px)',
-            flexWrap: 'wrap',
-            margin: '0 auto clamp(48px, 6vw, 72px)',
-          }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.45, delay: 0.05 }}
         >
-          {[
-            { target: 6, suffix: '', label: 'Structured Steps' },
-            { target: 9, suffix: '', label: 'Key Documents' },
-            { target: 100, suffix: '%', label: 'Personalised Guidance' },
-          ].map((stat) => (
-            <div key={stat.label} style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
-                  fontWeight: 800,
-                  ...headingGradientStyle,
-                }}
-              >
-                <AnimatedCounter target={stat.target} suffix={stat.suffix} />
-              </div>
-              <div
-                style={{
-                  fontSize: '12.5px',
-                  fontWeight: 600,
-                  color: '#64748b',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.06em',
-                  marginTop: '2px',
-                }}
-              >
-                {stat.label}
-              </div>
+          <div className="process-stepper-scroll">
+            <div className="process-stepper">
+              {PROCESS_STEPS.map((step, i) => {
+                const stAccent = stepAccent(i);
+                const isPassed = i <= activeStep;
+                const isActive = i === activeStep;
+                return (
+                  <div key={step.id} className="process-step-node">
+                    <button
+                      type="button"
+                      onClick={() => handleStepClick(i)}
+                      aria-label={step.title}
+                      className="process-step-btn"
+                      style={{
+                        backgroundImage: isPassed
+                          ? `linear-gradient(135deg, ${stAccent.from}, ${stAccent.to})`
+                          : undefined,
+                        backgroundColor: isPassed ? undefined : '#fff',
+                        borderColor: isPassed ? 'transparent' : 'rgba(15,23,42,0.15)',
+                        boxShadow: isActive
+                          ? `0 0 0 5px ${stAccent.from}22, 0 6px 16px ${stAccent.from}45`
+                          : 'none',
+                        transform: isActive ? 'scale(1.12)' : 'scale(1)',
+                      }}
+                    >
+                      <step.Icon size={15} strokeWidth={2.4} color={isPassed ? '#fff' : '#94a3b8'} />
+                    </button>
+                    <span
+                      className="process-step-label"
+                      style={{ color: isActive ? stAccent.from : '#94a3b8', fontWeight: isActive ? 700 : 600 }}
+                    >
+                      {step.short}
+                    </span>
+                    {i < PROCESS_STEPS.length - 1 && (
+                      <span
+                        className="process-connector"
+                        style={{
+                          backgroundImage: i < activeStep ? HEADING_GRADIENT : undefined,
+                          backgroundColor: i < activeStep ? undefined : 'rgba(15,23,42,0.10)',
+                        }}
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          ))}
-        </motion.div>
-
-        {/* ── Timeline ── */}
-        <div ref={trackRef} className="process-track">
-          {/* central connecting line (desktop) / left line (mobile) */}
-          <div className="process-line" aria-hidden>
-            <div
-              className="process-line-fill"
-              style={{
-                height: `${fill * 100}%`,
-                backgroundImage: HEADING_GRADIENT,
-                backgroundSize: '200% 200%',
-              }}
-            />
           </div>
 
-          {PROCESS_STEPS.map((step, i) => {
-            const accent = stepAccent(i);
-            const isLeft = i % 2 === 0;
-            const isPassed = fill >= (i + 0.5) / PROCESS_STEPS.length;
-            const isActive = activeStep === i;
-
-            return (
-              <div
-                key={step.id}
-                data-process-step={i}
-                className={`process-row ${isLeft ? 'is-left' : 'is-right'}`}
+          {/* single detail panel — swaps content instead of stacking 6 cards */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="process-panel"
+              style={{ borderColor: accent.border, boxShadow: `0 14px 32px ${accent.soft}` }}
+            >
+              <span
+                className="process-panel-icon"
+                style={{ backgroundImage: `linear-gradient(135deg, ${accent.from}, ${accent.to})` }}
               >
-                <div className="process-spacer" aria-hidden />
-
-                <div className="process-dot-col">
-                  <motion.div
-                    className="process-dot"
-                    animate={{
-                      scale: isActive ? 1.18 : 1,
-                      boxShadow: isPassed
-                        ? `0 0 0 6px ${accent.from}22, 0 4px 14px ${accent.from}55`
-                        : '0 0 0 4px rgba(15,23,42,0.05)',
-                    }}
-                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                    style={{
-                      backgroundImage: isPassed
-                        ? `linear-gradient(135deg, ${accent.from}, ${accent.to})`
-                        : undefined,
-                      backgroundColor: isPassed ? undefined : '#fff',
-                      borderColor: isPassed ? 'transparent' : 'rgba(15,23,42,0.15)',
-                    }}
-                  >
-                    <step.Icon
-                      size={16}
-                      strokeWidth={2.4}
-                      color={isPassed ? '#fff' : '#94a3b8'}
-                    />
-                  </motion.div>
-                </div>
-
-                <motion.div
-                  className="process-card"
-                  initial={{ opacity: 0, x: isLeft ? 40 : -40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ y: -4 }}
-                  style={{
-                    borderColor: isActive ? accent.border : 'rgba(15,23,42,0.08)',
-                    boxShadow: isActive
-                      ? `0 16px 34px ${accent.soft}`
-                      : '0 4px 16px rgba(15,23,42,0.05)',
-                  }}
-                >
-                  <span className="process-card-number" style={{ color: accent.from }}>
-                    {step.number}
-                  </span>
-                  <h3 className="process-card-title" style={{ color: accent.from }}>
-                    {step.title}
-                  </h3>
-                  <p className="process-card-desc">{step.description}</p>
-                </motion.div>
+                <active.Icon size={20} strokeWidth={2.2} color="#fff" />
+              </span>
+              <div>
+                <span className="process-panel-number" style={{ color: accent.from }}>
+                  Step {active.number}
+                </span>
+                <h3 className="process-panel-title">{active.title}</h3>
+                <p className="process-panel-desc">{active.description}</p>
               </div>
-            );
-          })}
-        </div>
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
 
-        {/* ── Document Checklist ── */}
+        {/* ── Document Checklist (collapsible chip grid) ── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.5 }}
-          style={{ marginTop: 'clamp(72px, 9vw, 112px)' }}
+          transition={{ duration: 0.45 }}
+          style={{ marginTop: 'clamp(36px, 5vw, 52px)' }}
         >
-          <div style={{ textAlign: 'center', marginBottom: 'clamp(28px, 4vw, 40px)' }}>
+          <div style={{ textAlign: 'center', marginBottom: '18px' }}>
             <p
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                fontSize: '13px',
+                fontSize: '12.5px',
                 fontWeight: 600,
                 textTransform: 'uppercase',
-                letterSpacing: '1.5px',
+                letterSpacing: '1.4px',
                 color: '#6366f1',
-                marginBottom: '14px',
+                marginBottom: '8px',
               }}
             >
-              <ClipboardList size={14} strokeWidth={2.25} aria-hidden />
+              <ClipboardList size={13} strokeWidth={2.25} aria-hidden />
               Document Checklist
             </p>
             <h2
               style={{
-                fontSize: 'clamp(1.7rem, 3.6vw, 2.6rem)',
+                fontSize: 'clamp(1.3rem, 2.6vw, 1.8rem)',
                 fontWeight: 800,
-                lineHeight: 1.15,
-                marginBottom: '12px',
+                lineHeight: 1.2,
+                marginBottom: '6px',
                 letterSpacing: '-0.02em',
                 ...headingGradientStyle,
               }}
             >
               What You Will Typically Need
             </h2>
-            <p
-              style={{
-                fontSize: 'clamp(0.9rem, 1.3vw, 1.02rem)',
-                color: '#666',
-                maxWidth: '620px',
-                margin: '0 auto',
-                lineHeight: 1.6,
-              }}
-            >
-              Requirements vary by country and university. The following is a standard baseline.
+            <p style={{ fontSize: '13px', color: '#777', maxWidth: '480px', margin: '0 auto' }}>
+              Tap a document to see notes. Requirements vary by country and university.
             </p>
           </div>
 
-          <div className="doc-table-wrap">
-            <table className="doc-table">
-              <thead>
-                <tr>
-                  <th>Document</th>
-                  <th>Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {DOCUMENTS.map((doc, i) => {
-                  const accent = stepAccent(i);
-                  return (
-                    <motion.tr
-                      key={doc.label}
-                      initial={{ opacity: 0, y: 12 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.4 }}
-                      transition={{ duration: 0.35, delay: i * 0.04 }}
-                    >
-                      <td data-label="Document">
-                        <span
-                          className="doc-icon"
-                          style={{
-                            background: accent.soft,
-                            color: accent.from,
-                          }}
-                        >
-                          <doc.Icon size={16} strokeWidth={2.1} />
-                        </span>
-                        {doc.label}
-                      </td>
-                      <td data-label="Notes">{doc.note}</td>
-                    </motion.tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          <div className="doc-chip-grid">
+            {DOCUMENTS.map((doc, i) => {
+              const docAccent = stepAccent(i);
+              const isOpen = expandedDoc === i;
+              return (
+                <button
+                  key={doc.label}
+                  type="button"
+                  onClick={() => setExpandedDoc(isOpen ? null : i)}
+                  className={`doc-chip${isOpen ? ' is-open' : ''}`}
+                  style={{ borderColor: isOpen ? docAccent.border : 'rgba(15,23,42,0.08)' }}
+                >
+                  <span className="doc-chip-row">
+                    <span className="doc-chip-icon" style={{ background: docAccent.soft, color: docAccent.from }}>
+                      <doc.Icon size={14} strokeWidth={2.1} />
+                    </span>
+                    <span className="doc-chip-label">{doc.label}</span>
+                    <ChevronDown
+                      size={14}
+                      strokeWidth={2.4}
+                      className="doc-chip-chevron"
+                      style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', color: docAccent.from }}
+                    />
+                  </span>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.span
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+                        className="doc-chip-note"
+                      >
+                        {doc.note}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </button>
+              );
+            })}
           </div>
 
           <div className="doc-advisor-note">
-            <span className="doc-advisor-note-icon">
-              <Sparkles size={15} strokeWidth={2.4} />
-            </span>
+            <Sparkles size={13} strokeWidth={2.4} />
             <p>
-              Your Placedly advisor will provide a{' '}
-              <strong>personalised, destination-specific checklist</strong> during your
-              counselling session.
+              Your advisor provides a <strong>personalised, destination-specific checklist</strong> during counselling.
             </p>
           </div>
         </motion.div>
 
-        {/* ── Closing CTA ── */}
+        {/* ── Closing CTA (slim banner) ── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.45 }}
           className="process-cta"
         >
           <motion.div
@@ -557,208 +442,203 @@ export default function OurProcessSection() {
             animate={{ x: ['-30%', '130%'] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: 'linear' }}
           />
-          <h2 style={{ ...headingGradientStyle, position: 'relative', zIndex: 1 }}>
-            Your Global Journey Starts With One Conversation
-          </h2>
-          <p style={{ position: 'relative', zIndex: 1 }}>
-            Book a free counselling session today. No obligations — just clarity on your path
-            forward.
-          </p>
-          <motion.div
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            style={{ position: 'relative', zIndex: 1, display: 'inline-block' }}
-          >
+          <div className="process-cta-text">
+            <h3 style={headingGradientStyle}>Your Global Journey Starts With One Conversation</h3>
+            <p>Book a free counselling session today — no obligations, just clarity.</p>
+          </div>
+          <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} style={{ position: 'relative', zIndex: 1, flexShrink: 0 }}>
             <Link href="/study-visa" className="process-cta-btn">
               <span className="process-cta-btn-shine" aria-hidden />
-              <span style={{ position: 'relative', zIndex: 1 }}>
-                Book Free Study Abroad Counselling
-              </span>
-              <ArrowRight size={17} strokeWidth={2.4} className="process-cta-btn-arrow" />
+              <span style={{ position: 'relative', zIndex: 1 }}>Book Free Counselling</span>
+              <ArrowRight size={16} strokeWidth={2.4} className="process-cta-btn-arrow" />
             </Link>
           </motion.div>
         </motion.div>
       </div>
 
       <style>{`
-        /* ── Timeline layout ── */
-        .process-track {
-          position: relative;
-        }
-        .process-line {
-          position: absolute;
-          left: 50%;
-          top: 6px;
-          bottom: 6px;
-          width: 3px;
-          background: rgba(15, 23, 42, 0.08);
-          transform: translateX(-50%);
-          border-radius: 999px;
-          overflow: hidden;
-        }
-        .process-line-fill {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          border-radius: 999px;
-          transition: height 0.15s linear;
-        }
-        .process-row {
-          position: relative;
-          display: grid;
-          grid-template-columns: 1fr 64px 1fr;
+        .process-stat-line {
+          display: inline-flex;
           align-items: center;
-          gap: 20px;
-          margin-bottom: 48px;
-        }
-        .process-row:last-child {
-          margin-bottom: 0;
-        }
-        .process-row.is-left .process-card {
-          grid-column: 1;
-          justify-self: end;
-          text-align: right;
-        }
-        .process-row.is-left .process-spacer {
-          grid-column: 3;
-        }
-        .process-row.is-right .process-card {
-          grid-column: 3;
-          justify-self: start;
-          text-align: left;
-        }
-        .process-row.is-right .process-spacer {
-          grid-column: 1;
-        }
-        .process-dot-col {
-          grid-column: 2;
-          display: flex;
-          justify-content: center;
-        }
-        .process-dot {
-          width: 42px;
-          height: 42px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 2px solid rgba(15, 23, 42, 0.15);
+          gap: 10px;
+          font-size: 12.5px;
+          color: #64748b;
           background: #fff;
+          border: 1px solid rgba(15,23,42,0.07);
+          padding: 6px 16px;
+          border-radius: 999px;
+          box-shadow: 0 2px 10px rgba(15,23,42,0.04);
+        }
+        .process-stat-line strong { color: #334155; font-weight: 800; }
+        .process-stat-dot {
+          width: 3px; height: 3px; border-radius: 50%; background: #cbd5e1; flex-shrink: 0;
+        }
+
+        /* ── Stepper ── */
+        .process-stepper-scroll {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          padding-bottom: 2px;
+        }
+        .process-stepper-scroll::-webkit-scrollbar { display: none; }
+        .process-stepper {
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          min-width: max-content;
+          margin: 0 auto;
+          padding: 4px 8px;
+        }
+        .process-step-node {
+          display: flex;
+          align-items: center;
           flex-shrink: 0;
-          z-index: 2;
         }
-        .process-card {
-          max-width: 420px;
+        .process-step-btn {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          border: 2px solid;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease, background 0.3s ease;
+          flex-shrink: 0;
+        }
+        .process-step-label {
+          position: absolute;
+          margin-top: 52px;
+          font-size: 10.5px;
+          letter-spacing: 0.02em;
+          white-space: nowrap;
+          transition: color 0.3s ease;
+        }
+        .process-connector {
+          width: 34px;
+          height: 2px;
+          margin: 0 4px;
+          border-radius: 999px;
+          background-size: 200% 200%;
+          transition: background 0.4s ease;
+          flex-shrink: 0;
+        }
+
+        /* ── Detail panel ── */
+        .process-panel {
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+          max-width: 640px;
+          margin: 42px auto 0;
           background: #fff;
+          border: 1.5px solid rgba(15,23,42,0.08);
           border-radius: 18px;
-          padding: 22px 26px;
-          border: 1.5px solid rgba(15, 23, 42, 0.08);
-          transition: border-color 0.3s ease, box-shadow 0.3s ease;
+          padding: 20px 22px;
         }
-        .process-card-number {
-          display: block;
-          font-size: 12px;
-          font-weight: 800;
-          letter-spacing: 0.08em;
-          margin-bottom: 6px;
-          opacity: 0.85;
+        .process-panel-icon {
+          width: 44px;
+          height: 44px;
+          border-radius: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
         }
-        .process-card-title {
-          font-size: 17px;
+        .process-panel-number {
+          font-size: 11px;
           font-weight: 800;
-          margin-bottom: 8px;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+        }
+        .process-panel-title {
+          font-size: 16.5px;
+          font-weight: 800;
+          color: #0f172a;
+          margin: 3px 0 6px;
           line-height: 1.3;
         }
-        .process-card-desc {
-          font-size: 14px;
-          line-height: 1.65;
+        .process-panel-desc {
+          font-size: 13.5px;
+          line-height: 1.6;
           color: #555;
         }
 
-        /* ── Document table ── */
-        .doc-table-wrap {
-          background: #fff;
-          border-radius: 22px;
-          overflow: hidden;
-          border: 1px solid rgba(15, 23, 42, 0.07);
-          box-shadow: 0 14px 40px rgba(15, 23, 42, 0.06);
+        /* ── Document chip grid ── */
+        .doc-chip-grid {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: flex-start;
+          gap: 10px;
+          justify-content: center;
         }
-        .doc-table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        .doc-table thead th {
+        .doc-chip {
+          flex: 0 1 calc(33.333% - 10px);
+          min-width: 220px;
           text-align: left;
-          padding: 16px 26px;
-          font-size: 11.5px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          color: #64748b;
-          background: rgba(99, 102, 241, 0.045);
-          border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+          background: #fff;
+          border: 1.5px solid rgba(15,23,42,0.08);
+          border-radius: 14px;
+          padding: 11px 14px;
+          cursor: pointer;
+          transition: border-color 0.25s ease, box-shadow 0.25s ease;
         }
-        .doc-table tbody tr {
-          border-bottom: 1px solid rgba(15, 23, 42, 0.055);
-          transition: background 0.2s ease;
+        .doc-chip:hover {
+          box-shadow: 0 6px 18px rgba(15,23,42,0.06);
         }
-        .doc-table tbody tr:last-child {
-          border-bottom: none;
+        .doc-chip.is-open {
+          box-shadow: 0 10px 24px rgba(15,23,42,0.08);
         }
-        .doc-table tbody tr:hover {
-          background: rgba(99, 102, 241, 0.035);
-        }
-        .doc-table td {
-          padding: 15px 26px;
-          font-size: 14px;
-          color: #334155;
-          vertical-align: middle;
-          line-height: 1.5;
-        }
-        .doc-table td:first-child {
-          font-weight: 700;
-          color: #0f172a;
+        .doc-chip-row {
           display: flex;
           align-items: center;
-          gap: 12px;
-          white-space: nowrap;
+          gap: 10px;
         }
-        .doc-icon {
-          width: 32px;
-          height: 32px;
-          border-radius: 9px;
+        .doc-chip-icon {
+          width: 26px;
+          height: 26px;
+          border-radius: 8px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
+        }
+        .doc-chip-label {
+          font-size: 13px;
+          font-weight: 700;
+          color: #0f172a;
+          flex: 1;
+        }
+        .doc-chip-chevron {
+          flex-shrink: 0;
+          transition: transform 0.25s ease;
+        }
+        .doc-chip-note {
+          display: block;
+          overflow: hidden;
+          font-size: 12.5px;
+          color: #64748b;
+          line-height: 1.5;
+          padding-left: 36px;
+          padding-top: 6px;
         }
 
         .doc-advisor-note {
           display: flex;
           align-items: flex-start;
-          gap: 10px;
-          margin-top: 20px;
-          padding: 16px 20px;
-          border-radius: 14px;
+          gap: 8px;
+          max-width: 560px;
+          margin: 16px auto 0;
+          padding: 10px 16px;
+          border-radius: 12px;
           background: rgba(99, 102, 241, 0.06);
           border: 1px solid rgba(99, 102, 241, 0.15);
-        }
-        .doc-advisor-note-icon {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 26px;
-          height: 26px;
-          border-radius: 50%;
-          background: rgba(99, 102, 241, 0.15);
           color: #6366f1;
-          flex-shrink: 0;
-          margin-top: 1px;
         }
         .doc-advisor-note p {
-          font-size: 13.5px;
-          line-height: 1.6;
+          font-size: 12.5px;
+          line-height: 1.5;
           color: #475569;
         }
 
@@ -766,147 +646,87 @@ export default function OurProcessSection() {
         .process-cta {
           position: relative;
           overflow: hidden;
-          text-align: center;
-          margin-top: clamp(64px, 8vw, 96px);
-          padding: clamp(36px, 5vw, 56px) clamp(24px, 5vw, 48px);
-          border-radius: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+          flex-wrap: wrap;
+          margin-top: clamp(32px, 4.5vw, 48px);
+          padding: clamp(20px, 3vw, 28px) clamp(22px, 4vw, 32px);
+          border-radius: 22px;
           background: linear-gradient(135deg, rgba(37,99,235,0.06) 0%, rgba(147,51,234,0.06) 100%);
           border: 1px solid rgba(37,99,235,0.14);
-          box-shadow: 0 20px 50px rgba(37,99,235,0.08);
         }
         .process-cta-sweep {
           position: absolute;
-          top: 0;
-          bottom: 0;
+          top: 0; bottom: 0;
           width: 40%;
-          background: linear-gradient(90deg, transparent, rgba(147,51,234,0.07), transparent);
+          background: linear-gradient(90deg, transparent, rgba(147,51,234,0.06), transparent);
           pointer-events: none;
         }
-        .process-cta h2 {
-          font-size: clamp(1.5rem, 3.4vw, 2.3rem);
+        .process-cta-text { position: relative; z-index: 1; max-width: 420px; }
+        .process-cta-text h3 {
+          font-size: clamp(1.05rem, 1.8vw, 1.3rem);
           font-weight: 800;
-          letter-spacing: -0.02em;
-          margin-bottom: 12px;
+          letter-spacing: -0.01em;
+          margin-bottom: 4px;
+          line-height: 1.3;
         }
-        .process-cta p {
-          font-size: clamp(0.92rem, 1.3vw, 1.02rem);
-          color: #555;
-          max-width: 520px;
-          margin: 0 auto 26px;
-          line-height: 1.6;
+        .process-cta-text p {
+          font-size: 13px;
+          color: #666;
+          line-height: 1.5;
         }
 
         .process-cta-btn {
           position: relative;
           display: inline-flex;
           align-items: center;
-          gap: 10px;
-          padding: 15px 30px;
+          gap: 8px;
+          padding: 12px 22px;
           border-radius: 999px;
           font-weight: 700;
-          font-size: 15px;
+          font-size: 13.5px;
           color: #fff;
           background-image: ${HEADING_GRADIENT};
           background-size: 200% 200%;
           border: 1px solid rgba(255,255,255,0.25);
-          box-shadow: 0 12px 30px rgba(79,70,229,0.28), 0 4px 12px rgba(0,0,0,0.12);
+          box-shadow: 0 10px 24px rgba(79,70,229,0.26);
           overflow: hidden;
           isolation: isolate;
-          transition: transform 0.28s cubic-bezier(0.22,1,0.36,1),
-                      box-shadow 0.28s cubic-bezier(0.22,1,0.36,1),
-                      filter 0.28s ease,
-                      background-position 0.6s ease;
+          white-space: nowrap;
+          transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s ease, filter 0.25s ease, background-position 0.6s ease;
         }
         .process-cta-btn:hover {
           filter: brightness(1.07);
-          box-shadow: 0 18px 38px rgba(79,70,229,0.36), 0 6px 16px rgba(0,0,0,0.16);
+          box-shadow: 0 14px 30px rgba(79,70,229,0.34);
           background-position: 100% 50%;
         }
-        .process-cta-btn-arrow {
-          position: relative;
-          z-index: 1;
-          transition: transform 0.25s ease;
-        }
-        .process-cta-btn:hover .process-cta-btn-arrow {
-          transform: translateX(4px);
-        }
+        .process-cta-btn-arrow { position: relative; z-index: 1; transition: transform 0.25s ease; }
+        .process-cta-btn:hover .process-cta-btn-arrow { transform: translateX(3px); }
         .process-cta-btn-shine {
-          position: absolute;
-          top: 0;
-          left: -130%;
-          width: 55%;
-          height: 100%;
+          position: absolute; top: 0; left: -130%; width: 55%; height: 100%;
           background: linear-gradient(115deg, transparent, rgba(255,255,255,0.5), transparent);
           transform: skewX(-20deg);
-          transition: left 0.65s ease;
+          transition: left 0.6s ease;
           z-index: 0;
         }
-        .process-cta-btn:hover .process-cta-btn-shine {
-          left: 140%;
-        }
+        .process-cta-btn:hover .process-cta-btn-shine { left: 140%; }
 
-        /* ── Responsive: mobile timeline + table ── */
-        @media (max-width: 780px) {
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
           .process-blob { display: none; }
-
-          .process-line {
-            left: 20px;
-            transform: none;
-          }
-          .process-row {
-            grid-template-columns: 40px 1fr;
-            gap: 14px;
-          }
-          .process-row .process-spacer {
-            display: none;
-          }
-          .process-row.is-left .process-card,
-          .process-row.is-right .process-card {
-            grid-column: 2;
-            justify-self: start;
-            text-align: left;
-            max-width: 100%;
-          }
-          .process-dot-col {
-            grid-column: 1;
-            justify-content: flex-start;
-          }
-          .process-dot {
-            width: 36px;
-            height: 36px;
-          }
-
-          .doc-table thead {
-            display: none;
-          }
-          .doc-table, .doc-table tbody, .doc-table tr, .doc-table td {
-            display: block;
-            width: 100%;
-          }
-          .doc-table tr {
-            padding: 16px 20px;
-          }
-          .doc-table td {
-            padding: 4px 0;
-            border: none;
-          }
-          .doc-table td:first-child {
-            white-space: normal;
-          }
-          .doc-table td:nth-child(2) {
-            padding-left: 44px;
-            color: #64748b;
-          }
-          .doc-table td:nth-child(2)::before {
-            content: 'Notes';
-            display: block;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: #94a3b8;
-            margin: 4px 0 2px;
-          }
+          .process-step-btn { width: 34px; height: 34px; }
+          .process-step-label { display: none; }
+          .process-connector { width: 22px; }
+          .process-panel { margin-top: 26px; padding: 16px 16px; gap: 12px; }
+          .process-panel-icon { width: 38px; height: 38px; }
+          .doc-chip { flex: 1 1 100%; min-width: 0; }
+          .process-cta { flex-direction: column; align-items: flex-start; }
+          .process-cta-btn { width: 100%; justify-content: center; }
+        }
+        @media (min-width: 641px) and (max-width: 900px) {
+          .doc-chip { flex: 0 1 calc(50% - 10px); }
         }
       `}</style>
     </section>

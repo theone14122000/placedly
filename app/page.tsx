@@ -14,6 +14,7 @@ import StudyDestinationsMarquee from './components/StudyDestinationsMarquee';
 import Testimonials from './components/Testimonials';
 import Faq from './components/Faq';
 import Cta from './components/Cta';
+import ServiceWidgetSection from './components/ServiceWidgetSection';
 import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import PlacedlyFixes from './components/PlacedlyFixes';
@@ -110,6 +111,7 @@ export default async function Home() {
         <Testimonials />
         <Faq />
         <Cta cms={cms} />
+        <ServiceWidgetSection />
         <Footer cms={cms} />
         <FloatingWhatsApp cms={cms} />
         <CapFloatingCta label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'} />
