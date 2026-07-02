@@ -7,7 +7,7 @@ import {
   RefreshCw, TrendingUp, Phone, Search, FileSignature,
   FileText, Mic2, Handshake, PartyPopper,
   CheckCircle2, Sparkles, ArrowRight, Rocket, MessageCircle,
-  Play, Pause, X, Zap, Calculator,
+  Play, X, Zap, Calculator,
 } from 'lucide-react';
 import { getCmsMap, parseCmsJson } from '@/lib/cms';
 
@@ -74,7 +74,7 @@ const domains = [
   },
 ];
 
-const steps = [
+const defaultSteps = [
   { num: 1, Icon: Phone,         title: 'Free Discovery Call',            badge: 'Free',                 desc: "15-minute call. We understand your experience, goals and situation. Honest assessment — we'll tell you if we can help.",                             tags: ['15–20 min', 'Zero Cost'] },
   { num: 2, Icon: Search,        title: 'Deep Profile Assessment',        badge: 'Foundation',           desc: '45–60 minute session. Full career story, strengths, gaps, target companies. Your personalized roadmap is built here.',                              tags: ['45–60 min', 'Roadmap Delivered'] },
   { num: 3, Icon: FileSignature, title: 'Service Agreement Sign',         badge: 'Transparent',          desc: 'Digital service agreement signed. Scope, Success Share %, and terms — everything in writing before we start.',                                    tags: ['Digital Agreement', 'Fully Transparent'] },
@@ -185,8 +185,8 @@ export default async function CapPage() {
       ];
 
   const cmsSteps = capCms.steps;
-  const mergedSteps = steps.map((step, i) => {
-    const cms = cmsSteps?.[i];
+  const mergedSteps = defaultSteps.map((step, i) => {
+    const cms = cmsSteps?.find(s => s.number === step.num || s.id === step.num) ?? cmsSteps?.[i];
     return {
       ...step,
       num: cms?.number ?? step.num,
@@ -207,7 +207,7 @@ export default async function CapPage() {
       <section className="cap-hero">
         <AmbientBlobs />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <nav className="cap-breadcrumb reveal" data-reveal>
+          <nav className="cap-breadcrumb reveal" data-reveal aria-label="Breadcrumb">
             <a href="/">Home</a><span className="cap-sep">›</span>
             <span className="cap-current">CAP</span>
           </nav>
@@ -217,7 +217,7 @@ export default async function CapPage() {
 
             <h1 className="cap-h1 reveal" data-reveal data-delay="0.08">
               Not Just a Job.{' '}
-              <GradientText tag="h1" style={{ display: 'inline' }}>A Career Transformation.</GradientText>
+              <GradientText tag="span" style={{ display: 'inline' }}>A Career Transformation.</GradientText>
             </h1>
 
             <p className="cap-lead reveal" data-reveal data-delay="0.16">{heroSubtitle}</p>
@@ -260,7 +260,7 @@ export default async function CapPage() {
           <div className="cap-two-col">
             <div className="reveal" data-reveal>
               <SectionLabel text="What's Included" />
-              <h2 className="cap-h2">Everything You Get <GradientText tag="h2">in the CAP</GradientText></h2>
+              <h2 className="cap-h2">Everything You Get <GradientText tag="span">in the CAP</GradientText></h2>
               <p className="cap-body">A complete career transformation system — not just a resume, not just job leads. Everything, end to end.</p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -357,16 +357,22 @@ export default async function CapPage() {
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="cap-center reveal" data-reveal>
             <SectionLabel text="Who We Help" center />
-            <h2 className="cap-h2">Our <GradientText tag="h2">Specialist Domains</GradientText></h2>
+            <h2 className="cap-h2">Our <GradientText tag="span">Specialist Domains</GradientText></h2>
             <p className="cap-body" style={{ margin: '0 auto', textAlign: 'center', maxWidth: '480px' }}>
-              Click any card to see the numbers behind each domain.
+              Click or tap any card to see the numbers behind each domain.
             </p>
           </div>
 
           <div className="cap-domains-3">
             {domains.map((d, i) => (
               <div key={d.title} className="cap-flip-outer reveal" data-reveal data-delay={`${i * 0.08}`}>
-                <button type="button" className="cap-flip-card" data-flip-card aria-label={`Flip ${d.title} card`}>
+                <div
+                  className="cap-flip-card"
+                  tabIndex={0}
+                  role="region"
+                  aria-label={`${d.title} domain details`}
+                  data-flip-card
+                >
                   <div className="cap-flip-inner" data-flip-inner>
 
                     {/* Front */}
@@ -400,13 +406,13 @@ export default async function CapPage() {
                           </div>
                         ))}
                       </div>
-                      <a href="/cap/apply" className="cap-domain-back-cta" onClick={(e) => e.stopPropagation()}>
+                      <a href="/cap/apply" className="cap-domain-back-cta">
                         Talk to a Specialist <ArrowRight size={13} />
                       </a>
                     </div>
 
                   </div>
-                </button>
+                </div>
               </div>
             ))}
           </div>
@@ -419,12 +425,12 @@ export default async function CapPage() {
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="cap-center reveal" data-reveal>
             <SectionLabel text="The Journey" center />
-            <h2 className="cap-h2">Your 7-Step <GradientText tag="h2">Career Growth Path</GradientText></h2>
+            <h2 className="cap-h2">Your 7-Step <GradientText tag="span">Career Growth Path</GradientText></h2>
           </div>
 
           {/* Controls */}
           <div className="cap-journey-controls reveal" data-reveal data-delay="0.1">
-            <button type="button" className="cap-play-btn" data-journey-play>
+            <button type="button" className="cap-play-btn" data-journey-play aria-label="Auto play step journey">
               <span data-play-icon><Play size={13} /></span>
               <span data-play-label>Auto-Play Journey</span>
             </button>
@@ -472,7 +478,7 @@ export default async function CapPage() {
                   <div className={`cap-journey-card ${isLast ? 'cap-journey-card-final' : ''}`}>
                     <div className="cap-journey-card-glow" style={{ background: `linear-gradient(135deg, ${col}, ${G.orange})` }} />
 
-                    <button type="button" className="cap-journey-card-head" data-journey-toggle>
+                    <button type="button" className="cap-journey-card-head" data-journey-toggle aria-expanded={i === 0}>
                       <div className="cap-journey-icon" style={{ background: `${col}15` }}>
                         <step.Icon size={18} color={col} />
                       </div>
@@ -515,7 +521,7 @@ export default async function CapPage() {
             <div className="cap-cta-orb cap-cta-orb-orange" />
             <div style={{ position: 'relative', zIndex: 1 }}>
               <SectionLabel text="Take Action" center light />
-              <h2 className="cap-cta-h2"><GradientText tag="h2">Ready to Transform Your Career?</GradientText></h2>
+              <h2 className="cap-cta-h2"><GradientText tag="span">Ready to Transform Your Career?</GradientText></h2>
               <p className="cap-cta-body">
                 Zero upfront. You only pay after your career grows. Start with a free 15-minute discovery call.
               </p>
@@ -544,7 +550,7 @@ export default async function CapPage() {
             <a href="/cap/apply" className="cap-btn cap-btn-primary" style={{ padding: '10px 22px', fontSize: '13px' }}>
               Apply Now <ArrowRight size={13} />
             </a>
-            <button type="button" className="cap-sticky-dismiss" data-sticky-dismiss aria-label="Dismiss">
+            <button type="button" className="cap-sticky-dismiss" data-sticky-dismiss aria-label="Dismiss banner">
               <X size={16} />
             </button>
           </div>
@@ -651,7 +657,7 @@ export default async function CapPage() {
 
         /* ── Flip cards ── */
         .cap-flip-outer { perspective:1400px; }
-        .cap-flip-card { all:unset; display:block; width:100%; cursor:pointer; }
+        .cap-flip-card { display:block; width:100%; cursor:pointer; outline:none; }
         .cap-flip-inner { position:relative; width:100%; min-height:260px; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.22,1,.36,1); }
         .cap-flip-inner.is-flipped { transform:rotateY(180deg); }
         .cap-flip-face { position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
@@ -713,7 +719,7 @@ export default async function CapPage() {
         .cap-journey-card-glow { position:absolute; top:0; left:0; right:0; height:3px; opacity:.85; }
 
         .cap-journey-card-head { all:unset; display:flex; align-items:center; gap:10px; padding:20px 24px; flex-wrap:wrap; cursor:pointer; width:100%; box-sizing:border-box; }
-        .cap-journey-icon { width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; transition:transform .3s ease; flex-shrink:0; }
+        .cap-journey-icon { width:32px; height:32px; border-radius:99px; display:flex; align-items:center; justify-content:center; transition:transform .3s ease; flex-shrink:0; }
         .cap-journey-item.is-active .cap-journey-icon { transform:rotate(-8deg) scale(1.08); }
         .cap-journey-title { font-size:15px; font-weight:700; color:#0b0d20; }
         .cap-journey-badge { margin-left:auto; padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700; }
@@ -780,7 +786,7 @@ export default async function CapPage() {
                 var progressFill = document.querySelector('[data-scroll-progress]');
                 function updateProgress() {
                   var h = document.documentElement;
-                  var scrolled = h.scrollTop;
+                  var scrolled = window.pageYOffset || h.scrollTop;
                   var max = h.scrollHeight - h.clientHeight;
                   var pct = max > 0 ? (scrolled / max) * 100 : 0;
                   if (progressFill) progressFill.style.width = pct + '%';
@@ -916,9 +922,17 @@ export default async function CapPage() {
 
                 /* ── Flip cards ── */
                 document.querySelectorAll('[data-flip-card]').forEach(function (card) {
-                  card.addEventListener('click', function () {
+                  var toggle = function (e) {
+                    if (e.target.closest('a')) return;
                     var inner = card.querySelector('[data-flip-inner]');
                     if (inner) inner.classList.toggle('is-flipped');
+                  };
+                  card.addEventListener('click', toggle);
+                  card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      toggle(e);
+                    }
                   });
                 });
 
@@ -972,7 +986,11 @@ export default async function CapPage() {
                 var ticking = false;
                 document.addEventListener('scroll', function () {
                   updateProgress();
-                  if (!ticking) { requestAnimationFrame(updateJourneyFromScroll); ticking = true; setTimeout(function(){ ticking = false; }, 16); }
+                  if (!ticking) {
+                    requestAnimationFrame(updateJourneyFromScroll);
+                    ticking = true;
+                    setTimeout(function(){ ticking = false; }, 16);
+                  }
                   updateStickyBar();
                 }, { passive: true });
                 window.addEventListener('resize', updateJourneyFromScroll);
@@ -996,7 +1014,11 @@ export default async function CapPage() {
                 document.querySelectorAll('[data-journey-toggle]').forEach(function (btn, idx) {
                   btn.addEventListener('click', function () {
                     var item = journeyItems[idx];
-                    if (item) item.classList.toggle('is-open');
+                    if (item) {
+                      var wasOpen = item.classList.contains('is-open');
+                      item.classList.toggle('is-open');
+                      btn.setAttribute('aria-expanded', !wasOpen);
+                    }
                   });
                 });
 
@@ -1005,12 +1027,15 @@ export default async function CapPage() {
                 var playIcon = document.querySelector('[data-play-icon]');
                 var playLabel = document.querySelector('[data-play-label]');
 
+                var playSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+                var pauseSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+
                 function startAutoplay() {
                   autoplayOn = true;
                   autoplayIndex = 0;
                   if (playBtn) playBtn.classList.add('is-playing');
                   if (playLabel) playLabel.textContent = 'Pause Journey';
-                  if (playIcon) playIcon.innerHTML = '${`<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`}';
+                  if (playIcon) playIcon.innerHTML = pauseSVG;
                   advanceAutoplay();
                   autoplayTimer = setInterval(advanceAutoplay, 3200);
                 }
@@ -1019,7 +1044,7 @@ export default async function CapPage() {
                   if (autoplayTimer) clearInterval(autoplayTimer);
                   if (playBtn) playBtn.classList.remove('is-playing');
                   if (playLabel) playLabel.textContent = 'Auto-Play Journey';
-                  if (playIcon) playIcon.innerHTML = '${`<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`}';
+                  if (playIcon) playIcon.innerHTML = playSVG;
                 }
                 function advanceAutoplay() {
                   setActiveStep(autoplayIndex, true);
@@ -1049,7 +1074,7 @@ export default async function CapPage() {
                   if (!stickyBar || stickyDismissed) return;
                   var heroEl = document.querySelector('.cap-hero');
                   var threshold = heroEl ? heroEl.offsetHeight : 500;
-                  if (window.scrollY > threshold) stickyBar.classList.add('is-visible');
+                  if (window.pageYOffset > threshold) stickyBar.classList.add('is-visible');
                   else stickyBar.classList.remove('is-visible');
                 }
                 if (stickyDismiss) {
