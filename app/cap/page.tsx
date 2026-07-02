@@ -8,13 +8,18 @@ import {
   FileText, Mic2, Handshake, PartyPopper,
   CheckCircle2, Sparkles, ArrowRight, Rocket, MessageCircle,
   Play, X, Zap, Calculator,
+  type LucideIcon,
 } from 'lucide-react';
 import { getCmsMap, parseCmsJson } from '@/lib/cms';
 
-export const metadata: Metadata = {
-  title: 'Career Assistance Programme (CAP) — Placedly',
-  description: 'Placedly CAP: The flagship career growth programme for BPO, Healthcare Claims, Insurance & Finance professionals. Resume rebuild, mock interviews, direct employer connect. Zero upfront.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const cmsMap = await getCmsMap('cap:');
+  const capCms = parseCmsJson<CapCmsData>(cmsMap, 'cap:data', {});
+  return {
+    title: capCms.seo?.title ?? 'Career Assistance Programme (CAP) — Placedly',
+    description: capCms.seo?.description ?? 'Placedly CAP: The flagship career growth programme for BPO, Healthcare Claims, Insurance & Finance professionals. Resume rebuild, mock interviews, direct employer connect. Zero upfront.',
+  };
+}
 
 /* ── Brand tokens (site-wide) ── */
 const G = {
@@ -25,7 +30,95 @@ const G = {
   purple: '#a855f7',
 };
 
-const benefits = [
+const DOT_COLORS = [G.blue, G.orange, G.purple, '#16a34a', G.rose, '#0891b2', G.blue];
+
+/* ── Icon registry: CMS sends a string, we resolve the component ── */
+const ICON_MAP: Record<string, LucideIcon> = {
+  HeartPulse, ClipboardList, Briefcase, BarChart3, RefreshCw, TrendingUp,
+  Phone, Search, FileSignature, FileText, Mic2, Handshake, PartyPopper,
+  Rocket, Zap, Sparkles,
+};
+function resolveIcon(name: string | undefined, fallback: LucideIcon): LucideIcon {
+  return (name && ICON_MAP[name]) || fallback;
+}
+
+/* ════════════════════════════════════════════════════════════
+   CMS TYPES — everything on this page is editable
+   ════════════════════════════════════════════════════════════ */
+type CapCmsData = {
+  seo?: { title?: string; description?: string };
+  hero?: {
+    tag?: string;
+    titlePlain?: string;
+    titleGradient?: string;
+    subtitle?: string;
+    ctaText?: string;
+    ctaLink?: string;
+    secondaryCtaText?: string;
+    secondaryCtaLink?: string;
+  };
+  liveActivity?: string[];
+  stats?: Array<{ label?: string; value?: string }>;
+  included?: {
+    heading?: string;
+    headingGradient?: string;
+    body?: string;
+    benefits?: string[];
+    ctaText?: string;
+    ctaLink?: string;
+  };
+  successShare?: {
+    title?: string;
+    subtitle?: string;
+    percent?: number;          // e.g. 12
+    note?: string;
+    calcMin?: number;
+    calcMax?: number;
+    calcDefault?: number;
+  };
+  shareTable?: Array<{ ctc: string; fee: string; net: string; roi: string }>;
+  domainsSection?: { heading?: string; headingGradient?: string; body?: string };
+  domains?: Array<{
+    icon?: string;
+    iconBg?: string;
+    iconColor?: string;
+    title?: string;
+    desc?: string;
+    badge?: string;
+    badgeColor?: string;
+    stats?: Array<{ label?: string; value?: string }>;
+  }>;
+  journey?: { heading?: string; headingGradient?: string };
+  steps?: Array<{
+    id?: number;
+    number?: number;
+    icon?: string;
+    title?: string;
+    badge?: string;
+    desc?: string;
+    tags?: string[];
+  }>;
+  cta?: {
+    title?: string;
+    body?: string;
+    primaryText?: string;
+    primaryLink?: string;
+    whatsappNumber?: string;   // e.g. "919876543210"
+    whatsappText?: string;
+  };
+  stickyCta?: {
+    title?: string;
+    subtitle?: string;
+    ctaText?: string;
+    ctaLink?: string;
+  };
+};
+
+/* ════════════════════════════════════════════════════════════
+   DEFAULTS (fallbacks when CMS is empty)
+   ════════════════════════════════════════════════════════════ */
+
+const DEFAULT_BENEFITS = [
   'ATS-Optimized Resume + LinkedIn Rebuild',
   '3 Mock Interview Sessions (HR + Technical + Negotiation)',
   'Personalized Career Roadmap & Strategy',
@@ -35,58 +128,56 @@ const benefits = [
   '48-Hour WhatsApp Support Throughout',
 ];
 
-const domains = [
+const DEFAULT_DOMAINS = [
   {
-    Icon: HeartPulse, iconBg: '#fef2f2', iconColor: '#ef4444', title: 'US Healthcare Claims',
+    icon: 'HeartPulse', iconBg: '#fef2f2', iconColor: '#ef4444', title: 'US Healthcare Claims',
     desc: 'CPT coding, ICD-10, adjudication, COB, denial management. Direct connections at EXL, Optum, WNS & more.',
     badge: 'Strongest Domain', badgeColor: '#ef4444',
     stats: [{ label: 'Placements/mo', value: '12+' }, { label: 'Avg Salary Hike', value: '45%' }, { label: 'Time to Offer', value: '18 days' }],
   },
   {
-    Icon: ClipboardList, iconBg: '#fff7ed', iconColor: G.orange, title: 'Insurance Operations',
+    icon: 'ClipboardList', iconBg: '#fff7ed', iconColor: G.orange, title: 'Insurance Operations',
     desc: "Lloyd's market, underwriting support, XIS submission, RFT compliance, claims processing.",
     badge: 'High Value', badgeColor: G.orange,
     stats: [{ label: 'Placements/mo', value: '8+' }, { label: 'Avg Salary Hike', value: '40%' }, { label: 'Time to Offer', value: '21 days' }],
   },
   {
-    Icon: Briefcase, iconBg: '#eff6ff', iconColor: G.blue, title: 'BPO / KPO Operations',
+    icon: 'Briefcase', iconBg: '#eff6ff', iconColor: G.blue, title: 'BPO / KPO Operations',
     desc: 'Process associates, team leads, quality analysts, ops managers. Volume domain — fastest results.',
     badge: 'Fast Growth', badgeColor: G.blue,
     stats: [{ label: 'Placements/mo', value: '15+' }, { label: 'Avg Salary Hike', value: '35%' }, { label: 'Time to Offer', value: '12 days' }],
   },
   {
-    Icon: BarChart3, iconBg: '#f0fdf4', iconColor: '#16a34a', title: 'Finance & Accounts',
+    icon: 'BarChart3', iconBg: '#f0fdf4', iconColor: '#16a34a', title: 'Finance & Accounts',
     desc: 'Accounts executives, finance analysts, payroll specialists, BFSI roles at growing companies.',
     badge: 'Growing', badgeColor: '#16a34a',
     stats: [{ label: 'Placements/mo', value: '9+' }, { label: 'Avg Salary Hike', value: '42%' }, { label: 'Time to Offer', value: '20 days' }],
   },
   {
-    Icon: RefreshCw, iconBg: '#faf5ff', iconColor: G.purple, title: 'Career Switchers',
+    icon: 'RefreshCw', iconBg: '#faf5ff', iconColor: G.purple, title: 'Career Switchers',
     desc: 'Gap in career? Domain switch needed? We know exactly how to present your story to land the role.',
     badge: 'Specialist', badgeColor: G.purple,
     stats: [{ label: 'Placements/mo', value: '6+' }, { label: 'Avg Salary Hike', value: '38%' }, { label: 'Time to Offer', value: '25 days' }],
   },
   {
-    Icon: TrendingUp, iconBg: '#ecfeff', iconColor: '#0891b2', title: 'Salary Growth Seekers',
+    icon: 'TrendingUp', iconBg: '#ecfeff', iconColor: '#0891b2', title: 'Salary Growth Seekers',
     desc: 'Want 40–70% growth? This is exactly what the CAP is designed to deliver — real, fast career jumps.',
     badge: 'High Impact', badgeColor: '#0891b2',
     stats: [{ label: 'Placements/mo', value: '10+' }, { label: 'Avg Salary Hike', value: '58%' }, { label: 'Time to Offer', value: '16 days' }],
   },
 ];
 
-const defaultSteps = [
-  { num: 1, Icon: Phone,         title: 'Free Discovery Call',            badge: 'Free',                 desc: "15-minute call. We understand your experience, goals and situation. Honest assessment — we'll tell you if we can help.",                             tags: ['15–20 min', 'Zero Cost'] },
-  { num: 2, Icon: Search,        title: 'Deep Profile Assessment',        badge: 'Foundation',           desc: '45–60 minute session. Full career story, strengths, gaps, target companies. Your personalized roadmap is built here.',                              tags: ['45–60 min', 'Roadmap Delivered'] },
-  { num: 3, Icon: FileSignature, title: 'Service Agreement Sign',         badge: 'Transparent',          desc: 'Digital service agreement signed. Scope, Success Share %, and terms — everything in writing before we start.',                                    tags: ['Digital Agreement', 'Fully Transparent'] },
-  { num: 4, Icon: FileText,      title: 'Resume & LinkedIn Rebuild',      badge: 'Core',                 desc: 'ATS-friendly resume, achievement-based bullets, domain keywords. LinkedIn updated too. Ready in 1–2 days. 2 revisions included.',                    tags: ['1–2 Days', 'ATS Optimized', '2 Revisions'] },
-  { num: 5, Icon: Mic2,          title: 'Interview Mastery — 3 Sessions', badge: 'Biggest Edge',         desc: 'Session 1: HR Round. Session 2: Technical/Domain. Session 3: Full Mock + Salary Negotiation Script.',                                              tags: ['~3 hrs total', 'Mock Interview', 'Negotiation Script'] },
-  { num: 6, Icon: Handshake,     title: 'Direct Employer Connect',        badge: 'Our Work',             desc: 'Your profile goes directly to hiring managers at 10–15 target companies — with a warm intro from us. We follow up, schedule, and track everything.', tags: ['7–21 Days Active', '10–15 Companies'] },
-  { num: 7, Icon: PartyPopper,   title: 'Career Grows — Success Share!',  badge: 'Partnership Complete', desc: 'New role confirmed. Better CTC. Real growth. Now we collect our Success Share — because we grew together.',                                     tags: ['12% Success Share', '7 Day Window', 'GST Receipt'] },
+const DEFAULT_STEPS = [
+  { num: 1, icon: 'Phone',         title: 'Free Discovery Call',            badge: 'Free',                 desc: "15-minute call. We understand your experience, goals and situation. Honest assessment — we'll tell you if we can help.",                             tags: ['15–20 min', 'Zero Cost'] },
+  { num: 2, icon: 'Search',        title: 'Deep Profile Assessment',        badge: 'Foundation',           desc: '45–60 minute session. Full career story, strengths, gaps, target companies. Your personalized roadmap is built here.',                              tags: ['45–60 min', 'Roadmap Delivered'] },
+  { num: 3, icon: 'FileSignature', title: 'Service Agreement Sign',         badge: 'Transparent',          desc: 'Digital service agreement signed. Scope, Success Share %, and terms — everything in writing before we start.',                                    tags: ['Digital Agreement', 'Fully Transparent'] },
+  { num: 4, icon: 'FileText',      title: 'Resume & LinkedIn Rebuild',      badge: 'Core',                 desc: 'ATS-friendly resume, achievement-based bullets, domain keywords. LinkedIn updated too. Ready in 1–2 days. 2 revisions included.',                    tags: ['1–2 Days', 'ATS Optimized', '2 Revisions'] },
+  { num: 5, icon: 'Mic2',          title: 'Interview Mastery — 3 Sessions', badge: 'Biggest Edge',         desc: 'Session 1: HR Round. Session 2: Technical/Domain. Session 3: Full Mock + Salary Negotiation Script.',                                              tags: ['~3 hrs total', 'Mock Interview', 'Negotiation Script'] },
+  { num: 6, icon: 'Handshake',     title: 'Direct Employer Connect',        badge: 'Our Work',             desc: 'Your profile goes directly to hiring managers at 10–15 target companies — with a warm intro from us. We follow up, schedule, and track everything.', tags: ['7–21 Days Active', '10–15 Companies'] },
+  { num: 7, icon: 'PartyPopper',   title: 'Career Grows — Success Share!',  badge: 'Partnership Complete', desc: 'New role confirmed. Better CTC. Real growth. Now we collect our Success Share — because we grew together.',                                     tags: ['12% Success Share', '7 Day Window', 'GST Receipt'] },
 ];
 
-const DOT_COLORS = [G.blue, G.orange, G.purple, '#16a34a', G.rose, '#0891b2', G.blue];
-
-const LIVE_ACTIVITY = [
+const DEFAULT_LIVE_ACTIVITY = [
   '🎉 Ankit R. just got placed at WNS — ₹6.4L CTC',
   '⚡ Priya S. completed Interview Mastery, Session 3',
   '🚀 47 candidates in active employer connect right now',
@@ -95,12 +186,20 @@ const LIVE_ACTIVITY = [
   '🎯 Vikram T. landed Senior Analyst role — 9 days flat',
 ];
 
-type CapCmsData = {
-  hero?: { tag?: string; title?: string; subtitle?: string; ctaText?: string; ctaLink?: string };
-  steps?: Array<{ id?: number; number?: number; title?: string; desc?: string; tag?: string }>;
-  stats?: Array<{ label?: string; value?: string }>;
-  shareTable?: Array<{ ctc: string; fee: string; net: string; roi: string }>;
-};
+const DEFAULT_STATS = [
+  { num: '300+', label: 'Professionals Placed' },
+  { num: '60%+', label: 'Avg. Career Growth' },
+  { num: '9', label: 'Fastest Placement (Days)' },
+  { num: '₹0', label: 'Upfront Cost' },
+];
+
+const DEFAULT_SHARE_TABLE = [
+  { ctc: '₹3,00,000',  fee: '₹36,000',   net: '₹2.64L+', roi: '7x ROI' },
+  { ctc: '₹4,50,000',  fee: '₹54,000',   net: '₹3.96L+', roi: '7x ROI' },
+  { ctc: '₹6,00,000',  fee: '₹72,000',   net: '₹5.28L+', roi: '8x ROI' },
+  { ctc: '₹8,00,000',  fee: '₹96,000',   net: '₹7.04L+', roi: '8x ROI' },
+  { ctc: '₹10,00,000', fee: '₹1,20,000', net: '₹8.8L+',  roi: '9x ROI' },
+];
 
 /* ════════════════════════════════════════════════════════════
    Reusable server-rendered pieces
@@ -158,42 +257,123 @@ function AmbientBlobs() {
 /* ════════════════════════════════════════════════════════════ */
 export default async function CapPage() {
   const cmsMap = await getCmsMap('cap:');
-  const capCms = parseCmsJson<CapCmsData>(cmsMap, 'cap:data', {});
+  const cms = parseCmsJson<CapCmsData>(cmsMap, 'cap:data', {});
 
-  const heroTag = capCms.hero?.tag ?? 'Career Assistance Programme';
-  const heroSubtitle = capCms.hero?.subtitle ?? "The CAP is Placedly's flagship programme for working professionals in BPO, Healthcare Claims, Insurance & Finance who want to grow — fast.";
+  /* ── HERO (dynamic) ── */
+  const hero = {
+    tag:               cms.hero?.tag ?? 'Career Assistance Programme',
+    titlePlain:        cms.hero?.titlePlain ?? 'Not Just a Job.',
+    titleGradient:     cms.hero?.titleGradient ?? 'A Career Transformation.',
+    subtitle:          cms.hero?.subtitle ?? "The CAP is Placedly's flagship programme for working professionals in BPO, Healthcare Claims, Insurance & Finance who want to grow — fast.",
+    ctaText:           cms.hero?.ctaText ?? 'Apply to CAP Now',
+    ctaLink:           cms.hero?.ctaLink ?? '/cap/apply',
+    secondaryCtaText:  cms.hero?.secondaryCtaText ?? 'See the Journey',
+    secondaryCtaLink:  cms.hero?.secondaryCtaLink ?? '#how-it-works',
+  };
 
-  const cmsStats = capCms.stats;
-  const defaultStats = [
-    { num: '300+', label: 'Professionals Placed' },
-    { num: '60%+', label: 'Avg. Career Growth' },
-    { num: '9', label: 'Fastest Placement (Days)' },
-    { num: '₹0', label: 'Upfront Cost' },
-  ];
-  const heroStats = cmsStats && cmsStats.length > 0
-    ? cmsStats.map(s => ({ num: s.value ?? '', label: s.label ?? '' }))
-    : defaultStats;
+  /* ── LIVE TICKER (dynamic) ── */
+  const liveActivity = (cms.liveActivity && cms.liveActivity.length > 0)
+    ? cms.liveActivity
+    : DEFAULT_LIVE_ACTIVITY;
 
-  const shareTable = (capCms.shareTable && capCms.shareTable.length > 0)
-    ? capCms.shareTable
-    : [
-        { ctc: '₹3,00,000',  fee: '₹36,000',   net: '₹2.64L+', roi: '7x ROI' },
-        { ctc: '₹4,50,000',  fee: '₹54,000',   net: '₹3.96L+', roi: '7x ROI' },
-        { ctc: '₹6,00,000',  fee: '₹72,000',   net: '₹5.28L+', roi: '8x ROI' },
-        { ctc: '₹8,00,000',  fee: '₹96,000',   net: '₹7.04L+', roi: '8x ROI' },
-        { ctc: '₹10,00,000', fee: '₹1,20,000', net: '₹8.8L+',  roi: '9x ROI' },
-      ];
+  /* ── STATS (dynamic) ── */
+  const heroStats = (cms.stats && cms.stats.length > 0)
+    ? cms.stats.map(s => ({ num: s.value ?? '', label: s.label ?? '' }))
+    : DEFAULT_STATS;
 
-  const cmsSteps = capCms.steps;
-  const mergedSteps = defaultSteps.map((step, i) => {
-    const cms = cmsSteps?.find(s => s.number === step.num || s.id === step.num) ?? cmsSteps?.[i];
+  /* ── WHAT'S INCLUDED (dynamic) ── */
+  const included = {
+    heading:         cms.included?.heading ?? 'Everything You Get',
+    headingGradient: cms.included?.headingGradient ?? 'in the CAP',
+    body:            cms.included?.body ?? 'A complete career transformation system — not just a resume, not just job leads. Everything, end to end.',
+    benefits:        (cms.included?.benefits && cms.included.benefits.length > 0) ? cms.included.benefits : DEFAULT_BENEFITS,
+    ctaText:         cms.included?.ctaText ?? "Apply Now — It's Free to Start",
+    ctaLink:         cms.included?.ctaLink ?? '/cap/apply',
+  };
+
+  /* ── SUCCESS SHARE (dynamic, drives calculator too) ── */
+  const sharePercent = cms.successShare?.percent ?? 12;
+  const successShare = {
+    title:       cms.successShare?.title ?? 'Our Success Share Model',
+    subtitle:    cms.successShare?.subtitle ?? 'We invest everything first. You pay only when your career genuinely grows — after your offer letter arrives.',
+    percent:     sharePercent,
+    note:        cms.successShare?.note ?? `* ${sharePercent}% Success Share of agreed annual CTC. GST receipt provided.`,
+    calcMin:     cms.successShare?.calcMin ?? 200000,
+    calcMax:     cms.successShare?.calcMax ?? 2000000,
+    calcDefault: cms.successShare?.calcDefault ?? 500000,
+  };
+
+  /* pre-compute initial calculator display (SSR-correct before JS runs) */
+  const initFee = Math.round(successShare.calcDefault * (sharePercent / 100));
+  const initNet = successShare.calcDefault - initFee;
+  const initRoi = initFee > 0 ? Math.max(1, Math.round(initNet / initFee)) : 0;
+  const fmtINR = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN');
+  const fmtLakh = (n: number) => '₹' + (n / 100000).toFixed(2).replace(/\.00$/, '') + 'L';
+
+  /* ── SHARE TABLE (dynamic) ── */
+  const shareTable = (cms.shareTable && cms.shareTable.length > 0)
+    ? cms.shareTable
+    : DEFAULT_SHARE_TABLE;
+
+  /* ── DOMAINS (dynamic, merged with defaults) ── */
+  const domainsSection = {
+    heading:         cms.domainsSection?.heading ?? 'Our',
+    headingGradient: cms.domainsSection?.headingGradient ?? 'Specialist Domains',
+    body:            cms.domainsSection?.body ?? 'Click or tap any card to see the numbers behind each domain.',
+  };
+  const rawDomains = (cms.domains && cms.domains.length > 0) ? cms.domains : DEFAULT_DOMAINS;
+  const mergedDomains = rawDomains.map((d, i) => {
+    const def = DEFAULT_DOMAINS[i % DEFAULT_DOMAINS.length];
     return {
-      ...step,
-      num: cms?.number ?? step.num,
-      title: cms?.title ?? step.title,
-      desc: cms?.desc ?? step.desc,
+      Icon:       resolveIcon(d.icon, resolveIcon(def.icon, Briefcase)),
+      iconBg:     d.iconBg ?? def.iconBg,
+      iconColor:  d.iconColor ?? def.iconColor,
+      title:      d.title ?? def.title,
+      desc:       d.desc ?? def.desc,
+      badge:      d.badge ?? def.badge,
+      badgeColor: d.badgeColor ?? def.badgeColor,
+      stats:      (d.stats && d.stats.length > 0)
+        ? d.stats.map(s => ({ label: s.label ?? '', value: s.value ?? '' }))
+        : def.stats,
     };
   });
+
+  /* ── JOURNEY STEPS (dynamic, merged by step number) ── */
+  const journey = {
+    heading:         cms.journey?.heading ?? 'Your 7-Step',
+    headingGradient: cms.journey?.headingGradient ?? 'Career Growth Path',
+  };
+  const cmsSteps = cms.steps;
+  const mergedSteps = DEFAULT_STEPS.map((step, i) => {
+    const match = cmsSteps?.find(s => s.number === step.num || s.id === step.num) ?? cmsSteps?.[i];
+    return {
+      num:   match?.number ?? step.num,
+      Icon:  resolveIcon(match?.icon, resolveIcon(step.icon, Phone)),
+      title: match?.title ?? step.title,
+      badge: match?.badge ?? step.badge,
+      desc:  match?.desc ?? step.desc,
+      tags:  (match?.tags && match.tags.length > 0) ? match.tags : step.tags,
+    };
+  });
+  const totalSteps = mergedSteps.length;
+
+  /* ── CTA SECTION (dynamic) ── */
+  const cta = {
+    title:          cms.cta?.title ?? 'Ready to Transform Your Career?',
+    body:           cms.cta?.body ?? 'Zero upfront. You only pay after your career grows. Start with a free 15-minute discovery call.',
+    primaryText:    cms.cta?.primaryText ?? 'Apply to CAP Now',
+    primaryLink:    cms.cta?.primaryLink ?? '/cap/apply',
+    whatsappNumber: cms.cta?.whatsappNumber ?? '919876543210',
+    whatsappText:   cms.cta?.whatsappText ?? 'WhatsApp Us',
+  };
+
+  /* ── STICKY BAR (dynamic) ── */
+  const stickyCta = {
+    title:    cms.stickyCta?.title ?? 'Ready to grow?',
+    subtitle: cms.stickyCta?.subtitle ?? "Zero upfront — pay only after you're placed.",
+    ctaText:  cms.stickyCta?.ctaText ?? 'Apply Now',
+    ctaLink:  cms.stickyCta?.ctaLink ?? '/cap/apply',
+  };
 
   return (
     <PageLayout>
@@ -213,35 +393,35 @@ export default async function CapPage() {
           </nav>
 
           <div style={{ maxWidth: '780px' }}>
-            <div className="reveal" data-reveal><SectionLabel text={heroTag} /></div>
+            <div className="reveal" data-reveal><SectionLabel text={hero.tag} /></div>
 
             <h1 className="cap-h1 reveal" data-reveal data-delay="0.08">
-              Not Just a Job.{' '}
-              <GradientText tag="span" style={{ display: 'inline' }}>A Career Transformation.</GradientText>
+              {hero.titlePlain}{' '}
+              <GradientText tag="span" style={{ display: 'inline' }}>{hero.titleGradient}</GradientText>
             </h1>
 
-            <p className="cap-lead reveal" data-reveal data-delay="0.16">{heroSubtitle}</p>
+            <p className="cap-lead reveal" data-reveal data-delay="0.16">{hero.subtitle}</p>
 
             {/* Live activity ticker */}
             <div className="cap-ticker reveal" data-reveal data-delay="0.2">
               <span className="cap-ticker-live">
                 <span className="cap-ticker-dot" /> LIVE
               </span>
-              <span className="cap-ticker-text" data-ticker-text>{LIVE_ACTIVITY[0]}</span>
+              <span className="cap-ticker-text" data-ticker-text>{liveActivity[0]}</span>
             </div>
 
             <div className="cap-btn-row reveal" data-reveal data-delay="0.28">
-              <a href="/cap/apply" className="cap-btn cap-btn-primary" data-magnetic>
-                <Rocket size={15} /> Apply to CAP Now
+              <a href={hero.ctaLink} className="cap-btn cap-btn-primary" data-magnetic>
+                <Rocket size={15} /> {hero.ctaText}
                 <span className="cap-arrow"><ArrowRight size={14} /></span>
               </a>
-              <a href="#how-it-works" className="cap-btn cap-btn-ghost">See the Journey</a>
+              <a href={hero.secondaryCtaLink} className="cap-btn cap-btn-ghost">{hero.secondaryCtaText}</a>
             </div>
           </div>
 
-          <div className="cap-stats-4">
+          <div className="cap-stats-4" style={{ gridTemplateColumns: `repeat(${Math.min(heroStats.length, 4)}, 1fr)` }}>
             {heroStats.map((s, i) => (
-              <div key={s.label} className="cap-stat-cell reveal" data-reveal data-delay={`${i * 0.08}`}
+              <div key={`${s.label}-${i}`} className="cap-stat-cell reveal" data-reveal data-delay={`${i * 0.08}`}
                 style={{ borderRight: i < heroStats.length - 1 ? '1px solid #eef2ff' : 'none' }}>
                 <div className="cap-stat-num" data-countup={s.num}
                   style={{ backgroundImage: `linear-gradient(135deg, ${DOT_COLORS[i % DOT_COLORS.length]}, ${G.indigo})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
@@ -260,12 +440,12 @@ export default async function CapPage() {
           <div className="cap-two-col">
             <div className="reveal" data-reveal>
               <SectionLabel text="What's Included" />
-              <h2 className="cap-h2">Everything You Get <GradientText tag="span">in the CAP</GradientText></h2>
-              <p className="cap-body">A complete career transformation system — not just a resume, not just job leads. Everything, end to end.</p>
+              <h2 className="cap-h2">{included.heading} <GradientText tag="span">{included.headingGradient}</GradientText></h2>
+              <p className="cap-body">{included.body}</p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {benefits.map((b, i) => (
-                  <div key={b} className="cap-benefit reveal" data-reveal data-delay={`${0.1 + i * 0.05}`}>
+                {included.benefits.map((b, i) => (
+                  <div key={`${b}-${i}`} className="cap-benefit reveal" data-reveal data-delay={`${0.1 + i * 0.05}`}>
                     <CheckCircle2 size={18} color={G.blue} className="cap-check" style={{ flexShrink: 0, marginTop: '2px' }} />
                     <span>{b}</span>
                   </div>
@@ -273,8 +453,8 @@ export default async function CapPage() {
               </div>
 
               <div style={{ marginTop: '32px' }}>
-                <a href="/cap/apply" className="cap-btn cap-btn-primary" data-magnetic>
-                  Apply Now — It&apos;s Free to Start
+                <a href={included.ctaLink} className="cap-btn cap-btn-primary" data-magnetic>
+                  {included.ctaText}
                   <span className="cap-arrow"><ArrowRight size={14} /></span>
                 </a>
               </div>
@@ -285,13 +465,13 @@ export default async function CapPage() {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', position: 'relative', zIndex: 1 }}>
                 <TrendingUp size={22} color={G.orange} />
-                <div style={{ fontSize: '18px', fontWeight: 800 }}>Our Success Share Model</div>
+                <div style={{ fontSize: '18px', fontWeight: 800 }}>{successShare.title}</div>
               </div>
               <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginBottom: '22px', position: 'relative', zIndex: 1 }}>
-                We invest everything first. You pay only when your career genuinely grows — after your offer letter arrives.
+                {successShare.subtitle}
               </p>
 
-              {/* ── Interactive calculator ── */}
+              {/* ── Interactive calculator (percent + range fully dynamic) ── */}
               <div className="cap-calc" style={{ position: 'relative', zIndex: 1 }}>
                 <div className="cap-calc-head">
                   <Calculator size={14} color={G.orange} />
@@ -299,24 +479,31 @@ export default async function CapPage() {
                 </div>
                 <div className="cap-calc-value-row">
                   <span>Annual CTC</span>
-                  <span className="cap-calc-ctc-display" data-ctc-value>₹5,00,000</span>
+                  <span className="cap-calc-ctc-display" data-ctc-value>{fmtINR(successShare.calcDefault)}</span>
                 </div>
                 <input
-                  type="range" min="200000" max="2000000" step="10000" defaultValue="500000"
-                  className="cap-calc-range" data-ctc-slider aria-label="Annual CTC slider"
+                  type="range"
+                  min={successShare.calcMin}
+                  max={successShare.calcMax}
+                  step={10000}
+                  defaultValue={successShare.calcDefault}
+                  className="cap-calc-range"
+                  data-ctc-slider
+                  data-share-percent={sharePercent}
+                  aria-label="Annual CTC slider"
                 />
                 <div className="cap-calc-results">
                   <div className="cap-calc-result">
                     <span className="cap-calc-result-k">Service Fee</span>
-                    <span className="cap-calc-result-v" style={{ color: G.orange }} data-ctc-fee>₹60,000</span>
+                    <span className="cap-calc-result-v" style={{ color: G.orange }} data-ctc-fee>{fmtINR(initFee)}</span>
                   </div>
                   <div className="cap-calc-result">
                     <span className="cap-calc-result-k">Your Net Gain</span>
-                    <span className="cap-calc-result-v" style={{ color: '#4ade80' }} data-ctc-net>₹4.4L</span>
+                    <span className="cap-calc-result-v" style={{ color: '#4ade80' }} data-ctc-net>{fmtLakh(initNet)}</span>
                   </div>
                   <div className="cap-calc-result">
                     <span className="cap-calc-result-k">Return</span>
-                    <span className="cap-calc-result-v" style={{ color: '#fff' }} data-ctc-roi>7x ROI</span>
+                    <span className="cap-calc-result-v" style={{ color: '#fff' }} data-ctc-roi>{initRoi}x ROI</span>
                   </div>
                 </div>
               </div>
@@ -344,7 +531,7 @@ export default async function CapPage() {
                 </tbody>
               </table>
               <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '16px', position: 'relative', zIndex: 1 }}>
-                * 12% Success Share of agreed annual CTC. GST receipt provided.
+                {successShare.note}
               </p>
             </div>
           </div>
@@ -357,15 +544,15 @@ export default async function CapPage() {
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="cap-center reveal" data-reveal>
             <SectionLabel text="Who We Help" center />
-            <h2 className="cap-h2">Our <GradientText tag="span">Specialist Domains</GradientText></h2>
+            <h2 className="cap-h2">{domainsSection.heading} <GradientText tag="span">{domainsSection.headingGradient}</GradientText></h2>
             <p className="cap-body" style={{ margin: '0 auto', textAlign: 'center', maxWidth: '480px' }}>
-              Click or tap any card to see the numbers behind each domain.
+              {domainsSection.body}
             </p>
           </div>
 
           <div className="cap-domains-3">
-            {domains.map((d, i) => (
-              <div key={d.title} className="cap-flip-outer reveal" data-reveal data-delay={`${i * 0.08}`}>
+            {mergedDomains.map((d, i) => (
+              <div key={`${d.title}-${i}`} className="cap-flip-outer reveal" data-reveal data-delay={`${i * 0.08}`}>
                 <div
                   className="cap-flip-card"
                   tabIndex={0}
@@ -399,14 +586,14 @@ export default async function CapPage() {
                     <div className="cap-domain-card cap-flip-face cap-flip-back" style={{ background: `linear-gradient(160deg, ${d.iconColor}, #0b0d20)` }}>
                       <div className="cap-domain-back-title">{d.title}</div>
                       <div className="cap-domain-back-stats">
-                        {d.stats.map(s => (
-                          <div key={s.label} className="cap-domain-back-stat">
+                        {d.stats.map((s, si) => (
+                          <div key={`${s.label}-${si}`} className="cap-domain-back-stat">
                             <span className="cap-domain-back-v">{s.value}</span>
                             <span className="cap-domain-back-k">{s.label}</span>
                           </div>
                         ))}
                       </div>
-                      <a href="/cap/apply" className="cap-domain-back-cta">
+                      <a href={hero.ctaLink} className="cap-domain-back-cta">
                         Talk to a Specialist <ArrowRight size={13} />
                       </a>
                     </div>
@@ -425,7 +612,7 @@ export default async function CapPage() {
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="cap-center reveal" data-reveal>
             <SectionLabel text="The Journey" center />
-            <h2 className="cap-h2">Your 7-Step <GradientText tag="span">Career Growth Path</GradientText></h2>
+            <h2 className="cap-h2">{journey.heading} <GradientText tag="span">{journey.headingGradient}</GradientText></h2>
           </div>
 
           {/* Controls */}
@@ -434,7 +621,9 @@ export default async function CapPage() {
               <span data-play-icon><Play size={13} /></span>
               <span data-play-label>Auto-Play Journey</span>
             </button>
-            <span className="cap-journey-progress-text" data-journey-progress-text>Step 1 of 7 · 14% complete</span>
+            <span className="cap-journey-progress-text" data-journey-progress-text>
+              Step 1 of {totalSteps} · {Math.round((1 / totalSteps) * 100)}% complete
+            </span>
           </div>
 
           {/* Step navigator pills */}
@@ -494,7 +683,7 @@ export default async function CapPage() {
                         <p className="cap-journey-desc">{step.desc}</p>
                         <div className="cap-journey-tags">
                           {step.tags.map((tag, ti) => (
-                            <span key={tag} className="cap-journey-tag" style={{ animationDelay: `${ti * 0.06}s` }}>{tag}</span>
+                            <span key={`${tag}-${ti}`} className="cap-journey-tag" style={{ animationDelay: `${ti * 0.06}s` }}>{tag}</span>
                           ))}
                         </div>
                       </div>
@@ -521,17 +710,15 @@ export default async function CapPage() {
             <div className="cap-cta-orb cap-cta-orb-orange" />
             <div style={{ position: 'relative', zIndex: 1 }}>
               <SectionLabel text="Take Action" center light />
-              <h2 className="cap-cta-h2"><GradientText tag="span">Ready to Transform Your Career?</GradientText></h2>
-              <p className="cap-cta-body">
-                Zero upfront. You only pay after your career grows. Start with a free 15-minute discovery call.
-              </p>
+              <h2 className="cap-cta-h2"><GradientText tag="span">{cta.title}</GradientText></h2>
+              <p className="cap-cta-body">{cta.body}</p>
               <div className="cap-btn-row" style={{ justifyContent: 'center', marginBottom: 0 }}>
-                <a href="/cap/apply" className="cap-btn cap-btn-warm" data-magnetic>
-                  <Rocket size={15} /> Apply to CAP Now
+                <a href={cta.primaryLink} className="cap-btn cap-btn-warm" data-magnetic>
+                  <Rocket size={15} /> {cta.primaryText}
                   <span className="cap-arrow"><ArrowRight size={14} /></span>
                 </a>
-                <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="cap-btn cap-btn-ghost-dark">
-                  <MessageCircle size={15} /> WhatsApp Us
+                <a href={`https://wa.me/${cta.whatsappNumber}`} target="_blank" rel="noopener noreferrer" className="cap-btn cap-btn-ghost-dark">
+                  <MessageCircle size={15} /> {cta.whatsappText}
                 </a>
               </div>
             </div>
@@ -543,12 +730,12 @@ export default async function CapPage() {
       <div className="cap-sticky-cta" data-sticky-cta>
         <div className="cap-sticky-cta-inner">
           <div className="cap-sticky-cta-text">
-            <strong>Ready to grow?</strong>
-            <span>Zero upfront — pay only after you&apos;re placed.</span>
+            <strong>{stickyCta.title}</strong>
+            <span>{stickyCta.subtitle}</span>
           </div>
           <div className="cap-sticky-cta-actions">
-            <a href="/cap/apply" className="cap-btn cap-btn-primary" style={{ padding: '10px 22px', fontSize: '13px' }}>
-              Apply Now <ArrowRight size={13} />
+            <a href={stickyCta.ctaLink} className="cap-btn cap-btn-primary" style={{ padding: '10px 22px', fontSize: '13px' }}>
+              {stickyCta.ctaText} <ArrowRight size={13} />
             </a>
             <button type="button" className="cap-sticky-dismiss" data-sticky-dismiss aria-label="Dismiss banner">
               <X size={16} />
@@ -574,7 +761,6 @@ export default async function CapPage() {
         .reveal { opacity:0; transform:translateY(40px); transition:opacity .55s cubic-bezier(.22,1,.36,1), transform .55s cubic-bezier(.22,1,.36,1); }
         .reveal.is-visible { opacity:1; transform:translateY(0); }
 
-        /* ── Scroll progress bar ── */
         .cap-progress-track { position:fixed; top:0; left:0; right:0; height:3px; background:transparent; z-index:9999; pointer-events:none; }
         .cap-progress-fill { height:100%; width:0%; background:linear-gradient(90deg, ${G.blue}, ${G.purple}, ${G.orange}); transition:width .1s linear; }
 
@@ -594,7 +780,6 @@ export default async function CapPage() {
         .cap-lead { font-size:16.5px; color:#64748b; line-height:1.75; max-width:560px; margin-bottom:22px; }
         .cap-body { font-size:15.5px; color:#64748b; line-height:1.8; margin-bottom:24px; }
 
-        /* ── Live ticker ── */
         .cap-ticker { display:inline-flex; align-items:center; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:8px 16px 8px 8px; margin-bottom:28px; box-shadow:0 2px 10px rgba(0,0,0,.05); max-width:100%; }
         .cap-ticker-live { display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:800; color:#ef4444; background:#fef2f2; padding:4px 8px; border-radius:999px; flex-shrink:0; }
         .cap-ticker-dot { width:6px; height:6px; border-radius:50%; background:#ef4444; animation:cap-ticker-dot-pulse 1.4s ease-in-out infinite; }
@@ -611,7 +796,7 @@ export default async function CapPage() {
         .cap-btn-ghost-dark:hover { border-color:rgba(255,255,255,.5); transform:translateY(-3px); }
         .cap-arrow { display:inline-flex; animation:cap-arrow-bounce 1.3s ease-in-out infinite; }
 
-        .cap-stats-4 { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid #eef2ff; }
+        .cap-stats-4 { display:grid; border-top:1px solid #eef2ff; }
         .cap-stat-cell { text-align:center; padding:28px 20px; background:#fafbff; transition:background .25s ease; }
         .cap-stat-cell:hover { background:#fff; }
         .cap-stat-num { font-size:2rem; font-weight:900; line-height:1; margin-bottom:6px; }
@@ -630,7 +815,6 @@ export default async function CapPage() {
         .cap-share-card { position:relative; overflow:hidden; background:linear-gradient(160deg, #0b0d20 0%, #14163a 100%); border-radius:24px; color:#fff; padding:36px; transition:transform .3s ease; transform-style:preserve-3d; }
         .cap-share-orb { position:absolute; top:-60px; right:-60px; width:260px; height:260px; border-radius:50%; background:radial-gradient(circle, ${G.blue}30 0%, transparent 70%); pointer-events:none; animation:cap-blob-a 10s ease-in-out infinite; }
 
-        /* ── Calculator ── */
         .cap-calc { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:20px; }
         .cap-calc-head { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:700; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:.5px; margin-bottom:14px; }
         .cap-calc-value-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
@@ -655,7 +839,6 @@ export default async function CapPage() {
 
         .cap-domains-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
 
-        /* ── Flip cards ── */
         .cap-flip-outer { perspective:1400px; }
         .cap-flip-card { display:block; width:100%; cursor:pointer; outline:none; }
         .cap-flip-inner { position:relative; width:100%; min-height:260px; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.22,1,.36,1); }
@@ -686,7 +869,6 @@ export default async function CapPage() {
         .cap-domain-back-cta { display:inline-flex; align-items:center; justify-content:center; gap:6px; margin:0 24px; padding:10px 16px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); border-radius:999px; color:#fff; font-size:12.5px; font-weight:700; text-decoration:none; transition:background .2s ease; }
         .cap-domain-back-cta:hover { background:rgba(255,255,255,.25); }
 
-        /* ── Journey ── */
         .cap-journey-controls { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
         .cap-play-btn { display:inline-flex; align-items:center; gap:8px; padding:9px 18px; border-radius:999px; border:1.5px solid #e2e8f0; background:#fff; cursor:pointer; font-size:13px; font-weight:700; color:#374151; transition:all .2s ease; font-family:inherit; }
         .cap-play-btn:hover { border-color:${G.blue}; color:${G.blue}; }
@@ -742,7 +924,6 @@ export default async function CapPage() {
         .cap-cta-h2 { font-size:clamp(1.6rem, 3.2vw, 2.4rem); font-weight:900; line-height:1.18; letter-spacing:-0.5px; margin-bottom:14px; }
         .cap-cta-body { font-size:15px; color:rgba(255,255,255,.6); max-width:460px; margin:0 auto 32px; line-height:1.75; }
 
-        /* ── Sticky CTA bar ── */
         .cap-sticky-cta { position:fixed; bottom:0; left:0; right:0; z-index:998; transform:translateY(120%); transition:transform .4s cubic-bezier(.22,1,.36,1); pointer-events:none; }
         .cap-sticky-cta.is-visible { transform:translateY(0); pointer-events:auto; animation:cap-sticky-in .4s cubic-bezier(.22,1,.36,1); }
         .cap-sticky-cta-inner { max-width:900px; margin:0 auto; background:#fff; border:1px solid #e2e8f0; border-radius:16px 16px 0 0; box-shadow:0 -8px 32px rgba(0,0,0,.12); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
@@ -835,11 +1016,11 @@ export default async function CapPage() {
                 }, { threshold: 0.5 });
                 countEls.forEach(function (el) { countIO.observe(el); });
 
-                /* ── Live activity ticker ── */
+                /* ── Live activity ticker (CMS-driven list) ── */
                 var tickerText = document.querySelector('[data-ticker-text]');
-                var activities = ${JSON.stringify(LIVE_ACTIVITY)};
+                var activities = ${JSON.stringify(liveActivity)};
                 var tickerIdx = 0;
-                if (tickerText) {
+                if (tickerText && activities.length > 1) {
                   setInterval(function () {
                     tickerIdx = (tickerIdx + 1) % activities.length;
                     tickerText.style.opacity = '0';
@@ -878,13 +1059,14 @@ export default async function CapPage() {
                   });
                 }
 
-                /* ── Interactive CTC calculator ── */
+                /* ── Interactive CTC calculator (percent from CMS) ── */
                 var slider = document.querySelector('[data-ctc-slider]');
                 var ctcValueEl = document.querySelector('[data-ctc-value]');
                 var feeEl = document.querySelector('[data-ctc-fee]');
                 var netEl = document.querySelector('[data-ctc-net]');
                 var roiEl = document.querySelector('[data-ctc-roi]');
                 var ctcRows = Array.prototype.slice.call(document.querySelectorAll('[data-ctc-row]'));
+                var sharePct = slider ? (parseFloat(slider.getAttribute('data-share-percent')) || 12) / 100 : 0.12;
 
                 function formatINR(n) {
                   return '₹' + Math.round(n).toLocaleString('en-IN');
@@ -896,7 +1078,7 @@ export default async function CapPage() {
                 function updateCalculator() {
                   if (!slider) return;
                   var val = parseFloat(slider.value);
-                  var fee = val * 0.12;
+                  var fee = val * sharePct;
                   var net = val - fee;
                   var roi = fee > 0 ? Math.max(1, Math.round(net / fee)) : 0;
 
@@ -905,7 +1087,6 @@ export default async function CapPage() {
                   if (netEl) netEl.textContent = formatLakh(net);
                   if (roiEl) roiEl.textContent = roi + 'x ROI';
 
-                  /* highlight nearest reference row */
                   var closestRow = null;
                   var closestDist = Infinity;
                   ctcRows.forEach(function (row) {
@@ -953,7 +1134,7 @@ export default async function CapPage() {
                     if (openIt) item.classList.toggle('is-open', i === idx);
                   });
                   stepPills.forEach(function (pill, i) { pill.classList.toggle('is-active', i === idx); });
-                  if (progressText) {
+                  if (progressText && totalSteps > 0) {
                     var pct = Math.round(((idx + 1) / totalSteps) * 100);
                     progressText.textContent = 'Step ' + (idx + 1) + ' of ' + totalSteps + ' · ' + pct + '% complete';
                   }
@@ -1017,7 +1198,7 @@ export default async function CapPage() {
                     if (item) {
                       var wasOpen = item.classList.contains('is-open');
                       item.classList.toggle('is-open');
-                      btn.setAttribute('aria-expanded', !wasOpen);
+                      btn.setAttribute('aria-expanded', String(!wasOpen));
                     }
                   });
                 });
@@ -1054,7 +1235,7 @@ export default async function CapPage() {
                     var scrollTop = window.pageYOffset + rect.top - (window.innerHeight * 0.3);
                     window.scrollTo({ top: scrollTop, behavior: 'smooth' });
                   }
-                  var fillPct = ((autoplayIndex + 1) / totalSteps) * 100;
+                  var fillPct = totalSteps > 0 ? ((autoplayIndex + 1) / totalSteps) * 100 : 0;
                   if (fill) fill.style.height = fillPct + '%';
                   autoplayIndex = (autoplayIndex + 1) % totalSteps;
                 }
