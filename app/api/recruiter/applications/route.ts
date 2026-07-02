@@ -28,8 +28,8 @@ export async function GET(req: NextRequest) {
       ...(userRole === 'recruiter' ? { recruiterId: userId } : {}),
       ...(q ? {
         OR: [
-          { name:  { contains: q, mode: 'insensitive' } },
-          { email: { contains: q, mode: 'insensitive' } },
+          { name:  { contains: q } },
+          { email: { contains: q } },
           { phone: { contains: q } },
         ],
       } : {}),
