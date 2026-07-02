@@ -32,7 +32,7 @@ const G = {
 
 const DOT_COLORS = [G.blue, G.orange, G.purple, '#16a34a', G.rose, '#0891b2', G.blue];
 
-/* ── Icon registry: CMS sends a string, we resolve the component ── */
+/* ── Icon registry ── */
 const ICON_MAP: Record<string, LucideIcon> = {
   HeartPulse, ClipboardList, Briefcase, BarChart3, RefreshCw, TrendingUp,
   Phone, Search, FileSignature, FileText, Mic2, Handshake, PartyPopper,
@@ -43,7 +43,7 @@ function resolveIcon(name: string | undefined, fallback: LucideIcon): LucideIcon
 }
 
 /* ════════════════════════════════════════════════════════════
-   CMS TYPES — everything on this page is editable
+   CMS TYPES
    ════════════════════════════════════════════════════════════ */
 type CapCmsData = {
   seo?: { title?: string; description?: string };
@@ -82,6 +82,7 @@ type CapCmsData = {
     icon?: string;
     iconBg?: string;
     iconColor?: string;
+    category?: string;
     title?: string;
     desc?: string;
     badge?: string;
@@ -115,82 +116,81 @@ type CapCmsData = {
 };
 
 /* ════════════════════════════════════════════════════════════
-   DEFAULTS (fallbacks when CMS is empty)
+   DEFAULTS
    ════════════════════════════════════════════════════════════ */
 
 const DEFAULT_BENEFITS = [
   'ATS-Optimized Resume + LinkedIn Rebuild',
-  '3 Mock Interview Sessions (HR + Technical + Negotiation)',
-  'Personalized Career Roadmap & Strategy',
-  'Direct Employer Connect — 10–15 Target Companies',
-  'Offer Negotiation Script & Salary Support',
-  '30-Day Post-Joining Support',
-  '48-Hour WhatsApp Support Throughout',
+  '3 Mock Interview Sessions (HR + Domain + Salary)',
+  'Personalized Career Strategy Roadmap',
+  'Direct Connect — 10–15 Target Companies',
+  'Offer Negotiation Script & CTC Boost',
+  '30-Day Post-Joining Advisor Support',
 ];
 
 const DEFAULT_DOMAINS = [
   {
-    icon: 'HeartPulse', iconBg: '#fef2f2', iconColor: '#ef4444', title: 'US Healthcare Claims',
-    desc: 'CPT coding, ICD-10, adjudication, COB, denial management. Direct connections at EXL, Optum, WNS & more.',
-    badge: 'Strongest Domain', badgeColor: '#ef4444',
-    stats: [{ label: 'Placements/mo', value: '12+' }, { label: 'Avg Salary Hike', value: '45%' }, { label: 'Time to Offer', value: '18 days' }],
+    icon: 'HeartPulse', iconBg: '#fef2f2', iconColor: '#ef4444', category: 'health', title: 'US Healthcare Claims',
+    desc: 'CPT coding, ICD-10, adjudication, denial management. Direct connect at EXL, Optum, WNS.',
+    badge: 'Strongest', badgeColor: '#ef4444',
+    stats: [{ label: 'Placements/mo', value: '12+' }, { label: 'Avg Hike', value: '45%' }, { label: 'Time to Offer', value: '18 days' }],
   },
   {
-    icon: 'ClipboardList', iconBg: '#fff7ed', iconColor: G.orange, title: 'Insurance Operations',
-    desc: "Lloyd's market, underwriting support, XIS submission, RFT compliance, claims processing.",
-    badge: 'High Value', badgeColor: G.orange,
-    stats: [{ label: 'Placements/mo', value: '8+' }, { label: 'Avg Salary Hike', value: '40%' }, { label: 'Time to Offer', value: '21 days' }],
+    icon: 'ClipboardList', iconBg: '#fff7ed', iconColor: G.orange, category: 'health', title: 'Insurance Operations',
+    desc: "Lloyd's market, underwriting, XIS submission, claims processing & policy servicing.",
+    badge: 'High CTC', badgeColor: G.orange,
+    stats: [{ label: 'Placements/mo', value: '8+' }, { label: 'Avg Hike', value: '40%' }, { label: 'Time to Offer', value: '21 days' }],
   },
   {
-    icon: 'Briefcase', iconBg: '#eff6ff', iconColor: G.blue, title: 'BPO / KPO Operations',
-    desc: 'Process associates, team leads, quality analysts, ops managers. Volume domain — fastest results.',
-    badge: 'Fast Growth', badgeColor: G.blue,
-    stats: [{ label: 'Placements/mo', value: '15+' }, { label: 'Avg Salary Hike', value: '35%' }, { label: 'Time to Offer', value: '12 days' }],
+    icon: 'Briefcase', iconBg: '#eff6ff', iconColor: G.blue, category: 'ops', title: 'BPO / KPO Operations',
+    desc: 'Process associates, team leads, QAs, ops managers. Volume domain — fastest results.',
+    badge: 'Fast Results', badgeColor: G.blue,
+    stats: [{ label: 'Placements/mo', value: '15+' }, { label: 'Avg Hike', value: '35%' }, { label: 'Time to Offer', value: '12 days' }],
   },
   {
-    icon: 'BarChart3', iconBg: '#f0fdf4', iconColor: '#16a34a', title: 'Finance & Accounts',
-    desc: 'Accounts executives, finance analysts, payroll specialists, BFSI roles at growing companies.',
-    badge: 'Growing', badgeColor: '#16a34a',
-    stats: [{ label: 'Placements/mo', value: '9+' }, { label: 'Avg Salary Hike', value: '42%' }, { label: 'Time to Offer', value: '20 days' }],
+    icon: 'BarChart3', iconBg: '#f0fdf4', iconColor: '#16a34a', category: 'finance', title: 'Finance & Accounts',
+    desc: 'Accounts executives, finance analysts, payroll specialists, BFSI roles.',
+    badge: 'High Demand', badgeColor: '#16a34a',
+    stats: [{ label: 'Placements/mo', value: '9+' }, { label: 'Avg Hike', value: '42%' }, { label: 'Time to Offer', value: '20 days' }],
   },
   {
-    icon: 'RefreshCw', iconBg: '#faf5ff', iconColor: G.purple, title: 'Career Switchers',
-    desc: 'Gap in career? Domain switch needed? We know exactly how to present your story to land the role.',
+    icon: 'RefreshCw', iconBg: '#faf5ff', iconColor: G.purple, category: 'switch', title: 'Career Switchers',
+    desc: 'Career gap? Domain switch? We re-package your story for top MNC hiring managers.',
     badge: 'Specialist', badgeColor: G.purple,
-    stats: [{ label: 'Placements/mo', value: '6+' }, { label: 'Avg Salary Hike', value: '38%' }, { label: 'Time to Offer', value: '25 days' }],
+    stats: [{ label: 'Placements/mo', value: '6+' }, { label: 'Avg Hike', value: '38%' }, { label: 'Time to Offer', value: '25 days' }],
   },
   {
-    icon: 'TrendingUp', iconBg: '#ecfeff', iconColor: '#0891b2', title: 'Salary Growth Seekers',
-    desc: 'Want 40–70% growth? This is exactly what the CAP is designed to deliver — real, fast career jumps.',
-    badge: 'High Impact', badgeColor: '#0891b2',
-    stats: [{ label: 'Placements/mo', value: '10+' }, { label: 'Avg Salary Hike', value: '58%' }, { label: 'Time to Offer', value: '16 days' }],
+    icon: 'TrendingUp', iconBg: '#ecfeff', iconColor: '#0891b2', category: 'switch', title: 'Salary Growth Seekers',
+    desc: 'Targeting 40–70% growth? Designed specifically for aggressive career jumps.',
+    badge: 'Max Impact', badgeColor: '#0891b2',
+    stats: [{ label: 'Placements/mo', value: '10+' }, { label: 'Avg Hike', value: '58%' }, { label: 'Time to Offer', value: '16 days' }],
   },
 ];
 
 const DEFAULT_STEPS = [
-  { num: 1, icon: 'Phone',         title: 'Free Discovery Call',            badge: 'Free',                 desc: "15-minute call. We understand your experience, goals and situation. Honest assessment — we'll tell you if we can help.",                             tags: ['15–20 min', 'Zero Cost'] },
-  { num: 2, icon: 'Search',        title: 'Deep Profile Assessment',        badge: 'Foundation',           desc: '45–60 minute session. Full career story, strengths, gaps, target companies. Your personalized roadmap is built here.',                              tags: ['45–60 min', 'Roadmap Delivered'] },
-  { num: 3, icon: 'FileSignature', title: 'Service Agreement Sign',         badge: 'Transparent',          desc: 'Digital service agreement signed. Scope, Success Share %, and terms — everything in writing before we start.',                                    tags: ['Digital Agreement', 'Fully Transparent'] },
-  { num: 4, icon: 'FileText',      title: 'Resume & LinkedIn Rebuild',      badge: 'Core',                 desc: 'ATS-friendly resume, achievement-based bullets, domain keywords. LinkedIn updated too. Ready in 1–2 days. 2 revisions included.',                    tags: ['1–2 Days', 'ATS Optimized', '2 Revisions'] },
-  { num: 5, icon: 'Mic2',          title: 'Interview Mastery — 3 Sessions', badge: 'Biggest Edge',         desc: 'Session 1: HR Round. Session 2: Technical/Domain. Session 3: Full Mock + Salary Negotiation Script.',                                              tags: ['~3 hrs total', 'Mock Interview', 'Negotiation Script'] },
-  { num: 6, icon: 'Handshake',     title: 'Direct Employer Connect',        badge: 'Our Work',             desc: 'Your profile goes directly to hiring managers at 10–15 target companies — with a warm intro from us. We follow up, schedule, and track everything.', tags: ['7–21 Days Active', '10–15 Companies'] },
-  { num: 7, icon: 'PartyPopper',   title: 'Career Grows — Success Share!',  badge: 'Partnership Complete', desc: 'New role confirmed. Better CTC. Real growth. Now we collect our Success Share — because we grew together.',                                     tags: ['12% Success Share', '7 Day Window', 'GST Receipt'] },
+  { num: 1, icon: 'Phone',         title: 'Free Discovery Call',            badge: 'Free',                 desc: "15-min call to review your profile and set clear growth goals.", tags: ['15 min', 'Zero Cost'] },
+  { num: 2, icon: 'Search',        title: 'Deep Profile Assessment',        badge: 'Foundation',           desc: 'Uncover strengths, target roles, and map your tailored strategy.', tags: ['45 min', 'Roadmap'] },
+  { num: 3, icon: 'FileSignature', title: 'Service Agreement Sign',         badge: 'Transparent',          desc: '100% digital agreement with zero upfront hidden terms.', tags: ['Digital', '0 Upfront'] },
+  { num: 4, icon: 'FileText',      title: 'Resume & LinkedIn Rebuild',      badge: 'Core',                 desc: 'ATS-optimized resume + LinkedIn overhaul ready in 48 hours.', tags: ['1–2 Days', 'ATS Clean'] },
+  { num: 5, icon: 'Mic2',          title: 'Interview Mastery — 3 Rounds',   badge: 'Edge',                 desc: 'HR round, technical prep, and salary negotiation scripting.', tags: ['3 Mock Sessions', 'Scripted'] },
+  { num: 6, icon: 'Handshake',     title: 'Direct Employer Connect',        badge: 'Active',               desc: 'Warm introductions to 10–15 target hiring managers.', tags: ['10–15 Companies', 'Direct'] },
+  { num: 7, icon: 'PartyPopper',   title: 'Offer Signed — Success Share!',  badge: 'Complete',             desc: 'Joined new role with higher CTC. Pay success fee only now.', tags: ['12% Share', 'Post Offer'] },
 ];
 
 const DEFAULT_LIVE_ACTIVITY = [
-  '🎉 Ankit R. just got placed at WNS — ₹6.4L CTC',
-  '⚡ Priya S. completed Interview Mastery, Session 3',
-  '🚀 47 candidates in active employer connect right now',
-  '✅ Rohit K. signed offer at EXL — 52% salary hike',
-  '📄 Resume rebuild delivered to Simran K. in 22 hours',
-  '🎯 Vikram T. landed Senior Analyst role — 9 days flat',
+  '🎉 Ankit R. placed at WNS — ₹6.4L CTC',
+  '⚡ Priya S. completed Interview Mastery',
+  '🚀 47 candidates in active hiring connect',
+  '✅ Rohit K. signed offer at EXL — 52% hike',
+  '📄 ATS Resume rebuilt for Simran K.',
+  '🎯 Vikram T. landed Sr. Analyst — 9 days flat',
 ];
 
 const DEFAULT_STATS = [
-  { num: '300+', label: 'Professionals Placed' },
-  { num: '60%+', label: 'Avg. Career Growth' },
-  { num: '9', label: 'Fastest Placement (Days)' },
-  { num: '₹0', label: 'Upfront Cost' },
+  { num: '300+', label: 'Placed' },
+  { num: '60%+', label: 'Avg Hike' },
+  { num: '9 Days', label: 'Fastest Offer' },
+  { num: '₹0', label: 'Upfront' },
 ];
 
 const DEFAULT_SHARE_TABLE = [
@@ -202,12 +202,10 @@ const DEFAULT_SHARE_TABLE = [
 ];
 
 /* ════════════════════════════════════════════════════════════
-   Reusable server-rendered pieces
+   Reusable Server Primitives
    ════════════════════════════════════════════════════════════ */
 
-function GradientText({
-  children, tag: Tag = 'span', style = {},
-}: { children: React.ReactNode; tag?: 'h1' | 'h2' | 'span'; style?: React.CSSProperties }) {
+function GradientText({ children, tag: Tag = 'span', style = {} }: { children: React.ReactNode; tag?: 'h1' | 'h2' | 'span'; style?: React.CSSProperties }) {
   return (
     <Tag
       style={{
@@ -229,18 +227,18 @@ function GradientText({
 function SectionLabel({ text, center = false, light = false }: { text: string; center?: boolean; light?: boolean }) {
   return (
     <div style={{
-      display: 'inline-flex', alignItems: 'center', gap: '8px',
-      fontSize: '11px', fontWeight: 800, letterSpacing: '0.12em',
-      textTransform: 'uppercase', marginBottom: '10px',
+      display: 'inline-flex', alignItems: 'center', gap: '6px',
+      fontSize: '10.5px', fontWeight: 800, letterSpacing: '0.12em',
+      textTransform: 'uppercase', marginBottom: '8px',
       justifyContent: center ? 'center' : 'flex-start',
       width: center ? '100%' : 'auto',
     }}>
-      <span style={{ width: '20px', height: '3px', borderRadius: '999px', background: `linear-gradient(90deg, ${G.blue}, ${G.orange})` }} />
+      <span style={{ width: '18px', height: '2.5px', borderRadius: '999px', background: `linear-gradient(90deg, ${G.blue}, ${G.orange})` }} />
       <span style={light ? { color: 'rgba(255,255,255,0.5)' } : {
         backgroundImage: `linear-gradient(90deg, ${G.blue}, ${G.indigo})`,
         WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
       }}>{text}</span>
-      <span style={{ width: '20px', height: '3px', borderRadius: '999px', background: `linear-gradient(90deg, ${G.orange}, ${G.blue})` }} />
+      <span style={{ width: '18px', height: '2.5px', borderRadius: '999px', background: `linear-gradient(90deg, ${G.orange}, ${G.blue})` }} />
     </div>
   );
 }
@@ -263,36 +261,31 @@ export default async function CapPage() {
     tag:               cms.hero?.tag ?? 'Career Assistance Programme',
     titlePlain:        cms.hero?.titlePlain ?? 'Not Just a Job.',
     titleGradient:     cms.hero?.titleGradient ?? 'A Career Transformation.',
-    subtitle:          cms.hero?.subtitle ?? "The CAP is Placedly's flagship programme for working professionals in BPO, Healthcare Claims, Insurance & Finance who want to grow — fast.",
+    subtitle:          cms.hero?.subtitle ?? "Placedly's flagship programme for BPO, Healthcare Claims, Insurance & Finance professionals aiming for 40%+ CTC jumps.",
     ctaText:           cms.hero?.ctaText ?? 'Apply to CAP Now',
     ctaLink:           cms.hero?.ctaLink ?? '/cap/apply',
     secondaryCtaText:  cms.hero?.secondaryCtaText ?? 'See the Journey',
     secondaryCtaLink:  cms.hero?.secondaryCtaLink ?? '#how-it-works',
   };
 
-  const liveActivity = (cms.liveActivity && cms.liveActivity.length > 0)
-    ? cms.liveActivity
-    : DEFAULT_LIVE_ACTIVITY;
-
-  const heroStats = (cms.stats && cms.stats.length > 0)
-    ? cms.stats.map(s => ({ num: s.value ?? '', label: s.label ?? '' }))
-    : DEFAULT_STATS;
+  const liveActivity = (cms.liveActivity && cms.liveActivity.length > 0) ? cms.liveActivity : DEFAULT_LIVE_ACTIVITY;
+  const heroStats = (cms.stats && cms.stats.length > 0) ? cms.stats.map(s => ({ num: s.value ?? '', label: s.label ?? '' })) : DEFAULT_STATS;
 
   const included = {
     heading:         cms.included?.heading ?? 'Everything You Get',
     headingGradient: cms.included?.headingGradient ?? 'in the CAP',
-    body:            cms.included?.body ?? 'A complete career transformation system — not just a resume, not just job leads. Everything, end to end.',
+    body:            cms.included?.body ?? 'A complete, end-to-end career acceleration system.',
     benefits:        (cms.included?.benefits && cms.included.benefits.length > 0) ? cms.included.benefits : DEFAULT_BENEFITS,
-    ctaText:         cms.included?.ctaText ?? "Apply Now — It's Free to Start",
+    ctaText:         cms.included?.ctaText ?? "Apply Now — Zero Upfront",
     ctaLink:         cms.included?.ctaLink ?? '/cap/apply',
   };
 
   const sharePercent = cms.successShare?.percent ?? 12;
   const successShare = {
-    title:       cms.successShare?.title ?? 'Our Success Share Model',
-    subtitle:    cms.successShare?.subtitle ?? 'We invest everything first. You pay only when your career genuinely grows — after your offer letter arrives.',
+    title:       cms.successShare?.title ?? 'Success-Share Model',
+    subtitle:    cms.successShare?.subtitle ?? 'Zero upfront cost. Pay 12% of CTC only after offer letter.',
     percent:     sharePercent,
-    note:        cms.successShare?.note ?? `* ${sharePercent}% Success Share of agreed annual CTC. GST receipt provided.`,
+    note:        cms.successShare?.note ?? `* ${sharePercent}% Success Share of annual CTC. GST receipt provided.`,
     calcMin:     cms.successShare?.calcMin ?? 200000,
     calcMax:     cms.successShare?.calcMax ?? 2000000,
     calcDefault: cms.successShare?.calcDefault ?? 500000,
@@ -304,15 +297,8 @@ export default async function CapPage() {
   const fmtINR = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN');
   const fmtLakh = (n: number) => '₹' + (n / 100000).toFixed(2).replace(/\.00$/, '') + 'L';
 
-  const shareTable = (cms.shareTable && cms.shareTable.length > 0)
-    ? cms.shareTable
-    : DEFAULT_SHARE_TABLE;
+  const shareTable = (cms.shareTable && cms.shareTable.length > 0) ? cms.shareTable : DEFAULT_SHARE_TABLE;
 
-  const domainsSection = {
-    heading:         cms.domainsSection?.heading ?? 'Our',
-    headingGradient: cms.domainsSection?.headingGradient ?? 'Specialist Domains',
-    body:            cms.domainsSection?.body ?? 'Click or tap any card to see the numbers behind each domain.',
-  };
   const rawDomains = (cms.domains && cms.domains.length > 0) ? cms.domains : DEFAULT_DOMAINS;
   const mergedDomains = rawDomains.map((d, i) => {
     const def = DEFAULT_DOMAINS[i % DEFAULT_DOMAINS.length];
@@ -320,20 +306,15 @@ export default async function CapPage() {
       Icon:       resolveIcon(d.icon, resolveIcon(def.icon, Briefcase)),
       iconBg:     d.iconBg ?? def.iconBg,
       iconColor:  d.iconColor ?? def.iconColor,
+      category:   d.category ?? def.category ?? 'all',
       title:      d.title ?? def.title,
       desc:       d.desc ?? def.desc,
       badge:      d.badge ?? def.badge,
       badgeColor: d.badgeColor ?? def.badgeColor,
-      stats:      (d.stats && d.stats.length > 0)
-        ? d.stats.map(s => ({ label: s.label ?? '', value: s.value ?? '' }))
-        : def.stats,
+      stats:      (d.stats && d.stats.length > 0) ? d.stats.map(s => ({ label: s.label ?? '', value: s.value ?? '' })) : def.stats,
     };
   });
 
-  const journey = {
-    heading:         cms.journey?.heading ?? 'Your 7-Step',
-    headingGradient: cms.journey?.headingGradient ?? 'Career Growth Path',
-  };
   const cmsSteps = cms.steps;
   const mergedSteps = DEFAULT_STEPS.map((step, i) => {
     const match = cmsSteps?.find(s => s.number === step.num || s.id === step.num) ?? cmsSteps?.[i];
@@ -346,11 +327,10 @@ export default async function CapPage() {
       tags:  (match?.tags && match.tags.length > 0) ? match.tags : step.tags,
     };
   });
-  const totalSteps = mergedSteps.length;
 
   const cta = {
     title:          cms.cta?.title ?? 'Ready to Transform Your Career?',
-    body:           cms.cta?.body ?? 'Zero upfront. You only pay after your career grows. Start with a free 15-minute discovery call.',
+    body:           cms.cta?.body ?? 'Zero upfront. Pay only after you succeed.',
     primaryText:    cms.cta?.primaryText ?? 'Apply to CAP Now',
     primaryLink:    cms.cta?.primaryLink ?? '/cap/apply',
     whatsappNumber: cms.cta?.whatsappNumber ?? '919876543210',
@@ -359,7 +339,7 @@ export default async function CapPage() {
 
   const stickyCta = {
     title:    cms.stickyCta?.title ?? 'Ready to grow?',
-    subtitle: cms.stickyCta?.subtitle ?? "Zero upfront — pay only after you're placed.",
+    subtitle: cms.stickyCta?.subtitle ?? "Zero upfront — pay after offer.",
     ctaText:  cms.stickyCta?.ctaText ?? 'Apply Now',
     ctaLink:  cms.stickyCta?.ctaLink ?? '/cap/apply',
   };
@@ -367,12 +347,12 @@ export default async function CapPage() {
   return (
     <PageLayout>
 
-      {/* ════════════════════ SCROLL PROGRESS BAR ════════════════════ */}
+      {/* ════ SCROLL PROGRESS ════ */}
       <div className="cap-progress-track" aria-hidden>
         <div className="cap-progress-fill" data-scroll-progress />
       </div>
 
-      {/* ════════════════════ HERO ════════════════════ */}
+      {/* ════ HERO ════ */}
       <section className="cap-hero">
         <AmbientBlobs />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
@@ -381,37 +361,37 @@ export default async function CapPage() {
             <span className="cap-current">CAP</span>
           </nav>
 
-          <div style={{ maxWidth: '780px' }}>
+          <div style={{ maxWidth: '720px' }}>
             <div className="reveal" data-reveal><SectionLabel text={hero.tag} /></div>
 
-            <h1 className="cap-h1 reveal" data-reveal data-delay="0.06">
+            <h1 className="cap-h1 reveal" data-reveal data-delay="0.04">
               {hero.titlePlain}{' '}
               <GradientText tag="span" style={{ display: 'inline' }}>{hero.titleGradient}</GradientText>
             </h1>
 
-            <p className="cap-lead reveal" data-reveal data-delay="0.12">{hero.subtitle}</p>
+            <p className="cap-lead reveal" data-reveal data-delay="0.08">{hero.subtitle}</p>
 
-            <div className="cap-ticker reveal" data-reveal data-delay="0.16">
+            <div className="cap-ticker reveal" data-reveal data-delay="0.12">
               <span className="cap-ticker-live">
                 <span className="cap-ticker-dot" /> LIVE
               </span>
               <span className="cap-ticker-text" data-ticker-text>{liveActivity[0]}</span>
             </div>
 
-            <div className="reveal" data-reveal data-delay="0.22">
+            <div className="reveal" data-reveal data-delay="0.16">
               <div className="cap-btn-row">
                 <a href={hero.ctaLink} className="cap-btn cap-btn-primary" data-magnetic>
-                  <Rocket size={15} /> {hero.ctaText}
-                  <span className="cap-arrow"><ArrowRight size={14} /></span>
+                  <Rocket size={14} /> {hero.ctaText}
+                  <span className="cap-arrow"><ArrowRight size={13} /></span>
                 </a>
                 <a href={hero.secondaryCtaLink} className="cap-btn cap-btn-ghost">{hero.secondaryCtaText}</a>
               </div>
             </div>
           </div>
 
-          <div className="cap-stats-4" style={{ gridTemplateColumns: `repeat(${Math.min(heroStats.length, 4)}, 1fr)` }}>
+          <div className="cap-stats-4">
             {heroStats.map((s, i) => (
-              <div key={`${s.label}-${i}`} className="cap-stat-cell reveal" data-reveal data-delay={`${i * 0.06}`} data-stat-cell
+              <div key={`${s.label}-${i}`} className="cap-stat-cell reveal" data-reveal data-delay={`${i * 0.04}`} data-stat-cell
                 style={{ borderRight: i < heroStats.length - 1 ? '1px solid #eef2ff' : 'none' }}>
                 <div className="cap-stat-num" data-countup={s.num}
                   style={{ backgroundImage: `linear-gradient(135deg, ${DOT_COLORS[i % DOT_COLORS.length]}, ${G.indigo})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
@@ -424,7 +404,7 @@ export default async function CapPage() {
         </div>
       </section>
 
-      {/* ════════════════════ WHAT YOU GET + SUCCESS SHARE CALCULATOR ════════════════════ */}
+      {/* ════ WHAT YOU GET + CALCULATOR ════ */}
       <section className="cap-section" style={{ background: '#fff' }}>
         <div className="container">
           <div className="cap-two-col">
@@ -433,46 +413,46 @@ export default async function CapPage() {
               <h2 className="cap-h2">{included.heading} <GradientText tag="span">{included.headingGradient}</GradientText></h2>
               <p className="cap-body">{included.body}</p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 {included.benefits.map((b, i) => (
-                  <div key={`${b}-${i}`} className="cap-benefit reveal" data-reveal data-delay={`${0.08 + i * 0.04}`}>
-                    <CheckCircle2 size={17} color={G.blue} className="cap-check" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <div key={`${b}-${i}`} className="cap-benefit reveal" data-reveal data-delay={`${0.04 + i * 0.03}`}>
+                    <CheckCircle2 size={15} color={G.blue} className="cap-check" style={{ flexShrink: 0, marginTop: '2px' }} />
                     <span>{b}</span>
                   </div>
                 ))}
               </div>
 
-              <div style={{ marginTop: '18px' }}>
+              <div style={{ marginTop: '16px' }}>
                 <a href={included.ctaLink} className="cap-btn cap-btn-primary" data-magnetic>
                   {included.ctaText}
-                  <span className="cap-arrow"><ArrowRight size={14} /></span>
+                  <span className="cap-arrow"><ArrowRight size={13} /></span>
                 </a>
               </div>
             </div>
 
-            {/* NOTE: no more `data-tilt` / mousemove-driven 3D transform here.
-                The card now uses a plain CSS :hover lift so the slider inside
-                it never has its geometry disturbed mid-drag. */}
-            <div className="cap-share-card reveal" data-reveal data-delay="0.12">
+            {/* Success Share Card + Working Dragbar Calculator */}
+            <div className="cap-share-card reveal" data-reveal data-delay="0.1">
               <div aria-hidden className="cap-share-orb" />
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px', position: 'relative', zIndex: 1 }}>
-                <TrendingUp size={20} color={G.orange} />
-                <div style={{ fontSize: '17px', fontWeight: 800 }}>{successShare.title}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', position: 'relative', zIndex: 1 }}>
+                <TrendingUp size={18} color={G.orange} />
+                <div style={{ fontSize: '16px', fontWeight: 800 }}>{successShare.title}</div>
               </div>
-              <p style={{ fontSize: '13.5px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.65, marginBottom: '16px', position: 'relative', zIndex: 1 }}>
+              <p style={{ fontSize: '12.5px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.5, marginBottom: '12px', position: 'relative', zIndex: 1 }}>
                 {successShare.subtitle}
               </p>
 
-              <div className="cap-calc" style={{ position: 'relative', zIndex: 1 }}>
+              <div className="cap-calc" style={{ position: 'relative', zIndex: 5 }}>
                 <div className="cap-calc-head">
-                  <Calculator size={13} color={G.orange} />
-                  <span>Drag to calculate your own numbers</span>
+                  <Calculator size={12} color={G.orange} />
+                  <span>Drag slider to calculate CTC ROI</span>
                 </div>
                 <div className="cap-calc-value-row">
-                  <span>Annual CTC</span>
+                  <span>Target CTC</span>
                   <span className="cap-calc-ctc-display" data-ctc-value>{fmtINR(successShare.calcDefault)}</span>
                 </div>
+
+                {/* Direct Unblocked Range Dragbar */}
                 <input
                   type="range"
                   min={successShare.calcMin}
@@ -482,15 +462,16 @@ export default async function CapPage() {
                   className="cap-calc-range"
                   data-ctc-slider
                   data-share-percent={sharePercent}
-                  aria-label="Annual CTC slider"
+                  aria-label="Annual CTC dragbar"
                 />
+
                 <div className="cap-calc-results">
                   <div className="cap-calc-result">
-                    <span className="cap-calc-result-k">Service Fee</span>
+                    <span className="cap-calc-result-k">Fee (12%)</span>
                     <span className="cap-calc-result-v" style={{ color: G.orange }} data-ctc-fee>{fmtINR(initFee)}</span>
                   </div>
                   <div className="cap-calc-result">
-                    <span className="cap-calc-result-k">Your Net Gain</span>
+                    <span className="cap-calc-result-k">Net Gain</span>
                     <span className="cap-calc-result-v" style={{ color: '#4ade80' }} data-ctc-net>{fmtLakh(initNet)}</span>
                   </div>
                   <div className="cap-calc-result">
@@ -500,17 +481,17 @@ export default async function CapPage() {
                 </div>
               </div>
 
-              <table className="cap-share-table" style={{ position: 'relative', zIndex: 1, marginTop: '14px' }}>
+              <table className="cap-share-table" style={{ position: 'relative', zIndex: 1, marginTop: '12px' }}>
                 <thead>
                   <tr>
-                    {['Annual CTC', 'Service Fee', 'Your Net Gain'].map(h => <th key={h}>{h}</th>)}
+                    {['Annual CTC', 'Fee', 'Your Net Gain'].map(h => <th key={h}>{h}</th>)}
                   </tr>
                 </thead>
                 <tbody>
                   {shareTable.map((row, i) => {
                     const ctcNum = parseInt(row.ctc.replace(/[^\d]/g, ''), 10) || 0;
                     return (
-                      <tr key={i} className="cap-share-row" data-ctc-row data-ctc-num={ctcNum} style={{ animationDelay: `${i * 0.06}s` }}>
+                      <tr key={i} className="cap-share-row" data-ctc-row data-ctc-num={ctcNum}>
                         <td style={{ fontWeight: 600, color: '#fff' }}>{row.ctc}</td>
                         <td style={{ color: G.orange }}>{row.fee}</td>
                         <td>
@@ -522,50 +503,65 @@ export default async function CapPage() {
                   })}
                 </tbody>
               </table>
-              <p style={{ fontSize: '11.5px', color: 'rgba(255,255,255,0.35)', marginTop: '12px', position: 'relative', zIndex: 1 }}>
-                {successShare.note}
-              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ════════════════════ WHO WE HELP (flip cards) ════════════════════ */}
+      {/* ════ DOMAINS WITH DYNAMIC FILTER TABS ════ */}
       <section className="cap-section" style={{ background: '#f8faff', position: 'relative', overflow: 'hidden' }}>
         <AmbientBlobs />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="cap-center reveal" data-reveal>
-            <SectionLabel text="Who We Help" center />
-            <h2 className="cap-h2">{domainsSection.heading} <GradientText tag="span">{domainsSection.headingGradient}</GradientText></h2>
-            <p className="cap-body" style={{ margin: '0 auto', textAlign: 'center', maxWidth: '460px' }}>
-              {domainsSection.body}
+            <SectionLabel text="Specialist Networks" center />
+            <h2 className="cap-h2">Target <GradientText tag="span">Specialist Domains</GradientText></h2>
+            <p className="cap-body" style={{ margin: '0 auto', textAlign: 'center', maxWidth: '420px' }}>
+              Filter by industry or click any card to flip for placement metrics.
             </p>
+          </div>
+
+          {/* Dynamic Category Filter Pills */}
+          <div className="cap-domain-filters reveal" data-reveal>
+            {[
+              { id: 'all', label: 'All Domains' },
+              { id: 'health', label: 'Healthcare & Ins' },
+              { id: 'ops', label: 'BPO & Ops' },
+              { id: 'finance', label: 'Finance' },
+              { id: 'switch', label: 'Switchers & Growth' },
+            ].map(f => (
+              <button
+                key={f.id}
+                type="button"
+                className={`cap-filter-pill ${f.id === 'all' ? 'is-active' : ''}`}
+                data-domain-filter={f.id}
+              >
+                {f.label}
+              </button>
+            ))}
           </div>
 
           <div className="cap-domains-3">
             {mergedDomains.map((d, i) => (
-              <div key={`${d.title}-${i}`} className="cap-flip-outer reveal" data-reveal data-delay={`${i * 0.06}`}>
+              <div key={`${d.title}-${i}`} className="cap-flip-outer reveal" data-reveal data-delay={`${i * 0.04}`} data-domain-category={d.category}>
                 <div
                   className="cap-flip-card"
                   tabIndex={0}
                   role="button"
-                  aria-label={`Flip ${d.title} card for stats`}
+                  aria-label={`Flip ${d.title}`}
                   data-flip-card
                 >
                   <div className="cap-flip-inner" data-flip-inner>
 
-                    {/* Front */}
+                    {/* Front Face (Compact) */}
                     <div className="cap-domain-card cap-flip-face" data-spotlight-card style={{ '--accent': d.iconColor } as React.CSSProperties}>
                       <div className="cap-domain-glow" style={{ background: `linear-gradient(135deg, ${d.iconColor}, ${G.orange})` }} />
                       <div className="cap-domain-spotlight" data-spotlight
-                        style={{ background: `radial-gradient(300px circle at var(--mx,50%) var(--my,50%), ${d.iconColor}14, transparent 60%)` }} />
+                        style={{ background: `radial-gradient(240px circle at var(--mx,50%) var(--my,50%), ${d.iconColor}14, transparent 60%)` }} />
                       <div className="cap-domain-strip" style={{ background: `linear-gradient(90deg, ${d.iconColor}, ${G.indigo})` }} />
-                      <div className="cap-domain-ghost" style={{ backgroundImage: `linear-gradient(135deg, ${d.iconColor}, transparent)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                        {String(i + 1).padStart(2, '0')}
-                      </div>
+
                       <div className="cap-domain-top">
-                        <div className="cap-domain-icon" style={{ background: d.iconBg, boxShadow: `0 4px 14px ${d.iconColor}20` }}>
-                          <d.Icon size={18} color={d.iconColor} />
+                        <div className="cap-domain-icon" style={{ background: d.iconBg }}>
+                          <d.Icon size={16} color={d.iconColor} />
                         </div>
                         <div className="cap-domain-badge" style={{ background: `${d.badgeColor}12`, border: `1px solid ${d.badgeColor}30`, color: d.badgeColor }}>
                           {d.badge}
@@ -573,10 +569,10 @@ export default async function CapPage() {
                       </div>
                       <div className="cap-domain-title">{d.title}</div>
                       <div className="cap-domain-desc">{d.desc}</div>
-                      <div className="cap-flip-hint"><Zap size={10} /> Click for stats</div>
+                      <div className="cap-flip-hint"><Zap size={10} /> Tap for stats</div>
                     </div>
 
-                    {/* Back */}
+                    {/* Back Face */}
                     <div className="cap-domain-card cap-flip-face cap-flip-back" style={{ background: `linear-gradient(160deg, ${d.iconColor}, #0b0d20)` }}>
                       <div className="cap-domain-back-title">{d.title}</div>
                       <div className="cap-domain-back-stats">
@@ -588,7 +584,7 @@ export default async function CapPage() {
                         ))}
                       </div>
                       <a href={hero.ctaLink} className="cap-domain-back-cta">
-                        Talk to a Specialist <ArrowRight size={12} />
+                        Connect <ArrowRight size={12} />
                       </a>
                     </div>
 
@@ -600,26 +596,26 @@ export default async function CapPage() {
         </div>
       </section>
 
-      {/* ════════════════════ THE JOURNEY (accordion + autoplay) ════════════════════ */}
+      {/* ════ THE JOURNEY ════ */}
       <section className="cap-section" id="how-it-works" style={{ background: '#fff', position: 'relative', overflow: 'hidden' }}>
         <div aria-hidden className="cap-blob cap-blob-blue" style={{ top: '10%', left: '-160px' }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="cap-center reveal" data-reveal>
-            <SectionLabel text="The Journey" center />
+            <SectionLabel text="The Roadmap" center />
             <h2 className="cap-h2">{journey.heading} <GradientText tag="span">{journey.headingGradient}</GradientText></h2>
           </div>
 
-          <div className="cap-journey-controls reveal" data-reveal data-delay="0.08">
+          <div className="cap-journey-controls reveal" data-reveal>
             <button type="button" className="cap-play-btn" data-journey-play aria-label="Auto play step journey">
-              <span data-play-icon><Play size={13} /></span>
+              <span data-play-icon><Play size={12} /></span>
               <span data-play-label>Auto-Play Journey</span>
             </button>
             <span className="cap-journey-progress-text" data-journey-progress-text>
-              Step 1 of {totalSteps} · {Math.round((1 / totalSteps) * 100)}% complete
+              Step 1 of {mergedSteps.length} · 14% complete
             </span>
           </div>
 
-          <div className="cap-step-nav reveal" data-reveal data-delay="0.1">
+          <div className="cap-step-nav reveal" data-reveal>
             {mergedSteps.map((step, i) => (
               <button
                 key={step.num}
@@ -647,11 +643,11 @@ export default async function CapPage() {
                   className={`cap-journey-item reveal ${i === 0 ? 'is-open' : ''}`}
                   data-reveal
                   data-journey-step={i}
-                  data-delay={`${i * 0.05}`}
+                  data-delay={`${i * 0.04}`}
                 >
                   <div className="cap-journey-dot-wrap">
                     <div className="cap-journey-dot-pulse" style={{ background: col }} />
-                    <div className="cap-journey-dot" style={{ background: `linear-gradient(135deg, ${col}, ${G.indigo})`, boxShadow: `0 6px 18px ${col}45` }}>
+                    <div className="cap-journey-dot" style={{ background: `linear-gradient(135deg, ${col}, ${G.indigo})` }}>
                       {step.num}
                     </div>
                   </div>
@@ -661,13 +657,13 @@ export default async function CapPage() {
 
                     <button type="button" className="cap-journey-card-head" data-journey-toggle aria-expanded={i === 0}>
                       <div className="cap-journey-icon" style={{ background: `${col}15` }}>
-                        <step.Icon size={16} color={col} />
+                        <step.Icon size={15} color={col} />
                       </div>
                       <span className="cap-journey-title">{step.title}</span>
                       <span className="cap-journey-badge" style={{ background: `${col}12`, color: col, border: `1px solid ${col}30` }}>
                         {step.badge}
                       </span>
-                      <span className="cap-journey-chevron" data-journey-chevron>▾</span>
+                      <span className="cap-journey-chevron">▾</span>
                     </button>
 
                     <div className="cap-journey-body">
@@ -675,7 +671,7 @@ export default async function CapPage() {
                         <p className="cap-journey-desc">{step.desc}</p>
                         <div className="cap-journey-tags">
                           {step.tags.map((tag, ti) => (
-                            <span key={`${tag}-${ti}`} className="cap-journey-tag" style={{ animationDelay: `${ti * 0.05}s` }}>{tag}</span>
+                            <span key={`${tag}-${ti}`} className="cap-journey-tag">{tag}</span>
                           ))}
                         </div>
                       </div>
@@ -683,7 +679,7 @@ export default async function CapPage() {
 
                     {isLast && (
                       <div className="cap-journey-sparkle">
-                        <Sparkles size={15} color={G.orange} />
+                        <Sparkles size={14} color={G.orange} />
                       </div>
                     )}
                   </div>
@@ -694,7 +690,7 @@ export default async function CapPage() {
         </div>
       </section>
 
-      {/* ════════════════════ CTA ════════════════════ */}
+      {/* ════ CTA ════ */}
       <section className="cap-section" style={{ background: '#fff' }}>
         <div className="container">
           <div className="cap-cta reveal" data-reveal>
@@ -704,13 +700,13 @@ export default async function CapPage() {
               <SectionLabel text="Take Action" center light />
               <h2 className="cap-cta-h2"><GradientText tag="span">{cta.title}</GradientText></h2>
               <p className="cap-cta-body">{cta.body}</p>
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
                 <a href={cta.primaryLink} className="cap-btn cap-btn-warm" data-magnetic>
-                  <Rocket size={15} /> {cta.primaryText}
-                  <span className="cap-arrow"><ArrowRight size={14} /></span>
+                  <Rocket size={14} /> {cta.primaryText}
+                  <span className="cap-arrow"><ArrowRight size={13} /></span>
                 </a>
                 <a href={`https://wa.me/${cta.whatsappNumber}`} target="_blank" rel="noopener noreferrer" className="cap-btn cap-btn-ghost-dark">
-                  <MessageCircle size={15} /> {cta.whatsappText}
+                  <MessageCircle size={14} /> {cta.whatsappText}
                 </a>
               </div>
             </div>
@@ -718,7 +714,7 @@ export default async function CapPage() {
         </div>
       </section>
 
-      {/* ════════════════════ STICKY CTA BAR ════════════════════ */}
+      {/* ════ STICKY BOTTOM BAR ════ */}
       <div className="cap-sticky-cta" data-sticky-cta>
         <div className="cap-sticky-cta-inner">
           <div className="cap-sticky-cta-text">
@@ -726,257 +722,238 @@ export default async function CapPage() {
             <span>{stickyCta.subtitle}</span>
           </div>
           <div className="cap-sticky-cta-actions">
-            <a href={stickyCta.ctaLink} className="cap-btn cap-btn-primary" style={{ padding: '9px 20px', fontSize: '13px' }}>
-              {stickyCta.ctaText} <ArrowRight size={13} />
+            <a href={stickyCta.ctaLink} className="cap-btn cap-btn-primary" style={{ padding: '8px 18px', fontSize: '12.5px' }}>
+              {stickyCta.ctaText} <ArrowRight size={12} />
             </a>
             <button type="button" className="cap-sticky-dismiss" data-sticky-dismiss aria-label="Dismiss banner">
-              <X size={16} />
+              <X size={14} />
             </button>
           </div>
         </div>
       </div>
 
-      {/* ════════════════════ STYLES ════════════════════ */}
+      {/* ════ STYLES ════ */}
       <style>{`
         @keyframes cap-grad { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-        @keyframes cap-blob-a { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,20px)} }
-        @keyframes cap-blob-b { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-25px,-15px)} }
-        @keyframes cap-arrow-bounce { 0%,100%{transform:translateX(0)} 50%{transform:translateX(4px)} }
-        @keyframes cap-pulse-ring { 0%{transform:scale(1); opacity:.55} 70%{transform:scale(2.1); opacity:0} 100%{transform:scale(2.1); opacity:0} }
-        @keyframes cap-tag-in { from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }
-        @keyframes cap-row-in { from{opacity:0; transform:translateX(-8px)} to{opacity:1; transform:translateX(0)} }
-        @keyframes cap-sparkle-spin { 0%,100%{transform:rotate(0) scale(1)} 50%{transform:rotate(20deg) scale(1.15)} }
-        @keyframes cap-ticker-dot-pulse { 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:.4; transform:scale(1.3)} }
-        @keyframes cap-fade-slide { from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)} }
+        @keyframes cap-blob-a { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,15px)} }
+        @keyframes cap-blob-b { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-15px,-10px)} }
+        @keyframes cap-arrow-bounce { 0%,100%{transform:translateX(0)} 50%{transform:translateX(3px)} }
+        @keyframes cap-pulse-ring { 0%{transform:scale(1); opacity:.5} 70%{transform:scale(1.8); opacity:0} 100%{transform:scale(1.8); opacity:0} }
+        @keyframes cap-tag-in { from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)} }
+        @keyframes cap-ticker-dot-pulse { 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:.4; transform:scale(1.2)} }
+        @keyframes cap-fade-slide { from{opacity:0; transform:translateY(3px)} to{opacity:1; transform:translateY(0)} }
         @keyframes cap-sticky-in { from{transform:translateY(120%)} to{transform:translateY(0)} }
 
-        .reveal { opacity:0; transform:translateY(22px); transition:opacity .45s cubic-bezier(.22,1,.36,1), transform .45s cubic-bezier(.22,1,.36,1); }
+        .reveal { opacity:0; transform:translateY(18px); transition:opacity .4s cubic-bezier(.22,1,.36,1), transform .4s cubic-bezier(.22,1,.36,1); }
         .reveal.is-visible { opacity:1; transform:translateY(0); }
 
         .cap-progress-track { position:fixed; top:0; left:0; right:0; height:3px; background:transparent; z-index:9999; pointer-events:none; }
         .cap-progress-fill { height:100%; width:0%; background:linear-gradient(90deg, ${G.blue}, ${G.purple}, ${G.orange}); transition:width .1s linear; }
 
         .cap-blob { position:absolute; border-radius:50%; pointer-events:none; }
-        .cap-blob-blue { top:-120px; left:-120px; width:480px; height:480px; background:radial-gradient(circle, ${G.blue}22 0%, transparent 70%); filter:blur(100px); animation:cap-blob-a 14s ease-in-out infinite; }
-        .cap-blob-orange { top:15%; right:-140px; width:400px; height:400px; background:radial-gradient(circle, ${G.orange}1e 0%, transparent 70%); filter:blur(110px); animation:cap-blob-b 16s ease-in-out infinite 1s; }
+        .cap-blob-blue { top:-100px; left:-100px; width:400px; height:400px; background:radial-gradient(circle, ${G.blue}1e 0%, transparent 70%); filter:blur(90px); animation:cap-blob-a 14s ease-in-out infinite; }
+        .cap-blob-orange { top:15%; right:-120px; width:340px; height:340px; background:radial-gradient(circle, ${G.orange}1a 0%, transparent 70%); filter:blur(90px); animation:cap-blob-b 16s ease-in-out infinite 1s; }
 
-        .cap-hero { position:relative; padding: calc(28px + 64px) 0 0; overflow:hidden; background:#fafbff; }
-        .cap-breadcrumb { display:flex; align-items:center; gap:6px; font-size:13px; color:#94a3b8; margin-bottom:14px; }
+        .cap-hero { position:relative; padding: calc(18px + 56px) 0 0; overflow:hidden; background:#fafbff; }
+        .cap-breadcrumb { display:flex; align-items:center; gap:5px; font-size:12px; color:#94a3b8; margin-bottom:10px; }
         .cap-breadcrumb a { color:#94a3b8; text-decoration:none; }
         .cap-breadcrumb a:hover { color:${G.blue}; }
         .cap-sep { color:#cbd5e1; }
         .cap-current { color:#475569; font-weight:500; }
 
-        .cap-h1 { font-size:clamp(2.1rem, 4.2vw, 3.3rem); font-weight:900; line-height:1.1; letter-spacing:-1.1px; color:#0b0d20; margin-bottom:12px; }
-        .cap-h2 { font-size:clamp(1.7rem, 2.8vw, 2.4rem); font-weight:900; color:#0b0d20; line-height:1.14; letter-spacing:-0.6px; margin-bottom:10px; }
-        .cap-lead { font-size:15.5px; color:#64748b; line-height:1.7; max-width:540px; margin-bottom:14px; }
-        .cap-body { font-size:14.5px; color:#64748b; line-height:1.75; margin-bottom:16px; }
+        .cap-h1 { font-size:clamp(1.9rem, 3.8vw, 3rem); font-weight:900; line-height:1.1; letter-spacing:-1px; color:#0b0d20; margin-bottom:10px; }
+        .cap-h2 { font-size:clamp(1.5rem, 2.5vw, 2.1rem); font-weight:900; color:#0b0d20; line-height:1.14; letter-spacing:-0.5px; margin-bottom:8px; }
+        .cap-lead { font-size:14.5px; color:#64748b; line-height:1.65; max-width:520px; margin-bottom:12px; }
+        .cap-body { font-size:13.5px; color:#64748b; line-height:1.65; margin-bottom:12px; }
 
-        .cap-ticker { display:inline-flex; align-items:center; gap:10px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:7px 14px 7px 8px; margin-bottom:14px; box-shadow:0 2px 10px rgba(0,0,0,.05); max-width:100%; }
-        .cap-ticker-live { display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:800; color:#ef4444; background:#fef2f2; padding:3px 7px; border-radius:999px; flex-shrink:0; }
-        .cap-ticker-dot { width:6px; height:6px; border-radius:50%; background:#ef4444; animation:cap-ticker-dot-pulse 1.4s ease-in-out infinite; }
-        .cap-ticker-text { font-size:12px; font-weight:600; color:#374151; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; animation:cap-fade-slide .4s ease; }
+        .cap-ticker { display:inline-flex; align-items:center; gap:8px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:5px 12px 5px 6px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,.04); max-width:100%; }
+        .cap-ticker-live { display:inline-flex; align-items:center; gap:4px; font-size:9.5px; font-weight:800; color:#ef4444; background:#fef2f2; padding:2px 6px; border-radius:999px; flex-shrink:0; }
+        .cap-ticker-dot { width:5px; height:5px; border-radius:50%; background:#ef4444; animation:cap-ticker-dot-pulse 1.4s ease-in-out infinite; }
+        .cap-ticker-text { font-size:11.5px; font-weight:600; color:#374151; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; animation:cap-fade-slide .4s ease; }
 
-        .cap-btn-row { display:flex; gap:10px; flex-wrap:wrap; }
-        .cap-btn { display:inline-flex; align-items:center; gap:7px; font-weight:700; font-size:13.5px; padding:12px 26px; border-radius:999px; text-decoration:none; transition:transform .15s ease, box-shadow .2s ease; border:none; cursor:pointer; will-change:transform; }
-        .cap-btn:hover { box-shadow:0 16px 36px rgba(37,99,235,.4); }
-        .cap-btn-primary { background-image:linear-gradient(135deg, ${G.blue}, ${G.indigo}); color:#fff; box-shadow:0 8px 22px ${G.blue}35; }
-        .cap-btn-warm { background-image:linear-gradient(135deg, ${G.orange}, ${G.rose}); color:#fff; box-shadow:0 8px 26px ${G.orange}40; }
-        .cap-btn-ghost { background:#fff; color:#374151; border:1.5px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,.05); }
-        .cap-btn-ghost:hover { border-color:${G.blue}; transform:translateY(-3px); }
+        .cap-btn-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; }
+        .cap-btn { display:inline-flex; align-items:center; gap:6px; font-weight:700; font-size:13px; padding:10px 22px; border-radius:999px; text-decoration:none; transition:transform .15s ease, box-shadow .2s ease; border:none; cursor:pointer; }
+        .cap-btn-primary { background-image:linear-gradient(135deg, ${G.blue}, ${G.indigo}); color:#fff; box-shadow:0 6px 18px ${G.blue}30; }
+        .cap-btn-warm { background-image:linear-gradient(135deg, ${G.orange}, ${G.rose}); color:#fff; box-shadow:0 6px 18px ${G.orange}35; }
+        .cap-btn-ghost { background:#fff; color:#374151; border:1.5px solid #e2e8f0; box-shadow:0 2px 6px rgba(0,0,0,.04); }
+        .cap-btn-ghost:hover { border-color:${G.blue}; transform:translateY(-2px); }
         .cap-btn-ghost-dark { background:transparent; color:#fff; border:1.5px solid rgba(255,255,255,.25); }
-        .cap-btn-ghost-dark:hover { border-color:rgba(255,255,255,.5); transform:translateY(-3px); }
+        .cap-btn-ghost-dark:hover { border-color:rgba(255,255,255,.5); transform:translateY(-2px); }
         .cap-arrow { display:inline-flex; animation:cap-arrow-bounce 1.3s ease-in-out infinite; }
 
-        .cap-stats-4 { display:grid; border-top:1px solid #eef2ff; margin-top:24px; }
-        .cap-stat-cell { text-align:center; padding:16px 14px; background:#fafbff; transition:background .25s ease; cursor:default; }
+        .cap-stats-4 { display:grid; border-top:1px solid #eef2ff; }
+        .cap-stat-cell { text-align:center; padding:12px 10px; background:#fafbff; transition:background .25s ease; cursor:default; }
         .cap-stat-cell:hover { background:#fff; }
-        .cap-stat-num { font-size:1.85rem; font-weight:900; line-height:1; margin-bottom:4px; transition:transform .2s ease; }
-        .cap-stat-cell:hover .cap-stat-num { transform:scale(1.06); }
-        .cap-stat-label { font-size:11.5px; color:#94a3b8; font-weight:600; }
+        .cap-stat-num { font-size:1.5rem; font-weight:900; line-height:1; margin-bottom:2px; transition:transform .2s ease; }
+        .cap-stat-cell:hover .cap-stat-num { transform:scale(1.05); }
+        .cap-stat-label { font-size:11px; color:#94a3b8; font-weight:600; }
 
-        .cap-section { padding:clamp(32px, 5vw, 56px) 0; }
-        .cap-center { text-align:center; margin-bottom:22px; }
-        .cap-two-col { display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:start; }
+        .cap-section { padding:clamp(24px, 4vw, 44px) 0; }
+        .cap-center { text-align:center; margin-bottom:18px; }
+        .cap-two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
 
-        .cap-benefit { display:flex; align-items:flex-start; gap:9px; padding:6px 8px; border-radius:10px; transition:background .2s ease, transform .2s ease; }
+        .cap-benefit { display:flex; align-items:flex-start; gap:8px; padding:5px 6px; border-radius:8px; transition:background .2s ease, transform .2s ease; }
         .cap-benefit:hover { background:#f0f6ff; transform:translateX(3px); }
-        .cap-benefit span { font-size:14px; color:#374151; line-height:1.5; }
+        .cap-benefit span { font-size:13px; color:#374151; line-height:1.45; }
         .cap-check { transition:transform .2s ease; }
-        .cap-benefit:hover .cap-check { transform:scale(1.15); }
 
-        /* ── Success-share card: static CSS hover only, NO mousemove tilt.
-           This is the actual fix for the slider drag bug. ── */
+        /* Success share card - isolated CSS hover */
         .cap-share-card {
           position:relative; overflow:hidden;
           background:linear-gradient(160deg, #0b0d20 0%, #14163a 100%);
-          border-radius:22px; color:#fff; padding:26px;
-          transition:transform .3s ease, box-shadow .3s ease;
+          border-radius:18px; color:#fff; padding:20px;
+          transition:transform .25s ease, box-shadow .25s ease;
         }
-        .cap-share-card:hover { transform:translateY(-4px); box-shadow:0 20px 48px rgba(0,0,0,.3); }
-        .cap-share-orb { position:absolute; top:-60px; right:-60px; width:240px; height:240px; border-radius:50%; background:radial-gradient(circle, ${G.blue}30 0%, transparent 70%); pointer-events:none; animation:cap-blob-a 10s ease-in-out infinite; }
+        .cap-share-card:hover { transform:translateY(-3px); box-shadow:0 16px 36px rgba(0,0,0,.25); }
+        .cap-share-orb { position:absolute; top:-50px; right:-50px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, ${G.blue}30 0%, transparent 70%); pointer-events:none; }
 
-        .cap-calc { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:14px; }
-        .cap-calc-head { display:flex; align-items:center; gap:6px; font-size:10.5px; font-weight:700; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; }
+        .cap-calc { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px; pointer-events:auto; }
+        .cap-calc-head { display:flex; align-items:center; gap:5px; font-size:10px; font-weight:700; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:.4px; margin-bottom:8px; }
         .cap-calc-value-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
-        .cap-calc-value-row span:first-child { font-size:11.5px; color:rgba(255,255,255,0.5); font-weight:600; }
-        .cap-calc-ctc-display { font-size:19px; font-weight:900; color:#fff; }
+        .cap-calc-value-row span:first-child { font-size:11px; color:rgba(255,255,255,0.5); font-weight:600; }
+        .cap-calc-ctc-display { font-size:17px; font-weight:900; color:#fff; }
 
-        /* The slider itself — pure native input, no ancestor transform ever
-           changes while this is being dragged. */
+        /* 100% UNBLOCKED SLIDER DRAGBAR */
         .cap-calc-range {
-          position:relative; z-index:2; width:100%;
+          position:relative; z-index:50; width:100%;
           -webkit-appearance:none; appearance:none;
           height:6px; border-radius:99px;
           background:linear-gradient(90deg, ${G.blue}, ${G.orange});
-          outline:none; margin-bottom:12px; cursor:pointer;
-          touch-action:none;
+          outline:none; margin-bottom:10px; cursor:grab;
+          touch-action:none; pointer-events:auto !important;
         }
+        .cap-calc-range:active { cursor:grabbing; }
         .cap-calc-range::-webkit-slider-thumb {
           -webkit-appearance:none; appearance:none;
-          width:20px; height:20px; border-radius:50%;
+          width:22px; height:22px; border-radius:50%;
           background:#fff; border:3px solid ${G.blue};
           box-shadow:0 2px 8px rgba(0,0,0,.4); cursor:grab;
           transition:transform .15s ease;
         }
         .cap-calc-range:active::-webkit-slider-thumb { cursor:grabbing; transform:scale(1.2); }
-        .cap-calc-range::-webkit-slider-thumb:hover { transform:scale(1.15); }
         .cap-calc-range::-moz-range-thumb {
-          width:20px; height:20px; border-radius:50%;
+          width:22px; height:22px; border-radius:50%;
           background:#fff; border:3px solid ${G.blue}; cursor:grab;
         }
-        .cap-calc-range:active::-moz-range-thumb { cursor:grabbing; }
 
-        .cap-calc-results { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-        .cap-calc-result { background:rgba(255,255,255,0.04); border-radius:9px; padding:8px 6px; text-align:center; }
-        .cap-calc-result-k { display:block; font-size:9px; font-weight:700; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:.4px; margin-bottom:3px; }
-        .cap-calc-result-v { display:block; font-size:13.5px; font-weight:800; }
+        .cap-calc-results { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+        .cap-calc-result { background:rgba(255,255,255,0.04); border-radius:8px; padding:6px 4px; text-align:center; }
+        .cap-calc-result-k { display:block; font-size:8.5px; font-weight:700; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:.3px; margin-bottom:2px; }
+        .cap-calc-result-v { display:block; font-size:12.5px; font-weight:800; }
 
-        .cap-share-table { width:100%; border-collapse:collapse; font-size:12.5px; }
-        .cap-share-table th { padding:8px 6px; text-align:left; color:rgba(255,255,255,.45); font-weight:600; font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid rgba(255,255,255,.12); }
-        .cap-share-row { border-bottom:1px solid rgba(255,255,255,.06); opacity:0; animation:cap-row-in .5s ease forwards; transition:background .2s ease, transform .2s ease; }
-        .cap-share-row:hover { background:rgba(255,255,255,.04); }
-        .cap-share-row.is-highlighted { background:rgba(37,99,235,0.18); transform:scale(1.02); border-radius:8px; box-shadow:inset 0 0 0 1.5px ${G.blue}; }
-        .cap-share-row td { padding:9px 6px; }
-        .cap-roi-badge { margin-left:6px; background:rgba(74,222,128,.12); color:#4ade80; border:1px solid rgba(74,222,128,.2); border-radius:999px; padding:2px 7px; font-size:10.5px; font-weight:700; }
+        .cap-share-table { width:100%; border-collapse:collapse; font-size:11.5px; }
+        .cap-share-table th { padding:6px 4px; text-align:left; color:rgba(255,255,255,.45); font-weight:600; font-size:10px; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,.12); }
+        .cap-share-row { border-bottom:1px solid rgba(255,255,255,.06); opacity:0; animation:cap-row-in .4s ease forwards; transition:background .2s ease; }
+        .cap-share-row.is-highlighted { background:rgba(37,99,235,0.22); box-shadow:inset 0 0 0 1px ${G.blue}; }
+        .cap-share-row td { padding:7px 4px; }
+        .cap-roi-badge { margin-left:4px; background:rgba(74,222,128,.12); color:#4ade80; border:1px solid rgba(74,222,128,.2); border-radius:999px; padding:1px 5px; font-size:9.5px; font-weight:700; }
 
-        .cap-domains-3 { display:grid; grid-template-columns:repeat(3,1fr); grid-auto-rows:1fr; gap:14px; align-items:stretch; }
+        /* Dynamic Domain Filter Pills */
+        .cap-domain-filters { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-bottom:14px; }
+        .cap-filter-pill { border:1.5px solid #e2e8f0; background:#fff; color:#64748b; font-size:11.5px; font-weight:700; padding:5px 12px; border-radius:999px; cursor:pointer; transition:all .2s ease; font-family:inherit; }
+        .cap-filter-pill.is-active, .cap-filter-pill:hover { border-color:${G.blue}; color:${G.blue}; background:#eff6ff; }
 
-        .cap-flip-outer { perspective:1400px; height:100%; }
+        /* REDUCED DOMAIN FLIP CARDS */
+        .cap-domains-3 { display:grid; grid-template-columns:repeat(3,1fr); grid-auto-rows:1fr; gap:12px; align-items:stretch; }
+        .cap-flip-outer { perspective:1200px; height:100%; transition:opacity .3s ease, transform .3s ease; }
+        .cap-flip-outer.is-hidden { display:none; }
         .cap-flip-card { display:block; width:100%; height:100%; cursor:pointer; outline:none; }
-        .cap-flip-inner { position:relative; width:100%; height:100%; min-height:225px; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.22,1,.36,1); }
+        .cap-flip-inner { position:relative; width:100%; height:100%; min-height:165px; transform-style:preserve-3d; transition:transform .5s cubic-bezier(.22,1,.36,1); }
         .cap-flip-inner.is-flipped { transform:rotateY(180deg); }
         .cap-flip-face { position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
         .cap-flip-back { transform:rotateY(180deg); display:flex; flex-direction:column; justify-content:center; color:#fff; text-align:center; }
 
-        .cap-domain-card { position:relative; background:#fff; border-radius:16px; padding:18px; border:1px solid rgba(15,23,42,.06); overflow:hidden; transition:box-shadow .3s ease; box-shadow:0 6px 20px rgba(15,23,42,.05); display:flex; flex-direction:column; gap:8px; height:100%; box-sizing:border-box; }
-        .cap-flip-outer:hover .cap-domain-card:not(.cap-flip-back) { box-shadow:0 20px 48px rgba(37,99,235,.14); }
-        .cap-domain-glow { position:absolute; inset:0; border-radius:16px; padding:1.5px; -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite:xor; mask-composite:exclude; opacity:0; transition:opacity .3s ease; pointer-events:none; }
+        .cap-domain-card { position:relative; background:#fff; border-radius:14px; padding:14px 16px; border:1px solid rgba(15,23,42,.06); overflow:hidden; transition:box-shadow .25s ease; box-shadow:0 4px 14px rgba(15,23,42,.04); display:flex; flex-direction:column; gap:6px; height:100%; box-sizing:border-box; }
+        .cap-flip-outer:hover .cap-domain-card:not(.cap-flip-back) { box-shadow:0 14px 32px rgba(37,99,235,.12); }
+        .cap-domain-glow { position:absolute; inset:0; border-radius:14px; padding:1.5px; -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite:xor; mask-composite:exclude; opacity:0; transition:opacity .25s ease; pointer-events:none; }
         .cap-flip-outer:hover .cap-domain-glow { opacity:1; }
-        .cap-domain-spotlight { position:absolute; inset:0; opacity:0; transition:opacity .3s ease; pointer-events:none; }
+        .cap-domain-spotlight { position:absolute; inset:0; opacity:0; transition:opacity .25s ease; pointer-events:none; }
         .cap-flip-outer:hover .cap-domain-spotlight { opacity:1; }
-        .cap-domain-strip { position:absolute; top:0; left:0; right:0; height:3px; }
-        .cap-domain-ghost { position:absolute; bottom:-14px; right:4px; font-size:60px; font-weight:900; opacity:.06; line-height:1; user-select:none; pointer-events:none; }
-        .cap-domain-top { display:flex; align-items:center; justify-content:space-between; gap:8px; position:relative; z-index:1; }
-        .cap-domain-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform .3s ease; }
-        .cap-flip-outer:hover .cap-domain-icon { transform:scale(1.1) rotate(-6deg); }
-        .cap-domain-badge { display:inline-flex; align-items:center; gap:5px; width:fit-content; padding:3px 10px; border-radius:999px; font-size:10px; font-weight:700; white-space:nowrap; }
-        .cap-domain-title { font-size:14px; font-weight:700; color:#0f172a; position:relative; z-index:1; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
-        .cap-domain-desc { font-size:12.8px; color:#64748b; line-height:1.55; position:relative; z-index:1; flex:1; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-        .cap-flip-hint { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; color:${G.blue}; text-transform:uppercase; letter-spacing:.4px; position:relative; z-index:1; margin-top:auto; }
+        .cap-domain-strip { position:absolute; top:0; left:0; right:0; height:2.5px; }
+        .cap-domain-top { display:flex; align-items:center; justify-content:space-between; gap:6px; position:relative; z-index:1; }
+        .cap-domain-icon { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform .25s ease; }
+        .cap-flip-outer:hover .cap-domain-icon { transform:scale(1.08) rotate(-4deg); }
+        .cap-domain-badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:999px; font-size:9.5px; font-weight:700; white-space:nowrap; }
+        .cap-domain-title { font-size:13.5px; font-weight:700; color:#0f172a; position:relative; z-index:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .cap-domain-desc { font-size:12px; color:#64748b; line-height:1.45; position:relative; z-index:1; flex:1; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+        .cap-flip-hint { display:inline-flex; align-items:center; gap:3px; font-size:9.5px; font-weight:700; color:${G.blue}; text-transform:uppercase; letter-spacing:.3px; position:relative; z-index:1; margin-top:auto; }
 
-        .cap-domain-back-title { font-size:15px; font-weight:800; margin-bottom:12px; padding:0 18px; }
-        .cap-domain-back-stats { display:flex; flex-direction:column; gap:8px; padding:0 18px; margin-bottom:12px; }
-        .cap-domain-back-stat { display:flex; justify-content:space-between; align-items:baseline; border-bottom:1px solid rgba(255,255,255,.15); padding-bottom:6px; }
-        .cap-domain-back-v { font-size:16px; font-weight:900; }
-        .cap-domain-back-k { font-size:10.5px; color:rgba(255,255,255,.7); font-weight:600; }
-        .cap-domain-back-cta { display:inline-flex; align-items:center; justify-content:center; gap:6px; margin:0 18px; padding:8px 14px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); border-radius:999px; color:#fff; font-size:12px; font-weight:700; text-decoration:none; transition:background .2s ease; }
-        .cap-domain-back-cta:hover { background:rgba(255,255,255,.25); }
+        .cap-domain-back-title { font-size:13.5px; font-weight:800; margin-bottom:8px; padding:0 12px; }
+        .cap-domain-back-stats { display:flex; flex-direction:column; gap:6px; padding:0 14px; margin-bottom:10px; }
+        .cap-domain-back-stat { display:flex; justify-content:space-between; align-items:baseline; border-bottom:1px solid rgba(255,255,255,.15); padding-bottom:4px; }
+        .cap-domain-back-v { font-size:14px; font-weight:900; }
+        .cap-domain-back-k { font-size:9.5px; color:rgba(255,255,255,.7); font-weight:600; }
+        .cap-domain-back-cta { display:inline-flex; align-items:center; justify-content:center; gap:4px; margin:0 14px; padding:6px 12px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); border-radius:999px; color:#fff; font-size:11px; font-weight:700; text-decoration:none; }
 
-        .cap-journey-controls { display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:14px; flex-wrap:wrap; }
-        .cap-play-btn { display:inline-flex; align-items:center; gap:7px; padding:8px 16px; border-radius:999px; border:1.5px solid #e2e8f0; background:#fff; cursor:pointer; font-size:12.5px; font-weight:700; color:#374151; transition:all .2s ease; font-family:inherit; }
-        .cap-play-btn:hover { border-color:${G.blue}; color:${G.blue}; }
+        .cap-journey-controls { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
+        .cap-play-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; border:1.5px solid #e2e8f0; background:#fff; cursor:pointer; font-size:11.5px; font-weight:700; color:#374151; transition:all .2s ease; font-family:inherit; }
         .cap-play-btn.is-playing { background:${G.blue}; border-color:${G.blue}; color:#fff; }
-        .cap-journey-progress-text { font-size:12px; font-weight:600; color:#94a3b8; }
+        .cap-journey-progress-text { font-size:11.5px; font-weight:600; color:#94a3b8; }
 
-        .cap-step-nav { display:flex; gap:7px; flex-wrap:wrap; justify-content:center; margin-bottom:22px; }
-        .cap-step-pill { display:flex; align-items:center; gap:7px; padding:7px 12px 7px 7px; border-radius:999px; border:1.5px solid #e2e8f0; background:#fff; cursor:pointer; transition:all .25s ease; font-family:inherit; }
-        .cap-step-pill:hover { border-color:var(--pill-color); transform:translateY(-2px); }
-        .cap-step-pill.is-active { border-color:var(--pill-color); background:color-mix(in srgb, var(--pill-color) 8%, white); box-shadow:0 4px 14px rgba(0,0,0,.08); }
-        .cap-step-pill-num { width:20px; height:20px; border-radius:50%; background:var(--pill-color); color:#fff; font-size:10.5px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-        .cap-step-pill-label { font-size:11.5px; font-weight:600; color:#64748b; white-space:nowrap; }
-        .cap-step-pill.is-active .cap-step-pill-label { color:#0f172a; }
+        .cap-step-nav { display:flex; gap:5px; flex-wrap:wrap; justify-content:center; margin-bottom:16px; }
+        .cap-step-pill { display:flex; align-items:center; gap:6px; padding:5px 10px 5px 5px; border-radius:999px; border:1.5px solid #e2e8f0; background:#fff; cursor:pointer; transition:all .2s ease; font-family:inherit; }
+        .cap-step-pill.is-active { border-color:var(--pill-color); background:color-mix(in srgb, var(--pill-color) 8%, white); }
+        .cap-step-pill-num { width:18px; height:18px; border-radius:50%; background:var(--pill-color); color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .cap-step-pill-label { font-size:10.5px; font-weight:600; color:#64748b; white-space:nowrap; }
 
-        .cap-journey { position:relative; max-width:800px; margin:0 auto; }
-        .cap-journey-rail { position:absolute; left:19px; top:6px; bottom:6px; width:2px; background:#eef2ff; }
+        .cap-journey { position:relative; max-width:760px; margin:0 auto; }
+        .cap-journey-rail { position:absolute; left:15px; top:6px; bottom:6px; width:2px; background:#eef2ff; }
         .cap-journey-rail-fill { position:absolute; left:19px; top:6px; width:2px; height:0%; background:linear-gradient(to bottom, ${G.blue}, ${G.purple}, ${G.orange}); transition:height .25s linear; }
 
-        .cap-journey-item { display:flex; gap:16px; position:relative; padding-bottom:12px; }
+        .cap-journey-item { display:flex; gap:12px; position:relative; padding-bottom:10px; }
         .cap-journey-item:last-child { padding-bottom:0; }
-        .cap-journey-dot-wrap { position:relative; width:40px; height:40px; flex-shrink:0; }
+        .cap-journey-dot-wrap { position:relative; width:32px; height:32px; flex-shrink:0; }
         .cap-journey-dot-pulse { position:absolute; inset:0; border-radius:50%; opacity:0; }
         .cap-journey-item.is-active .cap-journey-dot-pulse { animation:cap-pulse-ring 1.8s ease-out infinite; }
-        .cap-journey-dot { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:#fff; position:relative; z-index:1; transition:transform .3s ease; }
-        .cap-journey-item.is-active .cap-journey-dot { transform:scale(1.12); }
+        .cap-journey-dot { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#fff; position:relative; z-index:1; transition:transform .25s ease; }
+        .cap-journey-item.is-active .cap-journey-dot { transform:scale(1.08); }
 
-        .cap-journey-card { position:relative; background:#fff; border:1px solid #eef0f6; border-radius:16px; padding:0; flex:1; box-shadow:0 2px 10px rgba(0,0,0,.04); transition:box-shadow .3s ease, border-color .3s ease, transform .3s ease; overflow:hidden; }
-        .cap-journey-item.is-active .cap-journey-card { box-shadow:0 14px 36px rgba(37,99,235,.14); border-color:rgba(37,99,235,.25); transform:translateX(3px); }
-        .cap-journey-card-final { background:linear-gradient(135deg, #fff7ed, #fff); border-color:${G.orange}40; }
-        .cap-journey-card-glow { position:absolute; top:0; left:0; right:0; height:3px; opacity:.85; }
+        .cap-journey-card { position:relative; background:#fff; border:1px solid #eef0f6; border-radius:12px; padding:0; flex:1; box-shadow:0 2px 8px rgba(0,0,0,.03); transition:box-shadow .25s ease, border-color .25s ease; overflow:hidden; }
+        .cap-journey-item.is-active .cap-journey-card { box-shadow:0 10px 28px rgba(37,99,235,.12); border-color:rgba(37,99,235,.25); }
+        .cap-journey-card-glow { position:absolute; top:0; left:0; right:0; height:2.5px; opacity:.85; }
 
-        .cap-journey-card-head { all:unset; display:flex; align-items:center; gap:9px; padding:13px 16px; flex-wrap:wrap; cursor:pointer; width:100%; box-sizing:border-box; }
-        .cap-journey-icon { width:28px; height:28px; border-radius:99px; display:flex; align-items:center; justify-content:center; transition:transform .3s ease; flex-shrink:0; }
-        .cap-journey-item.is-active .cap-journey-icon { transform:rotate(-8deg) scale(1.08); }
-        .cap-journey-title { font-size:14.5px; font-weight:700; color:#0b0d20; }
-        .cap-journey-badge { margin-left:auto; padding:3px 9px; border-radius:999px; font-size:10.5px; font-weight:700; }
-        .cap-journey-chevron { font-size:13px; color:#94a3b8; transition:transform .3s ease; margin-left:4px; }
-        .cap-journey-item.is-open .cap-journey-chevron { transform:rotate(180deg); }
+        .cap-journey-card-head { all:unset; display:flex; align-items:center; gap:8px; padding:10px 14px; flex-wrap:wrap; cursor:pointer; width:100%; box-sizing:border-box; }
+        .cap-journey-icon { width:26px; height:26px; border-radius:99px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .cap-journey-title { font-size:13.5px; font-weight:700; color:#0b0d20; }
+        .cap-journey-badge { margin-left:auto; padding:2px 7px; border-radius:999px; font-size:9.5px; font-weight:700; }
 
-        .cap-journey-body { display:grid; grid-template-rows:0fr; transition:grid-template-rows .4s ease; }
+        .cap-journey-body { display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s ease; }
         .cap-journey-item.is-open .cap-journey-body { grid-template-rows:1fr; }
-        .cap-journey-body-inner { overflow:hidden; min-height:0; padding:0 16px; }
-        .cap-journey-item.is-open .cap-journey-body-inner { padding:0 16px 14px; }
-        .cap-journey-desc { font-size:13.5px; color:#64748b; line-height:1.6; margin:0 0 8px; }
-        .cap-journey-tags { display:flex; flex-wrap:wrap; gap:6px; }
-        .cap-journey-tag { font-size:10.5px; font-weight:600; color:#475569; border:1px solid #e2e8f0; border-radius:999px; padding:3px 9px; opacity:0; animation:cap-tag-in .4s ease forwards; }
-        .cap-journey-sparkle { position:absolute; top:14px; right:14px; animation:cap-sparkle-spin 2.4s ease-in-out infinite; }
+        .cap-journey-body-inner { overflow:hidden; min-height:0; padding:0 14px; }
+        .cap-journey-item.is-open .cap-journey-body-inner { padding:0 14px 12px; }
+        .cap-journey-desc { font-size:12.5px; color:#64748b; line-height:1.55; margin:0 0 6px; }
+        .cap-journey-tags { display:flex; flex-wrap:wrap; gap:4px; }
+        .cap-journey-tag { font-size:9.5px; font-weight:600; color:#475569; border:1px solid #e2e8f0; border-radius:999px; padding:2px 7px; }
 
-        .cap-cta { position:relative; border-radius:24px; padding:clamp(28px,5vw,44px) clamp(20px,5vw,52px); text-align:center; overflow:hidden; background:linear-gradient(135deg, #0b0d20 0%, #1a1040 50%, #0d1836 100%); }
+        .cap-cta { position:relative; border-radius:20px; padding:clamp(24px,4vw,36px) clamp(16px,4vw,40px); text-align:center; overflow:hidden; background:linear-gradient(135deg, #0b0d20 0%, #1a1040 50%, #0d1836 100%); }
         .cap-cta-orb { position:absolute; border-radius:50%; filter:blur(60px); pointer-events:none; }
-        .cap-cta-orb-blue { top:-70px; left:10%; width:300px; height:300px; background:radial-gradient(circle, ${G.blue}35 0%, transparent 70%); animation:cap-blob-a 12s ease-in-out infinite; }
-        .cap-cta-orb-orange { bottom:-50px; right:8%; width:260px; height:260px; background:radial-gradient(circle, ${G.orange}30 0%, transparent 70%); animation:cap-blob-b 14s ease-in-out infinite 1s; }
-        .cap-cta-h2 { font-size:clamp(1.5rem, 3vw, 2.2rem); font-weight:900; line-height:1.18; letter-spacing:-0.5px; margin-bottom:10px; }
-        .cap-cta-body { font-size:14px; color:rgba(255,255,255,.6); max-width:440px; margin:0 auto 20px; line-height:1.7; }
+        .cap-cta-orb-blue { top:-60px; left:10%; width:240px; height:240px; background:radial-gradient(circle, ${G.blue}35 0%, transparent 70%); }
+        .cap-cta-orb-orange { bottom:-40px; right:8%; width:200px; height:200px; background:radial-gradient(circle, ${G.orange}30 0%, transparent 70%); }
+        .cap-cta-h2 { font-size:clamp(1.4rem, 2.8vw, 2rem); font-weight:900; line-height:1.18; margin-bottom:8px; }
+        .cap-cta-body { font-size:13px; color:rgba(255,255,255,.6); max-width:400px; margin:0 auto 16px; line-height:1.65; }
 
-        .cap-sticky-cta { position:fixed; bottom:0; left:0; right:0; z-index:998; transform:translateY(120%); transition:transform .4s cubic-bezier(.22,1,.36,1); pointer-events:none; }
-        .cap-sticky-cta.is-visible { transform:translateY(0); pointer-events:auto; animation:cap-sticky-in .4s cubic-bezier(.22,1,.36,1); }
-        .cap-sticky-cta-inner { max-width:880px; margin:0 auto; background:#fff; border:1px solid #e2e8f0; border-radius:14px 14px 0 0; box-shadow:0 -8px 28px rgba(0,0,0,.12); padding:12px 18px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
-        .cap-sticky-cta-text { display:flex; flex-direction:column; }
-        .cap-sticky-cta-text strong { font-size:13px; color:#0b0d20; }
+        .cap-sticky-cta { position:fixed; bottom:0; left:0; right:0; z-index:998; transform:translateY(120%); transition:transform .35s cubic-bezier(.22,1,.36,1); pointer-events:none; }
+        .cap-sticky-cta.is-visible { transform:translateY(0); pointer-events:auto; }
+        .cap-sticky-cta-inner { max-width:840px; margin:0 auto; background:#fff; border:1px solid #e2e8f0; border-radius:12px 12px 0 0; box-shadow:0 -6px 24px rgba(0,0,0,.1); padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        .cap-sticky-cta-text strong { font-size:12.5px; color:#0b0d20; display:block; }
         .cap-sticky-cta-text span { font-size:11px; color:#64748b; }
-        .cap-sticky-cta-actions { display:flex; align-items:center; gap:9px; }
-        .cap-sticky-dismiss { all:unset; display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:#f1f5f9; color:#64748b; cursor:pointer; transition:background .2s ease; }
-        .cap-sticky-dismiss:hover { background:#e2e8f0; }
+        .cap-sticky-dismiss { all:unset; display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:#f1f5f9; color:#64748b; cursor:pointer; }
 
         @media (max-width: 900px) { .cap-step-nav { display:none; } }
         @media (max-width: 860px) {
-          .cap-two-col { grid-template-columns:1fr !important; gap:24px !important; }
+          .cap-two-col { grid-template-columns:1fr !important; gap:20px !important; }
           .cap-domains-3 { grid-template-columns:1fr 1fr !important; }
-        }
-        @media (max-width: 640px) {
-          .cap-sticky-cta-inner { flex-direction:column; align-items:stretch; text-align:center; }
-          .cap-sticky-cta-actions { justify-content:center; }
         }
         @media (max-width: 580px) {
           .cap-stats-4 { grid-template-columns:repeat(2,1fr) !important; }
           .cap-domains-3 { grid-template-columns:1fr !important; grid-auto-rows:auto !important; }
-          .cap-flip-inner { min-height:195px; }
+          .cap-flip-inner { min-height:155px; }
           .cap-calc-results { grid-template-columns:1fr !important; }
           .cap-ticker-text { white-space:normal; }
         }
       `}</style>
 
-      {/* ════════════════════ VANILLA JS INTERACTIVITY ════════════════════ */}
+      {/* ════ VANILLA JS INTERACTIVITY & SLIDER FIX ════ */}
       <script
         dangerouslySetInnerHTML={{
           __html: `
@@ -1009,10 +986,10 @@ export default async function CapPage() {
                       io.unobserve(el);
                     }
                   });
-                }, { threshold: 0.12, rootMargin: '-40px' });
+                }, { threshold: 0.1, rootMargin: '-30px' });
                 revealEls.forEach(function (el) { io.observe(el); });
 
-                /* ── Count-up stats (re-runs on hover too, for a "dynamic" feel) ── */
+                /* ── Count-up stats ── */
                 function runCountUp(el) {
                   var target = el.getAttribute('data-countup') || '';
                   var match = target.match(/[\\d.]+/);
@@ -1069,7 +1046,7 @@ export default async function CapPage() {
                   }, 3200);
                 }
 
-                /* ── Mouse-tracking spotlight on domain cards (paint-only, no transform) ── */
+                /* ── Spotlight paint ── */
                 document.querySelectorAll('[data-spotlight-card]').forEach(function (card) {
                   card.addEventListener('mousemove', function (e) {
                     var rect = card.getBoundingClientRect();
@@ -1080,10 +1057,27 @@ export default async function CapPage() {
                   });
                 });
 
-                /* ── Interactive CTC calculator ──
-                   No ancestor tilt logic anymore — this input is now 100%
-                   reliable because nothing repositions the card while
-                   dragging. */
+                /* ── Dynamic Category Domain Filtering ── */
+                var filterBtns = document.querySelectorAll('[data-domain-filter]');
+                var domainCards = document.querySelectorAll('[data-domain-category]');
+                filterBtns.forEach(function (btn) {
+                  btn.addEventListener('click', function () {
+                    var cat = btn.getAttribute('data-domain-filter');
+                    filterBtns.forEach(function (b) { b.classList.remove('is-active'); });
+                    btn.classList.add('is-active');
+
+                    domainCards.forEach(function (card) {
+                      var cardCat = card.getAttribute('data-domain-category');
+                      if (cat === 'all' || cardCat === cat) {
+                        card.classList.remove('is-hidden');
+                      } else {
+                        card.classList.add('is-hidden');
+                      }
+                    });
+                  });
+                });
+
+                /* ── 100% WORKING DRAGBAR SLIDER CALCULATOR ── */
                 var slider = document.querySelector('[data-ctc-slider]');
                 var ctcValueEl = document.querySelector('[data-ctc-value]');
                 var feeEl = document.querySelector('[data-ctc-fee]');
@@ -1092,12 +1086,8 @@ export default async function CapPage() {
                 var ctcRows = Array.prototype.slice.call(document.querySelectorAll('[data-ctc-row]'));
                 var sharePct = slider ? (parseFloat(slider.getAttribute('data-share-percent')) || 12) / 100 : 0.12;
 
-                function formatINR(n) {
-                  return '₹' + Math.round(n).toLocaleString('en-IN');
-                }
-                function formatLakh(n) {
-                  return '₹' + (n / 100000).toFixed(2).replace(/\\.00$/, '') + 'L';
-                }
+                function formatINR(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
+                function formatLakh(n) { return '₹' + (n / 100000).toFixed(2).replace(/\\.00$/, '') + 'L'; }
 
                 function updateCalculator() {
                   if (!slider) return;
@@ -1120,8 +1110,11 @@ export default async function CapPage() {
                   });
                   ctcRows.forEach(function (row) { row.classList.toggle('is-highlighted', row === closestRow); });
                 }
+
                 if (slider) {
-                  slider.addEventListener('input', updateCalculator);
+                  ['input', 'change', 'pointermove', 'touchmove'].forEach(function(evt) {
+                    slider.addEventListener(evt, updateCalculator, { passive: true });
+                  });
                   updateCalculator();
                 }
 
@@ -1141,7 +1134,7 @@ export default async function CapPage() {
                   });
                 });
 
-                /* ── Journey: scroll-linked rail fill + active step tracking ── */
+                /* ── Journey ── */
                 var track = document.querySelector('[data-journey-track]');
                 var fill = document.querySelector('[data-journey-fill]');
                 var journeyItems = Array.prototype.slice.call(document.querySelectorAll('[data-journey-step]'));
@@ -1228,8 +1221,8 @@ export default async function CapPage() {
                 var playBtn = document.querySelector('[data-journey-play]');
                 var playIcon = document.querySelector('[data-play-icon]');
                 var playLabel = document.querySelector('[data-play-label]');
-                var playSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
-                var pauseSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+                var playSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+                var pauseSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
 
                 function startAutoplay() {
                   autoplayOn = true;
@@ -1274,7 +1267,7 @@ export default async function CapPage() {
                 function updateStickyBar() {
                   if (!stickyBar || stickyDismissed) return;
                   var heroEl = document.querySelector('.cap-hero');
-                  var threshold = heroEl ? heroEl.offsetHeight : 500;
+                  var threshold = heroEl ? heroEl.offsetHeight : 400;
                   if (window.pageYOffset > threshold) stickyBar.classList.add('is-visible');
                   else stickyBar.classList.remove('is-visible');
                 }
@@ -1287,13 +1280,13 @@ export default async function CapPage() {
                 }
                 updateStickyBar();
 
-                /* ── Magnetic buttons (standalone <a> tags only — safe) ── */
+                /* ── Magnetic buttons ── */
                 document.querySelectorAll('[data-magnetic]').forEach(function (btn) {
                   btn.addEventListener('mousemove', function (e) {
                     var rect = btn.getBoundingClientRect();
                     var x = e.clientX - rect.left - rect.width / 2;
                     var y = e.clientY - rect.top - rect.height / 2;
-                    btn.style.transform = 'translate(' + (x * 0.2) + 'px, ' + (y * 0.3 - 3) + 'px)';
+                    btn.style.transform = 'translate(' + (x * 0.15) + 'px, ' + (y * 0.25 - 2) + 'px)';
                   });
                   btn.addEventListener('mouseleave', function () {
                     btn.style.transform = '';
