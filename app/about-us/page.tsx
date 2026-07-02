@@ -103,7 +103,7 @@ export default async function AboutUsPage() {
   return (
     <PageLayout>
 
-      {/* ════════════════════ GLOBAL KEYFRAMES ════════════════════ */}
+      {/* ════════════════════ ENHANCED KEYFRAMES ════════════════════ */}
       <style>{`
         @keyframes ab-grad {
           0%   { background-position: 0%   50%; }
@@ -124,33 +124,195 @@ export default async function AboutUsPage() {
           0%,100% { opacity:1; transform:scale(1);   }
           50%     { opacity:.5; transform:scale(1.4); }
         }
+        @keyframes ab-glow-pulse {
+          0%, 100% { box-shadow: 0 0 20px rgba(37,99,235,0.3); }
+          50% { box-shadow: 0 0 40px rgba(37,99,235,0.6); }
+        }
+        @keyframes ab-bounce-in {
+          0% { transform: scale(0.9); opacity: 0; }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); opacity: 1; }
+        }
 
         /* entry animation utility */
         .ab-fade-up { opacity:0; animation: ab-fade-up 0.6s cubic-bezier(.22,1,.36,1) forwards; }
 
-        /* value card hover */
-        .ab-val-card { transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease; }
+        /* ═══════════ ENHANCED INTERACTIVE STYLES ═══════════ */
+        
+        /* Interactive Buttons */
+        .ab-btn {
+          position: relative;
+          overflow: hidden;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ab-btn::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+          transform: translateX(-100%);
+          transition: transform 0.6s;
+        }
+        .ab-btn:hover::before {
+          transform: translateX(100%);
+        }
+        .ab-btn:hover {
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 20px 50px rgba(37,99,235,0.4) !important;
+        }
+        .ab-btn:active {
+          transform: translateY(-1px) scale(0.98);
+        }
+
+        /* Secondary Button */
+        .ab-btn-secondary {
+          position: relative;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ab-btn-secondary:hover {
+          transform: translateY(-3px);
+          border-color: ${G.blue} !important;
+          background: rgba(37,99,235,0.05) !important;
+          box-shadow: 0 12px 30px rgba(37,99,235,0.15) !important;
+        }
+        .ab-btn-secondary:active {
+          transform: translateY(-1px) scale(0.98);
+        }
+
+        /* Value Cards - Enhanced */
+        .ab-val-card { 
+          position: relative;
+          transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+          cursor: pointer;
+        }
+        .ab-val-card::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: 20px;
+          background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(251,146,60,0.1));
+          opacity: 0;
+          transition: opacity 0.4s;
+        }
         .ab-val-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 20px 48px rgba(37,99,235,.10) !important;
+          transform: translateY(-12px) scale(1.02);
+          box-shadow: 0 30px 60px rgba(37,99,235,0.2) !important;
+          border-color: transparent !important;
+        }
+        .ab-val-card:hover::after {
+          opacity: 1;
         }
         .ab-val-card .ab-val-strip {
           transform: scaleX(.35);
           transform-origin: left;
-          transition: transform .45s cubic-bezier(.22,1,.36,1);
+          transition: transform .5s cubic-bezier(.34,1.56,.64,1);
         }
-        .ab-val-card:hover .ab-val-strip { transform: scaleX(1); }
+        .ab-val-card:hover .ab-val-strip { 
+          transform: scaleX(1); 
+        }
+        .ab-val-card .ab-val-icon {
+          transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .ab-val-card:hover .ab-val-icon {
+          transform: scale(1.15) rotate(5deg);
+          animation: ab-glow-pulse 2s infinite;
+        }
 
-        /* stat card hover */
-        .ab-stat-cell { transition: background .25s ease; }
-        .ab-stat-cell:hover { background: rgba(37,99,235,.03); }
+        /* Stat Cards - Enhanced */
+        .ab-stat-cell { 
+          position: relative;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
+        }
+        .ab-stat-cell::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(251,146,60,0.05));
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+        .ab-stat-cell:hover {
+          transform: translateY(-8px);
+          background: rgba(37,99,235,.05) !important;
+        }
+        .ab-stat-cell:hover::before {
+          opacity: 1;
+        }
+        .ab-stat-cell .ab-stat-icon {
+          transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .ab-stat-cell:hover .ab-stat-icon {
+          transform: scale(1.2) rotate(10deg);
+        }
 
-        /* timeline dot pulse */
-        .ab-tl-dot { animation: ab-pulse-dot 2.4s ease-in-out infinite; }
+        /* Timeline dots - Enhanced */
+        .ab-tl-dot { 
+          animation: ab-pulse-dot 2.4s ease-in-out infinite;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ab-timeline-item:hover .ab-tl-dot {
+          transform: scale(1.3);
+          animation: ab-glow-pulse 1.5s infinite;
+        }
 
-        /* floating badges */
-        .ab-badge-left  { animation: ab-float-up   5.5s ease-in-out infinite; }
-        .ab-badge-right { animation: ab-float-down 6s   ease-in-out infinite; }
+        /* Timeline Item */
+        .ab-timeline-item {
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+        .ab-timeline-item:hover {
+          transform: translateX(8px);
+        }
+
+        /* Floating badges - Enhanced */
+        .ab-badge-left  { 
+          animation: ab-float-up 5.5s ease-in-out infinite;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ab-badge-right { 
+          animation: ab-float-down 6s ease-in-out infinite;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ab-badge-left:hover,
+        .ab-badge-right:hover {
+          transform: scale(1.1);
+          box-shadow: 0 20px 50px rgba(37,99,235,0.25) !important;
+        }
+
+        /* Founder Card */
+        .ab-founder-card {
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ab-founder-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 30px 70px rgba(37,99,235,0.15) !important;
+        }
+
+        /* Dark CTA Section */
+        .ab-dark-cta .ab-cta-btn {
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
+        }
+        .ab-dark-cta .ab-cta-btn::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+          transform: translateX(-100%);
+          transition: transform 0.6s;
+        }
+        .ab-dark-cta .ab-cta-btn:hover::before {
+          transform: translateX(100%);
+        }
+        .ab-dark-cta .ab-cta-btn:hover {
+          transform: translateY(-5px) scale(1.05);
+          box-shadow: 0 25px 60px rgba(37,99,235,0.6) !important;
+        }
+        .ab-dark-cta .ab-cta-btn:active {
+          transform: translateY(-2px) scale(1.02);
+        }
 
         /* responsive */
         @media (max-width: 860px) {
@@ -213,7 +375,7 @@ export default async function AboutUsPage() {
             </p>
 
             <div style={{ display:'flex', gap:'12px', flexWrap:'wrap', marginBottom:'64px' }}>
-              <a href="/contact" style={{
+              <a href="/contact" className="ab-btn" style={{
                 display:'inline-flex', alignItems:'center', gap:'8px',
                 backgroundImage:`linear-gradient(135deg,${G.blue},${G.indigo})`,
                 color:'#fff', fontWeight:700, fontSize:'14px',
@@ -222,7 +384,7 @@ export default async function AboutUsPage() {
               }}>
                 <Rocket size={15}/> Start Your Journey
               </a>
-              <a href="#our-story" style={{
+              <a href="#our-story" className="ab-btn-secondary" style={{
                 display:'inline-flex', alignItems:'center', gap:'8px',
                 background:'#fff', color:'#374151', fontWeight:500, fontSize:'14px',
                 padding:'14px 30px', borderRadius:'999px',
@@ -244,7 +406,7 @@ export default async function AboutUsPage() {
                   textAlign:'center', padding:'32px 16px',
                   borderRight: i < stats.length-1 ? '1px solid #eef2ff' : 'none',
                 }}>
-                  <div style={{
+                  <div className="ab-stat-icon" style={{
                     width:'44px', height:'44px', borderRadius:'12px',
                     background:`${col}15`,
                     display:'flex', alignItems:'center', justifyContent:'center',
@@ -288,7 +450,7 @@ export default async function AboutUsPage() {
                 <strong style={{ color:G.blue }}>zero upfront, success-share only.</strong>{' '}
                 Career Assistance Fee of 12% of CTC — collected only after you receive your offer letter. If we don&apos;t place you, you don&apos;t pay.
               </p>
-              <a href="/contact" style={{
+              <a href="/contact" className="ab-btn" style={{
                 display:'inline-flex', alignItems:'center', gap:'8px',
                 backgroundImage:`linear-gradient(135deg,${G.blue},${G.indigo})`,
                 color:'#fff', fontWeight:700, fontSize:'14px',
@@ -395,7 +557,7 @@ export default async function AboutUsPage() {
                   background:`linear-gradient(90deg,${v.color},${G.indigo})`,
                   borderRadius:'20px 20px 0 0',
                 }}/>
-                <div style={{
+                <div className="ab-val-icon" style={{
                   width:'48px', height:'48px', borderRadius:'14px',
                   background:v.bg,
                   display:'flex', alignItems:'center', justifyContent:'center',
@@ -457,7 +619,7 @@ export default async function AboutUsPage() {
               {timeline.map((item, i) => {
                 const col = DOT_COLORS[i % DOT_COLORS.length];
                 return (
-                  <div key={i} style={{ display:'flex', gap:'20px', alignItems:'stretch' }}>
+                  <div key={i} className="ab-timeline-item" style={{ display:'flex', gap:'20px', alignItems:'stretch' }}>
                     <div style={{ display:'flex', flexDirection:'column', alignItems:'center', flexShrink:0 }}>
                       <div className="ab-tl-dot" style={{
                         width:'40px', height:'40px', borderRadius:'50%',
@@ -631,7 +793,7 @@ export default async function AboutUsPage() {
               </p>
 
               <div style={{ display:'flex', gap:'14px', justifyContent:'center', flexWrap:'wrap' }}>
-                <a href="/contact" style={{
+                <a href="/contact" className="ab-cta-btn" style={{
                   display:'inline-flex', alignItems:'center', gap:'8px',
                   backgroundImage:`linear-gradient(135deg,${G.blue},${G.indigo})`,
                   color:'#fff', fontWeight:700, fontSize:'14px',
@@ -640,7 +802,7 @@ export default async function AboutUsPage() {
                 }}>
                   <Rocket size={15}/> Get Placed Now
                 </a>
-                <a href="/study-visa" style={{
+                <a href="/study-visa" className="ab-cta-btn" style={{
                   display:'inline-flex', alignItems:'center', gap:'8px',
                   backgroundImage:`linear-gradient(135deg,${G.orange},${G.rose})`,
                   color:'#fff', fontWeight:700, fontSize:'14px',
