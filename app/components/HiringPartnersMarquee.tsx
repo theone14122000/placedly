@@ -11,9 +11,7 @@ type Company = {
   logo?: string;
 };
 
-/* ── Default hiring partners (name + logo) ──
-   `domain` auto-generates a logo via icon.horse (highly reliable, returns 404 if missing).
-   You can also pass an explicit `logo` URL to override. */
+/* ── Default hiring partners (name + logo) ── */
 const DEFAULT_COMPANIES: Company[] = [
   { name: 'EXL Services',      domain: 'exlservice.com' },
   { name: 'Quatrro',           domain: 'quatrro.com' },
@@ -44,12 +42,6 @@ function buildSequence(companies: Company[]): Company[] {
     sequence.push(...rotateList(companies, r * 2));
   }
   return sequence;
-}
-
-function logoSrc(company: Company): string | undefined {
-  if (company.logo) return company.logo;
-  if (company.domain) return `https://icon.horse/icon/${company.domain}`;
-  return undefined;
 }
 
 /**
@@ -94,27 +86,55 @@ function parseCompanies(cms: Cms): Company[] {
   return DEFAULT_COMPANIES;
 }
 
-function CompanyChip({ company }: { company: Company }) {
-  const src = logoSrc(company);
-  const [imgError, setImgError] = useState(false);
+/**
+ * Resilient Logo Component:
+ * 1. Tries the provided logo or Clearbit.
+ * 2. If blocked/fails, falls back to Google's Favicon API (highly reliable).
+ * 3. If all fail, shows a text initial.
+ */
+function ResilientLogo({ company }: { company: Company }) {
+  const [src, setSrc] = useState<string | undefined>(() => {
+    if (company.logo) return company.logo;
+    if (company.domain) return `https://logo.clearbit.com/${company.domain}`;
+    return undefined;
+  });
+  const [error, setError] = useState(false);
 
+  const handleError = () => {
+    // If Clearbit fails (or is blocked by an adblocker), try Google's Favicon API
+    if (src && src.includes('clearbit.com') && company.domain) {
+      setSrc(`https://www.google.com/s2/favicons?domain=${company.domain}&sz=128`);
+    } else {
+      setError(true);
+    }
+  };
+
+  if (!src || error) {
+    return (
+      <span className="placedly-strip-fallback" aria-hidden>
+        {company.name.charAt(0).toUpperCase()}
+      </span>
+    );
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={`${company.name} logo`}
+      className="placedly-strip-logo"
+      loading="lazy"
+      referrerPolicy="no-referrer" // Crucial: bypasses hotlinking blocks from many APIs
+      onError={handleError}
+    />
+  );
+}
+
+function CompanyChip({ company }: { company: Company }) {
   return (
     <span className="placedly-strip-item">
       <span className="placedly-strip-logo-wrap">
-        {src && !imgError ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={src}
-            alt={`${company.name} logo`}
-            className="placedly-strip-logo"
-            loading="lazy"
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <span className="placedly-strip-fallback" aria-hidden>
-            {company.name.charAt(0).toUpperCase()}
-          </span>
-        )}
+        <ResilientLogo company={company} />
       </span>
       <span className="placedly-strip-name">{company.name}</span>
     </span>
