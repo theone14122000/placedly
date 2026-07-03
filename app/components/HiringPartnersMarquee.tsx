@@ -1,34 +1,43 @@
 'use client';
 
-import { useState } from 'react';
 import { FadeUp } from './motion';
 
 type Cms = Record<string, string>;
 
-type Company = {
-  name: string;
-  domain?: string;
-  logo?: string;
-};
-
-/* ── Default hiring partners (name + logo) ── */
-const DEFAULT_COMPANIES: Company[] = [
-  { name: 'EXL Services',      domain: 'exlservice.com' },
-  { name: 'Quatrro',           domain: 'quatrro.com' },
-  { name: 'WNS Global',        domain: 'wns.com' },
-  { name: 'Optum',             domain: 'optum.com' },
-  { name: 'Cognizant',         domain: 'cognizant.com' },
-  { name: 'Wipro',             domain: 'wipro.com' },
-  { name: 'Infosys BPM',       domain: 'infosysbpm.com' },
-  { name: 'Mphasis',           domain: 'mphasis.com' },
-  { name: 'HCLTech',           domain: 'hcltech.com' },
-  { name: 'Genpact',           domain: 'genpact.com' },
-  { name: 'Access Healthcare', domain: 'accesshealthcare.com' },
-  { name: 'Conifer Health',    domain: 'coniferhealth.com' },
+const DEFAULT_COMPANIES = [
+  'EXL Services',
+  'Quatrro',
+  'WNS Global',
+  'Optum',
+  'Cognizant',
+  'Wipro',
+  'Infosys BPM',
+  'Mphasis',
+  'HCLTech',
+  'Genpact',
+  'Access Healthcare',
+  'Conifer Health',
 ];
 
-const MARQUEE_DURATION = 38; // seconds — single strip scroll speed
-const REPEATS = 3;           // full-list repeats before the loop resets
+const MARQUEE_DURATION = 42; // seconds
+const REPEATS = 3;
+
+/* Accent palette — each company gets a deterministic color pair */
+const ACCENTS: [string, string][] = [
+  ['#6366f1', '#8b5cf6'],
+  ['#3b82f6', '#06b6d4'],
+  ['#f97316', '#fbbf24'],
+  ['#ec4899', '#f43f5e'],
+  ['#10b981', '#22c55e'],
+  ['#0ea5e9', '#14b8a6'],
+  ['#a855f7', '#d946ef'],
+];
+
+function accentFor(name: string): [string, string] {
+  let hash = 0;
+  for (let i = 0; i < name.length; i += 1) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+  return ACCENTS[hash % ACCENTS.length];
+}
 
 function rotateList<T>(items: T[], offset: number): T[] {
   if (!items.length) return items;
@@ -36,108 +45,61 @@ function rotateList<T>(items: T[], offset: number): T[] {
   return [...items.slice(n), ...items.slice(0, n)];
 }
 
-function buildSequence(companies: Company[]): Company[] {
-  const sequence: Company[] = [];
+function buildSequence(companies: string[]): string[] {
+  const sequence: string[] = [];
   for (let r = 0; r < REPEATS; r += 1) {
     sequence.push(...rotateList(companies, r * 2));
   }
   return sequence;
 }
 
-/**
- * Parses company data from CMS.
- * Priority:
- *  1. `hp:marqueeCompaniesJson` — JSON array of { name, domain?, logo? }
- *  2. `hp:marqueeCompanies`     — legacy comma-separated plain names
- *  3. DEFAULT_COMPANIES
- */
-function parseCompanies(cms: Cms): Company[] {
-  const rawJson = cms['hp:marqueeCompaniesJson'];
-  if (rawJson) {
-    try {
-      const parsed = JSON.parse(rawJson);
-      if (Array.isArray(parsed) && parsed.length) {
-        const cleaned: Company[] = parsed
-          .map((item: unknown) => {
-            if (typeof item === 'string') return { name: item.trim() };
-            if (item && typeof item === 'object') {
-              const obj = item as Record<string, unknown>;
-              const name = typeof obj.name === 'string' ? obj.name.trim() : '';
-              const domain = typeof obj.domain === 'string' ? obj.domain.trim() : undefined;
-              const logo = typeof obj.logo === 'string' ? obj.logo.trim() : undefined;
-              return name ? { name, domain, logo } : null;
-            }
-            return null;
-          })
-          .filter((c): c is Company => !!c && !!c.name);
-        if (cleaned.length) return cleaned;
-      }
-    } catch {
-      /* fall through */
-    }
-  }
-
+function parseCompanies(cms: Cms): string[] {
   const rawList = cms['hp:marqueeCompanies'];
   if (rawList) {
     const names = rawList.split(',').map((s) => s.trim()).filter(Boolean);
-    if (names.length) return names.map((name) => ({ name }));
+    if (names.length) return names;
   }
-
   return DEFAULT_COMPANIES;
 }
 
-/**
- * Resilient Logo Component:
- * 1. Tries the provided logo or Clearbit.
- * 2. If blocked/fails, falls back to Google's Favicon API (highly reliable).
- * 3. If all fail, shows a text initial.
- */
-function ResilientLogo({ company }: { company: Company }) {
-  const [src, setSrc] = useState<string | undefined>(() => {
-    if (company.logo) return company.logo;
-    if (company.domain) return `https://logo.clearbit.com/${company.domain}`;
-    return undefined;
-  });
-  const [error, setError] = useState(false);
-
-  const handleError = () => {
-    // If Clearbit fails (or is blocked by an adblocker), try Google's Favicon API
-    if (src && src.includes('clearbit.com') && company.domain) {
-      setSrc(`https://www.google.com/s2/favicons?domain=${company.domain}&sz=128`);
-    } else {
-      setError(true);
-    }
-  };
-
-  if (!src || error) {
-    return (
-      <span className="placedly-strip-fallback" aria-hidden>
-        {company.name.charAt(0).toUpperCase()}
-      </span>
-    );
-  }
-
+function CompanyPill({ name }: { name: string }) {
+  const [c1, c2] = accentFor(name);
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={`${company.name} logo`}
-      className="placedly-strip-logo"
-      loading="lazy"
-      referrerPolicy="no-referrer" // Crucial: bypasses hotlinking blocks from many APIs
-      onError={handleError}
-    />
+    <span
+      className="placedly-pill"
+      style={
+        {
+          '--pill-c1': c1,
+          '--pill-c2': c2,
+        } as React.CSSProperties
+      }
+    >
+      <span className="placedly-pill-dot" aria-hidden />
+      <span className="placedly-pill-name">{name}</span>
+    </span>
   );
 }
 
-function CompanyChip({ company }: { company: Company }) {
+function StripRow({
+  sequence,
+  reverse,
+}: {
+  sequence: string[];
+  reverse?: boolean;
+}) {
   return (
-    <span className="placedly-strip-item">
-      <span className="placedly-strip-logo-wrap">
-        <ResilientLogo company={company} />
-      </span>
-      <span className="placedly-strip-name">{company.name}</span>
-    </span>
+    <div className={`placedly-strip-track${reverse ? ' placedly-strip-track--reverse' : ''}`}>
+      <div className="placedly-strip-inner">
+        {sequence.map((name, i) => (
+          <CompanyPill key={`a-${name}-${i}`} name={name} />
+        ))}
+      </div>
+      <div className="placedly-strip-inner" aria-hidden>
+        {sequence.map((name, i) => (
+          <CompanyPill key={`b-${name}-${i}`} name={name} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -148,48 +110,64 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
     'Through our placement network — roles sourced via trusted recruitment partners';
 
   const companies = parseCompanies(cms);
-  const sequence = buildSequence(companies);
+  const seqA = buildSequence(companies);
+  const seqB = buildSequence(rotateList(companies, 5));
 
   return (
     <section className="placedly-partners-section" aria-label="Hiring partners">
       <FadeUp className="placedly-partners-header">
+        <span className="placedly-partners-eyebrow">
+          <span className="placedly-partners-eyebrow-line" aria-hidden />
+          Trusted placement network
+          <span className="placedly-partners-eyebrow-line" aria-hidden />
+        </span>
         <h2 className="placedly-partners-title">{label}</h2>
         <p className="placedly-partners-sub">{sub}</p>
       </FadeUp>
 
       <div className="placedly-strip">
         <div className="placedly-strip-edge placedly-strip-edge--left" aria-hidden />
-        <div className="placedly-strip-track">
-          <div className="placedly-strip-inner">
-            {sequence.map((c, i) => (
-              <CompanyChip key={`a-${c.name}-${i}`} company={c} />
-            ))}
-          </div>
-          <div className="placedly-strip-inner" aria-hidden>
-            {sequence.map((c, i) => (
-              <CompanyChip key={`b-${c.name}-${i}`} company={c} />
-            ))}
-          </div>
+        <div className="placedly-strip-rows">
+          <StripRow sequence={seqA} />
+          <StripRow sequence={seqB} reverse />
         </div>
         <div className="placedly-strip-edge placedly-strip-edge--right" aria-hidden />
       </div>
 
       <style>{`
         .placedly-partners-section {
-          padding: 48px 0;
+          padding: 56px 0;
         }
+
         .placedly-partners-header {
           text-align: center;
-          max-width: 640px;
-          margin: 0 auto 28px;
+          max-width: 660px;
+          margin: 0 auto 30px;
           padding: 0 20px;
         }
+        .placedly-partners-eyebrow {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: #94a3b8;
+          margin-bottom: 12px;
+        }
+        .placedly-partners-eyebrow-line {
+          width: 22px;
+          height: 2px;
+          border-radius: 999px;
+          background: linear-gradient(90deg, #6366f1, #ec4899);
+        }
         .placedly-partners-title {
-          font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+          font-size: clamp(1.15rem, 2.4vw, 1.5rem);
           font-weight: 800;
           color: #0f172a;
-          margin-bottom: 6px;
-          letter-spacing: -0.3px;
+          margin-bottom: 8px;
+          letter-spacing: -0.4px;
         }
         .placedly-partners-sub {
           font-size: 13.5px;
@@ -197,37 +175,43 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
           line-height: 1.6;
         }
 
-        /* ── Single thin strip ── */
+        /* ── Strip band ── */
         .placedly-strip {
           position: relative;
           overflow: hidden;
-          background: #fff;
-          border-top: 1px solid rgba(15, 23, 42, 0.06);
-          border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-          padding: 14px 0;
+          padding: 4px 0;
+        }
+        .placedly-strip-rows {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
         }
 
         .placedly-strip-edge {
           position: absolute;
           top: 0;
           bottom: 0;
-          width: 90px;
-          z-index: 2;
+          width: 100px;
+          z-index: 3;
           pointer-events: none;
         }
         .placedly-strip-edge--left {
           left: 0;
-          background: linear-gradient(90deg, #fff, rgba(255,255,255,0));
+          background: linear-gradient(90deg, #fafafa 10%, rgba(250,250,250,0));
         }
         .placedly-strip-edge--right {
           right: 0;
-          background: linear-gradient(270deg, #fff, rgba(255,255,255,0));
+          background: linear-gradient(270deg, #fafafa 10%, rgba(250,250,250,0));
         }
 
         .placedly-strip-track {
           display: flex;
           width: max-content;
           animation: placedly-strip-scroll ${MARQUEE_DURATION}s linear infinite;
+        }
+        .placedly-strip-track--reverse {
+          animation-direction: reverse;
+          animation-duration: ${MARQUEE_DURATION + 6}s;
         }
         .placedly-strip:hover .placedly-strip-track {
           animation-play-state: paused;
@@ -236,103 +220,120 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
         .placedly-strip-inner {
           display: flex;
           align-items: center;
-          gap: 36px;
-          padding-right: 36px;
+          gap: 14px;
+          padding-right: 14px;
           flex-shrink: 0;
         }
 
-        /* ── Each company chip: logo + name ── */
-        .placedly-strip-item {
+        /* ── Company pill ── */
+        .placedly-pill {
+          position: relative;
           display: inline-flex;
           align-items: center;
-          gap: 10px;
+          gap: 9px;
           white-space: nowrap;
-          padding: 4px 6px;
-          border-radius: 10px;
-          transition: background 0.25s ease;
+          padding: 9px 18px 9px 15px;
+          border-radius: 999px;
+          background: #ffffff;
+          border: 1px solid rgba(15, 23, 42, 0.08);
+          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+          transition:
+            transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+            box-shadow 0.28s ease,
+            border-color 0.28s ease;
         }
-        .placedly-strip-item:hover {
-          background: rgba(15, 23, 42, 0.035);
+        .placedly-pill::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: 999px;
+          padding: 1px;
+          background: linear-gradient(135deg, var(--pill-c1), var(--pill-c2));
+          -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          opacity: 0;
+          transition: opacity 0.28s ease;
         }
-
-        .placedly-strip-logo-wrap {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 26px;
-          height: 26px;
-          flex-shrink: 0;
+        .placedly-pill:hover {
+          transform: translateY(-3px);
+          border-color: transparent;
+          box-shadow:
+            0 10px 24px -6px color-mix(in srgb, var(--pill-c1) 45%, transparent);
         }
-
-        .placedly-strip-logo {
-          max-height: 24px;
-          max-width: 26px;
-          width: auto;
-          height: auto;
-          object-fit: contain;
-          filter: grayscale(1);
-          opacity: 0.7;
-          transition: filter 0.3s ease, opacity 0.3s ease;
-        }
-        .placedly-strip-item:hover .placedly-strip-logo {
-          filter: grayscale(0);
+        .placedly-pill:hover::before {
           opacity: 1;
         }
 
-        /* Fallback badge (shown when no logo / image fails) */
-        .placedly-strip-fallback {
-          width: 26px;
-          height: 26px;
-          border-radius: 7px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-          font-weight: 800;
-          color: #fff;
-          background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        .placedly-pill-dot {
+          position: relative;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, var(--pill-c1), var(--pill-c2));
+          flex-shrink: 0;
+        }
+        .placedly-pill-dot::after {
+          content: '';
+          position: absolute;
+          inset: -3px;
+          border-radius: 50%;
+          background: var(--pill-c1);
+          opacity: 0.25;
+          animation: placedly-pill-pulse 2.4s ease-in-out infinite;
         }
 
-        .placedly-strip-name {
+        .placedly-pill-name {
           font-size: 13.5px;
           font-weight: 600;
-          color: #475569;
-          transition: color 0.3s ease;
+          color: #334155;
+          transition: color 0.28s ease;
         }
-        .placedly-strip-item:hover .placedly-strip-name {
-          color: #0f172a;
+        .placedly-pill:hover .placedly-pill-name {
+          background-image: linear-gradient(135deg, var(--pill-c1), var(--pill-c2));
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
 
         @keyframes placedly-strip-scroll {
           from { transform: translateX(0); }
           to   { transform: translateX(-50%); }
         }
+        @keyframes placedly-pill-pulse {
+          0%, 100% { transform: scale(1);   opacity: 0.25; }
+          50%      { transform: scale(1.6); opacity: 0;    }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .placedly-strip-track { animation: none; }
+          .placedly-pill-dot::after { animation: none; }
+          .placedly-strip-inner:nth-child(2) { display: none; }
+          .placedly-strip-inner { flex-wrap: wrap; justify-content: center; }
+        }
 
         @media (max-width: 639px) {
           .placedly-partners-section {
-            padding: 36px 0;
+            padding: 40px 0;
           }
-          .placedly-strip {
-            padding: 12px 0;
+          .placedly-strip-rows {
+            gap: 10px;
           }
           .placedly-strip-edge {
-            width: 40px;
+            width: 44px;
           }
           .placedly-strip-inner {
-            gap: 24px;
-            padding-right: 24px;
+            gap: 10px;
+            padding-right: 10px;
           }
-          .placedly-strip-logo-wrap,
-          .placedly-strip-fallback {
-            width: 22px;
-            height: 22px;
+          .placedly-pill {
+            padding: 8px 14px 8px 12px;
+            gap: 7px;
           }
-          .placedly-strip-logo {
-            max-height: 20px;
-            max-width: 22px;
-          }
-          .placedly-strip-name {
-            font-size: 12px;
+          .placedly-pill-name {
+            font-size: 12.5px;
           }
         }
       `}</style>
