@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { FadeUp } from './motion';
 
 type Cms = Record<string, string>;
@@ -11,7 +12,7 @@ type Company = {
 };
 
 /* ── Default hiring partners (name + logo) ──
-   `domain` auto-generates a logo via Clearbit's free logo API.
+   `domain` auto-generates a logo via icon.horse (highly reliable, returns 404 if missing).
    You can also pass an explicit `logo` URL to override. */
 const DEFAULT_COMPANIES: Company[] = [
   { name: 'EXL Services',      domain: 'exlservice.com' },
@@ -47,7 +48,7 @@ function buildSequence(companies: Company[]): Company[] {
 
 function logoSrc(company: Company): string | undefined {
   if (company.logo) return company.logo;
-  if (company.domain) return `https://logo.clearbit.com/${company.domain}`;
+  if (company.domain) return `https://icon.horse/icon/${company.domain}`;
   return undefined;
 }
 
@@ -95,33 +96,25 @@ function parseCompanies(cms: Cms): Company[] {
 
 function CompanyChip({ company }: { company: Company }) {
   const src = logoSrc(company);
+  const [imgError, setImgError] = useState(false);
 
   return (
     <span className="placedly-strip-item">
       <span className="placedly-strip-logo-wrap">
-        {src ? (
+        {src && !imgError ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={src}
             alt={`${company.name} logo`}
             className="placedly-strip-logo"
             loading="lazy"
-            onError={(e) => {
-              // Hide broken image and reveal the initials fallback
-              const img = e.currentTarget;
-              img.style.display = 'none';
-              const fallback = img.nextElementSibling as HTMLElement | null;
-              if (fallback) fallback.style.display = 'flex';
-            }}
+            onError={() => setImgError(true)}
           />
-        ) : null}
-        <span
-          className="placedly-strip-fallback"
-          style={{ display: src ? 'none' : 'flex' }}
-          aria-hidden
-        >
-          {company.name.charAt(0).toUpperCase()}
-        </span>
+        ) : (
+          <span className="placedly-strip-fallback" aria-hidden>
+            {company.name.charAt(0).toUpperCase()}
+          </span>
+        )}
       </span>
       <span className="placedly-strip-name">{company.name}</span>
     </span>
@@ -271,6 +264,7 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
           width: 26px;
           height: 26px;
           border-radius: 7px;
+          display: flex;
           align-items: center;
           justify-content: center;
           font-size: 12px;
