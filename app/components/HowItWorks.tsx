@@ -29,10 +29,7 @@ type TabDef = {
   accent: Accent;
 };
 
-/* ══════════════════════════════════════════════════════════
-   Shared brand gradient — Blue → Indigo → Orange → Rose → Purple → Blue
-   Identical to Hero.tsx / HeroMobileBrief.tsx
-══════════════════════════════════════════════════════════ */
+/* ── Shared brand gradient ── */
 const GRADIENT_STYLE: React.CSSProperties = {
   backgroundImage:
     'linear-gradient(270deg, #2563eb, #7c8ff0, #fb923c, #f43f5e, #a855f7, #2563eb)',
@@ -52,7 +49,7 @@ const GRADIENT_KEYFRAMES = `
   }
 `;
 
-/* ─── Defaults ─── */
+/* ── Defaults ── */
 const CAREER_DEFAULTS = [
   {
     title: 'Understand You First',
@@ -104,7 +101,7 @@ const ACCENTS: Record<string, Accent> = {
   visa:    makeAccent('#0ea5e9', '#14b8a6', 'rgba(14,165,233,0.10)'),
 };
 
-/* ─── Visuals ─── */
+/* ── Visuals (unchanged) ── */
 function VisualCareer1() {
   return (
     <div className="placedly-hiw-visual placedly-hiw-visual--warm">
@@ -281,10 +278,7 @@ const INTERVAL_MS = 2200;
    Tab Bar
 ════════════════════════════════════════ */
 function TabBar({
-  tabs,
-  activeId,
-  onSelect,
-  tickKey,
+  tabs, activeId, onSelect, tickKey,
 }: {
   tabs: TabDef[];
   activeId: string;
@@ -299,17 +293,15 @@ function TabBar({
           role="tablist"
           aria-label="How Placedly works"
           style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
-            padding: '5px',
-            borderRadius: '999px',
+            display: 'inline-flex', alignItems: 'center', gap: '4px',
+            padding: '5px', borderRadius: '999px',
             background: 'rgba(15,23,42,0.05)',
             border: '1px solid rgba(15,23,42,0.08)',
           }}
         >
           {tabs.map((tab) => (
-            <TabButton key={tab.id} tab={tab} active={tab.id === activeId} tickKey={tickKey} onSelect={onSelect} />
+            <TabButton key={tab.id} tab={tab} active={tab.id === activeId}
+              tickKey={tickKey} onSelect={onSelect} />
           ))}
         </div>
       </div>
@@ -320,38 +312,17 @@ function TabBar({
         role="tablist"
         aria-label="How Placedly works"
         style={{
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '8px',
-          padding: '6px',
-          borderRadius: '20px',
+          gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px',
+          padding: '6px', borderRadius: '20px',
           background: 'rgba(15,23,42,0.05)',
           border: '1px solid rgba(15,23,42,0.08)',
         }}
       >
         {tabs.map((tab) => (
-          <TabButton key={tab.id} tab={tab} active={tab.id === activeId} tickKey={tickKey} onSelect={onSelect} mobile />
+          <TabButton key={tab.id} tab={tab} active={tab.id === activeId}
+            tickKey={tickKey} onSelect={onSelect} mobile />
         ))}
       </div>
-
-      <style>{`
-        .hiw-tabbar-desktop { 
-          display: flex !important; 
-          justify-content: center; 
-          margin-bottom: 28px; 
-        }
-        .hiw-tabbar-mobile { 
-          display: none !important; 
-          margin-bottom: 24px; 
-        }
-        @media (max-width: 639px) {
-          .hiw-tabbar-desktop { 
-            display: none !important; 
-          }
-          .hiw-tabbar-mobile { 
-            display: grid !important; 
-          }
-        }
-      `}</style>
     </>
   );
 }
@@ -377,15 +348,15 @@ function TabButton({
         gap: mobile ? '4px' : '6px',
         padding: mobile ? '10px 6px' : '8px 16px',
         borderRadius: mobile ? '14px' : '999px',
-        border: 'none',
-        cursor: 'pointer',
+        border: 'none', cursor: 'pointer',
         fontSize: mobile ? '11px' : '13px',
         fontWeight: active ? 700 : 500,
-        whiteSpace: 'nowrap',
-        textAlign: 'center',
+        whiteSpace: 'nowrap', textAlign: 'center',
         background: active ? '#ffffff' : 'transparent',
         color: active ? tab.accent.from : 'rgba(15,23,42,0.50)',
-        boxShadow: active ? `0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px ${tab.accent.border}` : 'none',
+        boxShadow: active
+          ? `0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px ${tab.accent.border}`
+          : 'none',
         transition: 'background 0.3s, color 0.3s, box-shadow 0.3s',
         overflow: 'hidden',
         width: mobile ? '100%' : undefined,
@@ -395,13 +366,16 @@ function TabButton({
         size={mobile ? 16 : 14}
         strokeWidth={2.2}
         aria-hidden
-        style={{ color: active ? tab.accent.from : 'rgba(15,23,42,0.35)', transition: 'color 0.3s', flexShrink: 0 }}
+        style={{
+          color: active ? tab.accent.from : 'rgba(15,23,42,0.35)',
+          transition: 'color 0.3s', flexShrink: 0,
+        }}
       />
       <span
         style={
           active
             ? {
-                backgroundImage: `linear-gradient(135deg, ${tab.accent.from}, ${tab.accent.to})`,
+                backgroundImage: `linear-gradient(135deg,${tab.accent.from},${tab.accent.to})`,
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -424,7 +398,7 @@ function TabButton({
             position: 'absolute', left: 0, right: 0, bottom: 0,
             height: '3px', transformOrigin: 'left',
             borderRadius: '0 0 999px 999px',
-            background: `linear-gradient(90deg, ${tab.accent.from}, ${tab.accent.to})`,
+            background: `linear-gradient(90deg,${tab.accent.from},${tab.accent.to})`,
             opacity: 0.6,
           }}
         />
@@ -435,10 +409,6 @@ function TabButton({
 
 /* ════════════════════════════════════════
    Tab Panel
-   NOTE: .placedly-hiw-panel-visual is placed FIRST in markup order and
-   given `order: -1` on mobile via CSS so it renders ABOVE the copy on
-   small screens, while desktop keeps its existing side-by-side layout
-   (defined by your global stylesheet) completely untouched.
 ════════════════════════════════════════ */
 function TabPanel({ tab }: { tab: TabDef }) {
   return (
@@ -454,34 +424,32 @@ function TabPanel({ tab }: { tab: TabDef }) {
         aria-hidden
         style={{
           position: 'absolute', inset: '-30px', zIndex: 0, pointerEvents: 'none',
-          background: `radial-gradient(circle at 25% 20%, ${tab.accent.from}22, transparent 60%)`,
+          background: `radial-gradient(circle at 25% 20%,${tab.accent.from}22,transparent 60%)`,
           filter: 'blur(50px)',
         }}
       />
 
-      {/* Visual / demo mockup — appears above copy on mobile */}
-      <div className="placedly-hiw-panel-visual" style={{ position: 'relative', zIndex: 1 }}>
-        <div className="placedly-hiw-mobile-media-frame">
-          <tab.Visual />
-        </div>
+      {/* ── MOBILE: visual ABOVE copy ── */}
+      <div className="placedly-hiw-panel-visual-mobile" style={{ position: 'relative', zIndex: 1 }}>
+        <tab.Visual />
+      </div>
+
+      {/* ── DESKTOP: original side-by-side layout preserved ── */}
+      <div className="placedly-hiw-panel-visual-desktop" style={{ position: 'relative', zIndex: 1 }}>
+        <tab.Visual />
       </div>
 
       <div className="placedly-hiw-panel-copy" style={{ position: 'relative', zIndex: 1 }}>
         <h3
           className="placedly-hiw-panel-title"
-          style={{
-            position: 'relative',
-            paddingLeft: '16px',
-            color: 'inherit',
-            WebkitTextFillColor: 'initial',
-          }}
+          style={{ position: 'relative', paddingLeft: '16px', color: 'inherit', WebkitTextFillColor: 'initial' }}
         >
           <span
             aria-hidden
             style={{
               position: 'absolute', left: 0, top: '4px', bottom: '4px',
               width: '4px', borderRadius: '4px',
-              background: `linear-gradient(180deg, ${tab.accent.from}, ${tab.accent.to})`,
+              background: `linear-gradient(180deg,${tab.accent.from},${tab.accent.to})`,
             }}
           />
           <span style={GRADIENT_STYLE}>{tab.title}</span>
@@ -494,7 +462,7 @@ function TabPanel({ tab }: { tab: TabDef }) {
             href={tab.cta.href}
             className="placedly-hiw-step-cta"
             style={{
-              background: `linear-gradient(135deg, ${tab.accent.from}, ${tab.accent.to})`,
+              background: `linear-gradient(135deg,${tab.accent.from},${tab.accent.to})`,
               boxShadow: `0 10px 26px ${tab.accent.soft}`,
               borderColor: 'transparent',
               color: '#fff',
@@ -594,14 +562,120 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
       <style>{`
         ${GRADIENT_KEYFRAMES}
 
+        /* ── Tab bar responsive ── */
+        .hiw-tabbar-desktop {
+          display: flex !important;
+          justify-content: center;
+          margin-bottom: 28px;
+        }
+        .hiw-tabbar-mobile {
+          display: none !important;
+          margin-bottom: 20px;
+        }
+
+        /* ─────────────────────────────────────────────
+           VISUAL SLOT CONTROL
+           Desktop: show desktop slot, hide mobile slot
+           Mobile:  show mobile slot (above copy), hide desktop slot
+        ───────────────────────────────────────────── */
+        .placedly-hiw-panel-visual-desktop { display: block; }
+        .placedly-hiw-panel-visual-mobile  { display: none;  }
+
+        /* ─────────────────────────────────────────────
+           MOBILE OVERRIDES  ≤ 639 px
+        ───────────────────────────────────────────── */
+        @media (max-width: 639px) {
+
+          /* Tab bar swap */
+          .hiw-tabbar-desktop { display: none !important; }
+          .hiw-tabbar-mobile  { display: grid !important; }
+
+          /* Panel inner: stack visual ABOVE copy */
+          .placedly-hiw-panel-inner {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0 !important;
+          }
+
+          /* Show mobile visual slot (top), hide desktop slot */
+          .placedly-hiw-panel-visual-desktop { display: none !important; }
+          .placedly-hiw-panel-visual-mobile  {
+            display: block !important;
+            /* Give the visual a fixed height so it doesn't collapse */
+            width: 100%;
+            /* Rounded card wrapper */
+            border-radius: 18px;
+            overflow: hidden;
+            margin-bottom: 0;
+            /* Subtle border to frame it */
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+          }
+
+          /* Visual fills nicely on small screens */
+          .placedly-hiw-panel-visual-mobile .placedly-hiw-visual {
+            border-radius: 18px !important;
+            min-height: 200px;
+            height: auto !important;
+          }
+
+          /* Copy block: clean padding below visual */
+          .placedly-hiw-panel-copy {
+            padding-top: 20px !important;
+          }
+
+          /* Title tighter on mobile */
+          .placedly-hiw-panel-title {
+            font-size: 1.15rem !important;
+            line-height: 1.3 !important;
+            margin-bottom: 10px !important;
+          }
+
+          /* Description readable on small screens */
+          .placedly-hiw-panel-desc {
+            font-size: 13.5px !important;
+            line-height: 1.65 !important;
+          }
+
+          /* CTA full-width on mobile */
+          .placedly-hiw-step-cta {
+            width: 100% !important;
+            justify-content: center !important;
+            text-align: center !important;
+          }
+
+          /* Panel footer centred */
+          .placedly-hiw-panel-footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 16px;
+          }
+
+          /* Tighten section padding on mobile */
+          .placedly-hiw-section {
+            padding-top: 40px !important;
+            padding-bottom: 40px !important;
+          }
+
+          /* Section header */
+          .placedly-hiw-title {
+            font-size: clamp(1.25rem, 5vw, 1.6rem) !important;
+            line-height: 1.25 !important;
+          }
+          .placedly-hiw-subtitle {
+            font-size: 13.5px !important;
+            line-height: 1.65 !important;
+          }
+        }
+
+        /* ── Accent-driven dynamic colours (unchanged) ── */
         .placedly-hiw-mock-tag {
           background: var(--hiw-accent-soft) !important;
           color: var(--hiw-accent-from) !important;
           border-color: var(--hiw-accent-border) !important;
           transition: background 0.4s, color 0.4s, border-color 0.4s;
         }
-        .placedly-hiw-mock-spark  { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
-        .placedly-hiw-mock-arrow  { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
+        .placedly-hiw-mock-spark { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
+        .placedly-hiw-mock-arrow { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
         .placedly-hiw-mock-card--cta {
           background: var(--hiw-accent-soft) !important;
           border-color: var(--hiw-accent-border) !important;
@@ -612,68 +686,12 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           color: var(--hiw-accent-from) !important;
           transition: background 0.4s, color 0.4s;
         }
-        .placedly-hiw-mock-offer  { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
+        .placedly-hiw-mock-offer { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
         .placedly-hiw-mock-bubble {
           background: var(--hiw-accent-soft) !important;
           color: var(--hiw-accent-from) !important;
           border-color: var(--hiw-accent-border) !important;
           transition: background 0.4s, color 0.4s, border-color 0.4s;
-        }
-
-        /* ═══════════════════════════════════════════════════════
-           MOBILE-ONLY: media/visual panel moves ABOVE the text copy
-           and gets a more polished "app preview" card treatment.
-           Desktop layout (side-by-side, defined elsewhere) is
-           completely untouched — these rules only fire ≤ 767px.
-        ═══════════════════════════════════════════════════════ */
-        @media (max-width: 767px) {
-          .placedly-hiw-panel-inner {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: clamp(16px, 4vw, 22px);
-          }
-          .placedly-hiw-panel-visual {
-            order: -1 !important;
-            width: 100%;
-          }
-          .placedly-hiw-panel-copy {
-            order: 2 !important;
-            width: 100%;
-          }
-          .placedly-hiw-panel-title {
-            font-size: clamp(1.05rem, 4.5vw, 1.25rem) !important;
-          }
-          .placedly-hiw-panel-desc {
-            font-size: clamp(0.85rem, 3.6vw, 0.95rem) !important;
-            line-height: 1.65 !important;
-          }
-          .placedly-hiw-step-cta {
-            width: 100%;
-            justify-content: center;
-            text-align: center;
-          }
-
-          /* Frame the visual like a media/preview card so it reads
-             as a distinct "video-like" element sitting above the text */
-          .placedly-hiw-mobile-media-frame {
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            background: #ffffff;
-            border: 1px solid rgba(15,23,42,0.07);
-            box-shadow: 0 16px 40px rgba(15,23,42,0.10);
-            padding: clamp(14px, 4vw, 18px);
-          }
-          .placedly-hiw-mobile-media-frame::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--hiw-accent-from), var(--hiw-accent-to));
-          }
-          .placedly-hiw-visual {
-            transform: scale(0.98);
-          }
         }
       `}</style>
     </section>
