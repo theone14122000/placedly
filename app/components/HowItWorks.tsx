@@ -18,6 +18,15 @@ import SeeDemoButton from './SeeDemoButton';
 type Cms = Record<string, string>;
 type Accent = { from: string; to: string; soft: string; border: string };
 
+/* Extend CSSProperties so TS accepts our custom CSS variables without
+   an unsafe double-cast (this is what was breaking `npm run build`). */
+type HiwCSSVars = React.CSSProperties & {
+  '--hiw-accent-from'?: string;
+  '--hiw-accent-to'?: string;
+  '--hiw-accent-soft'?: string;
+  '--hiw-accent-border'?: string;
+};
+
 type TabDef = {
   id: string;
   label: string;
@@ -265,7 +274,7 @@ function buildTabs(cms: Cms): TabDef[] {
       Icon:    meta.Icon,
       title:   cms[`${prefix}${key}Title`]   || def.title,
       details: cms[`${prefix}${key}Details`] || def.details,
-      cta:     def.cta,
+      cta:     'cta' in def ? def.cta : undefined,
       Visual:  meta.Visual,
       accent:  ACCENTS[meta.id] ?? ACCENTS.consult,
     };
@@ -516,18 +525,18 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
     cms['hp:hiwSubtitle'] ??
     'Placedly connects ambitious professionals to careers and global education. Built for candidates who want clarity, warm guidance, and results — not generic agency noise.';
 
+  const sectionVars: HiwCSSVars = {
+    '--hiw-accent-from':   activeTab.accent.from,
+    '--hiw-accent-to':     activeTab.accent.to,
+    '--hiw-accent-soft':   activeTab.accent.soft,
+    '--hiw-accent-border': activeTab.accent.border,
+  };
+
   return (
     <section
       className="placedly-hiw-section"
       id="how"
-      style={
-        {
-          '--hiw-accent-from':   activeTab.accent.from,
-          '--hiw-accent-to':     activeTab.accent.to,
-          '--hiw-accent-soft':   activeTab.accent.soft,
-          '--hiw-accent-border': activeTab.accent.border,
-        } as React.CSSProperties
-      }
+      style={sectionVars}
     >
       <div className="placedly-hiw-container">
         <FadeUp className="placedly-hiw-header">
@@ -591,25 +600,22 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           .hiw-tabbar-mobile  { display: grid !important; }
 
           /* Panel inner: stack visual ABOVE copy.
-             IMPORTANT: this also resets any grid/order rules that may be
-             defined elsewhere for the desktop 2-column layout — without
-             this reset, an inherited "order" value can silently keep the
-             video/visual block rendering after the copy on mobile. */
+             This also resets any inherited order/grid rules from the
+             desktop 2-column layout, so the visual can't silently
+             render after the copy on mobile. */
           .placedly-hiw-panel-inner {
             display: flex !important;
             flex-direction: column !important;
             gap: 0 !important;
           }
 
-          /* Force the visual to always be first, and the copy to always
-             come after it — regardless of any order/grid rules inherited
-             from a shared/global stylesheet for the desktop layout. */
+          /* Force the visual to always be first, copy always after */
           .placedly-hiw-panel-visual-mobile {
             order: -1 !important;
           }
           .placedly-hiw-panel-visual-desktop {
             display: none !important;
-            order: 3 !important; /* stays out of flow anyway, but locked just in case */
+            order: 3 !important;
           }
           .placedly-hiw-panel-copy {
             order: 2 !important;
@@ -618,13 +624,10 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           /* Show mobile visual slot (top), hide desktop slot */
           .placedly-hiw-panel-visual-mobile  {
             display: block !important;
-            /* Give the visual a fixed height so it doesn't collapse */
             width: 100%;
-            /* Rounded card wrapper */
             border-radius: 18px;
             overflow: hidden;
             margin-bottom: 0;
-            /* Subtle border to frame it */
             box-shadow: 0 4px 24px rgba(0,0,0,0.07);
           }
 
