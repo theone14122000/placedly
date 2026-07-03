@@ -435,6 +435,10 @@ function TabButton({
 
 /* ════════════════════════════════════════
    Tab Panel
+   NOTE: .placedly-hiw-panel-visual is placed FIRST in markup order and
+   given `order: -1` on mobile via CSS so it renders ABOVE the copy on
+   small screens, while desktop keeps its existing side-by-side layout
+   (defined by your global stylesheet) completely untouched.
 ════════════════════════════════════════ */
 function TabPanel({ tab }: { tab: TabDef }) {
   return (
@@ -455,8 +459,11 @@ function TabPanel({ tab }: { tab: TabDef }) {
         }}
       />
 
+      {/* Visual / demo mockup — appears above copy on mobile */}
       <div className="placedly-hiw-panel-visual" style={{ position: 'relative', zIndex: 1 }}>
-        <tab.Visual />
+        <div className="placedly-hiw-mobile-media-frame">
+          <tab.Visual />
+        </div>
       </div>
 
       <div className="placedly-hiw-panel-copy" style={{ position: 'relative', zIndex: 1 }}>
@@ -611,6 +618,62 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           color: var(--hiw-accent-from) !important;
           border-color: var(--hiw-accent-border) !important;
           transition: background 0.4s, color 0.4s, border-color 0.4s;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           MOBILE-ONLY: media/visual panel moves ABOVE the text copy
+           and gets a more polished "app preview" card treatment.
+           Desktop layout (side-by-side, defined elsewhere) is
+           completely untouched — these rules only fire ≤ 767px.
+        ═══════════════════════════════════════════════════════ */
+        @media (max-width: 767px) {
+          .placedly-hiw-panel-inner {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: clamp(16px, 4vw, 22px);
+          }
+          .placedly-hiw-panel-visual {
+            order: -1 !important;
+            width: 100%;
+          }
+          .placedly-hiw-panel-copy {
+            order: 2 !important;
+            width: 100%;
+          }
+          .placedly-hiw-panel-title {
+            font-size: clamp(1.05rem, 4.5vw, 1.25rem) !important;
+          }
+          .placedly-hiw-panel-desc {
+            font-size: clamp(0.85rem, 3.6vw, 0.95rem) !important;
+            line-height: 1.65 !important;
+          }
+          .placedly-hiw-step-cta {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+          }
+
+          /* Frame the visual like a media/preview card so it reads
+             as a distinct "video-like" element sitting above the text */
+          .placedly-hiw-mobile-media-frame {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #ffffff;
+            border: 1px solid rgba(15,23,42,0.07);
+            box-shadow: 0 16px 40px rgba(15,23,42,0.10);
+            padding: clamp(14px, 4vw, 18px);
+          }
+          .placedly-hiw-mobile-media-frame::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--hiw-accent-from), var(--hiw-accent-to));
+          }
+          .placedly-hiw-visual {
+            transform: scale(0.98);
+          }
         }
       `}</style>
     </section>
