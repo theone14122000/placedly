@@ -418,6 +418,11 @@ function TabButton({
 
 /* ════════════════════════════════════════
    Tab Panel
+   NOTE: layout is now fully self-contained here.
+   - Desktop: flex row, copy on the LEFT, visual on the RIGHT
+   - Mobile:  flex column, visual on TOP, copy BELOW
+   This no longer depends on any external/global CSS for ordering,
+   so nothing outside this file can silently break the layout again.
 ════════════════════════════════════════ */
 function TabPanel({ tab }: { tab: TabDef }) {
   return (
@@ -438,16 +443,7 @@ function TabPanel({ tab }: { tab: TabDef }) {
         }}
       />
 
-      {/* ── MOBILE: visual ABOVE copy ── */}
-      <div className="placedly-hiw-panel-visual-mobile" style={{ position: 'relative', zIndex: 1 }}>
-        <tab.Visual />
-      </div>
-
-      {/* ── DESKTOP: original side-by-side layout preserved ── */}
-      <div className="placedly-hiw-panel-visual-desktop" style={{ position: 'relative', zIndex: 1 }}>
-        <tab.Visual />
-      </div>
-
+      {/* Copy block — LEFT on desktop, BELOW visual on mobile */}
       <div className="placedly-hiw-panel-copy" style={{ position: 'relative', zIndex: 1 }}>
         <h3
           className="placedly-hiw-panel-title"
@@ -480,6 +476,11 @@ function TabPanel({ tab }: { tab: TabDef }) {
             {tab.cta.label}
           </Link>
         )}
+      </div>
+
+      {/* Visual block — RIGHT on desktop, ON TOP on mobile */}
+      <div className="placedly-hiw-panel-visual" style={{ position: 'relative', zIndex: 1 }}>
+        <tab.Visual />
       </div>
     </motion.div>
   );
@@ -583,12 +584,31 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
         }
 
         /* ─────────────────────────────────────────────
-           VISUAL SLOT CONTROL
-           Desktop: show desktop slot, hide mobile slot
-           Mobile:  show mobile slot (above copy), hide desktop slot
+           PANEL LAYOUT — fully self-contained, no
+           dependency on any external/global CSS.
+
+           DESKTOP (default):
+             flex row → copy (left) + visual (right)
+
+           MOBILE (≤ 639px):
+             flex column → visual (top) + copy (below)
         ───────────────────────────────────────────── */
-        .placedly-hiw-panel-visual-desktop { display: block; }
-        .placedly-hiw-panel-visual-mobile  { display: none;  }
+        .placedly-hiw-panel-inner {
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 48px !important;
+        }
+        .placedly-hiw-panel-copy {
+          order: 1 !important;
+          flex: 1 1 50% !important;
+          min-width: 0 !important;
+        }
+        .placedly-hiw-panel-visual {
+          order: 2 !important;
+          flex: 1 1 50% !important;
+          min-width: 0 !important;
+        }
 
         /* ─────────────────────────────────────────────
            MOBILE OVERRIDES  ≤ 639 px
@@ -599,48 +619,32 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           .hiw-tabbar-desktop { display: none !important; }
           .hiw-tabbar-mobile  { display: grid !important; }
 
-          /* Panel inner: stack visual ABOVE copy.
-             This also resets any inherited order/grid rules from the
-             desktop 2-column layout, so the visual can't silently
-             render after the copy on mobile. */
+          /* Stack vertically, visual first */
           .placedly-hiw-panel-inner {
-            display: flex !important;
             flex-direction: column !important;
+            align-items: stretch !important;
             gap: 0 !important;
           }
-
-          /* Force the visual to always be first, copy always after */
-          .placedly-hiw-panel-visual-mobile {
+          .placedly-hiw-panel-visual {
             order: -1 !important;
-          }
-          .placedly-hiw-panel-visual-desktop {
-            display: none !important;
-            order: 3 !important;
-          }
-          .placedly-hiw-panel-copy {
-            order: 2 !important;
-          }
-
-          /* Show mobile visual slot (top), hide desktop slot */
-          .placedly-hiw-panel-visual-mobile  {
-            display: block !important;
+            flex: none !important;
             width: 100%;
             border-radius: 18px;
             overflow: hidden;
-            margin-bottom: 0;
+            margin-bottom: 20px;
             box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+          }
+          .placedly-hiw-panel-copy {
+            order: 2 !important;
+            flex: none !important;
+            width: 100%;
           }
 
           /* Visual fills nicely on small screens */
-          .placedly-hiw-panel-visual-mobile .placedly-hiw-visual {
+          .placedly-hiw-panel-visual .placedly-hiw-visual {
             border-radius: 18px !important;
             min-height: 200px;
             height: auto !important;
-          }
-
-          /* Copy block: clean padding below visual */
-          .placedly-hiw-panel-copy {
-            padding-top: 20px !important;
           }
 
           /* Title tighter on mobile */
