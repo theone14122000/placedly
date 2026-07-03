@@ -318,13 +318,49 @@ export default async function AboutUsPage() {
         @media (max-width: 860px) {
           .ab-two-col   { grid-template-columns: 1fr !important; gap: 40px !important; }
           .ab-values-3  { grid-template-columns: 1fr 1fr !important; }
-          .ab-founder-card { flex-direction: column !important; padding: 32px !important; }
+          .ab-founder-card { flex-direction: column !important; padding: 32px !important; text-align: center; }
           .ab-mission-img  { height: 320px !important; }
+
+          /* FIX: kill sticky once the timeline grid stacks to 1 column —
+             otherwise the intro copy overlaps the timeline steps beneath it */
+          .ab-sticky-col {
+            position: static !important;
+            top: auto !important;
+          }
+
+          /* FIX: founder photo shrinks + centers instead of forcing overflow */
+          .ab-founder-card > div:first-child {
+            width: 150px !important;
+            height: 190px !important;
+            margin: 0 auto;
+          }
+
+          /* FIX: floating badges shouldn't hang off the edge of the viewport */
+          .ab-badge-left  { left: 0 !important; padding: 10px 14px !important; }
+          .ab-badge-right { right: 0 !important; padding: 10px 14px !important; }
+
+          /* FIX: give the dark CTA breathing room on tablets too, not just phones */
+          .ab-dark-cta { padding: 56px 28px !important; }
+
+          /* Safety net: prevents floating badges / negative-offset elements
+             from ever creating a horizontal scrollbar on small screens */
+          section { overflow-x: hidden; }
         }
         @media (max-width: 580px) {
           .ab-stats-4  { grid-template-columns: repeat(2,1fr) !important; }
           .ab-values-3 { grid-template-columns: 1fr !important; }
-          .ab-dark-cta { padding: 48px 24px !important; }
+          .ab-dark-cta { padding: 48px 20px !important; }
+
+          /* FIX: 4→2 col stat grid needs its own border logic */
+          .ab-stat-cell:nth-child(2n)  { border-right: none !important; }
+          .ab-stat-cell:nth-child(n+3) { border-top: 1px solid #eef2ff; }
+
+          /* FIX: hero CTA row stacks cleanly on small phones */
+          .ab-hero-actions { flex-direction: column !important; align-items: stretch !important; }
+          .ab-hero-actions a { justify-content: center !important; }
+
+          /* FIX: timeline connector shouldn't be squished on ultra-narrow screens */
+          .ab-timeline-item { gap: 14px !important; }
         }
       `}</style>
 
@@ -374,7 +410,7 @@ export default async function AboutUsPage() {
               Born in Delhi NCR. Built for every professional who deserves better — a better role, a better salary, and a career that actually reflects their potential.
             </p>
 
-            <div style={{ display:'flex', gap:'12px', flexWrap:'wrap', marginBottom:'64px' }}>
+            <div className="ab-hero-actions" style={{ display:'flex', gap:'12px', flexWrap:'wrap', marginBottom:'64px' }}>
               <a href="/contact" className="ab-btn" style={{
                 display:'inline-flex', alignItems:'center', gap:'8px',
                 backgroundImage:`linear-gradient(135deg,${G.blue},${G.indigo})`,
@@ -579,7 +615,7 @@ export default async function AboutUsPage() {
         <div className="container">
           <div className="ab-two-col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'88px', alignItems:'start' }}>
             {/* Sticky copy */}
-            <div style={{ position:'sticky', top:'100px' }}>
+            <div className="ab-sticky-col" style={{ position:'sticky', top:'100px' }}>
               <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'18px' }}>
                 <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
                 <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', backgroundImage:`linear-gradient(90deg,${G.blue},${G.indigo})`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>Our Journey</span>

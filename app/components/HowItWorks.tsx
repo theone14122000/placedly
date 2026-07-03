@@ -101,7 +101,7 @@ const ACCENTS: Record<string, Accent> = {
   visa:    makeAccent('#0ea5e9', '#14b8a6', 'rgba(14,165,233,0.10)'),
 };
 
-/* ── Visuals ── */
+/* ── Visuals (unchanged) ── */
 function VisualCareer1() {
   return (
     <div className="placedly-hiw-visual placedly-hiw-visual--warm">
@@ -126,7 +126,6 @@ function VisualCareer1() {
     </div>
   );
 }
-
 function VisualCareer2() {
   return (
     <div className="placedly-hiw-visual placedly-hiw-visual--sunset">
@@ -157,7 +156,6 @@ function VisualCareer2() {
     </div>
   );
 }
-
 function VisualCareer3() {
   return (
     <div className="placedly-hiw-visual placedly-hiw-visual--peach">
@@ -179,7 +177,6 @@ function VisualCareer3() {
     </div>
   );
 }
-
 function VisualStudy1() {
   return (
     <div className="placedly-hiw-visual placedly-hiw-visual--warm">
@@ -204,7 +201,6 @@ function VisualStudy1() {
     </div>
   );
 }
-
 function VisualStudy2() {
   return (
     <div className="placedly-hiw-visual placedly-hiw-visual--sunset">
@@ -230,7 +226,6 @@ function VisualStudy2() {
     </div>
   );
 }
-
 function VisualStudy3() {
   return (
     <div className="placedly-hiw-visual placedly-hiw-visual--peach">
@@ -305,11 +300,8 @@ function TabBar({
           }}
         >
           {tabs.map((tab) => (
-            <TabButton
-              key={tab.id} tab={tab}
-              active={tab.id === activeId}
-              tickKey={tickKey} onSelect={onSelect}
-            />
+            <TabButton key={tab.id} tab={tab} active={tab.id === activeId}
+              tickKey={tickKey} onSelect={onSelect} />
           ))}
         </div>
       </div>
@@ -327,11 +319,8 @@ function TabBar({
         }}
       >
         {tabs.map((tab) => (
-          <TabButton
-            key={tab.id} tab={tab}
-            active={tab.id === activeId}
-            tickKey={tickKey} onSelect={onSelect} mobile
-          />
+          <TabButton key={tab.id} tab={tab} active={tab.id === activeId}
+            tickKey={tickKey} onSelect={onSelect} mobile />
         ))}
       </div>
     </>
@@ -371,7 +360,6 @@ function TabButton({
         transition: 'background 0.3s, color 0.3s, box-shadow 0.3s',
         overflow: 'hidden',
         width: mobile ? '100%' : undefined,
-        fontFamily: 'inherit',
       }}
     >
       <tab.Icon
@@ -421,9 +409,6 @@ function TabButton({
 
 /* ════════════════════════════════════════
    Tab Panel
-   KEY CHANGE: both copy and visual are
-   direct children of panel-inner so that
-   CSS `order` can flip them on mobile.
 ════════════════════════════════════════ */
 function TabPanel({ tab }: { tab: TabDef }) {
   return (
@@ -435,7 +420,6 @@ function TabPanel({ tab }: { tab: TabDef }) {
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
       style={{ position: 'relative' }}
     >
-      {/* Ambient glow */}
       <div
         aria-hidden
         style={{
@@ -445,18 +429,20 @@ function TabPanel({ tab }: { tab: TabDef }) {
         }}
       />
 
-      {/*
-        ── COPY BLOCK ──
-        Desktop: order 1 (left)
-        Mobile:  order 2 (below visual)
-      */}
-      <div className="placedly-hiw-panel-copy hiw-copy-block" style={{ position: 'relative', zIndex: 1 }}>
+      {/* ── MOBILE: visual ABOVE copy ── */}
+      <div className="placedly-hiw-panel-visual-mobile" style={{ position: 'relative', zIndex: 1 }}>
+        <tab.Visual />
+      </div>
+
+      {/* ── DESKTOP: original side-by-side layout preserved ── */}
+      <div className="placedly-hiw-panel-visual-desktop" style={{ position: 'relative', zIndex: 1 }}>
+        <tab.Visual />
+      </div>
+
+      <div className="placedly-hiw-panel-copy" style={{ position: 'relative', zIndex: 1 }}>
         <h3
           className="placedly-hiw-panel-title"
-          style={{
-            position: 'relative', paddingLeft: '16px',
-            color: 'inherit', WebkitTextFillColor: 'initial',
-          }}
+          style={{ position: 'relative', paddingLeft: '16px', color: 'inherit', WebkitTextFillColor: 'initial' }}
         >
           <span
             aria-hidden
@@ -485,15 +471,6 @@ function TabPanel({ tab }: { tab: TabDef }) {
             {tab.cta.label}
           </Link>
         )}
-      </div>
-
-      {/*
-        ── VISUAL BLOCK ──
-        Desktop: order 2 (right)
-        Mobile:  order 1 (above copy) ← THE FIX
-      */}
-      <div className="placedly-hiw-panel-visual hiw-visual-block" style={{ position: 'relative', zIndex: 1 }}>
-        <tab.Visual />
       </div>
     </motion.div>
   );
@@ -585,9 +562,7 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
       <style>{`
         ${GRADIENT_KEYFRAMES}
 
-        /* ══════════════════════════════════════════
-           TAB BAR — desktop vs mobile
-        ══════════════════════════════════════════ */
+        /* ── Tab bar responsive ── */
         .hiw-tabbar-desktop {
           display: flex !important;
           justify-content: center;
@@ -598,101 +573,109 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           margin-bottom: 20px;
         }
 
-        /* ══════════════════════════════════════════
-           PANEL INNER
-           Desktop: the existing CSS already makes
-           this a two-column row (copy left, visual right).
-           We just ensure the flex children have explicit
-           order values so mobile can flip them.
-        ══════════════════════════════════════════ */
+        /* ─────────────────────────────────────────────
+           VISUAL SLOT CONTROL
+           Desktop: show desktop slot, hide mobile slot
+           Mobile:  show mobile slot (above copy), hide desktop slot
+        ───────────────────────────────────────────── */
+        .placedly-hiw-panel-visual-desktop { display: block; }
+        .placedly-hiw-panel-visual-mobile  { display: none;  }
 
-        /* Copy — desktop: left column (order 1) */
-        .hiw-copy-block   { order: 1; }
-        /* Visual — desktop: right column (order 2) */
-        .hiw-visual-block { order: 2; }
-
-        /* ══════════════════════════════════════════
-           MOBILE  ≤ 639 px
-        ══════════════════════════════════════════ */
+        /* ─────────────────────────────────────────────
+           MOBILE OVERRIDES  ≤ 639 px
+        ───────────────────────────────────────────── */
         @media (max-width: 639px) {
 
-          /* Tab bar */
+          /* Tab bar swap */
           .hiw-tabbar-desktop { display: none !important; }
           .hiw-tabbar-mobile  { display: grid !important; }
 
-          /* Panel inner: become a flex column */
+          /* Panel inner: stack visual ABOVE copy.
+             IMPORTANT: this also resets any grid/order rules that may be
+             defined elsewhere for the desktop 2-column layout — without
+             this reset, an inherited "order" value can silently keep the
+             video/visual block rendering after the copy on mobile. */
           .placedly-hiw-panel-inner {
             display: flex !important;
             flex-direction: column !important;
-            gap: 16px !important;
+            gap: 0 !important;
           }
 
-          /*
-            THE ACTUAL FIX:
-            Flip visual ABOVE copy by swapping order values.
-            Visual (originally order 2) → order -1  = first
-            Copy   (originally order 1) → order  1  = second
-          */
-          .hiw-visual-block {
+          /* Force the visual to always be first, and the copy to always
+             come after it — regardless of any order/grid rules inherited
+             from a shared/global stylesheet for the desktop layout. */
+          .placedly-hiw-panel-visual-mobile {
             order: -1 !important;
-            width: 100% !important;
-            /* Nicely framed card */
-            border-radius: 18px !important;
-            overflow: hidden !important;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important;
+          }
+          .placedly-hiw-panel-visual-desktop {
+            display: none !important;
+            order: 3 !important; /* stays out of flow anyway, but locked just in case */
+          }
+          .placedly-hiw-panel-copy {
+            order: 2 !important;
           }
 
-          /* Visual itself fills the slot */
-          .hiw-visual-block .placedly-hiw-visual {
+          /* Show mobile visual slot (top), hide desktop slot */
+          .placedly-hiw-panel-visual-mobile  {
+            display: block !important;
+            /* Give the visual a fixed height so it doesn't collapse */
+            width: 100%;
+            /* Rounded card wrapper */
+            border-radius: 18px;
+            overflow: hidden;
+            margin-bottom: 0;
+            /* Subtle border to frame it */
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+          }
+
+          /* Visual fills nicely on small screens */
+          .placedly-hiw-panel-visual-mobile .placedly-hiw-visual {
             border-radius: 18px !important;
-            min-height: 200px !important;
+            min-height: 200px;
             height: auto !important;
-            width: 100% !important;
           }
 
-          /* Copy stays below */
-          .hiw-copy-block {
-            order: 1 !important;
-            padding-top: 4px !important;
+          /* Copy block: clean padding below visual */
+          .placedly-hiw-panel-copy {
+            padding-top: 20px !important;
           }
 
-          /* Title */
+          /* Title tighter on mobile */
           .placedly-hiw-panel-title {
             font-size: 1.15rem !important;
             line-height: 1.3 !important;
             margin-bottom: 10px !important;
           }
 
-          /* Description */
+          /* Description readable on small screens */
           .placedly-hiw-panel-desc {
             font-size: 13.5px !important;
             line-height: 1.65 !important;
           }
 
-          /* CTA full-width */
+          /* CTA full-width on mobile */
           .placedly-hiw-step-cta {
             width: 100% !important;
             justify-content: center !important;
             text-align: center !important;
-            display: flex !important;
           }
 
-          /* Footer centred */
+          /* Panel footer centred */
           .placedly-hiw-panel-footer {
-            display: flex !important;
-            justify-content: center !important;
-            margin-top: 12px !important;
+            display: flex;
+            justify-content: center;
+            margin-top: 16px;
           }
 
-          /* Section padding */
+          /* Tighten section padding on mobile */
           .placedly-hiw-section {
             padding-top: 40px !important;
             padding-bottom: 40px !important;
           }
 
-          /* Section header typography */
+          /* Section header */
           .placedly-hiw-title {
-            font-size: clamp(1.2rem, 5vw, 1.55rem) !important;
+            font-size: clamp(1.25rem, 5vw, 1.6rem) !important;
             line-height: 1.25 !important;
           }
           .placedly-hiw-subtitle {
@@ -701,9 +684,7 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           }
         }
 
-        /* ══════════════════════════════════════════
-           ACCENT-DRIVEN DYNAMIC COLOURS
-        ══════════════════════════════════════════ */
+        /* ── Accent-driven dynamic colours (unchanged) ── */
         .placedly-hiw-mock-tag {
           background: var(--hiw-accent-soft) !important;
           color: var(--hiw-accent-from) !important;
@@ -722,7 +703,7 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           color: var(--hiw-accent-from) !important;
           transition: background 0.4s, color 0.4s;
         }
-        .placedly-hiw-mock-offer  { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
+        .placedly-hiw-mock-offer { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
         .placedly-hiw-mock-bubble {
           background: var(--hiw-accent-soft) !important;
           color: var(--hiw-accent-from) !important;
