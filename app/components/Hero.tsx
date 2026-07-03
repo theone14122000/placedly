@@ -14,12 +14,11 @@ import HiringPartnersMarquee from './HiringPartnersMarquee';
 
 type HeroCms = { [k: string]: string };
 
-const SCATTER_AVATARS = [
-  { src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face', top: '0%',  left: '40%', size: 46, badge: false, depth: 16 },
-  { src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&crop=face', top: '4%',  left: '80%', size: 44, badge: true,  depth: 26 },
-  { src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&crop=face', top: '42%', left: '6%',  size: 50, badge: true,  depth: 12 },
-  { src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop&crop=face', top: '38%', left: '90%', size: 46, badge: true,  depth: 22 },
-  { src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&crop=face', top: '76%', left: '36%', size: 44, badge: false, depth: 18 },
+/* ─── Compact centered cluster — replaces the far-flung scatter ─── */
+const CLUSTER_AVATARS = [
+  { src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face', top: '-6%', left: '30%', size: 44, badge: false, depth: 12 },
+  { src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&crop=face', top: '2%',   left: '76%', size: 34, badge: true,  depth: 20 },
+  { src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&crop=face', top: '68%', left: '4%',  size: 36, badge: true,  depth: 10 },
 ] as const;
 
 const HERO_CARD_AVATARS = {
@@ -125,6 +124,7 @@ function CountUpNumber({ value, suffix = '' }: { value: number; suffix?: string 
   return <motion.span ref={ref}>{disp}</motion.span>;
 }
 
+/* ─── Dynamic pill button: animated gradient + pulsing glow + shine sweep ─── */
 function NavPillButton({ pill, active, onClick, delay }: {
   pill: typeof NAV_PILLS[number];
   active: boolean;
@@ -133,25 +133,35 @@ function NavPillButton({ pill, active, onClick, delay }: {
 }) {
   const Icon = pill.icon;
   return (
-    <motion.button
-      className={`ph-pill ph-pill--${pill.variant}${active ? ' ph-pill--on' : ''}`}
-      onClick={onClick}
+    <motion.div
+      className="ph-pill-wrap"
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.42, delay }}
-      whileHover={{ y: -2, scale: 1.02 }}
+      whileHover={{ y: -3, scale: 1.015 }}
       whileTap={{ scale: 0.97 }}
-      aria-expanded={active}
     >
-      <span className="ph-pill-icon"><Icon size={16} strokeWidth={2.1} /></span>
-      <span className="ph-pill-txt">
-        <strong>{pill.label}</strong>
-        <span>{pill.sub}</span>
-      </span>
-      <span className={`ph-pill-arr${active ? ' ph-pill-arr--open' : ''}`}>
-        <ArrowRight size={12} strokeWidth={2.5} />
-      </span>
-    </motion.button>
+      <span className={`ph-pill-glow ph-pill-glow--${pill.variant}`} aria-hidden />
+      <button
+        className={`ph-pill ph-pill--${pill.variant}${active ? ' ph-pill--on' : ''}`}
+        onClick={onClick}
+        aria-expanded={active}
+      >
+        <span className="ph-pill-shine" aria-hidden />
+        <span className="ph-pill-icon"><Icon size={16} strokeWidth={2.1} /></span>
+        <span className="ph-pill-txt">
+          <strong>{pill.label}</strong>
+          <span>{pill.sub}</span>
+        </span>
+        <motion.span
+          className={`ph-pill-arr${active ? ' ph-pill-arr--open' : ''}`}
+          animate={{ x: active ? 0 : [0, 3, 0] }}
+          transition={{ duration: 1.5, repeat: active ? 0 : Infinity, ease: 'easeInOut', delay }}
+        >
+          <ArrowRight size={12} strokeWidth={2.5} />
+        </motion.span>
+      </button>
+    </motion.div>
   );
 }
 
@@ -187,7 +197,7 @@ function PopupCard({ pill, onClose }: { pill: typeof NAV_PILLS[number]; onClose:
 
 export default function Hero({ cms = {} }: { cms?: HeroCms }) {
   const offerRole      = cms['hp:heroOfferRole']      ?? 'Senior Claims Analyst';
-  const admitProgramme = cms['hp:heroAdmitProgramme'] ?? "MSc International Business · Fall '25";
+  const admitProgramme = cms['hp:heroAdmitProgramme'] ?? "MSc International Business";
 
   const [activePopup, setActivePopup] = useState<PopupKey>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -220,24 +230,16 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
     <section id="Top" className="ph-hero">
       <style>{`
 
-        /* ─── SECTION ─────────────────────────────── */
+        /* ─── SECTION — tightened, no dead space ─────── */
         .ph-hero {
           position: relative;
           overflow: hidden;
-          isolation: isolate;
-          /* generous top so heading breathes below navbar */
-          padding-top: clamp(56px, 8vw, 96px);
-          padding-bottom: clamp(24px, 3.5vw, 40px);
+          padding-top: clamp(44px, 6vw, 72px);
+          padding-bottom: clamp(20px, 3vw, 32px);
           padding-left: 20px;
           padding-right: 20px;
         }
 
-        .ph-bg {
-          position: absolute; inset: 0; z-index: 0;
-          pointer-events: none; overflow: hidden;
-        }
-
-        /* centred column */
         .ph-wrap {
           position: relative; z-index: 1;
           max-width: 900px;
@@ -245,7 +247,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 0;
         }
 
         /* ─── COPY ────────────────────────────────── */
@@ -255,44 +256,71 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           flex-direction: column;
           align-items: center;
           text-align: center;
-          /* bottom gap before pills */
-          margin-bottom: 28px;
+          margin-bottom: 20px;
         }
 
         .ph-title {
-          font-size: clamp(2.1rem, 4vw, 3.3rem);
+          font-size: clamp(2rem, 3.8vw, 3.1rem);
           font-weight: 800;
           line-height: 1.13;
           letter-spacing: -0.024em;
           color: #0f172a;
           -webkit-text-fill-color: #0f172a;
-          margin: 0 0 14px;
+          margin: 0 0 12px;
           text-align: center;
           width: 100%;
         }
 
         .ph-sub {
           font-size: clamp(13.5px, 1.1vw, 15px);
-          line-height: 1.62;
+          line-height: 1.6;
           color: #55607a;
           max-width: 460px;
           margin: 0;
           text-align: center;
         }
 
-        /* ─── PILLS ───────────────────────────────── */
+        /* ─── PILLS — dynamic gradient, glow, shine ──── */
         .ph-pills {
           display: flex;
           align-items: stretch;
           justify-content: center;
-          gap: 8px;
+          gap: 9px;
           width: 100%;
           max-width: 700px;
-          /* no bottom margin — spacing handled by stage-wrap margin-top */
         }
 
+        .ph-pill-wrap { position: relative; flex: 1; isolation: isolate; min-width: 0; }
+
+        @keyframes ph-pulse {
+          0%, 100% { opacity: 0.32; transform: scale(1); }
+          50%      { opacity: 0.6;  transform: scale(1.07); }
+        }
+
+        .ph-pill-glow {
+          position: absolute;
+          inset: -5px;
+          border-radius: 17px;
+          z-index: 0;
+          filter: blur(11px);
+          pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        .ph-pill-glow--primary {
+          background: linear-gradient(135deg, #2563eb, #a855f7);
+          opacity: 0.36;
+          animation: ph-pulse 2.6s ease-in-out infinite;
+        }
+        .ph-pill-glow--secondary { background: linear-gradient(135deg, #2563eb, #7c8ff0); }
+        .ph-pill-glow--tertiary  { background: linear-gradient(135deg, #a855f7, #fb923c); }
+        .ph-pill-wrap:hover .ph-pill-glow--secondary,
+        .ph-pill-wrap:hover .ph-pill-glow--tertiary { opacity: 0.3; }
+
         .ph-pill {
-          flex: 1;
+          position: relative;
+          z-index: 1;
+          width: 100%;
           display: inline-flex;
           align-items: center;
           gap: 9px;
@@ -303,23 +331,43 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           border: 1.5px solid transparent;
           text-align: left;
           min-width: 0;
-          transition: box-shadow .2s, border-color .2s, background .2s, transform .2s;
+          overflow: hidden;
+          isolation: isolate;
+          transition: box-shadow .22s, border-color .22s, filter .22s;
         }
+
+        .ph-pill-shine {
+          position: absolute;
+          top: 0; left: -130%;
+          width: 55%; height: 100%;
+          background: linear-gradient(115deg, transparent, rgba(255,255,255,0.55), transparent);
+          transform: skewX(-20deg);
+          transition: left 0.6s ease;
+          z-index: 0;
+          pointer-events: none;
+        }
+        .ph-pill:hover .ph-pill-shine { left: 140%; }
+
         .ph-pill--primary {
-          background: linear-gradient(135deg,#1d4ed8,#2563eb);
-          border-color: #2563eb; color: #fff;
-          box-shadow: 0 4px 16px rgba(37,99,235,.30);
+          background-image: linear-gradient(135deg, #2563eb, #7c8ff0, #a855f7, #2563eb);
+          background-size: 240% 240%;
+          background-position: 0% 50%;
+          animation: ph-grad 5s ease infinite;
+          color: #fff;
+          box-shadow: 0 6px 18px rgba(37,99,235,.32), inset 0 1px 0 rgba(255,255,255,.25);
         }
-        .ph-pill--primary:hover,.ph-pill--primary.ph-pill--on {
-          box-shadow: 0 8px 24px rgba(37,99,235,.44);
+        .ph-pill--primary:hover, .ph-pill--primary.ph-pill--on {
+          box-shadow: 0 10px 26px rgba(37,99,235,.46), inset 0 1px 0 rgba(255,255,255,.3);
+          filter: brightness(1.06);
         }
+
         .ph-pill--secondary {
           background: #fff; border-color: #e2e8f0; color: #0f172a;
           box-shadow: 0 3px 10px rgba(15,23,42,.06);
         }
         .ph-pill--secondary:hover,.ph-pill--secondary.ph-pill--on {
           border-color: #2563eb; background: #f4f8ff;
-          box-shadow: 0 6px 18px rgba(37,99,235,.12);
+          box-shadow: 0 8px 22px rgba(37,99,235,.16);
         }
         .ph-pill--tertiary {
           background: rgba(248,250,255,.95); border-color: #e2e8f0; color: #0f172a;
@@ -327,20 +375,22 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
         .ph-pill--tertiary:hover,.ph-pill--tertiary.ph-pill--on {
           border-color: #a855f7; background: #fdf8ff;
-          box-shadow: 0 6px 18px rgba(168,85,247,.13);
+          box-shadow: 0 8px 22px rgba(168,85,247,.16);
         }
 
         .ph-pill-icon {
+          position: relative; z-index: 1;
           width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
           display: flex; align-items: center; justify-content: center;
-          transition: transform .2s;
+          transition: transform .25s cubic-bezier(.22,1,.36,1);
         }
-        .ph-pill--primary  .ph-pill-icon { background: rgba(255,255,255,.2);  color: #fff;    }
+        .ph-pill--primary  .ph-pill-icon { background: rgba(255,255,255,.22);  color: #fff;    }
         .ph-pill--secondary .ph-pill-icon { background: linear-gradient(135deg,#eef2ff,#e0e7ff); color: #2563eb; }
         .ph-pill--tertiary  .ph-pill-icon { background: linear-gradient(135deg,#fdf4ff,#f3e8ff); color: #a855f7; }
-        .ph-pill:hover .ph-pill-icon { transform: scale(1.1) rotate(-5deg); }
+        .ph-pill:hover .ph-pill-icon { transform: scale(1.12) rotate(-6deg); }
 
         .ph-pill-txt {
+          position: relative; z-index: 1;
           display: flex; flex-direction: column; line-height: 1.2;
           flex: 1; min-width: 0; overflow: hidden;
         }
@@ -353,53 +403,40 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .ph-pill--primary  .ph-pill-txt strong { color: #fff; }
-        .ph-pill--primary  .ph-pill-txt span   { color: rgba(255,255,255,.75); }
+        .ph-pill--primary  .ph-pill-txt span   { color: rgba(255,255,255,.78); }
         .ph-pill--secondary .ph-pill-txt strong,
         .ph-pill--tertiary  .ph-pill-txt strong { color: #0f172a; }
         .ph-pill--secondary .ph-pill-txt span,
         .ph-pill--tertiary  .ph-pill-txt span   { color: #64748b; }
 
         .ph-pill-arr {
+          position: relative; z-index: 1;
           width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
           display: flex; align-items: center; justify-content: center;
-          transition: transform .2s;
+          transition: transform .2s, background .2s;
         }
-        .ph-pill--primary  .ph-pill-arr { background: rgba(255,255,255,.18); color: #fff; }
+        .ph-pill--primary  .ph-pill-arr { background: rgba(255,255,255,.2); color: #fff; }
         .ph-pill--secondary .ph-pill-arr { background: #eef2ff; color: #2563eb; }
         .ph-pill--tertiary  .ph-pill-arr { background: #f3e8ff; color: #a855f7; }
         .ph-pill-arr--open { transform: rotate(90deg) !important; }
-        .ph-pill:hover .ph-pill-arr:not(.ph-pill-arr--open) { transform: translateX(2px); }
 
         /* ─── STAGE WRAPPER ───────────────────────── */
-        /*
-          The stage-wrap sits right after the pills.
-          margin-top provides the gap between pills and scene.
-          When popup is active we don't push stage down —
-          instead popup floats ABOVE the scene via absolute positioning
-          with a negative top so it overlaps the gap.
-        */
         .ph-stage-wrap {
           position: relative;
           width: 100%;
-          max-width: 860px;
-          margin-top: 20px;
+          max-width: 700px;
+          margin-top: 16px;
+          margin-bottom: clamp(20px, 3vw, 30px);
         }
 
         /* ─── POPUP ────────────────────────────────── */
-        /*
-          Rendered inside ph-stage-wrap.
-          Positioned so its BOTTOM aligns with the TOP of ph-stage
-          i.e. top = -(popup height + gap).
-          We use bottom: calc(100% + 8px) relative to ph-stage-wrap,
-          which means it sits 8 px above the stage top edge.
-        */
         .ph-popup {
           position: absolute;
-          /* sits 8px above the top edge of ph-stage-wrap */
           bottom: calc(100% + 8px);
           left: 50%;
           transform: translateX(-50%);
-          width: 340px;
+          width: 320px;
+          max-width: 88vw;
           background: #fff;
           border-radius: 18px;
           padding: 14px 14px 11px;
@@ -447,75 +484,106 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         .ph-popup-rtxt strong { font-size: 12.5px; font-weight: 700; color: #0f172a; }
         .ph-popup-rtxt span   { font-size: 11px;   color: #64748b; }
 
-        /* ─── STAGE (video/avatar scene) ─────────── */
+        /* ═══════════════════════════════════════════
+           STAGE — a compact rounded "video card".
+           The bg (video+gradient) is scoped ONLY to this
+           box, so the floating cards sit exactly on top
+           of it — never above/below it.
+           ═══════════════════════════════════════════ */
         .ph-stage {
           position: relative;
           width: 100%;
-          height: clamp(300px, 35vw, 420px);
-          margin-bottom: clamp(18px, 2.8vw, 28px);
+          height: clamp(228px, 27vw, 288px);
+          border-radius: 24px;
+          overflow: hidden;
+          isolation: isolate;
+          box-shadow: 0 18px 44px rgba(15,23,42,.14);
+          background: linear-gradient(135deg, #eef2ff, #fdf2f8);
         }
 
-        /* floating cards */
+        .ph-stage-bg {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          pointer-events: none;
+          overflow: hidden;
+        }
+
+        .ph-stage-content {
+          position: relative;
+          z-index: 1;
+          width: 100%;
+          height: 100%;
+        }
+
+        /* floating cards — compact, pinned to the box's own corners */
         .ph-card {
-          position: absolute; width: clamp(188px,20vw,222px);
-          background: #fff; border-radius: 15px; padding: 12px 14px;
-          box-shadow: 0 12px 30px rgba(15,23,42,.11);
+          position: absolute; width: clamp(172px,19vw,202px);
+          background: #fff; border-radius: 14px; padding: 10px 12px;
+          box-shadow: 0 10px 24px rgba(15,23,42,.14);
           border: 1px solid rgba(15,23,42,.04); z-index: 4;
           transition: box-shadow .26s;
         }
-        .ph-card:hover { box-shadow: 0 18px 40px rgba(15,23,42,.17); }
-        .ph-card--l { top: 0;    left: 0; }
-        .ph-card--r { bottom: 0; right: 0; }
-        .ph-card-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .ph-card:hover { box-shadow: 0 16px 34px rgba(15,23,42,.2); }
+        .ph-card--l { top: 10px;    left: 10px; }
+        .ph-card--r { bottom: 10px; right: 10px; }
+        .ph-card-row { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
         .ph-av {
-          width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+          width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
           border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.1); flex-shrink: 0;
         }
-        .ph-nm { font-size: 13px; font-weight: 700; color: #0f172a; margin: 0; }
-        .ph-rl { font-size: 11px; color: #64748b; margin: 0; }
-        .ph-ln { font-size: 11.5px; color: #334155; margin: 0; line-height: 1.4; }
+        .ph-nm { font-size: 12px; font-weight: 700; color: #0f172a; margin: 0; }
+        .ph-rl { font-size: 10px; color: #64748b; margin: 0; }
+        .ph-ln { font-size: 10.5px; color: #334155; margin: 0; line-height: 1.35; }
         .ph-ln strong {
           background-image: linear-gradient(90deg,#2563eb,#a855f7);
           -webkit-background-clip: text; background-clip: text;
           color: transparent; font-weight: 700;
         }
 
-        /* scatter */
-        .ph-sc   { position: absolute; inset: 0; z-index: 1; }
-        .ph-sc-w { position: absolute; border-radius: 50%; overflow: visible; }
-        .ph-sc-i {
-          width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
-          box-shadow: 0 6px 14px rgba(15,23,42,.14); border: 3px solid #fff; display: block;
+        /* ─── Center cluster — replaces the far-flung scatter,
+               everything tightly grouped and properly aligned ─── */
+        .ph-cluster {
+          position: absolute;
+          top: 50%; left: 50%;
+          transform: translate(-50%, -50%);
+          width: clamp(180px, 24vw, 216px);
+          height: clamp(120px, 16vw, 146px);
+          z-index: 2;
         }
-        .ph-sc-b {
-          position: absolute; bottom: -3px; right: -3px; width: 18px; height: 18px;
+
+        .ph-cl-av-wrap { position: absolute; border-radius: 50%; overflow: visible; }
+        .ph-cl-av {
+          width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+          box-shadow: 0 6px 14px rgba(15,23,42,.16); border: 3px solid #fff; display: block;
+        }
+        .ph-cl-badge {
+          position: absolute; bottom: -3px; right: -3px; width: 16px; height: 16px;
           border-radius: 50%; background: linear-gradient(135deg,#2563eb,#a855f7);
           color: #fff; display: flex; align-items: center; justify-content: center;
           border: 2px solid #fff; box-shadow: 0 2px 6px rgba(37,99,235,.36);
         }
 
-        /* glass pills */
-        .ph-gp {
-          position: absolute; display: flex; align-items: center; gap: 7px;
-          background: rgba(255,255,255,.88); backdrop-filter: blur(10px);
+        .ph-cl-gp {
+          position: absolute; display: flex; align-items: center; gap: 6px;
+          background: rgba(255,255,255,.92); backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
-          border: 1px solid rgba(255,255,255,.6); border-radius: 12px;
-          padding: 7px 12px; box-shadow: 0 8px 20px rgba(37,99,235,.12); z-index: 3;
+          border: 1px solid rgba(255,255,255,.7); border-radius: 11px;
+          padding: 6px 10px; box-shadow: 0 6px 16px rgba(37,99,235,.14); z-index: 3;
+          white-space: nowrap;
         }
-        .ph-gp--sh { top: 26%; left: 40%; }
-        .ph-gp--re { top: 46%; left: 46%; }
-        .ph-gp-ic {
-          width: 23px; height: 23px; border-radius: 50%;
+        .ph-cl-gp-ic {
+          width: 20px; height: 20px; border-radius: 50%;
           background: linear-gradient(135deg,#2563eb,#a855f7);
           color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
-        .ph-gp-tx { display: flex; flex-direction: column; line-height: 1.2; white-space: nowrap; }
-        .ph-gp-tx strong {
-          font-size: 11.5px; font-weight: 700;
+        .ph-cl-gp-tx { display: flex; flex-direction: column; line-height: 1.15; }
+        .ph-cl-gp-tx strong {
+          font-size: 10px; font-weight: 700;
           background-image: linear-gradient(90deg,#2563eb,#a855f7);
           -webkit-background-clip: text; background-clip: text; color: transparent;
         }
-        .ph-gp-tx span { font-size: 11.5px; color: #0f172a; font-weight: 600; }
+        .ph-cl-gp-tx span { font-size: 10px; color: #0f172a; font-weight: 600; }
 
         /* ─── STATS BAR ───────────────────────────── */
         .ph-stats {
@@ -524,13 +592,13 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           gap: 8px;
           width: 100%;
           max-width: 860px;
-          margin-bottom: clamp(22px, 3.5vw, 36px);
+          margin-bottom: clamp(16px, 2.4vw, 26px);
         }
         .ph-stat {
           position: relative; overflow: hidden; isolation: isolate;
           display: flex; align-items: center; gap: 10px;
           background: #fff; border: 1px solid #eef1f6; border-radius: 14px;
-          padding: 12px 14px; cursor: default;
+          padding: 11px 13px; cursor: default;
           box-shadow: 0 3px 12px rgba(15,23,42,.05);
           transition: box-shadow .22s, transform .22s;
         }
@@ -543,7 +611,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         .ph-stat:hover .ph-stat-shine { left: 140%; }
         .ph-stat-ic {
           position: relative; z-index: 1; flex-shrink: 0;
-          width: 34px; height: 34px; border-radius: 50%;
+          width: 32px; height: 32px; border-radius: 50%;
           background: linear-gradient(135deg,#eef2ff,#fdf2f8);
           border: 1.5px solid #e5e7ff; color: #7c3aed;
           display: flex; align-items: center; justify-content: center;
@@ -552,20 +620,20 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         .ph-stat:hover .ph-stat-ic { transform: scale(1.13) rotate(-7deg); }
         .ph-stat-body {
           position: relative; z-index: 1;
-          display: flex; flex-direction: column; line-height: 1.22; min-width: 0;
+          display: flex; flex-direction: column; line-height: 1.2; min-width: 0;
         }
         .ph-stat-val {
-          font-size: clamp(15px,1.6vw,18px); font-weight: 800; line-height: 1;
+          font-size: clamp(14px,1.5vw,17px); font-weight: 800; line-height: 1;
           background-image: linear-gradient(90deg,#2563eb,#a855f7);
           -webkit-background-clip: text; background-clip: text; color: transparent;
         }
         .ph-stat-lbl {
-          font-size: 10.5px; color: #64748b; font-weight: 500; margin-top: 2px;
+          font-size: 10px; color: #64748b; font-weight: 500; margin-top: 2px;
           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
         /* ─── MARQUEE HEADING ─────────────────────── */
-        .ph-mhead { text-align: center; margin-bottom: clamp(14px,2vw,20px); }
+        .ph-mhead { text-align: center; margin-bottom: clamp(12px,1.8vw,18px); }
         .ph-mhead .bar {
           width: 34px; height: 3px; border-radius: 999px;
           background-image: linear-gradient(90deg,#2563eb,#a855f7,#fb923c);
@@ -580,19 +648,13 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         @media (max-width: 900px) { .ph-wrap { display: none; } }
         @media (max-width: 680px) {
           .ph-pills { flex-wrap: wrap; }
-          .ph-pill  { flex: 1 1 calc(50% - 4px); }
+          .ph-pill-wrap  { flex: 1 1 calc(50% - 5px); }
           .ph-stats { grid-template-columns: repeat(2,1fr); }
         }
         @media (max-width: 400px) {
-          .ph-pill  { flex: 1 1 100%; }
+          .ph-pill-wrap  { flex: 1 1 100%; }
         }
       `}</style>
-
-      {/* background */}
-      <div className="ph-bg" aria-hidden>
-        <HeroGradientBg />
-        <HeroBgVideo />
-      </div>
 
       <div className="ph-wrap">
 
@@ -636,102 +698,109 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           ))}
         </motion.div>
 
-        {/* ── Stage wrapper — popup anchors here, above the scene ── */}
+        {/* ── Stage wrapper — popup anchors here, above the video box ── */}
         <motion.div
           className="ph-stage-wrap"
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.58, delay: 0.26 }}
+          transition={{ duration: 0.55, delay: 0.26 }}
         >
-          {/* popup floats above stage top edge */}
           {activePill && (
             <PopupCard pill={activePill} onClose={() => setActivePopup(null)} />
           )}
 
-          {/* scene */}
+          {/* ── The compact video card — bg is scoped exactly here ── */}
           <div
             ref={stageRef}
             className="ph-stage"
             onMouseMove={onMouseMove}
             onMouseLeave={onMouseLeave}
           >
-            {/* left card */}
-            <motion.div
-              className="ph-card ph-card--l"
-              animate={{ y: [0,-8,0] }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ x: useTransform(smx,[0,1],[-8,8]), y: useTransform(smy,[0,1],[-5,5]) }}
-              whileHover={{ scale: 1.03 }}
-            >
-              <div className="ph-card-row">
-                <img src={HERO_CARD_AVATARS.left} alt="" className="ph-av" width={36} height={36} loading="lazy" decoding="async" />
-                <div>
-                  <p className="ph-nm">{cms['hp:heroOfferName'] ?? 'Priya'}</p>
-                  <p className="ph-rl">CAP · India careers</p>
-                </div>
-              </div>
-              <p className="ph-ln">Targeting <strong>{offerRole}</strong></p>
-            </motion.div>
-
-            {/* scatter */}
-            <div className="ph-sc" aria-hidden>
-              {SCATTER_AVATARS.map((p, i) => (
-                <motion.div
-                  key={p.src}
-                  className="ph-sc-w"
-                  style={{
-                    top: p.top, left: p.left, width: p.size, height: p.size, zIndex: i + 1,
-                    x: useTransform(smx,[0,1],[-p.depth,p.depth]),
-                    y: useTransform(smy,[0,1],[-p.depth,p.depth]),
-                  }}
-                  animate={{ y: [0, i%2===0 ? -6 : 6, 0] }}
-                  transition={{ duration: 4.5+i, repeat: Infinity, ease: 'easeInOut', delay: i*0.25 }}
-                  whileHover={{ scale: 1.14 }}
-                >
-                  <img src={p.src} alt="" className="ph-sc-i" width={p.size} height={p.size} loading="lazy" decoding="async" />
-                  {p.badge && <span className="ph-sc-b"><Share2 size={9} strokeWidth={2.5} /></span>}
-                </motion.div>
-              ))}
+            <div className="ph-stage-bg" aria-hidden>
+              <HeroGradientBg />
+              <HeroBgVideo />
             </div>
 
-            {/* glass pills */}
-            <motion.div className="ph-gp ph-gp--sh"
-              animate={{ y:[0,-5,0] }}
-              transition={{ duration:4, repeat:Infinity, ease:'easeInOut' }}
-              style={{ x:useTransform(smx,[0,1],[-10,10]), y:useTransform(smy,[0,1],[-8,8]) }}
-              whileHover={{ scale:1.05 }}
-            >
-              <span className="ph-gp-ic"><Share2 size={11} strokeWidth={2.25}/></span>
-              <span className="ph-gp-tx"><strong>Shared</strong><span>CAP roadmap</span></span>
-            </motion.div>
-
-            <motion.div className="ph-gp ph-gp--re"
-              animate={{ y:[0,5,0] }}
-              transition={{ duration:4.5, repeat:Infinity, ease:'easeInOut', delay:0.3 }}
-              style={{ x:useTransform(smx,[0,1],[10,-10]), y:useTransform(smy,[0,1],[8,-8]) }}
-              whileHover={{ scale:1.05 }}
-            >
-              <span className="ph-gp-ic"><Sparkles size={11} strokeWidth={2.25}/></span>
-              <span className="ph-gp-tx"><strong>Recommended</strong><span>Admit path</span></span>
-            </motion.div>
-
-            {/* right card */}
-            <motion.div
-              className="ph-card ph-card--r"
-              animate={{ y:[0,8,0] }}
-              transition={{ duration:6, repeat:Infinity, ease:'easeInOut', delay:0.4 }}
-              style={{ x:useTransform(smx,[0,1],[8,-8]), y:useTransform(smy,[0,1],[5,-5]) }}
-              whileHover={{ scale:1.03 }}
-            >
-              <div className="ph-card-row">
-                <img src={HERO_CARD_AVATARS.right} alt="" className="ph-av" width={36} height={36} loading="lazy" decoding="async" />
-                <div>
-                  <p className="ph-nm">{cms['hp:heroAdmitName'] ?? 'Arjun'}</p>
-                  <p className="ph-rl">Study abroad track</p>
+            <div className="ph-stage-content">
+              {/* left card */}
+              <motion.div
+                className="ph-card ph-card--l"
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ x: useTransform(smx,[0,1],[-6,6]), y: useTransform(smy,[0,1],[-4,4]) }}
+                whileHover={{ scale: 1.04 }}
+              >
+                <div className="ph-card-row">
+                  <img src={HERO_CARD_AVATARS.left} alt="" className="ph-av" width={32} height={32} loading="lazy" decoding="async" />
+                  <div>
+                    <p className="ph-nm">{cms['hp:heroOfferName'] ?? 'Priya'}</p>
+                    <p className="ph-rl">CAP · India careers</p>
+                  </div>
                 </div>
+                <p className="ph-ln">Targeting <strong>{offerRole}</strong></p>
+              </motion.div>
+
+              {/* center cluster: avatars + connector badges + glass pills, tightly grouped */}
+              <div className="ph-cluster" aria-hidden>
+                {CLUSTER_AVATARS.map((p, i) => (
+                  <motion.div
+                    key={p.src}
+                    className="ph-cl-av-wrap"
+                    style={{
+                      top: p.top, left: p.left, width: p.size, height: p.size, zIndex: i + 1,
+                      x: useTransform(smx,[0,1],[-p.depth,p.depth]),
+                      y: useTransform(smy,[0,1],[-p.depth,p.depth]),
+                    }}
+                    animate={{ y: [0, i % 2 === 0 ? -5 : 5, 0] }}
+                    transition={{ duration: 4.2 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.25 }}
+                    whileHover={{ scale: 1.15 }}
+                  >
+                    <img src={p.src} alt="" className="ph-cl-av" width={p.size} height={p.size} loading="lazy" decoding="async" />
+                    {p.badge && <span className="ph-cl-badge"><Share2 size={8} strokeWidth={2.5} /></span>}
+                  </motion.div>
+                ))}
+
+                <motion.div
+                  className="ph-cl-gp"
+                  style={{ top: '32%', left: '0%' }}
+                  animate={{ y: [0, -4, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                  whileHover={{ scale: 1.06 }}
+                >
+                  <span className="ph-cl-gp-ic"><Share2 size={10} strokeWidth={2.25} /></span>
+                  <span className="ph-cl-gp-tx"><strong>Shared</strong><span>CAP roadmap</span></span>
+                </motion.div>
+
+                <motion.div
+                  className="ph-cl-gp"
+                  style={{ top: '58%', left: '32%' }}
+                  animate={{ y: [0, 4, 0] }}
+                  transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+                  whileHover={{ scale: 1.06 }}
+                >
+                  <span className="ph-cl-gp-ic"><Sparkles size={10} strokeWidth={2.25} /></span>
+                  <span className="ph-cl-gp-tx"><strong>Recommended</strong><span>Admit path</span></span>
+                </motion.div>
               </div>
-              <p className="ph-ln">Interested in <strong>{admitProgramme.split('·')[0]?.trim() ?? 'UK Masters'}</strong></p>
-            </motion.div>
+
+              {/* right card */}
+              <motion.div
+                className="ph-card ph-card--r"
+                animate={{ y: [0, 6, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+                style={{ x: useTransform(smx,[0,1],[6,-6]), y: useTransform(smy,[0,1],[4,-4]) }}
+                whileHover={{ scale: 1.04 }}
+              >
+                <div className="ph-card-row">
+                  <img src={HERO_CARD_AVATARS.right} alt="" className="ph-av" width={32} height={32} loading="lazy" decoding="async" />
+                  <div>
+                    <p className="ph-nm">{cms['hp:heroAdmitName'] ?? 'Arjun'}</p>
+                    <p className="ph-rl">Study abroad track</p>
+                  </div>
+                </div>
+                <p className="ph-ln">Interested in <strong>{admitProgramme.split('·')[0]?.trim() ?? 'UK Masters'}</strong></p>
+              </motion.div>
+            </div>
           </div>
         </motion.div>
 
