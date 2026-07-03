@@ -418,11 +418,9 @@ function TabButton({
 
 /* ════════════════════════════════════════
    Tab Panel
-   NOTE: layout is now fully self-contained here.
-   - Desktop: flex row, copy on the LEFT, visual on the RIGHT
-   - Mobile:  flex column, visual on TOP, copy BELOW
-   This no longer depends on any external/global CSS for ordering,
-   so nothing outside this file can silently break the layout again.
+   - Desktop: visual ON TOP, content BELOW
+   - Mobile:  visual ON TOP, content BELOW
+   (Visual first on both viewports, right under the toggle bar)
 ════════════════════════════════════════ */
 function TabPanel({ tab }: { tab: TabDef }) {
   return (
@@ -443,7 +441,12 @@ function TabPanel({ tab }: { tab: TabDef }) {
         }}
       />
 
-      {/* Copy block — LEFT on desktop, BELOW visual on mobile */}
+      {/* Visual block — ALWAYS FIRST (on top, right below toggle bar) */}
+      <div className="placedly-hiw-panel-visual" style={{ position: 'relative', zIndex: 1 }}>
+        <tab.Visual />
+      </div>
+
+      {/* Copy block — ALWAYS BELOW the visual */}
       <div className="placedly-hiw-panel-copy" style={{ position: 'relative', zIndex: 1 }}>
         <h3
           className="placedly-hiw-panel-title"
@@ -476,11 +479,6 @@ function TabPanel({ tab }: { tab: TabDef }) {
             {tab.cta.label}
           </Link>
         )}
-      </div>
-
-      {/* Visual block — RIGHT on desktop, ON TOP on mobile */}
-      <div className="placedly-hiw-panel-visual" style={{ position: 'relative', zIndex: 1 }}>
-        <tab.Visual />
       </div>
     </motion.div>
   );
@@ -584,34 +582,58 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
         }
 
         /* ─────────────────────────────────────────────
-           PANEL LAYOUT — fully self-contained, no
-           dependency on any external/global CSS.
-
-           DESKTOP (default):
-             flex row → copy (left) + visual (right)
-
-           MOBILE (≤ 639px):
-             flex column → visual (top) + copy (below)
+           PANEL LAYOUT — Visual on top, copy below.
+           On desktop, place them side-by-side but keep
+           visual first in DOM (CSS Grid: row 1 = visual,
+           row 2 = copy; on desktop, put them in cols).
         ───────────────────────────────────────────── */
         .placedly-hiw-panel-inner {
-          display: flex !important;
-          flex-direction: row !important;
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          grid-template-areas: "visual copy" !important;
           align-items: center !important;
           gap: 48px !important;
         }
-        .placedly-hiw-panel-copy {
-          order: 1 !important;
-          flex: 1 1 50% !important;
+        .placedly-hiw-panel-inner > .placedly-hiw-panel-visual {
+          grid-area: visual !important;
           min-width: 0 !important;
         }
-        .placedly-hiw-panel-visual {
-          order: 2 !important;
-          flex: 1 1 50% !important;
+        .placedly-hiw-panel-inner > .placedly-hiw-panel-copy {
+          grid-area: copy !important;
           min-width: 0 !important;
+        }
+
+        /* ── Accent-driven dynamic colours (unchanged) ── */
+        .placedly-hiw-mock-tag {
+          background: var(--hiw-accent-soft) !important;
+          color: var(--hiw-accent-from) !important;
+          border-color: var(--hiw-accent-border) !important;
+          transition: background 0.4s, color 0.4s, border-color 0.4s;
+        }
+        .placedly-hiw-mock-spark { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
+        .placedly-hiw-mock-arrow { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
+        .placedly-hiw-mock-card--cta {
+          background: var(--hiw-accent-soft) !important;
+          border-color: var(--hiw-accent-border) !important;
+          transition: background 0.4s, border-color 0.4s;
+        }
+        .placedly-hiw-mock-chip {
+          background: var(--hiw-accent-soft) !important;
+          color: var(--hiw-accent-from) !important;
+          transition: background 0.4s, color 0.4s;
+        }
+        .placedly-hiw-mock-offer { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
+        .placedly-hiw-mock-bubble {
+          background: var(--hiw-accent-soft) !important;
+          color: var(--hiw-accent-from) !important;
+          border-color: var(--hiw-accent-border) !important;
+          transition: background 0.4s, color 0.4s, border-color 0.4s;
         }
 
         /* ─────────────────────────────────────────────
            MOBILE OVERRIDES  ≤ 639 px
+           Visual on top, copy below — directly under
+           the toggle bar.
         ───────────────────────────────────────────── */
         @media (max-width: 639px) {
 
@@ -619,24 +641,24 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           .hiw-tabbar-desktop { display: none !important; }
           .hiw-tabbar-mobile  { display: grid !important; }
 
-          /* Stack vertically, visual first */
+          /* Stack: visual on top, copy below */
           .placedly-hiw-panel-inner {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            gap: 0 !important;
+            grid-template-columns: 1fr !important;
+            grid-template-areas:
+              "visual"
+              "copy" !important;
+            gap: 16px !important;
           }
-          .placedly-hiw-panel-visual {
-            order: -1 !important;
-            flex: none !important;
+
+          .placedly-hiw-panel-inner > .placedly-hiw-panel-visual {
+            grid-area: visual !important;
             width: 100%;
             border-radius: 18px;
             overflow: hidden;
-            margin-bottom: 20px;
             box-shadow: 0 4px 24px rgba(0,0,0,0.07);
           }
-          .placedly-hiw-panel-copy {
-            order: 2 !important;
-            flex: none !important;
+          .placedly-hiw-panel-inner > .placedly-hiw-panel-copy {
+            grid-area: copy !important;
             width: 100%;
           }
 
@@ -689,33 +711,6 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
             font-size: 13.5px !important;
             line-height: 1.65 !important;
           }
-        }
-
-        /* ── Accent-driven dynamic colours (unchanged) ── */
-        .placedly-hiw-mock-tag {
-          background: var(--hiw-accent-soft) !important;
-          color: var(--hiw-accent-from) !important;
-          border-color: var(--hiw-accent-border) !important;
-          transition: background 0.4s, color 0.4s, border-color 0.4s;
-        }
-        .placedly-hiw-mock-spark { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
-        .placedly-hiw-mock-arrow { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
-        .placedly-hiw-mock-card--cta {
-          background: var(--hiw-accent-soft) !important;
-          border-color: var(--hiw-accent-border) !important;
-          transition: background 0.4s, border-color 0.4s;
-        }
-        .placedly-hiw-mock-chip {
-          background: var(--hiw-accent-soft) !important;
-          color: var(--hiw-accent-from) !important;
-          transition: background 0.4s, color 0.4s;
-        }
-        .placedly-hiw-mock-offer { color: var(--hiw-accent-from) !important; transition: color 0.4s; }
-        .placedly-hiw-mock-bubble {
-          background: var(--hiw-accent-soft) !important;
-          color: var(--hiw-accent-from) !important;
-          border-color: var(--hiw-accent-border) !important;
-          transition: background 0.4s, color 0.4s, border-color 0.4s;
         }
       `}</style>
     </section>
