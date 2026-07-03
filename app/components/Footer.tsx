@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import {
   ArrowUpRight, ArrowUp, MapPin, Mail, MessageCircle,
-  Rocket, Sparkles, Phone, Shield, Clock, Zap,
+  Rocket, Sparkles, Shield, Clock, Zap,
   CheckCircle2, Globe, Star,
   type LucideIcon,
 } from 'lucide-react';
@@ -224,7 +224,7 @@ function CtaCard({ ctaText, ctaHref, wa }: { ctaText: string; ctaHref: string; w
       onMouseLeave={() => setHCard(false)}
       style={{
         position: 'relative', borderRadius: '24px', overflow: 'hidden',
-        padding: 'clamp(32px,5vw,52px) clamp(24px,5vw,60px)',
+        padding: 'clamp(28px,4.5vw,44px) clamp(24px,5vw,56px)',
         background: 'rgba(255,255,255,0.025)',
         border: `1px solid ${hCard ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.07)'}`,
         backdropFilter: 'blur(16px)',
@@ -246,14 +246,14 @@ function CtaCard({ ctaText, ctaHref, wa }: { ctaText: string; ctaHref: string; w
 
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '28px', flexWrap: 'wrap' }}>
         <div style={{ flex: 1, minWidth: '240px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '14px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
             <span style={{ width: '16px', height: '2px', borderRadius: '999px', background: `linear-gradient(90deg,${G.blue},${G.orange})` }} />
             <span style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.13em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>
               Zero Upfront · Pay After Offer
             </span>
             <span style={{ width: '16px', height: '2px', borderRadius: '999px', background: `linear-gradient(90deg,${G.orange},${G.blue})` }} />
           </div>
-          <h2 style={{ fontSize: 'clamp(1.4rem,2.8vw,2.2rem)', fontWeight: 900, lineHeight: 1.12, letterSpacing: '-0.8px', marginBottom: '10px', color: '#fff' }}>
+          <h2 style={{ fontSize: 'clamp(1.4rem,2.8vw,2.2rem)', fontWeight: 900, lineHeight: 1.12, letterSpacing: '-0.8px', marginBottom: '8px', color: '#fff' }}>
             Ready to <GradText>Transform Your Career?</GradText>
           </h2>
           <p style={{ fontSize: '13.5px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, maxWidth: '400px', margin: 0 }}>
@@ -428,7 +428,7 @@ function Newsletter() {
       position: 'relative', overflow: 'hidden',
       background: 'rgba(255,255,255,0.025)',
       border: '1px solid rgba(255,255,255,0.07)',
-      borderRadius: '18px', padding: '28px 32px',
+      borderRadius: '18px', padding: '24px 28px',
     }}>
       {/* Subtle orb */}
       <div aria-hidden style={{ position: 'absolute', top: '-30px', right: '-20px', width: '140px', height: '140px', borderRadius: '50%', background: `radial-gradient(circle,${G.indigo}20 0%,transparent 70%)`, filter: 'blur(30px)', pointerEvents: 'none' }} />
@@ -520,6 +520,7 @@ function ContactItem({ Icon, color, text, href, label }: {
         transition: 'all .2s ease',
         transform: h ? 'translateX(4px)' : 'translateX(0)',
         cursor: href ? 'pointer' : 'default',
+        height: '100%', boxSizing: 'border-box',
       }}
     >
       <div style={{
@@ -609,26 +610,28 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
         @keyframes ft-blob-c    { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(10px,-20px) scale(1.06)} }
         @keyframes ft-ticker-dot{ 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.3)} }
         @keyframes ft-spin      { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-        @keyframes ft-shimmer   { from{transform:translateX(-100%)} to{transform:translateX(200%)} }
         @keyframes ft-pop       { 0%{transform:scale(.7);opacity:0} 70%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1} }
         @keyframes ft-marquee   { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-        @keyframes ft-pulse-ring{ 0%{transform:scale(1);opacity:.5} 70%{transform:scale(1.7);opacity:0} 100%{transform:scale(1.7);opacity:0} }
 
-        /* Responsive grid */
-        .ft-main-grid { display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:44px; align-items:start; }
-        .ft-bottom-row{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+        /* Responsive grids */
+        .ft-main-grid    { display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:40px; align-items:start; }
+        .ft-contacts-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .ft-bottom-row   { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
 
-        @media (max-width:1024px){ .ft-main-grid{ grid-template-columns:1fr 1fr; gap:32px; } }
+        @media (max-width:1024px){ .ft-main-grid{ grid-template-columns:1fr 1fr; gap:28px; } }
         @media (max-width:640px) {
-          .ft-main-grid { grid-template-columns:1fr; gap:24px; }
-          .ft-bottom-row{ flex-direction:column; text-align:center; }
+          .ft-main-grid    { grid-template-columns:1fr; gap:24px; }
+          .ft-contacts-row { grid-template-columns:1fr 1fr; }
+          .ft-bottom-row   { flex-direction:column; text-align:center; }
+        }
+        @media (max-width:380px) {
+          .ft-contacts-row { grid-template-columns:1fr; }
         }
       `}</style>
 
       <footer ref={footerRef} style={{
         position: 'relative', overflow: 'hidden',
         background: 'linear-gradient(165deg,#04060e 0%,#080b1e 45%,#0e0e34 100%)',
-        paddingTop: '1px',
       }}>
 
         {/* ── Animated ambient orbs ── */}
@@ -649,32 +652,28 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           }} />
         ))}
 
-        {/* ══════════════════════
-            CTA CARD
-        ══════════════════════ */}
+        {/* ══════════ CONTENT STACK — single consistent spacing scale ══════════ */}
         <div style={{
-          padding: '64px 0 0', position: 'relative', zIndex: 1,
-          opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(18px)',
-          transition: 'opacity .6s ease, transform .6s ease',
+          position: 'relative', zIndex: 1,
+          paddingTop: 'clamp(40px, 6vw, 56px)',
+          display: 'flex', flexDirection: 'column',
+          gap: 'clamp(28px, 4vw, 36px)',
         }}>
-          <div className="container">
+
+          {/* CTA CARD */}
+          <div className="container" style={{
+            opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(18px)',
+            transition: 'opacity .6s ease, transform .6s ease',
+          }}>
             <CtaCard ctaText={ctaText} ctaHref={ctaHref} wa={wa} />
           </div>
-        </div>
 
-        {/* ══════════════════════
-            LIVE TICKER
-        ══════════════════════ */}
-        <div style={{ padding: '28px 0 0', position: 'relative', zIndex: 1 }}>
+          {/* LIVE TICKER */}
           <div className="container">
             <LiveTicker items={TICKER_ITEMS} idx={tickerIdx} visible={tickerVisible} />
           </div>
-        </div>
 
-        {/* ══════════════════════
-            ACHIEVEMENT MARQUEE
-        ══════════════════════ */}
-        <div style={{ padding: '28px 0 0', position: 'relative', zIndex: 1 }}>
+          {/* ACHIEVEMENT MARQUEE */}
           <div style={{
             borderTop: '1px solid rgba(255,255,255,0.05)',
             borderBottom: '1px solid rgba(255,255,255,0.05)',
@@ -682,12 +681,8 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           }}>
             <AchievementMarquee />
           </div>
-        </div>
 
-        {/* ══════════════════════
-            MAIN GRID
-        ══════════════════════ */}
-        <div style={{ padding: '52px 0 0', position: 'relative', zIndex: 1 }}>
+          {/* MAIN GRID */}
           <div className="container">
             <div
               className="ft-main-grid"
@@ -699,16 +694,16 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
             >
               {/* Brand Column */}
               <div>
-                <Link href="/" style={{ display: 'inline-block', marginBottom: '18px' }}>
+                <Link href="/" style={{ display: 'inline-block', marginBottom: '16px' }}>
                   <img src="/logo-dark.png" alt="Placedly" style={{ height: '34px', width: 'auto' }} loading="lazy" />
                 </Link>
 
-                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', lineHeight: 1.75, marginBottom: '18px', maxWidth: '270px' }}>
+                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', lineHeight: 1.75, marginBottom: '16px', maxWidth: '280px' }}>
                   {desc}
                 </p>
 
                 {/* Trust pills */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '16px' }}>
                   {[
                     { label: 'Zero Upfront', color: G.blue },
                     { label: '12% Post-Offer', color: G.orange },
@@ -727,21 +722,20 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
                 </div>
 
                 {/* Socials */}
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '22px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '18px', flexWrap: 'wrap' }}>
                   {socials.map(s => <SocialBtn key={s.label} {...s} />)}
                 </div>
 
-                {/* Contact items */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {/* Contact items — now in a 2×2 row grid: WhatsApp | Email  //  Office | Hours */}
+                <div className="ft-contacts-row">
                   {contacts.map(c => <ContactItem key={c.label} {...c} />)}
                 </div>
               </div>
 
               {/* Nav Columns */}
-              {NAV_COLS.map((col, ci) => (
+              {NAV_COLS.map(col => (
                 <div key={col.heading}>
-                  {/* Heading */}
-                  <div style={{ marginBottom: '6px' }}>
+                  <div style={{ marginBottom: '4px' }}>
                     <span style={{
                       fontSize: '10px', fontWeight: 800, letterSpacing: '0.13em',
                       textTransform: 'uppercase',
@@ -752,9 +746,8 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
                       {col.heading}
                     </span>
                   </div>
-                  {/* Animated accent underline */}
                   <div style={{
-                    height: '2px', width: '32px', borderRadius: '999px', marginBottom: '18px',
+                    height: '2px', width: '32px', borderRadius: '999px', marginBottom: '14px',
                     background: `linear-gradient(90deg,${col.color},transparent)`,
                   }} />
                   <nav style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -766,21 +759,13 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
               ))}
             </div>
           </div>
-        </div>
 
-        {/* ══════════════════════
-            NEWSLETTER
-        ══════════════════════ */}
-        <div style={{ padding: '44px 0 0', position: 'relative', zIndex: 1 }}>
+          {/* NEWSLETTER */}
           <div className="container">
             <Newsletter />
           </div>
-        </div>
 
-        {/* ══════════════════════
-            DIVIDER WITH LOGO CENTRE
-        ══════════════════════ */}
-        <div style={{ padding: '44px 0 0', position: 'relative', zIndex: 1 }}>
+          {/* DIVIDER WITH LOGO CENTRE */}
           <div className="container">
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '16px' }}>
               <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg,transparent,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.08))' }} />
@@ -795,13 +780,9 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
               <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg,rgba(255,255,255,0.08),rgba(255,255,255,0.08) 50%,transparent)' }} />
             </div>
           </div>
-        </div>
 
-        {/* ══════════════════════
-            BOTTOM BAR
-        ══════════════════════ */}
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <div className="container" style={{ padding: '18px 0 24px' }}>
+          {/* BOTTOM BAR */}
+          <div className="container" style={{ paddingBottom: 'clamp(20px, 3vw, 24px)' }}>
             <div className="ft-bottom-row">
               <p style={{ fontSize: '10.5px', color: 'rgba(255,255,255,0.24)', lineHeight: 1.65, flex: 1, margin: 0 }}>
                 {copyright}
@@ -816,8 +797,8 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
               </div>
             </div>
           </div>
-        </div>
 
+        </div>
       </footer>
     </>
   );
