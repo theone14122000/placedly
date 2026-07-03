@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Share2, Sparkles } from 'lucide-react';
+import { Share2, Sparkles, Briefcase, Globe, ArrowRight, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import HeroMobileBrief from './HeroMobileBrief';
 import HeroGradientBg from './HeroGradientBg';
@@ -11,26 +11,11 @@ import HiringPartnersMarquee from './HiringPartnersMarquee';
 type HeroCms = { [k: string]: string };
 
 const SCATTER_AVATARS = [
-  {
-    src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face',
-    top: '0%', left: '0%', size: 46, badge: false,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&crop=face',
-    top: '2%', left: '72%', size: 44, badge: true,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&crop=face',
-    top: '38%', left: '6%', size: 50, badge: true,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop&crop=face',
-    top: '70%', left: '0%', size: 44, badge: false,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&crop=face',
-    top: '66%', left: '74%', size: 48, badge: true,
-  },
+  { src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face', top: '0%', left: '0%', size: 46, badge: false },
+  { src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&crop=face', top: '2%', left: '72%', size: 44, badge: true },
+  { src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&crop=face', top: '38%', left: '6%', size: 50, badge: true },
+  { src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop&crop=face', top: '70%', left: '0%', size: 44, badge: false },
+  { src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&crop=face', top: '66%', left: '74%', size: 48, badge: true },
 ] as const;
 
 const HERO_CARD_AVATARS = {
@@ -56,12 +41,12 @@ function AnimatedGradientText({
           backgroundImage: [
             'linear-gradient(',
             '270deg,',
-            '#2563eb,',   /* blue        */
-            '#7c8ff0,',   /* indigo      */
-            '#fb923c,',   /* orange      */
-            '#f43f5e,',   /* rose        */
-            '#a855f7,',   /* purple      */
-            '#2563eb',    /* back to blue — seamless loop */
+            '#2563eb,',
+            '#7c8ff0,',
+            '#fb923c,',
+            '#f43f5e,',
+            '#a855f7,',
+            '#2563eb',
             ')',
           ].join(' '),
           backgroundSize: '300% 300%',
@@ -75,7 +60,6 @@ function AnimatedGradientText({
         {children}
       </Tag>
 
-      {/* keyframes — injected once, harmless if duplicated */}
       <style>{`
         @keyframes placedly-gradient-shift {
           0%   { background-position: 0%   50%; }
@@ -87,12 +71,185 @@ function AnimatedGradientText({
   );
 }
 
+/* ─── Dynamic shine-pill CTA (shared by both hero buttons) ─── */
+function HeroCtaButton({
+  href,
+  label,
+  icon: Icon,
+  variant,
+  delay = 0,
+}: {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  variant: 'get-placed' | 'study-abroad';
+  delay?: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay }}
+      whileTap={{ scale: 0.98 }}
+    >
+      <Link href={href} className={`placedly-hero-cta placedly-hero-cta--${variant}`}>
+        <span className="placedly-hero-cta-shine" aria-hidden />
+        <span className="placedly-hero-cta-label">{label}</span>
+        <motion.span
+          className="placedly-hero-cta-icon"
+          animate={{ x: [0, 3, 0] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut', delay: delay + 0.3 }}
+        >
+          {href.includes('study-visa') || variant === 'study-abroad'
+            ? <ArrowRight size={13} strokeWidth={2.5} />
+            : <Icon size={13} strokeWidth={2.5} />}
+        </motion.span>
+      </Link>
+    </motion.div>
+  );
+}
+
 export default function Hero({ cms = {} }: { cms?: HeroCms }) {
   const offerRole      = cms['hp:heroOfferRole']      ?? 'Senior Claims Analyst';
   const admitProgramme = cms['hp:heroAdmitProgramme'] ?? "MSc International Business · Fall '25";
 
   return (
     <section id="Top" className="placedly-lift-hero">
+      <style>{`
+        /* ============================================================
+           DYNAMIC HERO CTA SYSTEM
+           Shared shine-pill mechanic, two brand-token colour variants
+           ============================================================ */
+        .placedly-hero-cta {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 13px 22px 13px 26px;
+          border-radius: 999px;
+          font-weight: 700;
+          font-size: 14.5px;
+          letter-spacing: 0.01em;
+          font-family: inherit;
+          text-decoration: none;
+          color: #ffffff;
+          border: 1px solid rgba(255,255,255,0.25);
+          overflow: hidden;
+          isolation: isolate;
+          cursor: pointer;
+          background-size: 200% 200%;
+          background-position: 0% 50%;
+          transition:
+            transform 0.28s cubic-bezier(0.22,1,0.36,1),
+            box-shadow 0.28s cubic-bezier(0.22,1,0.36,1),
+            filter 0.28s ease,
+            background-position 0.6s ease;
+        }
+
+        /* Get Placed — primary blue gradient */
+        .placedly-hero-cta--get-placed {
+          background-image: linear-gradient(135deg, #2563eb, #7c8ff0);
+          box-shadow:
+            0 8px 22px rgba(37, 99, 235, 0.32),
+            0 2px 6px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255,255,255,0.25);
+        }
+        .placedly-hero-cta--get-placed:hover {
+          box-shadow:
+            0 16px 34px rgba(37, 99, 235, 0.42),
+            0 4px 10px rgba(0, 0, 0, 0.16),
+            inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        /* Study Abroad — warm orange/rose gradient */
+        .placedly-hero-cta--study-abroad {
+          background-image: linear-gradient(135deg, #fb923c, #f43f5e);
+          box-shadow:
+            0 8px 22px rgba(251, 146, 60, 0.32),
+            0 2px 6px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255,255,255,0.25);
+        }
+        .placedly-hero-cta--study-abroad:hover {
+          box-shadow:
+            0 16px 34px rgba(244, 63, 94, 0.4),
+            0 4px 10px rgba(0, 0, 0, 0.16),
+            inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .placedly-hero-cta:hover {
+          transform: translateY(-3px);
+          filter: brightness(1.07) saturate(1.05);
+          background-position: 100% 50%;
+        }
+
+        .placedly-hero-cta:active {
+          transform: translateY(-1px) scale(0.98);
+          filter: brightness(0.98);
+        }
+
+        .placedly-hero-cta-label {
+          position: relative;
+          z-index: 1;
+          white-space: nowrap;
+        }
+
+        .placedly-hero-cta-icon {
+          position: relative;
+          z-index: 1;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.22);
+          transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), background 0.3s ease;
+        }
+
+        .placedly-hero-cta:hover .placedly-hero-cta-icon {
+          background: rgba(255, 255, 255, 0.34);
+        }
+
+        .placedly-hero-cta-shine {
+          position: absolute;
+          top: 0;
+          left: -130%;
+          width: 55%;
+          height: 100%;
+          background: linear-gradient(115deg, transparent, rgba(255,255,255,0.5), transparent);
+          transform: skewX(-20deg);
+          transition: left 0.65s ease;
+          z-index: 0;
+          pointer-events: none;
+        }
+
+        .placedly-hero-cta:hover .placedly-hero-cta-shine {
+          left: 140%;
+        }
+
+        /* CTA row layout */
+        .placedly-lift-hero-ctas {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          flex-wrap: wrap;
+        }
+
+        @media (max-width: 640px) {
+          .placedly-lift-hero-ctas {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+          }
+          .placedly-hero-cta {
+            width: 100%;
+            justify-content: center;
+            padding: 15px 22px;
+            font-size: 15px;
+          }
+        }
+      `}</style>
+
       <div className="placedly-hero-desktop-gradient" aria-hidden>
         <HeroGradientBg />
         <HeroBgVideo />
@@ -106,13 +263,10 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55 }}
-            /* reset any colour the CSS class sets so gradient shows through */
             style={{ color: 'inherit', WebkitTextFillColor: 'initial' }}
           >
-            {/* plain line */}
             Grow your career,
             <br />
-            {/* gradient line */}
             <AnimatedGradientText>
               through people you trust.
             </AnimatedGradientText>
@@ -128,16 +282,22 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
               'Career Placement & Global Education Consultancy — Delhi NCR.'}
           </motion.p>
 
-          <motion.div
-            className="placedly-lift-hero-ctas"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.16 }}
-          >
-            <Link href="/study-visa" className="placedly-lift-hero-btn">
-              {cms['hp:heroSecondaryCtaText'] ?? 'Study Abroad'}
-            </Link>
-          </motion.div>
+          <div className="placedly-lift-hero-ctas">
+            <HeroCtaButton
+              href="/contact"
+              label={cms['hp:heroPrimaryCtaText'] ?? 'Get Placed'}
+              icon={Briefcase}
+              variant="get-placed"
+              delay={0.16}
+            />
+            <HeroCtaButton
+              href="/study-visa"
+              label={cms['hp:heroSecondaryCtaText'] ?? 'Study Abroad'}
+              icon={Globe}
+              variant="study-abroad"
+              delay={0.24}
+            />
+          </div>
         </div>
 
         {/* ── Stage ── */}

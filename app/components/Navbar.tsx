@@ -23,7 +23,6 @@ const navLinks = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const isHome = pathname === '/';
   const shellRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
 
@@ -32,8 +31,6 @@ export default function Navbar() {
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
-
-  const solid = scrolled || !isHome || servicesOpen || mobileOpen;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -74,8 +71,10 @@ export default function Navbar() {
   const toggleMobile = () => setMobileOpen(v => !v);
   const toggleMobileColumn = (id: string) => setMobileExpanded(v => (v === id ? null : id));
 
-  const textColor = solid ? '#0f172a' : 'rgba(255,255,255,0.92)';
-  const subTextColor = solid ? '#64748b' : 'rgba(255,255,255,0.6)';
+  // ✅ Text is ALWAYS dark — the bar itself is always a readable frosted surface,
+  // regardless of what section is scrolled behind it. This fixes the invisible-text bug.
+  const TEXT = '#0f172a';
+  const MUTED = '#64748b';
 
   return (
     <>
@@ -91,12 +90,14 @@ export default function Navbar() {
       <header
         style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
-          transition: 'background .4s ease, box-shadow .4s ease, border-color .4s ease',
-          background: solid ? 'rgba(255,255,255,0.86)' : 'transparent',
-          backdropFilter: solid ? 'blur(20px) saturate(180%)' : 'none',
-          WebkitBackdropFilter: solid ? 'blur(20px) saturate(180%)' : 'none',
-          borderBottom: solid ? '1px solid rgba(15,23,42,0.06)' : '1px solid transparent',
-          boxShadow: solid ? '0 8px 30px rgba(15,23,42,0.06)' : 'none',
+          transition: 'background .4s ease, box-shadow .4s ease, border-color .4s ease, backdrop-filter .4s ease',
+          // ✅ Always a light frosted glass surface — never fully transparent,
+          // so text contrast is guaranteed no matter what's behind it.
+          background: scrolled ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.62)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          borderBottom: scrolled ? '1px solid rgba(15,23,42,0.07)' : '1px solid rgba(15,23,42,0.04)',
+          boxShadow: scrolled ? '0 8px 30px rgba(15,23,42,0.08)' : '0 2px 12px rgba(15,23,42,0.03)',
         }}
       >
         <div ref={shellRef} style={{ position: 'relative' }}>
@@ -124,7 +125,8 @@ export default function Navbar() {
               <nav aria-label="Main navigation" className="pd-desktop-links" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 {navLinks.map(link => {
                   const active = pathname === link.href;
-                  const show = hovered === link.href || (active && hovered === null);
+                  const isHovered = hovered === link.href;
+                  const show = isHovered || (active && hovered === null);
                   return (
                     <Link
                       key={link.href}
@@ -132,10 +134,10 @@ export default function Navbar() {
                       onClick={handleLink}
                       onMouseEnter={() => setHovered(link.href)}
                       onMouseLeave={() => setHovered(null)}
+                      className="pd-nav-link"
                       style={{
                         position: 'relative', padding: '9px 16px', fontSize: 14, fontWeight: 600,
-                        color: active ? '#2563eb' : textColor, textDecoration: 'none',
-                        transition: 'color .25s ease', display: 'inline-block',
+                        textDecoration: 'none', display: 'inline-block',
                       }}
                     >
                       {show && (
@@ -144,12 +146,34 @@ export default function Navbar() {
                           transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                           style={{
                             position: 'absolute', inset: 0, borderRadius: 999,
-                            background: active ? 'rgba(37,99,235,0.1)' : 'rgba(15,23,42,0.05)',
+                            background: 'rgba(37,99,235,0.09)',
+                            border: '1px solid rgba(37,99,235,0.14)',
                             zIndex: 0,
                           }}
                         />
                       )}
-                      <span style={{ position: 'relative', zIndex: 1 }}>{link.label}</span>
+                      <span
+                        style={{
+                          position: 'relative', zIndex: 1,
+                          color: active || isHovered ? 'transparent' : TEXT,
+                          backgroundImage: active || isHovered ? 'linear-gradient(90deg,#2563eb,#7c8ff0)' : 'none',
+                          WebkitBackgroundClip: active || isHovered ? 'text' : 'unset',
+                          backgroundClip: active || isHovered ? 'text' : 'unset',
+                          transition: 'color .2s ease',
+                        }}
+                      >
+                        {link.label}
+                      </span>
+                      {/* animated underline */}
+                      <motion.span
+                        initial={false}
+                        animate={{ scaleX: active ? 1 : 0 }}
+                        transition={{ duration: 0.3, ease: EASE }}
+                        style={{
+                          position: 'absolute', left: 16, right: 16, bottom: 3, height: 2, borderRadius: 999,
+                          background: 'linear-gradient(90deg,#2563eb,#fb923c)', transformOrigin: 'left', zIndex: 1,
+                        }}
+                      />
                     </Link>
                   );
                 })}
@@ -160,13 +184,15 @@ export default function Navbar() {
                   onClick={toggleServices}
                   aria-expanded={servicesOpen}
                   aria-haspopup="true"
+                  className="pd-services-trigger"
                   style={{
                     position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 6,
-                    padding: '9px 16px', fontSize: 14, fontWeight: 600, cursor: 'pointer',
-                    background: servicesOpen ? 'rgba(37,99,235,0.1)' : 'transparent',
-                    color: servicesOpen ? '#2563eb' : textColor,
-                    border: 'none', borderRadius: 999, fontFamily: 'inherit',
-                    transition: 'background .25s ease, color .25s ease',
+                    padding: '9px 18px', fontSize: 14, fontWeight: 700, cursor: 'pointer',
+                    background: servicesOpen ? 'rgba(37,99,235,0.1)' : 'rgba(15,23,42,0.035)',
+                    color: servicesOpen ? '#2563eb' : TEXT,
+                    border: servicesOpen ? '1px solid rgba(37,99,235,0.25)' : '1px solid rgba(15,23,42,0.07)',
+                    borderRadius: 999, fontFamily: 'inherit', marginLeft: 6,
+                    transition: 'background .25s ease, color .25s ease, border-color .25s ease',
                   }}
                 >
                   Services
@@ -182,31 +208,34 @@ export default function Navbar() {
               <Link
                 href="/login"
                 onClick={handleLink}
+                className="pd-signin-link"
                 style={{
-                  fontSize: 14, fontWeight: 700, padding: '10px 20px', borderRadius: 999,
-                  color: textColor, textDecoration: 'none',
-                  border: solid ? '1.5px solid #e2e8f0' : '1.5px solid rgba(255,255,255,0.25)',
-                  transition: 'transform .2s ease, background .2s ease',
+                  position: 'relative', fontSize: 14, fontWeight: 700, padding: '10px 18px',
+                  color: TEXT, textDecoration: 'none',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
-                onMouseLeave={e => (e.currentTarget.style.transform = 'translateY(0)')}
               >
                 Sign in
+                <span className="pd-signin-underline" />
               </Link>
 
               <motion.div whileHover={{ y: -3 }} whileTap={{ y: 0, scale: 0.98 }}>
                 <Link
                   href="/cap/apply"
                   onClick={handleLink}
+                  className="pd-cta-shine"
                   style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none',
-                    background: 'linear-gradient(135deg,#2563eb,#7c8ff0)', color: '#fff',
+                    position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none',
+                    background: 'linear-gradient(135deg,#2563eb,#7c8ff0)', color: '#fff', overflow: 'hidden',
                     fontWeight: 700, fontSize: 14, padding: '11px 24px', borderRadius: 999,
                     boxShadow: '0 8px 22px rgba(37,99,235,0.35)', fontFamily: 'inherit',
                   }}
                 >
-                  Apply for CAP
-                  <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}>
+                  <span className="pd-cta-shine-sweep" aria-hidden />
+                  <span style={{ position: 'relative', zIndex: 1 }}>Apply for CAP</span>
+                  <motion.span
+                    style={{ position: 'relative', zIndex: 1, display: 'flex' }}
+                    animate={{ x: [0, 4, 0] }} transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+                  >
                     <ArrowRight size={14} />
                   </motion.span>
                 </Link>
@@ -216,13 +245,11 @@ export default function Navbar() {
                 href="/login"
                 onClick={handleLink}
                 aria-label="Sign in"
+                className="pd-avatar-btn"
                 style={{
                   width: 38, height: 38, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: textColor, border: solid ? '1.5px solid #e2e8f0' : '1.5px solid rgba(255,255,255,0.25)',
-                  transition: 'transform .2s ease',
+                  color: TEXT, border: '1.5px solid #e2e8f0', background: 'rgba(255,255,255,0.6)',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.08)')}
-                onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
               >
                 <CircleUserRound size={19} strokeWidth={1.75} />
               </Link>
@@ -237,7 +264,7 @@ export default function Navbar() {
               aria-expanded={mobileOpen}
               style={{
                 display: 'none', width: 42, height: 42, borderRadius: 12, alignItems: 'center', justifyContent: 'center',
-                background: solid ? 'rgba(15,23,42,0.05)' : 'rgba(255,255,255,0.12)', border: 'none', cursor: 'pointer',
+                background: 'rgba(15,23,42,0.05)', border: '1px solid rgba(15,23,42,0.06)', cursor: 'pointer',
               }}
             >
               <AnimatePresence mode="wait" initial={false}>
@@ -247,7 +274,7 @@ export default function Navbar() {
                   animate={{ rotate: 0, opacity: 1 }}
                   exit={{ rotate: 90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  style={{ display: 'flex', color: textColor }}
+                  style={{ display: 'flex', color: TEXT }}
                 >
                   {mobileOpen ? <X size={22} /> : <Menu size={22} />}
                 </motion.span>
@@ -296,10 +323,10 @@ export default function Navbar() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3, delay: 0.04 + columnIndex * 0.05, ease: EASE }}
                           whileHover={{ y: -4 }}
+                          className="pd-mega-col"
                           style={{
                             position: 'relative', padding: '20px 18px', borderRadius: 18,
                             border: '1px solid rgba(15,23,42,0.06)', overflow: 'hidden',
-                            transition: 'box-shadow .3s ease',
                           }}
                         >
                           <div style={{
@@ -350,8 +377,8 @@ export default function Navbar() {
                   </div>
 
                   <div style={{ display: 'flex', gap: 16, marginBottom: 20, paddingTop: 16, borderTop: '1px solid rgba(15,23,42,0.06)' }}>
-                    <Link href="/about-us" onClick={handleLink} style={{ fontSize: 13, fontWeight: 600, color: '#64748b', textDecoration: 'none' }}>About Us</Link>
-                    <Link href="/vacancies" onClick={handleLink} style={{ fontSize: 13, fontWeight: 600, color: '#64748b', textDecoration: 'none' }}>Vacancies</Link>
+                    <Link href="/about-us" onClick={handleLink} style={{ fontSize: 13, fontWeight: 600, color: MUTED, textDecoration: 'none' }}>About Us</Link>
+                    <Link href="/vacancies" onClick={handleLink} style={{ fontSize: 13, fontWeight: 600, color: MUTED, textDecoration: 'none' }}>Vacancies</Link>
                   </div>
 
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
@@ -413,7 +440,6 @@ export default function Navbar() {
                 display: 'flex', flexDirection: 'column', overflow: 'hidden',
               }}
             >
-              {/* ambient blob for brand consistency */}
               <div style={{
                 position: 'absolute', top: -60, right: -60, width: 240, height: 240, borderRadius: '50%',
                 background: 'radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%)',
@@ -425,7 +451,6 @@ export default function Navbar() {
                 filter: 'blur(60px)', pointerEvents: 'none',
               }} />
 
-              {/* header row */}
               <div style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 padding: '20px 24px', borderBottom: '1px solid rgba(15,23,42,0.06)', position: 'relative', zIndex: 1,
@@ -446,7 +471,6 @@ export default function Navbar() {
                 </button>
               </div>
 
-              {/* scrollable body */}
               <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px', position: 'relative', zIndex: 1 }}>
                 <nav style={{ display: 'flex', flexDirection: 'column', gap: 2, marginBottom: 8 }}>
                   {navLinks.map((link, i) => {
@@ -474,7 +498,6 @@ export default function Navbar() {
                   })}
                 </nav>
 
-                {/* Services accordion */}
                 <motion.div
                   initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.35, delay: 0.2, ease: EASE }}
@@ -533,7 +556,6 @@ export default function Navbar() {
                 </motion.div>
               </div>
 
-              {/* sticky footer CTAs */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.3, ease: EASE }}
@@ -575,6 +597,39 @@ export default function Navbar() {
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
         }
+
+        .pd-nav-link:hover .pd-signin-underline { transform: scaleX(1); }
+
+        .pd-services-trigger:hover {
+          border-color: rgba(37,99,235,0.3) !important;
+          box-shadow: 0 4px 14px rgba(37,99,235,0.12);
+        }
+
+        .pd-signin-link { overflow: hidden; }
+        .pd-signin-underline {
+          position: absolute; left: 18px; right: 18px; bottom: 6px; height: 2px; border-radius: 999px;
+          background: linear-gradient(90deg,#2563eb,#fb923c);
+          transform: scaleX(0); transform-origin: left; transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+        }
+        .pd-signin-link:hover .pd-signin-underline { transform: scaleX(1); }
+
+        .pd-avatar-btn { transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; }
+        .pd-avatar-btn:hover {
+          transform: scale(1.08);
+          border-color: rgba(37,99,235,0.35);
+          box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
+        }
+
+        .pd-cta-shine { isolation: isolate; }
+        .pd-cta-shine-sweep {
+          position: absolute; top: 0; left: -130%; width: 55%; height: 100%;
+          background: linear-gradient(115deg, transparent, rgba(255,255,255,0.5), transparent);
+          transform: skewX(-20deg); transition: left 0.65s ease; z-index: 0; pointer-events: none;
+        }
+        .pd-cta-shine:hover .pd-cta-shine-sweep { left: 140%; }
+
+        .pd-mega-col { transition: box-shadow .3s ease, border-color .3s ease; }
+        .pd-mega-col:hover { box-shadow: 0 20px 50px rgba(15,23,42,0.1); border-color: rgba(15,23,42,0.09); }
         .pd-mega-link:hover { color: #2563eb !important; transform: translateX(3px); }
         .pd-mega-link:hover .pd-mega-dot { background: #2563eb !important; }
 
