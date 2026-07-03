@@ -4,25 +4,30 @@ import { FadeUp } from './motion';
 
 type Cms = Record<string, string>;
 
-const DEFAULT_COMPANIES = [
-  'EXL Services',
-  'Quatrro',
-  'eBiz Solutions',
-  'WNS Global',
-  'Optum',
-  'Cognizant',
-  'Wipro',
-  'Infosys BPM',
-  'Mphasis',
-  'HCL',
-  'Genpact',
-  'Access Healthcare',
-  'Conifer Health',
+type Company = {
+  name: string;
+  domain?: string;
+  logo?: string;
+};
+
+/* ── Default hiring partners (with real domains for live logos) ── */
+const DEFAULT_COMPANIES: Company[] = [
+  { name: 'EXL Services',      domain: 'exlservice.com' },
+  { name: 'Quatrro',           domain: 'quatrro.com' },
+  { name: 'WNS Global',        domain: 'wns.com' },
+  { name: 'Optum',             domain: 'optum.com' },
+  { name: 'Cognizant',         domain: 'cognizant.com' },
+  { name: 'Wipro',             domain: 'wipro.com' },
+  { name: 'Infosys BPM',       domain: 'infosysbpm.com' },
+  { name: 'Mphasis',           domain: 'mphasis.com' },
+  { name: 'HCLTech',           domain: 'hcltech.com' },
+  { name: 'Genpact',           domain: 'genpact.com' },
+  { name: 'Access Healthcare', domain: 'accesshealthcare.com' },
+  { name: 'Conifer Health',    domain: 'coniferhealth.com' },
 ];
 
-const ROW_SPEEDS = [520, 620, 450];
-/** Repeat full list enough times so each half of the track exceeds viewport width */
-const ROW_REPEATS = 5;
+const MARQUEE_DURATION = 38; // seconds — single strip speed
+const REPEATS = 3; // how many times the full list repeats before looping
 
 function rotateList<T>(items: T[], offset: number): T[] {
   if (!items.length) return items;
@@ -30,67 +35,87 @@ function rotateList<T>(items: T[], offset: number): T[] {
   return [...items.slice(n), ...items.slice(0, n)];
 }
 
-function buildRowSequence(companies: string[]): string[] {
-  const sequence: string[] = [];
-  for (let r = 0; r < ROW_REPEATS; r += 1) {
+function buildSequence(companies: Company[]): Company[] {
+  const sequence: Company[] = [];
+  for (let r = 0; r < REPEATS; r += 1) {
     sequence.push(...rotateList(companies, r * 2));
   }
   return sequence;
 }
 
-function LogoRow({
-  companies,
-  reverse,
-  duration,
-}: {
-  companies: string[];
-  reverse?: boolean;
-  duration: number;
-}) {
-  const sequence = buildRowSequence(companies);
+/**
+ * Parses company data from CMS.
+ * Priority:
+ *  1. `hp:marqueeCompaniesJson` — JSON array of { name, domain?, logo? }
+ *  2. `hp:marqueeCompanies`     — legacy comma-separated plain names (no logos)
+ *  3. DEFAULT_COMPANIES
+ */
+function parseCompanies(cms: Cms): Company[] {
+  const rawJson = cms['hp:marqueeCompaniesJson'];
+  if (rawJson) {
+    try {
+      const parsed = JSON.parse(rawJson);
+      if (Array.isArray(parsed) && parsed.length) {
+        const cleaned: Company[] = parsed
+          .map((item: unknown) => {
+            if (typeof item === 'string') return { name: item.trim() };
+            if (item && typeof item === 'object') {
+              const obj = item as Record<string, unknown>;
+              const name = typeof obj.name === 'string' ? obj.name.trim() : '';
+              const domain = typeof obj.domain === 'string' ? obj.domain.trim() : undefined;
+              const logo = typeof obj.logo === 'string' ? obj.logo.trim() : undefined;
+              return name ? { name, domain, logo } : null;
+            }
+            return null;
+          })
+          .filter((c): c is Company => !!c && !!c.name);
+        if (cleaned.length) return cleaned;
+      }
+    } catch {
+      // fall through to next source
+    }
+  }
+
+  const rawList = cms['hp:marqueeCompanies'];
+  if (rawList) {
+    const names = rawList.split(',').map((s) => s.trim()).filter(Boolean);
+    if (names.length) return names.map((name) => ({ name }));
+  }
+
+  return DEFAULT_COMPANIES;
+}
+
+function CompanyLogo({ company }: { company: Company }) {
+  const src = company.logo || (company.domain ? `https://logo.clearbit.com/${company.domain}` : undefined);
 
   return (
-    <div className="placedly-partners-row">
-      <div className="placedly-partners-edge placedly-partners-edge--left" aria-hidden />
-      <div
-        className={`placedly-partners-track${reverse ? ' placedly-partners-track--reverse' : ''}`}
-        style={{ animationDuration: `${duration}s` }}
-      >
-        <div className="placedly-partners-inner">
-          {sequence.map((name, i) => (
-            <span key={`a-${name}-${i}`} className="placedly-partners-logo">
-              {name}
-            </span>
-          ))}
-        </div>
-        <div className="placedly-partners-inner" aria-hidden>
-          {sequence.map((name, i) => (
-            <span key={`b-${name}-${i}`} className="placedly-partners-logo">
-              {name}
-            </span>
-          ))}
-        </div>
-      </div>
-      <div className="placedly-partners-edge placedly-partners-edge--right" aria-hidden />
-    </div>
+    <span className="placedly-strip-item">
+      {src && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt=""
+          aria-hidden
+          className="placedly-strip-logo"
+          loading="lazy"
+          onError={(e) => {
+            e.currentTarget.style.display = 'none';
+          }}
+        />
+      )}
+      <span className="placedly-strip-name">{company.name}</span>
+    </span>
   );
 }
 
 export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
-  const label = cms['hp:marqueeLabel'] ?? 'Our cap candiate have landed roles at';
+  const label = cms['hp:marqueeLabel'] ?? 'Our CAP candidates have landed roles at';
   const sub =
     cms['hp:marqueeSub'] ??
     'Through our placement network — roles sourced via trusted recruitment partners';
-  const rawList = cms['hp:marqueeCompanies'] ?? '';
-  const companies = rawList
-    ? rawList.split(',').map((s) => s.trim()).filter(Boolean)
-    : DEFAULT_COMPANIES;
 
-  const rowSets = [
-    companies,
-    rotateList(companies, 4),
-    rotateList(companies, 8),
-  ];
+  const companies = parseCompanies(cms);
+  const sequence = buildSequence(companies);
 
   return (
     <section className="placedly-partners-section" aria-label="Hiring partners">
@@ -99,16 +124,149 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
         <p className="placedly-partners-sub">{sub}</p>
       </FadeUp>
 
-      <div className="placedly-partners-rows">
-        {rowSets.map((rowCompanies, i) => (
-          <LogoRow
-            key={i}
-            companies={rowCompanies}
-            reverse={i % 2 === 1}
-            duration={ROW_SPEEDS[i] ?? 45}
-          />
-        ))}
+      <div className="placedly-strip">
+        <div className="placedly-strip-edge placedly-strip-edge--left" aria-hidden />
+        <div className="placedly-strip-track">
+          <div className="placedly-strip-inner">
+            {sequence.map((c, i) => (
+              <CompanyLogo key={`a-${c.name}-${i}`} company={c} />
+            ))}
+          </div>
+          <div className="placedly-strip-inner" aria-hidden>
+            {sequence.map((c, i) => (
+              <CompanyLogo key={`b-${c.name}-${i}`} company={c} />
+            ))}
+          </div>
+        </div>
+        <div className="placedly-strip-edge placedly-strip-edge--right" aria-hidden />
       </div>
+
+      <style>{`
+        .placedly-partners-section {
+          padding: 48px 0;
+        }
+        .placedly-partners-header {
+          text-align: center;
+          max-width: 640px;
+          margin: 0 auto 28px;
+          padding: 0 20px;
+        }
+        .placedly-partners-title {
+          font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+          font-weight: 800;
+          color: #0f172a;
+          margin-bottom: 6px;
+          letter-spacing: -0.3px;
+        }
+        .placedly-partners-sub {
+          font-size: 13.5px;
+          color: #64748b;
+          line-height: 1.6;
+        }
+
+        /* ── Thin strip container ── */
+        .placedly-strip {
+          position: relative;
+          overflow: hidden;
+          background: #fff;
+          border-top: 1px solid rgba(15, 23, 42, 0.06);
+          border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+          padding: 16px 0;
+        }
+
+        .placedly-strip-edge {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 90px;
+          z-index: 2;
+          pointer-events: none;
+        }
+        .placedly-strip-edge--left {
+          left: 0;
+          background: linear-gradient(90deg, #fff, rgba(255,255,255,0));
+        }
+        .placedly-strip-edge--right {
+          right: 0;
+          background: linear-gradient(270deg, #fff, rgba(255,255,255,0));
+        }
+
+        .placedly-strip-track {
+          display: flex;
+          width: max-content;
+          animation: placedly-strip-scroll ${MARQUEE_DURATION}s linear infinite;
+        }
+        .placedly-strip:hover .placedly-strip-track {
+          animation-play-state: paused;
+        }
+
+        .placedly-strip-inner {
+          display: flex;
+          align-items: center;
+          gap: 40px;
+          padding-right: 40px;
+          flex-shrink: 0;
+        }
+
+        .placedly-strip-item {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          white-space: nowrap;
+        }
+
+        .placedly-strip-logo {
+          height: 22px;
+          width: auto;
+          max-width: 100px;
+          object-fit: contain;
+          filter: grayscale(1);
+          opacity: 0.55;
+          transition: filter 0.3s ease, opacity 0.3s ease;
+        }
+        .placedly-strip-item:hover .placedly-strip-logo {
+          filter: grayscale(0);
+          opacity: 1;
+        }
+
+        .placedly-strip-name {
+          font-size: 13.5px;
+          font-weight: 600;
+          color: #475569;
+          transition: color 0.3s ease;
+        }
+        .placedly-strip-item:hover .placedly-strip-name {
+          color: #0f172a;
+        }
+
+        @keyframes placedly-strip-scroll {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+
+        @media (max-width: 639px) {
+          .placedly-partners-section {
+            padding: 36px 0;
+          }
+          .placedly-strip {
+            padding: 14px 0;
+          }
+          .placedly-strip-edge {
+            width: 40px;
+          }
+          .placedly-strip-inner {
+            gap: 28px;
+            padding-right: 28px;
+          }
+          .placedly-strip-logo {
+            height: 18px;
+            max-width: 76px;
+          }
+          .placedly-strip-name {
+            font-size: 12px;
+          }
+        }
+      `}</style>
     </section>
   );
 }
