@@ -1,8 +1,9 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform, useInView } from 'framer-motion';
 import {
-  Star,
+  Share2,
+  Sparkles,
   Briefcase,
   Globe,
   Users,
@@ -12,6 +13,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 import HeroMobileBrief from './HeroMobileBrief';
 import HeroGradientBg from './HeroGradientBg';
 import HeroBgVideo from './HeroBgVideo';
@@ -19,16 +21,13 @@ import HiringPartnersMarquee from './HiringPartnersMarquee';
 
 type HeroCms = { [k: string]: string };
 
-/* ─── Floating scatter avatars — tightened, professional composition ─── */
+/* ─── Scatter avatars — restored original composition, repositioned to fit the centered stage without overlap ─── */
 const SCATTER_AVATARS = [
-  { src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&crop=face', top: '2%',  left: '45%', size: 56 },
-  { src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop&crop=face', top: '8%',  left: '88%', size: 42 },
-  { src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&crop=face', top: '60%', left: '22%', size: 46 },
-] as const;
-
-const DECORATIVE_DOTS = [
-  { top: '54%', left: '2%',  size: 18, tone: 'solid' as const },
-  { top: '0%',  left: '96%', size: 11, tone: 'ghost' as const },
+  { src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face', top: '0%',  left: '40%', size: 46, badge: false, depth: 16 },
+  { src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&crop=face', top: '4%',  left: '80%', size: 44, badge: true,  depth: 26 },
+  { src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&crop=face', top: '42%', left: '6%',  size: 50, badge: true,  depth: 12 },
+  { src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop&crop=face', top: '38%', left: '90%', size: 46, badge: true,  depth: 22 },
+  { src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&crop=face', top: '76%', left: '36%', size: 44, badge: false, depth: 18 },
 ] as const;
 
 const HERO_CARD_AVATARS = {
@@ -36,7 +35,15 @@ const HERO_CARD_AVATARS = {
   right: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face',
 } as const;
 
-/* ─── Animated gradient heading — full rainbow shift ─── */
+/* ─── Stat data ─── */
+const STATS = [
+  { icon: ShieldCheck, prefix: 'Trusted by', value: 500, suffix: '+', label: 'Companies' },
+  { icon: Users, prefix: '', value: 50000, suffix: '+', label: 'Careers Transformed' },
+  { icon: Globe, prefix: 'Global Opportunities Across', value: 20, suffix: '+', label: 'Countries' },
+  { icon: Award, prefix: '', value: 10, suffix: '+ Years', label: 'Recruitment Excellence' },
+] as const;
+
+/* ─── Animated gradient heading ─── */
 function AnimatedGradientText({
   children,
   className,
@@ -84,20 +91,33 @@ function AnimatedGradientText({
   );
 }
 
-/* ─── Feature pill (For Candidates / For Recruiters / Study Abroad) ─── */
-function HeroFeaturePill({
+/* ─── Count-up number ─── */
+function CountUpNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
+  const motionVal = useMotionValue(0);
+  const spring = useSpring(motionVal, { damping: 22, stiffness: 90 });
+  const display = useTransform(spring, (v) => `${Math.floor(v).toLocaleString()}${suffix}`);
+
+  useEffect(() => {
+    if (inView) motionVal.set(value);
+  }, [inView, value, motionVal]);
+
+  return <motion.span ref={ref}>{display}</motion.span>;
+}
+
+/* ─── Dynamic shine-pill CTA — animated gradient shift + pulsing glow + icon spin on hover ─── */
+function HeroCtaButton({
   href,
+  label,
   icon: Icon,
-  title,
-  subtitle,
   variant,
   delay = 0,
 }: {
   href: string;
+  label: string;
   icon: LucideIcon;
-  title: string;
-  subtitle: string;
-  variant: 'candidates' | 'recruiters' | 'study';
+  variant: 'get-placed' | 'study-abroad';
   delay?: number;
 }) {
   return (
@@ -105,23 +125,20 @@ function HeroFeaturePill({
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ y: -4, scale: 1.02 }}
+      whileTap={{ scale: 0.97 }}
     >
-      <Link href={href} className={`placedly-feature-pill placedly-feature-pill--${variant}`}>
-        <span className="placedly-feature-pill-shine" aria-hidden />
-        <span className="placedly-feature-pill-icon">
-          <Icon size={17} strokeWidth={2.1} />
-        </span>
-        <span className="placedly-feature-pill-text">
-          <strong>{title}</strong>
-          <span>{subtitle}</span>
-        </span>
+      <Link href={href} className={`placedly-hero-cta placedly-hero-cta--${variant}`}>
+        <span className="placedly-hero-cta-glow" aria-hidden />
+        <span className="placedly-hero-cta-shine" aria-hidden />
+        <span className="placedly-hero-cta-label">{label}</span>
         <motion.span
-          className="placedly-feature-pill-arrow"
+          className="placedly-hero-cta-icon"
           animate={{ x: [0, 3, 0] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut', delay: delay + 0.3 }}
+          whileHover={{ rotate: 90 }}
         >
-          <ArrowRight size={13} strokeWidth={2.5} />
+          <Icon size={13} strokeWidth={2.5} />
         </motion.span>
       </Link>
     </motion.div>
@@ -129,126 +146,151 @@ function HeroFeaturePill({
 }
 
 export default function Hero({ cms = {} }: { cms?: HeroCms }) {
-  const offerRole      = cms['hp:heroOfferRole']      ?? 'Head of Marketing';
-  const admitProgramme = cms['hp:heroAdmitProgramme'] ?? 'Early stage AI';
+  const offerRole      = cms['hp:heroOfferRole']      ?? 'Senior Claims Analyst';
+  const admitProgramme = cms['hp:heroAdmitProgramme'] ?? "MSc International Business · Fall '25";
+
+  /* ── mouse-parallax for the floating stage ── */
+  const stageRef = useRef<HTMLDivElement>(null);
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.5);
+  const smx = useSpring(mx, { damping: 24, stiffness: 120 });
+  const smy = useSpring(my, { damping: 24, stiffness: 120 });
+
+  function handleStageMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    mx.set((e.clientX - rect.left) / rect.width);
+    my.set((e.clientY - rect.top) / rect.height);
+  }
+  function handleStageMouseLeave() {
+    mx.set(0.5);
+    my.set(0.5);
+  }
 
   return (
     <section id="Top" className="placedly-cap-hero">
       <style>{`
         /* ============================================================
-           FEATURE PILL SYSTEM
+           DYNAMIC HERO CTA SYSTEM — animated gradient + pulsing glow
            ============================================================ */
-        .placedly-feature-pill {
+        @keyframes placedly-cta-glow-pulse {
+          0%, 100% { opacity: 0.55; transform: scale(1); }
+          50%      { opacity: 0.9;  transform: scale(1.08); }
+        }
+
+        .placedly-hero-cta {
           position: relative;
           display: inline-flex;
           align-items: center;
-          gap: 12px;
-          padding: 10px 14px 10px 10px;
+          gap: 10px;
+          padding: 13px 22px 13px 26px;
           border-radius: 999px;
+          font-weight: 700;
+          font-size: 14.5px;
+          letter-spacing: 0.01em;
+          font-family: inherit;
           text-decoration: none;
-          overflow: hidden;
+          color: #ffffff;
+          border: 1px solid rgba(255,255,255,0.25);
+          overflow: visible;
           isolation: isolate;
           cursor: pointer;
-          transition: transform 0.28s cubic-bezier(0.22,1,0.36,1), box-shadow 0.28s ease, filter 0.28s ease;
+          background-size: 220% 220%;
+          background-position: 0% 50%;
+          animation: placedly-gradient-shift 5s ease infinite;
+          transition: box-shadow 0.28s cubic-bezier(0.22,1,0.36,1), filter 0.28s ease;
         }
-        .placedly-feature-pill:hover { transform: translateY(-3px); }
 
-        .placedly-feature-pill-shine {
+        .placedly-hero-cta--get-placed {
+          background-image: linear-gradient(135deg, #2563eb, #7c8ff0, #a855f7, #2563eb);
+          box-shadow:
+            0 8px 22px rgba(37, 99, 235, 0.32),
+            0 2px 6px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255,255,255,0.25);
+        }
+        .placedly-hero-cta--get-placed:hover {
+          box-shadow:
+            0 18px 38px rgba(37, 99, 235, 0.46),
+            0 4px 10px rgba(0, 0, 0, 0.16),
+            inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .placedly-hero-cta--study-abroad {
+          background-image: linear-gradient(135deg, #fb923c, #f43f5e, #a855f7, #fb923c);
+          box-shadow:
+            0 8px 22px rgba(251, 146, 60, 0.32),
+            0 2px 6px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255,255,255,0.25);
+        }
+        .placedly-hero-cta--study-abroad:hover {
+          box-shadow:
+            0 18px 38px rgba(244, 63, 94, 0.44),
+            0 4px 10px rgba(0, 0, 0, 0.16),
+            inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .placedly-hero-cta:hover { filter: brightness(1.08) saturate(1.08); }
+        .placedly-hero-cta:active { filter: brightness(0.98); }
+
+        /* pulsing glow halo behind the button */
+        .placedly-hero-cta-glow {
+          position: absolute;
+          inset: -6px;
+          border-radius: 999px;
+          z-index: -1;
+          filter: blur(14px);
+          background: inherit;
+          background-image: inherit;
+          animation: placedly-cta-glow-pulse 2.6s ease-in-out infinite;
+          pointer-events: none;
+        }
+
+        .placedly-hero-cta-label { position: relative; z-index: 1; white-space: nowrap; }
+
+        .placedly-hero-cta-icon {
+          position: relative;
+          z-index: 1;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.22);
+          transition: background 0.3s ease;
+        }
+        .placedly-hero-cta:hover .placedly-hero-cta-icon { background: rgba(255, 255, 255, 0.36); }
+
+        .placedly-hero-cta-shine {
           position: absolute;
           top: 0; left: -130%;
           width: 55%; height: 100%;
-          background: linear-gradient(115deg, transparent, rgba(255,255,255,0.5), transparent);
+          background: linear-gradient(115deg, transparent, rgba(255,255,255,0.55), transparent);
           transform: skewX(-20deg);
           transition: left 0.65s ease;
           z-index: 0;
           pointer-events: none;
+          border-radius: inherit;
+          overflow: hidden;
         }
-        .placedly-feature-pill:hover .placedly-feature-pill-shine { left: 140%; }
+        .placedly-hero-cta:hover .placedly-hero-cta-shine { left: 140%; }
 
-        .placedly-feature-pill-icon {
-          position: relative;
-          z-index: 1;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 34px;
-          height: 34px;
-          border-radius: 50%;
-          flex-shrink: 0;
-        }
-
-        .placedly-feature-pill-text {
-          position: relative;
-          z-index: 1;
+        .placedly-lift-hero-ctas,
+        .placedly-cap-hero-ctas {
           display: flex;
-          flex-direction: column;
-          line-height: 1.25;
-          white-space: nowrap;
-        }
-        .placedly-feature-pill-text strong { font-size: 13.5px; font-weight: 700; }
-        .placedly-feature-pill-text span { font-size: 11.5px; font-weight: 500; opacity: 0.85; }
-
-        .placedly-feature-pill-arrow {
-          position: relative;
-          z-index: 1;
-          display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 26px;
-          height: 26px;
-          border-radius: 50%;
-          flex-shrink: 0;
+          gap: 14px;
+          flex-wrap: wrap;
         }
 
-        .placedly-feature-pill--candidates {
-          background-image: linear-gradient(135deg, #2563eb, #7c8ff0);
-          color: #fff;
-          box-shadow: 0 10px 24px rgba(37,99,235,0.32);
+        @media (max-width: 640px) {
+          .placedly-hero-cta { width: 100%; justify-content: center; padding: 15px 22px; font-size: 15px; }
+          .placedly-cap-hero-ctas { flex-direction: column; align-items: stretch; }
         }
-        .placedly-feature-pill--candidates .placedly-feature-pill-icon { background: rgba(255,255,255,0.2); color: #fff; }
-        .placedly-feature-pill--candidates .placedly-feature-pill-arrow { background: rgba(255,255,255,0.24); color: #fff; }
-        .placedly-feature-pill--candidates:hover { box-shadow: 0 16px 32px rgba(37,99,235,0.42); }
-
-        .placedly-feature-pill--recruiters {
-          background: #ffffff;
-          border: 1.5px solid #e5e7ff;
-          box-shadow: 0 8px 20px rgba(99,102,241,0.08);
-        }
-        .placedly-feature-pill--recruiters .placedly-feature-pill-icon {
-          background: linear-gradient(135deg, #eef2ff, #fdf2f8);
-          color: #7c3aed;
-        }
-        .placedly-feature-pill--recruiters .placedly-feature-pill-text strong {
-          background-image: linear-gradient(90deg, #2563eb, #a855f7);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-        }
-        .placedly-feature-pill--recruiters .placedly-feature-pill-text span { color: #64748b; }
-        .placedly-feature-pill--recruiters .placedly-feature-pill-arrow { background: #eef2ff; color: #7c3aed; }
-        .placedly-feature-pill--recruiters:hover { box-shadow: 0 14px 28px rgba(99,102,241,0.18); border-color: #c7d2fe; }
-
-        .placedly-feature-pill--study {
-          background-image: linear-gradient(135deg, #fdf2ee, #fee2e8);
-          color: #9a3412;
-          box-shadow: 0 8px 20px rgba(251,146,60,0.14);
-        }
-        .placedly-feature-pill--study .placedly-feature-pill-icon {
-          background: linear-gradient(135deg, #fb923c, #f43f5e);
-          color: #fff;
-        }
-        .placedly-feature-pill--study .placedly-feature-pill-text strong {
-          background-image: linear-gradient(90deg, #fb923c, #f43f5e);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-        }
-        .placedly-feature-pill--study .placedly-feature-pill-arrow { background: linear-gradient(135deg, #fb923c, #f43f5e); color: #fff; }
-        .placedly-feature-pill--study:hover { box-shadow: 0 14px 28px rgba(244,63,94,0.24); }
 
         /* ============================================================
-           HERO LAYOUT — video sits at z-index:0, everything else at z-index:1+
-           spacing is fluid via clamp() instead of fixed jumps
+           HERO LAYOUT
            ============================================================ */
         .placedly-cap-hero {
           position: relative;
@@ -272,11 +314,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           margin: 0 auto;
         }
 
-        .placedly-cap-hero-copy {
-          text-align: center;
-          max-width: 720px;
-          margin: 0 auto;
-        }
+        .placedly-cap-hero-copy { text-align: center; max-width: 720px; margin: 0 auto; }
 
         .placedly-cap-hero-title {
           font-size: clamp(2rem, 3.8vw, 3.25rem);
@@ -294,34 +332,30 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           margin: 0 auto clamp(20px, 2.4vw, 28px);
         }
 
-        .placedly-cap-hero-ctas {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-          gap: 12px;
-          margin-bottom: clamp(36px, 5vw, 52px);
-        }
+        .placedly-cap-hero-ctas { margin-bottom: clamp(40px, 5.5vw, 58px); }
 
-        /* Stage — fluid height, tighter composition */
+        /* Stage — restored original card + scatter + glass-pill composition */
         .placedly-cap-hero-stage {
           position: relative;
           width: 100%;
           max-width: 860px;
-          height: clamp(300px, 34vw, 400px);
+          height: clamp(340px, 38vw, 440px);
           margin: 0 auto clamp(32px, 4.5vw, 48px);
         }
 
         .placedly-cap-card {
           position: absolute;
-          width: clamp(210px, 24vw, 250px);
+          width: clamp(200px, 22vw, 236px);
           background: #ffffff;
           border-radius: 18px;
           padding: 14px 16px;
           box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
           border: 1px solid rgba(15, 23, 42, 0.04);
-          z-index: 3;
+          z-index: 4;
+          cursor: default;
+          transition: box-shadow 0.3s ease;
         }
+        .placedly-cap-card:hover { box-shadow: 0 22px 48px rgba(15, 23, 42, 0.18); }
         .placedly-cap-card--left  { top: 0;   left: 0; }
         .placedly-cap-card--right { bottom: 0; right: 0; }
 
@@ -342,43 +376,64 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           font-weight: 700;
         }
 
+        /* Scatter avatars with connector badge — restored from original */
         .placedly-cap-scatter { position: absolute; inset: 0; z-index: 1; }
 
         .placedly-cap-scatter-avatar-wrap {
           position: absolute;
           border-radius: 50%;
-          overflow: hidden;
-          box-shadow: 0 8px 18px rgba(15,23,42,0.14);
+          overflow: visible;
+          cursor: default;
+        }
+        .placedly-cap-scatter-avatar {
+          width: 100%; height: 100%; object-fit: cover; display: block;
+          border-radius: 50%;
+          box-shadow: 0 8px 18px rgba(15,23,42,0.16);
           border: 3px solid #fff;
         }
-        .placedly-cap-scatter-avatar { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-        .placedly-cap-dot { position: absolute; border-radius: 50%; z-index: 1; }
-        .placedly-cap-dot--solid { background: linear-gradient(135deg, #2563eb, #7c8ff0); box-shadow: 0 6px 14px rgba(37,99,235,0.35); }
-        .placedly-cap-dot--ghost { background: #c7d2fe; }
-
-        .placedly-cap-rec-pill {
+        .placedly-cap-scatter-badge {
           position: absolute;
-          top: 4%;
-          left: 62%;
+          bottom: -3px;
+          right: -3px;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #2563eb, #a855f7);
+          color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid #fff;
+          box-shadow: 0 3px 8px rgba(37,99,235,0.4);
+        }
+
+        /* Glass pills — restored "Shared / Recommended" pair from original */
+        .placedly-cap-glass-pill {
+          position: absolute;
           display: flex;
           align-items: center;
           gap: 9px;
-          background: #ffffff;
+          background: rgba(255,255,255,0.88);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(255,255,255,0.6);
           border-radius: 14px;
           padding: 9px 14px;
-          box-shadow: 0 10px 22px rgba(37,99,235,0.16);
+          box-shadow: 0 10px 24px rgba(37,99,235,0.14);
           z-index: 3;
         }
-        .placedly-cap-rec-pill-icon {
+        .placedly-cap-glass-pill--share { top: 26%; left: 40%; }
+        .placedly-cap-glass-pill--rec   { top: 46%; left: 46%; }
+
+        .placedly-cap-glass-pill-icon {
           width: 27px; height: 27px; border-radius: 50%;
           background: linear-gradient(135deg, #2563eb, #a855f7);
           color: #fff;
           display: flex; align-items: center; justify-content: center;
           flex-shrink: 0;
         }
-        .placedly-cap-rec-pill-text { display: flex; flex-direction: column; line-height: 1.2; white-space: nowrap; }
-        .placedly-cap-rec-pill-text strong {
+        .placedly-cap-glass-pill-text { display: flex; flex-direction: column; line-height: 1.2; white-space: nowrap; }
+        .placedly-cap-glass-pill-text strong {
           font-size: 12.5px;
           font-weight: 700;
           background-image: linear-gradient(90deg, #2563eb, #a855f7);
@@ -386,40 +441,72 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           background-clip: text;
           color: transparent;
         }
-        .placedly-cap-rec-pill-text span { font-size: 12.5px; color: #0f172a; font-weight: 600; }
+        .placedly-cap-glass-pill-text span { font-size: 12.5px; color: #0f172a; font-weight: 600; }
 
-        /* Trust stats — fluid gap, no extra whitespace */
+        /* ============================================================
+           DYNAMIC STATS BAR
+           ============================================================ */
         .placedly-cap-stats {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-          justify-content: center;
-          gap: 12px;
-          margin-bottom: clamp(36px, 5vw, 52px);
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+          gap: clamp(10px, 1.4vw, 14px);
+          max-width: 920px;
+          margin: 0 auto clamp(36px, 5vw, 52px);
         }
+
         .placedly-cap-stat {
+          position: relative;
           display: flex;
           align-items: center;
-          gap: 9px;
+          gap: 10px;
           background: #ffffff;
           border: 1px solid #eef1f6;
-          border-radius: 14px;
-          padding: 11px 16px;
+          border-radius: 16px;
+          padding: 14px 16px;
           box-shadow: 0 6px 16px rgba(15,23,42,0.05);
+          overflow: hidden;
+          isolation: isolate;
+          cursor: default;
         }
+
+        .placedly-cap-stat-shine {
+          position: absolute;
+          top: 0; left: -130%;
+          width: 60%; height: 100%;
+          background: linear-gradient(115deg, transparent, rgba(124,143,240,0.16), transparent);
+          transform: skewX(-20deg);
+          transition: left 0.7s ease;
+          z-index: 0;
+          pointer-events: none;
+        }
+        .placedly-cap-stat:hover .placedly-cap-stat-shine { left: 140%; }
+
         .placedly-cap-stat-icon {
-          width: 34px; height: 34px; border-radius: 50%;
+          position: relative;
+          z-index: 1;
+          width: 38px; height: 38px; border-radius: 50%;
           border: 1.5px solid #e5e7ff;
           display: flex; align-items: center; justify-content: center;
           flex-shrink: 0;
           background: linear-gradient(135deg, #eef2ff, #fdf2f8);
           color: #7c3aed;
+          transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
         }
-        .placedly-cap-stat-text { display: flex; flex-direction: column; line-height: 1.22; }
-        .placedly-cap-stat-text span:first-child { font-size: 11.5px; color: #64748b; }
-        .placedly-cap-stat-text strong { font-size: 14px; color: #0f172a; font-weight: 700; }
+        .placedly-cap-stat:hover .placedly-cap-stat-icon { transform: scale(1.12) rotate(-6deg); }
 
-        /* "Landed roles at" heading — tighter gap into marquee */
+        .placedly-cap-stat-text { position: relative; z-index: 1; display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+        .placedly-cap-stat-text span:first-child {
+          font-size: 11.5px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .placedly-cap-stat-text strong {
+          font-size: 15px; font-weight: 800;
+          background-image: linear-gradient(90deg, #2563eb, #a855f7);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+
+        /* "Landed roles at" heading */
         .placedly-cap-marquee-heading { text-align: center; margin-bottom: clamp(18px, 2.4vw, 24px); }
         .placedly-cap-marquee-heading .bar {
           width: 38px; height: 3px; border-radius: 999px;
@@ -439,13 +526,11 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
       `}</style>
 
-      {/* z-index:0 layer — video + gradient */}
       <div className="placedly-cap-hero-bg" aria-hidden>
         <HeroGradientBg />
         <HeroBgVideo />
       </div>
 
-      {/* z-index:1 layer — all content */}
       <div className="placedly-cap-hero-desktop">
         <div className="placedly-cap-hero-copy">
           <motion.h1
@@ -469,47 +554,47 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
             transition={{ duration: 0.5, delay: 0.08 }}
           >
             {cms['hp:heroSubline'] ??
-              'A career placement and study abroad platform where exceptional people connect—and start working together.'}
+              'Career Placement & Global Education Consultancy — Delhi NCR.'}
           </motion.p>
 
           <div className="placedly-cap-hero-ctas">
-            <HeroFeaturePill
+            <HeroCtaButton
               href="/contact"
+              label={cms['hp:heroPrimaryCtaText'] ?? 'Get Placed'}
               icon={Briefcase}
-              title={cms['hp:heroPrimaryCtaText'] ?? 'For Candidates'}
-              subtitle="Find Jobs & Build Your Career"
-              variant="candidates"
-              delay={0.14}
+              variant="get-placed"
+              delay={0.16}
             />
-            <HeroFeaturePill
-              href="/recruiters"
-              icon={Users}
-              title={cms['hp:heroRecruiterCtaText'] ?? 'For Recruiters'}
-              subtitle="Hire Top Talent Faster"
-              variant="recruiters"
-              delay={0.2}
-            />
-            <HeroFeaturePill
+            <HeroCtaButton
               href="/study-visa"
+              label={cms['hp:heroSecondaryCtaText'] ?? 'Study Abroad'}
               icon={Globe}
-              title={cms['hp:heroSecondaryCtaText'] ?? 'Study Abroad'}
-              subtitle="Study in Top Countries & Shape Your Future"
-              variant="study"
-              delay={0.26}
+              variant="study-abroad"
+              delay={0.24}
             />
           </div>
         </div>
 
+        {/* ── Stage — restored card/scatter/glass-pill layout with parallax ── */}
         <motion.div
+          ref={stageRef}
           className="placedly-cap-hero-stage"
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.3 }}
+          onMouseMove={handleStageMouseMove}
+          onMouseLeave={handleStageMouseLeave}
         >
+          {/* Left card */}
           <motion.div
             className="placedly-cap-card placedly-cap-card--left"
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+            style={{
+              x: useTransform(smx, [0, 1], [-8, 8]),
+              y: useTransform(smy, [0, 1], [-5, 5]),
+            }}
+            whileHover={{ scale: 1.03 }}
           >
             <div className="placedly-cap-card-profile">
               <img
@@ -522,23 +607,33 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
                 decoding="async"
               />
               <div>
-                <p className="placedly-cap-name">{cms['hp:heroOfferName'] ?? 'Amber'}</p>
-                <p className="placedly-cap-role">CEO at AI Startup</p>
+                <p className="placedly-cap-name">{cms['hp:heroOfferName'] ?? 'Priya'}</p>
+                <p className="placedly-cap-role">CAP · India careers</p>
               </div>
             </div>
             <p className="placedly-cap-line">
-              Hiring a <strong>{offerRole}</strong>
+              Targeting <strong>{offerRole}</strong>
             </p>
           </motion.div>
 
+          {/* Scatter avatars with badges */}
           <div className="placedly-cap-scatter" aria-hidden>
             {SCATTER_AVATARS.map((person, i) => (
               <motion.div
                 key={person.src}
                 className="placedly-cap-scatter-avatar-wrap"
-                style={{ top: person.top, left: person.left, width: person.size, height: person.size }}
+                style={{
+                  top: person.top,
+                  left: person.left,
+                  width: person.size,
+                  height: person.size,
+                  zIndex: i + 1,
+                  x: useTransform(smx, [0, 1], [-person.depth, person.depth]),
+                  y: useTransform(smy, [0, 1], [-person.depth, person.depth]),
+                }}
                 animate={{ y: [0, i % 2 === 0 ? -6 : 6, 0] }}
-                transition={{ duration: 4.5 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}
+                transition={{ duration: 4.5 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.25 }}
+                whileHover={{ scale: 1.15 }}
               >
                 <img
                   src={person.src}
@@ -549,36 +644,64 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
                   loading="lazy"
                   decoding="async"
                 />
+                {person.badge && (
+                  <span className="placedly-cap-scatter-badge">
+                    <Share2 size={11} strokeWidth={2.5} />
+                  </span>
+                )}
               </motion.div>
-            ))}
-
-            {DECORATIVE_DOTS.map((dot, i) => (
-              <span
-                key={i}
-                className={`placedly-cap-dot placedly-cap-dot--${dot.tone}`}
-                style={{ top: dot.top, left: dot.left, width: dot.size, height: dot.size }}
-              />
             ))}
           </div>
 
+          {/* Glass pills — Shared / Recommended */}
           <motion.div
-            className="placedly-cap-rec-pill"
-            animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}
+            className="placedly-cap-glass-pill placedly-cap-glass-pill--share"
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            style={{
+              x: useTransform(smx, [0, 1], [-10, 10]),
+              y: useTransform(smy, [0, 1], [-8, 8]),
+            }}
+            whileHover={{ scale: 1.05 }}
           >
-            <span className="placedly-cap-rec-pill-icon">
-              <Star size={13} strokeWidth={2.25} />
+            <span className="placedly-cap-glass-pill-icon">
+              <Share2 size={13} strokeWidth={2.25} />
             </span>
-            <span className="placedly-cap-rec-pill-text">
-              <strong>Recommended</strong>
-              <span>{cms['hp:heroAdmitName'] ?? 'Daniel'}</span>
+            <span className="placedly-cap-glass-pill-text">
+              <strong>Shared</strong>
+              <span>CAP roadmap</span>
             </span>
           </motion.div>
 
           <motion.div
+            className="placedly-cap-glass-pill placedly-cap-glass-pill--rec"
+            animate={{ y: [0, 5, 0] }}
+            transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+            style={{
+              x: useTransform(smx, [0, 1], [10, -10]),
+              y: useTransform(smy, [0, 1], [8, -8]),
+            }}
+            whileHover={{ scale: 1.05 }}
+          >
+            <span className="placedly-cap-glass-pill-icon">
+              <Sparkles size={13} strokeWidth={2.25} />
+            </span>
+            <span className="placedly-cap-glass-pill-text">
+              <strong>Recommended</strong>
+              <span>Admit path</span>
+            </span>
+          </motion.div>
+
+          {/* Right card */}
+          <motion.div
             className="placedly-cap-card placedly-cap-card--right"
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+            style={{
+              x: useTransform(smx, [0, 1], [8, -8]),
+              y: useTransform(smy, [0, 1], [5, -5]),
+            }}
+            whileHover={{ scale: 1.03 }}
           >
             <div className="placedly-cap-card-profile">
               <img
@@ -591,38 +714,50 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
                 decoding="async"
               />
               <div>
-                <p className="placedly-cap-name">{cms['hp:heroAdmitName'] ?? 'Daniel'}</p>
-                <p className="placedly-cap-role">Marketing Leader</p>
+                <p className="placedly-cap-name">{cms['hp:heroAdmitName'] ?? 'Arjun'}</p>
+                <p className="placedly-cap-role">Study abroad track</p>
               </div>
             </div>
             <p className="placedly-cap-line">
-              Interested in <strong>{admitProgramme}</strong>
+              Interested in{' '}
+              <strong>{admitProgramme.split('·')[0]?.trim() ?? 'UK Masters'}</strong>
             </p>
           </motion.div>
         </motion.div>
 
+        {/* ── Dynamic stats bar ── */}
         <motion.div
           className="placedly-cap-stats"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-60px' }}
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
         >
-          <div className="placedly-cap-stat">
-            <span className="placedly-cap-stat-icon"><ShieldCheck size={16} strokeWidth={2} /></span>
-            <span className="placedly-cap-stat-text"><span>Trusted by</span><strong>500+ Companies</strong></span>
-          </div>
-          <div className="placedly-cap-stat">
-            <span className="placedly-cap-stat-icon"><Users size={16} strokeWidth={2} /></span>
-            <span className="placedly-cap-stat-text"><span>50,000+</span><strong>Careers Transformed</strong></span>
-          </div>
-          <div className="placedly-cap-stat">
-            <span className="placedly-cap-stat-icon"><Globe size={16} strokeWidth={2} /></span>
-            <span className="placedly-cap-stat-text"><span>Global Opportunities Across</span><strong>20+ Countries</strong></span>
-          </div>
-          <div className="placedly-cap-stat">
-            <span className="placedly-cap-stat-icon"><Award size={16} strokeWidth={2} /></span>
-            <span className="placedly-cap-stat-text"><span>10+ Years of</span><strong>Recruitment Excellence</strong></span>
-          </div>
+          {STATS.map((stat) => (
+            <motion.div
+              key={stat.label}
+              className="placedly-cap-stat"
+              variants={{
+                hidden: { opacity: 0, y: 18, scale: 0.96 },
+                show: { opacity: 1, y: 0, scale: 1 },
+              }}
+              transition={{ duration: 0.45, ease: 'easeOut' }}
+              whileHover={{ y: -4, boxShadow: '0 14px 30px rgba(37,99,235,0.14)' }}
+            >
+              <span className="placedly-cap-stat-shine" aria-hidden />
+              <span className="placedly-cap-stat-icon">
+                <stat.icon size={16} strokeWidth={2} />
+              </span>
+              <span className="placedly-cap-stat-text">
+                {stat.prefix && <span>{stat.prefix}</span>}
+                <strong>
+                  <CountUpNumber value={stat.value} suffix={stat.suffix} />
+                  {!stat.prefix ? ` ${stat.label}` : ''}
+                </strong>
+                {stat.prefix && <span style={{ marginTop: 2 }}>{stat.label}</span>}
+              </span>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
 
