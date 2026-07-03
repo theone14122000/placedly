@@ -28,10 +28,10 @@ const HERO_CARD_AVATARS = {
 } as const;
 
 const STATS = [
-  { icon: ShieldCheck, value: 500,   suffix: '+', label: 'Companies Trusted Us'  },
-  { icon: Users,       value: 50000, suffix: '+', label: 'Careers Transformed'   },
-  { icon: Globe,       value: 20,    suffix: '+', label: 'Countries'              },
-  { icon: Award,       value: 10,    suffix: '+', label: 'Years Excellence'       },
+  { icon: ShieldCheck, value: 500,   suffix: '+', label: 'Companies Trusted Us' },
+  { icon: Users,       value: 50000, suffix: '+', label: 'Careers Transformed'  },
+  { icon: Globe,       value: 20,    suffix: '+', label: 'Countries'             },
+  { icon: Award,       value: 10,    suffix: '+', label: 'Years Excellence'      },
 ] as const;
 
 const NAV_PILLS = [
@@ -61,9 +61,9 @@ const NAV_PILLS = [
     popup: {
       title: 'For Recruiters',
       items: [
-        { icon: '🔍', heading: 'Source Top Talent',   sub: 'Pre-vetted candidate pool'    },
-        { icon: '⚡', heading: 'Hire in Days',        sub: 'Streamlined shortlisting'     },
-        { icon: '📊', heading: 'Analytics Dashboard', sub: 'Track pipeline in real-time'  },
+        { icon: '🔍', heading: 'Source Top Talent',   sub: 'Pre-vetted candidate pool'   },
+        { icon: '⚡', heading: 'Hire in Days',        sub: 'Streamlined shortlisting'    },
+        { icon: '📊', heading: 'Analytics Dashboard', sub: 'Track pipeline in real-time' },
       ],
     },
   },
@@ -87,7 +87,6 @@ const NAV_PILLS = [
 
 type PopupKey = 'candidates' | 'recruiters' | 'study' | null;
 
-/* ── Animated gradient text ── */
 function AnimatedGradientText({ children, as: Tag = 'span' }: {
   children: React.ReactNode;
   as?: 'span' | 'h1' | 'h2' | 'h3';
@@ -105,23 +104,27 @@ function AnimatedGradientText({ children, as: Tag = 'span' }: {
       }}>
         {children}
       </Tag>
-      <style>{`@keyframes ph-grad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}`}</style>
+      <style>{`
+        @keyframes ph-grad {
+          0%   { background-position: 0%   50%; }
+          50%  { background-position: 100% 50%; }
+          100% { background-position: 0%   50%; }
+        }
+      `}</style>
     </>
   );
 }
 
-/* ── Count-up ── */
 function CountUpNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
+  const ref    = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
-  const mv = useMotionValue(0);
-  const sp = useSpring(mv, { damping: 22, stiffness: 90 });
-  const display = useTransform(sp, (v) => `${Math.floor(v).toLocaleString()}${suffix}`);
+  const mv     = useMotionValue(0);
+  const sp     = useSpring(mv, { damping: 22, stiffness: 90 });
+  const disp   = useTransform(sp, (v) => `${Math.floor(v).toLocaleString()}${suffix}`);
   useEffect(() => { if (inView) mv.set(value); }, [inView, value, mv]);
-  return <motion.span ref={ref}>{display}</motion.span>;
+  return <motion.span ref={ref}>{disp}</motion.span>;
 }
 
-/* ── Nav pill ── */
 function NavPillButton({ pill, active, onClick, delay }: {
   pill: typeof NAV_PILLS[number];
   active: boolean;
@@ -152,15 +155,14 @@ function NavPillButton({ pill, active, onClick, delay }: {
   );
 }
 
-/* ── Popup card — rendered INSIDE the stage as absolute overlay ── */
 function PopupCard({ pill, onClose }: { pill: typeof NAV_PILLS[number]; onClose: () => void }) {
   return (
     <motion.div
       className="ph-popup"
       key={pill.id}
       initial={{ opacity: 0, y: 8, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 6, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0,  scale: 1    }}
+      exit={{    opacity: 0, y: 6,  scale: 0.96 }}
       transition={{ duration: 0.18, ease: 'easeOut' }}
     >
       <div className="ph-popup-head">
@@ -202,7 +204,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
   }
   function onMouseLeave() { mx.set(0.5); my.set(0.5); }
 
-  /* close on outside click */
   useEffect(() => {
     if (!activePopup) return;
     const fn = (e: MouseEvent) => {
@@ -218,68 +219,76 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
   return (
     <section id="Top" className="ph-hero">
       <style>{`
-        /* ─────────────────────────────────────────
-           ROOT LAYOUT
-        ───────────────────────────────────────── */
+
+        /* ─── SECTION ─────────────────────────────── */
         .ph-hero {
           position: relative;
           overflow: hidden;
           isolation: isolate;
-          padding: clamp(32px,5vw,56px) 20px clamp(20px,3vw,32px);
+          /* generous top so heading breathes below navbar */
+          padding-top: clamp(56px, 8vw, 96px);
+          padding-bottom: clamp(24px, 3.5vw, 40px);
+          padding-left: 20px;
+          padding-right: 20px;
         }
+
         .ph-bg {
           position: absolute; inset: 0; z-index: 0;
           pointer-events: none; overflow: hidden;
         }
+
+        /* centred column */
         .ph-wrap {
           position: relative; z-index: 1;
-          max-width: 900px; margin: 0 auto;
-          display: flex; flex-direction: column;
-          align-items: center;
-        }
-
-        /* ─────────────────────────────────────────
-           COPY — perfectly centred
-        ───────────────────────────────────────── */
-        .ph-copy {
-          width: 100%;
-          text-align: center;
+          max-width: 900px;
+          margin: 0 auto;
           display: flex;
           flex-direction: column;
           align-items: center;
-          margin-bottom: 20px;
+          gap: 0;
         }
+
+        /* ─── COPY ────────────────────────────────── */
+        .ph-copy {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          /* bottom gap before pills */
+          margin-bottom: 28px;
+        }
+
         .ph-title {
-          font-size: clamp(2rem,3.8vw,3.2rem);
+          font-size: clamp(2.1rem, 4vw, 3.3rem);
           font-weight: 800;
-          line-height: 1.12;
-          letter-spacing: -0.023em;
+          line-height: 1.13;
+          letter-spacing: -0.024em;
           color: #0f172a;
           -webkit-text-fill-color: #0f172a;
-          margin: 0 0 12px;
+          margin: 0 0 14px;
           text-align: center;
           width: 100%;
         }
+
         .ph-sub {
-          font-size: clamp(13.5px,1.1vw,15px);
-          line-height: 1.6;
+          font-size: clamp(13.5px, 1.1vw, 15px);
+          line-height: 1.62;
           color: #55607a;
-          max-width: 480px;
-          margin: 0 0 20px;
+          max-width: 460px;
+          margin: 0;
           text-align: center;
         }
 
-        /* ─────────────────────────────────────────
-           3-PILL ROW  — centred, equal width
-        ───────────────────────────────────────── */
+        /* ─── PILLS ───────────────────────────────── */
         .ph-pills {
           display: flex;
           align-items: stretch;
           justify-content: center;
           gap: 8px;
           width: 100%;
-          max-width: 720px;
-          /* NO margin-bottom — popup lives inside stage */
+          max-width: 700px;
+          /* no bottom margin — spacing handled by stage-wrap margin-top */
         }
 
         .ph-pill {
@@ -296,14 +305,13 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           min-width: 0;
           transition: box-shadow .2s, border-color .2s, background .2s, transform .2s;
         }
-
         .ph-pill--primary {
           background: linear-gradient(135deg,#1d4ed8,#2563eb);
           border-color: #2563eb; color: #fff;
           box-shadow: 0 4px 16px rgba(37,99,235,.30);
         }
         .ph-pill--primary:hover,.ph-pill--primary.ph-pill--on {
-          box-shadow: 0 8px 24px rgba(37,99,235,.42);
+          box-shadow: 0 8px 24px rgba(37,99,235,.44);
         }
         .ph-pill--secondary {
           background: #fff; border-color: #e2e8f0; color: #0f172a;
@@ -319,7 +327,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
         .ph-pill--tertiary:hover,.ph-pill--tertiary.ph-pill--on {
           border-color: #a855f7; background: #fdf8ff;
-          box-shadow: 0 6px 18px rgba(168,85,247,.12);
+          box-shadow: 0 6px 18px rgba(168,85,247,.13);
         }
 
         .ph-pill-icon {
@@ -327,7 +335,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           display: flex; align-items: center; justify-content: center;
           transition: transform .2s;
         }
-        .ph-pill--primary  .ph-pill-icon { background: rgba(255,255,255,.2);  color: #fff; }
+        .ph-pill--primary  .ph-pill-icon { background: rgba(255,255,255,.2);  color: #fff;    }
         .ph-pill--secondary .ph-pill-icon { background: linear-gradient(135deg,#eef2ff,#e0e7ff); color: #2563eb; }
         .ph-pill--tertiary  .ph-pill-icon { background: linear-gradient(135deg,#fdf4ff,#f3e8ff); color: #a855f7; }
         .ph-pill:hover .ph-pill-icon { transform: scale(1.1) rotate(-5deg); }
@@ -362,24 +370,33 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         .ph-pill-arr--open { transform: rotate(90deg) !important; }
         .ph-pill:hover .ph-pill-arr:not(.ph-pill-arr--open) { transform: translateX(2px); }
 
-        /* ─────────────────────────────────────────
-           STAGE WRAPPER — position:relative so
-           popup can be absolute INSIDE it, at top
-        ───────────────────────────────────────── */
+        /* ─── STAGE WRAPPER ───────────────────────── */
+        /*
+          The stage-wrap sits right after the pills.
+          margin-top provides the gap between pills and scene.
+          When popup is active we don't push stage down —
+          instead popup floats ABOVE the scene via absolute positioning
+          with a negative top so it overlaps the gap.
+        */
         .ph-stage-wrap {
           position: relative;
           width: 100%;
           max-width: 860px;
-          /* top padding = popup height so stage content is not covered */
+          margin-top: 20px;
         }
 
-        /* ─────────────────────────────────────────
-           POPUP — absolute, top of stage-wrap,
-           centred horizontally
-        ───────────────────────────────────────── */
+        /* ─── POPUP ────────────────────────────────── */
+        /*
+          Rendered inside ph-stage-wrap.
+          Positioned so its BOTTOM aligns with the TOP of ph-stage
+          i.e. top = -(popup height + gap).
+          We use bottom: calc(100% + 8px) relative to ph-stage-wrap,
+          which means it sits 8 px above the stage top edge.
+        */
         .ph-popup {
           position: absolute;
-          top: 8px;
+          /* sits 8px above the top edge of ph-stage-wrap */
+          bottom: calc(100% + 8px);
           left: 50%;
           transform: translateX(-50%);
           width: 340px;
@@ -408,6 +425,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           transition: background .15s, color .15s; padding: 0; font-family: inherit;
         }
         .ph-popup-x:hover { background: #e2e8f0; color: #0f172a; }
+
         .ph-popup-rows { display: flex; flex-direction: column; gap: 5px; }
         .ph-popup-row {
           display: flex; align-items: center; gap: 9px;
@@ -427,27 +445,19 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           display: flex; flex-direction: column; line-height: 1.25; flex: 1; min-width: 0;
         }
         .ph-popup-rtxt strong { font-size: 12.5px; font-weight: 700; color: #0f172a; }
-        .ph-popup-rtxt span   { font-size: 11px; color: #64748b; }
+        .ph-popup-rtxt span   { font-size: 11px;   color: #64748b; }
 
-        /* ─────────────────────────────────────────
-           STAGE — video / avatar scene
-           top offset = popup card height (≈148px)
-           when popup is open; use padding-top
-        ───────────────────────────────────────── */
+        /* ─── STAGE (video/avatar scene) ─────────── */
         .ph-stage {
           position: relative;
           width: 100%;
-          height: clamp(300px,35vw,420px);
-          margin-bottom: clamp(18px,2.8vw,28px);
-          /* shift down when popup is showing handled via CSS var */
-        }
-        .ph-stage-wrap.ph-has-popup .ph-stage {
-          margin-top: 158px; /* popup ~148px + 10px gap */
+          height: clamp(300px, 35vw, 420px);
+          margin-bottom: clamp(18px, 2.8vw, 28px);
         }
 
         /* floating cards */
         .ph-card {
-          position: absolute; width: clamp(190px,20vw,224px);
+          position: absolute; width: clamp(188px,20vw,222px);
           background: #fff; border-radius: 15px; padding: 12px 14px;
           box-shadow: 0 12px 30px rgba(15,23,42,.11);
           border: 1px solid rgba(15,23,42,.04); z-index: 4;
@@ -459,7 +469,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         .ph-card-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
         .ph-av {
           width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
-          border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.10); flex-shrink: 0;
+          border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.1); flex-shrink: 0;
         }
         .ph-nm { font-size: 13px; font-weight: 700; color: #0f172a; margin: 0; }
         .ph-rl { font-size: 11px; color: #64748b; margin: 0; }
@@ -471,7 +481,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* scatter */
-        .ph-sc { position: absolute; inset: 0; z-index: 1; }
+        .ph-sc   { position: absolute; inset: 0; z-index: 1; }
         .ph-sc-w { position: absolute; border-radius: 50%; overflow: visible; }
         .ph-sc-i {
           width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
@@ -507,16 +517,14 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
         .ph-gp-tx span { font-size: 11.5px; color: #0f172a; font-weight: 600; }
 
-        /* ─────────────────────────────────────────
-           STATS BAR
-        ───────────────────────────────────────── */
+        /* ─── STATS BAR ───────────────────────────── */
         .ph-stats {
           display: grid;
           grid-template-columns: repeat(4,1fr);
           gap: 8px;
           width: 100%;
           max-width: 860px;
-          margin-bottom: clamp(22px,3.5vw,36px);
+          margin-bottom: clamp(22px, 3.5vw, 36px);
         }
         .ph-stat {
           position: relative; overflow: hidden; isolation: isolate;
@@ -542,32 +550,37 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           transition: transform .28s cubic-bezier(.22,1,.36,1);
         }
         .ph-stat:hover .ph-stat-ic { transform: scale(1.13) rotate(-7deg); }
-        .ph-stat-body { position: relative; z-index: 1; display: flex; flex-direction: column; line-height: 1.22; min-width: 0; }
+        .ph-stat-body {
+          position: relative; z-index: 1;
+          display: flex; flex-direction: column; line-height: 1.22; min-width: 0;
+        }
         .ph-stat-val {
           font-size: clamp(15px,1.6vw,18px); font-weight: 800; line-height: 1;
           background-image: linear-gradient(90deg,#2563eb,#a855f7);
           -webkit-background-clip: text; background-clip: text; color: transparent;
         }
-        .ph-stat-lbl { font-size: 10.5px; color: #64748b; font-weight: 500; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .ph-stat-lbl {
+          font-size: 10.5px; color: #64748b; font-weight: 500; margin-top: 2px;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
 
-        /* ─────────────────────────────────────────
-           MARQUEE HEADING
-        ───────────────────────────────────────── */
+        /* ─── MARQUEE HEADING ─────────────────────── */
         .ph-mhead { text-align: center; margin-bottom: clamp(14px,2vw,20px); }
         .ph-mhead .bar {
           width: 34px; height: 3px; border-radius: 999px;
           background-image: linear-gradient(90deg,#2563eb,#a855f7,#fb923c);
           margin: 0 auto 12px;
         }
-        .ph-mhead h3 { font-size: clamp(17px,1.7vw,20px); font-weight: 800; color: #0f172a; line-height: 1.28; margin: 0; }
+        .ph-mhead h3 {
+          font-size: clamp(17px,1.7vw,20px); font-weight: 800;
+          color: #0f172a; line-height: 1.28; margin: 0;
+        }
 
-        /* ─────────────────────────────────────────
-           RESPONSIVE
-        ───────────────────────────────────────── */
+        /* ─── RESPONSIVE ──────────────────────────── */
         @media (max-width: 900px) { .ph-wrap { display: none; } }
         @media (max-width: 680px) {
           .ph-pills { flex-wrap: wrap; }
-          .ph-pill  { flex: 1 1 calc(50% - 4px); max-width: none; }
+          .ph-pill  { flex: 1 1 calc(50% - 4px); }
           .ph-stats { grid-template-columns: repeat(2,1fr); }
         }
         @media (max-width: 400px) {
@@ -575,7 +588,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
       `}</style>
 
-      {/* bg */}
+      {/* background */}
       <div className="ph-bg" aria-hidden>
         <HeroGradientBg />
         <HeroBgVideo />
@@ -583,11 +596,11 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
       <div className="ph-wrap">
 
-        {/* ── Copy block ── */}
+        {/* ── Copy ── */}
         <div className="ph-copy">
           <motion.h1
             className="ph-title"
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.52 }}
           >
@@ -599,38 +612,38 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
             className="ph-sub"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.48, delay: 0.08 }}
+            transition={{ duration: 0.48, delay: 0.1 }}
           >
             {cms['hp:heroSubline'] ?? 'Career Placement & Global Education Consultancy — Delhi NCR.'}
           </motion.p>
-
-          {/* 3 pills */}
-          <motion.div
-            className="ph-pills"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.16 }}
-          >
-            {NAV_PILLS.map((pill, i) => (
-              <NavPillButton
-                key={pill.id}
-                pill={pill}
-                active={activePopup === pill.id}
-                onClick={() => setActivePopup(activePopup === pill.id ? null : pill.id)}
-                delay={0.18 + i * 0.07}
-              />
-            ))}
-          </motion.div>
         </div>
 
-        {/* ── Stage wrapper — popup lives here, above the scene ── */}
+        {/* ── Pills ── */}
         <motion.div
-          className={`ph-stage-wrap${activePill ? ' ph-has-popup' : ''}`}
+          className="ph-pills"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.18 }}
+        >
+          {NAV_PILLS.map((pill, i) => (
+            <NavPillButton
+              key={pill.id}
+              pill={pill}
+              active={activePopup === pill.id}
+              onClick={() => setActivePopup(activePopup === pill.id ? null : pill.id)}
+              delay={0.2 + i * 0.07}
+            />
+          ))}
+        </motion.div>
+
+        {/* ── Stage wrapper — popup anchors here, above the scene ── */}
+        <motion.div
+          className="ph-stage-wrap"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.58, delay: 0.26 }}
         >
-          {/* POPUP rendered at top of stage-wrap */}
+          {/* popup floats above stage top edge */}
           {activePill && (
             <PopupCard pill={activePill} onClose={() => setActivePopup(null)} />
           )}
@@ -660,7 +673,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
               <p className="ph-ln">Targeting <strong>{offerRole}</strong></p>
             </motion.div>
 
-            {/* scatter avatars */}
+            {/* scatter */}
             <div className="ph-sc" aria-hidden>
               {SCATTER_AVATARS.map((p, i) => (
                 <motion.div
@@ -683,7 +696,8 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
             {/* glass pills */}
             <motion.div className="ph-gp ph-gp--sh"
-              animate={{ y:[0,-5,0] }} transition={{ duration:4, repeat:Infinity, ease:'easeInOut' }}
+              animate={{ y:[0,-5,0] }}
+              transition={{ duration:4, repeat:Infinity, ease:'easeInOut' }}
               style={{ x:useTransform(smx,[0,1],[-10,10]), y:useTransform(smy,[0,1],[-8,8]) }}
               whileHover={{ scale:1.05 }}
             >
@@ -692,7 +706,8 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
             </motion.div>
 
             <motion.div className="ph-gp ph-gp--re"
-              animate={{ y:[0,5,0] }} transition={{ duration:4.5, repeat:Infinity, ease:'easeInOut', delay:0.3 }}
+              animate={{ y:[0,5,0] }}
+              transition={{ duration:4.5, repeat:Infinity, ease:'easeInOut', delay:0.3 }}
               style={{ x:useTransform(smx,[0,1],[10,-10]), y:useTransform(smy,[0,1],[8,-8]) }}
               whileHover={{ scale:1.05 }}
             >
@@ -717,10 +732,10 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
               </div>
               <p className="ph-ln">Interested in <strong>{admitProgramme.split('·')[0]?.trim() ?? 'UK Masters'}</strong></p>
             </motion.div>
-          </div>{/* /ph-stage */}
-        </motion.div>{/* /ph-stage-wrap */}
+          </div>
+        </motion.div>
 
-        {/* ── Stats bar ── */}
+        {/* ── Stats ── */}
         <motion.div
           className="ph-stats"
           initial="hidden"
@@ -745,7 +760,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           ))}
         </motion.div>
 
-      </div>{/* /ph-wrap */}
+      </div>
 
       <HeroMobileBrief cms={cms} />
 
