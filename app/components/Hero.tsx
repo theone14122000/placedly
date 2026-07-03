@@ -604,7 +604,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.52 }}
           >
-            Grow your career,{' '}
+            Grow your career,{' '}<br />
             <AnimatedGradientText>through people you trust.</AnimatedGradientText>
           </motion.h1>
 
