@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Calculator,
@@ -726,6 +726,108 @@ function RotatingHeadlineBanner() {
   );
 }
 
+/* ---------- mobile bottom sheet ---------- */
+
+function MobileToolSheet({
+  onClose,
+  titleId,
+  children,
+}: {
+  onClose: () => void;
+  titleId: string;
+  children: React.ReactNode;
+}) {
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    sheetRef.current?.focus();
+  }, []);
+
+  return (
+    <>
+      <motion.div
+        key="tool-sheet-backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.25 }}
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(15,23,42,0.55)',
+          zIndex: 60,
+        }}
+      />
+      <motion.div
+        key="tool-sheet"
+        ref={sheetRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', damping: 32, stiffness: 300 }}
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.55 }}
+        onDragEnd={(_e, info) => {
+          if (info.offset.y > 110 || info.velocity.y > 700) onClose();
+        }}
+        style={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 61,
+          background: '#fff',
+          borderRadius: '22px 22px 0 0',
+          maxHeight: '92vh',
+          display: 'flex',
+          flexDirection: 'column',
+          boxShadow: '0 -20px 60px rgba(0,0,0,0.25)',
+          outline: 'none',
+          touchAction: 'none',
+        }}
+      >
+        <div
+          aria-hidden
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            padding: '10px 0 2px',
+            cursor: 'grab',
+            flexShrink: 0,
+          }}
+        >
+          <span
+            style={{
+              width: '38px',
+              height: '5px',
+              borderRadius: '999px',
+              background: 'rgba(0,0,0,0.15)',
+            }}
+          />
+        </div>
+        <div
+          style={{
+            flex: 1,
+            minHeight: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '4px 16px 0',
+            touchAction: 'pan-y',
+          }}
+        >
+          {children}
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
 /* ---------- component ---------- */
 
 export default function UtilityToolsSection() {
@@ -791,14 +893,14 @@ export default function UtilityToolsSection() {
     setFileError('');
   };
 
-  const closePanel = () => {
+  const closePanel = useCallback(() => {
     setActiveId(null);
     setPhase('idle');
     setInput('');
     setResultText('');
     setFileName('');
     setFileError('');
-  };
+  }, []);
 
   // lock body scroll when mobile modal open
   useEffect(() => {
@@ -811,6 +913,18 @@ export default function UtilityToolsSection() {
       document.body.style.overflow = '';
     };
   }, [isMobile, active]);
+
+  // close on Escape (mobile + desktop)
+  useEffect(() => {
+    if (!active) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closePanel();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [active, closePanel]);
+
+  const mobileTitleId = active ? `mobile-tool-title-${active.id}` : undefined;
 
   return (
     <section
@@ -950,6 +1064,7 @@ export default function UtilityToolsSection() {
               boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
               border: '1px solid rgba(0,0,0,0.05)',
               flexWrap: 'wrap',
+              justifyContent: 'center',
             }}
           >
             {FILTERS.map((f) => {
@@ -1093,47 +1208,76 @@ export default function UtilityToolsSection() {
           </div>
         </motion.div>
 
-        {/* Tool panel appears beneath toggle bar */}
-        <AnimatePresence mode="wait">
-          {active && (
-            <motion.div
-              key={active.id}
-              initial={{ opacity: 0, y: -10, height: 0 }}
-              animate={{ opacity: 1, y: 0, height: 'auto' }}
-              exit={{ opacity: 0, y: -10, height: 0 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              style={{ overflow: 'hidden' }}
-            >
-              <div
-                style={{
-                  maxWidth: '900px',
-                  margin: '0 auto',
-                  background: '#fff',
-                  borderRadius: '24px',
-                  padding: 'clamp(24px, 4vw, 36px)',
-                  boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
-                  border: `2px solid ${accent.from}22`,
-                }}
+        {/* Desktop: tool panel appears inline beneath toggle bar (unchanged behavior) */}
+        {!isMobile && (
+          <AnimatePresence mode="wait">
+            {active && (
+              <motion.div
+                key={active.id}
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                style={{ overflow: 'hidden' }}
               >
-                <ToolPanel
-                  active={active}
-                  accent={accent}
-                  input={input}
-                  setInput={setInput}
-                  phase={phase}
-                  typedResult={typedResult}
-                  runTool={runTool}
-                  closePanel={closePanel}
-                  onFileUpload={handleFileUpload}
-                  isExtracting={isExtracting}
-                  fileName={fileName}
-                  fileError={fileError}
-                />
-              </div>
-            </motion.div>
+                <div
+                  style={{
+                    maxWidth: '900px',
+                    margin: '0 auto',
+                    background: '#fff',
+                    borderRadius: '24px',
+                    padding: 'clamp(24px, 4vw, 36px)',
+                    boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
+                    border: `2px solid ${accent.from}22`,
+                  }}
+                >
+                  <ToolPanel
+                    active={active}
+                    accent={accent}
+                    input={input}
+                    setInput={setInput}
+                    phase={phase}
+                    typedResult={typedResult}
+                    runTool={runTool}
+                    closePanel={closePanel}
+                    onFileUpload={handleFileUpload}
+                    isExtracting={isExtracting}
+                    fileName={fileName}
+                    fileError={fileError}
+                    variant="desktop"
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
+      </div>
+
+      {/* Mobile: tool panel presented as a native-feeling bottom sheet */}
+      {isMobile && (
+        <AnimatePresence>
+          {active && mobileTitleId && (
+            <MobileToolSheet key="mobile-sheet" onClose={closePanel} titleId={mobileTitleId}>
+              <ToolPanel
+                active={active}
+                accent={accent}
+                input={input}
+                setInput={setInput}
+                phase={phase}
+                typedResult={typedResult}
+                runTool={runTool}
+                closePanel={closePanel}
+                onFileUpload={handleFileUpload}
+                isExtracting={isExtracting}
+                fileName={fileName}
+                fileError={fileError}
+                variant="mobile"
+                titleId={mobileTitleId}
+              />
+            </MobileToolSheet>
           )}
         </AnimatePresence>
-      </div>
+      )}
 
       <style>{`
         @media (max-width: 900px) {
@@ -1145,6 +1289,14 @@ export default function UtilityToolsSection() {
           }
           .tool-title-mobile {
             display: inline;
+          }
+
+          .tools-filter {
+            gap: 8px !important;
+          }
+          .tools-filter button {
+            padding: 12px 16px !important;
+            min-height: 44px;
           }
 
           .tools-toggle-wrap {
@@ -1166,7 +1318,8 @@ export default function UtilityToolsSection() {
           .tools-toggle-bar > button {
             flex-shrink: 0;
             scroll-snap-align: start;
-            padding: 10px 16px !important;
+            padding: 12px 16px !important;
+            min-height: 44px;
           }
           .tool-hot-badge {
             display: none;
@@ -1192,6 +1345,19 @@ export default function UtilityToolsSection() {
             right: 0;
             background: linear-gradient(270deg, #fafafa, rgba(250,250,250,0));
             border-radius: 0 999px 999px 0;
+          }
+
+          /* prevent iOS auto-zoom on focus + bigger tap targets inside the sheet */
+          .tool-textarea {
+            font-size: 16px !important;
+          }
+          .tool-close-btn {
+            width: 40px !important;
+            height: 40px !important;
+          }
+          .tool-upload-label {
+            padding: 12px 16px !important;
+            min-height: 44px;
           }
         }
         @media (min-width: 901px) {
@@ -1225,6 +1391,8 @@ function ToolPanel({
   isExtracting,
   fileName,
   fileError,
+  variant = 'desktop',
+  titleId,
 }: {
   active: Tool | null;
   accent: Accent;
@@ -1238,61 +1406,253 @@ function ToolPanel({
   isExtracting: boolean;
   fileName: string;
   fileError: string;
+  variant?: 'desktop' | 'mobile';
+  titleId?: string;
 }) {
   if (!active) return null;
 
   const supportsUpload = UPLOAD_ENABLED_IDS.includes(active.id);
+  const isMobileVariant = variant === 'mobile';
 
-  return (
-    <div style={{ position: 'relative' }}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          marginBottom: '20px',
-        }}
-      >
-        <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
-          <span
+  const runButton = (
+    <motion.button
+      type="button"
+      onClick={runTool}
+      disabled={phase === 'loading'}
+      whileHover={{ y: -2, boxShadow: `0 12px 32px ${accent.soft}` }}
+      whileTap={{ scale: 0.98 }}
+      style={{
+        width: '100%',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '10px',
+        padding: '16px 28px',
+        background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
+        color: '#fff',
+        border: 'none',
+        borderRadius: '14px',
+        fontWeight: 700,
+        fontSize: '15px',
+        cursor: phase === 'loading' ? 'wait' : 'pointer',
+        opacity: phase === 'loading' ? 0.85 : 1,
+        boxShadow: `0 8px 24px ${accent.soft}`,
+      }}
+    >
+      {phase === 'loading' ? (
+        <>
+          <motion.span
+            aria-hidden
+            animate={{ rotate: 360 }}
+            transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
             style={{
-              width: '50px',
-              height: '50px',
-              borderRadius: '16px',
+              width: '16px',
+              height: '16px',
+              borderRadius: '50%',
+              border: '2px solid rgba(255,255,255,0.3)',
+              borderTopColor: '#fff',
+              display: 'inline-block',
+            }}
+          />
+          Analyzing…
+        </>
+      ) : (
+        <>
+          <Sparkles size={18} strokeWidth={2.5} aria-hidden />
+          {active.cta}
+        </>
+      )}
+    </motion.button>
+  );
+
+  const resultBlock = (
+    <AnimatePresence>
+      {(phase === 'loading' || phase === 'done') && (
+        <motion.div
+          initial={{ opacity: 0, y: 10, height: 0 }}
+          animate={{ opacity: 1, y: 0, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          style={{
+            marginTop: '20px',
+            padding: '20px',
+            borderRadius: '16px',
+            background: accent.soft,
+            border: `2px solid ${accent.from}33`,
+            overflow: 'hidden',
+          }}
+        >
+          <p
+            style={{
+              fontSize: '11px',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.8px',
+              color: accent.from,
+              marginBottom: '12px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
-              color: '#fff',
-              flexShrink: 0,
-              boxShadow: `0 8px 20px ${accent.soft}`,
+              gap: '8px',
             }}
           >
-            <active.Icon size={24} strokeWidth={2} />
-          </span>
-          <div>
-            <p
-              style={{
-                fontSize: '11px',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '1.2px',
-                color: accent.from,
-                marginBottom: '4px',
-              }}
-            >
-              Placedly AI Tool
+            <Sparkles size={14} strokeWidth={2.5} />
+            AI Insight
+          </p>
+          {phase === 'loading' ? (
+            <TypingDots />
+          ) : (
+            <p style={{ fontSize: '14.5px', lineHeight: 1.7, color: '#222' }}>
+              {typedResult}
+              <motion.span
+                animate={{ opacity: [1, 0] }}
+                transition={{ duration: 0.6, repeat: Infinity }}
+                style={{
+                  display: 'inline-block',
+                  width: '2px',
+                  height: '16px',
+                  background: accent.from,
+                  marginLeft: '3px',
+                  verticalAlign: 'middle',
+                }}
+              />
             </p>
-            <h3
-              style={{
-                fontSize: 'clamp(1.1rem, 2vw, 1.4rem)',
-                fontWeight: 800,
-                lineHeight: 1.3,
-                ...headingGradientStyle,
-              }}
-            >
-              {active.title}
-            </h3>
+          )}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
+  const uploadBlock = supportsUpload && (
+    <div style={{ marginBottom: '14px' }}>
+      <input
+        type="file"
+        id={`resume-upload-${active.id}-${variant}`}
+        accept=".pdf,.doc,.docx,.txt"
+        style={{ display: 'none' }}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) onFileUpload(file);
+          e.target.value = '';
+        }}
+      />
+      <label
+        htmlFor={`resume-upload-${active.id}-${variant}`}
+        className="tool-upload-label"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '9px 16px',
+          borderRadius: '999px',
+          border: `1.5px dashed ${accent.from}55`,
+          background: accent.soft,
+          color: accent.from,
+          fontSize: '13px',
+          fontWeight: 600,
+          cursor: isExtracting ? 'wait' : 'pointer',
+          transition: 'border-color 0.25s ease, background 0.25s ease',
+        }}
+      >
+        <Upload size={15} strokeWidth={2.25} aria-hidden />
+        {isExtracting
+          ? 'Reading file…'
+          : fileName
+          ? `Uploaded: ${fileName}`
+          : 'Upload Resume (.pdf, .docx, .txt)'}
+      </label>
+      {fileError && (
+        <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '6px', lineHeight: 1.5 }}>
+          {fileError}
+        </p>
+      )}
+    </div>
+  );
+
+  const textarea = (
+    <textarea
+      rows={isMobileVariant ? 4 : 5}
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      placeholder={active.placeholder}
+      className="tool-textarea"
+      style={{
+        width: '100%',
+        resize: 'vertical',
+        padding: '16px',
+        borderRadius: '16px',
+        border: `2px solid ${accent.from}22`,
+        fontSize: '14px',
+        lineHeight: 1.6,
+        color: '#111',
+        outline: 'none',
+        marginBottom: '16px',
+        fontFamily: 'inherit',
+        background: accent.soft,
+        transition: 'border-color 0.3s ease',
+      }}
+      onFocus={(e) => {
+        e.currentTarget.style.borderColor = accent.from;
+      }}
+      onBlur={(e) => {
+        e.currentTarget.style.borderColor = `${accent.from}22`;
+      }}
+    />
+  );
+
+  const header = (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: isMobileVariant ? '14px' : '20px',
+        paddingBottom: isMobileVariant ? '14px' : 0,
+        borderBottom: isMobileVariant ? '1px solid rgba(0,0,0,0.06)' : 'none',
+        background: '#fff',
+      }}
+    >
+      <div style={{ display: 'flex', gap: isMobileVariant ? '12px' : '14px', alignItems: 'center', minWidth: 0 }}>
+        <span
+          style={{
+            width: isMobileVariant ? '44px' : '50px',
+            height: isMobileVariant ? '44px' : '50px',
+            borderRadius: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
+            color: '#fff',
+            flexShrink: 0,
+            boxShadow: `0 8px 20px ${accent.soft}`,
+          }}
+        >
+          <active.Icon size={isMobileVariant ? 21 : 24} strokeWidth={2} />
+        </span>
+        <div style={{ minWidth: 0 }}>
+          <p
+            style={{
+              fontSize: '11px',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '1.2px',
+              color: accent.from,
+              marginBottom: '4px',
+            }}
+          >
+            Placedly AI Tool
+          </p>
+          <h3
+            id={titleId}
+            style={{
+              fontSize: isMobileVariant ? '1.02rem' : 'clamp(1.1rem, 2vw, 1.4rem)',
+              fontWeight: 800,
+              lineHeight: 1.3,
+              ...headingGradientStyle,
+            }}
+          >
+            {active.title}
+          </h3>
+          {!isMobileVariant && (
             <p
               style={{
                 fontSize: '13px',
@@ -1303,213 +1663,86 @@ function ToolPanel({
             >
               {active.description}
             </p>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={closePanel}
-          aria-label="Close tool"
-          style={{
-            border: 'none',
-            background: 'rgba(0,0,0,0.05)',
-            width: '36px',
-            height: '36px',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            color: '#666',
-            flexShrink: 0,
-            transition: 'all 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(0,0,0,0.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
-          }}
-        >
-          <X size={18} strokeWidth={2.5} />
-        </button>
-      </div>
-
-      {supportsUpload && (
-        <div style={{ marginBottom: '14px' }}>
-          <input
-            type="file"
-            id={`resume-upload-${active.id}`}
-            accept=".pdf,.doc,.docx,.txt"
-            style={{ display: 'none' }}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) onFileUpload(file);
-              e.target.value = '';
-            }}
-          />
-          <label
-            htmlFor={`resume-upload-${active.id}`}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '9px 16px',
-              borderRadius: '999px',
-              border: `1.5px dashed ${accent.from}55`,
-              background: accent.soft,
-              color: accent.from,
-              fontSize: '13px',
-              fontWeight: 600,
-              cursor: isExtracting ? 'wait' : 'pointer',
-              transition: 'border-color 0.25s ease, background 0.25s ease',
-            }}
-          >
-            <Upload size={15} strokeWidth={2.25} aria-hidden />
-            {isExtracting
-              ? 'Reading file…'
-              : fileName
-              ? `Uploaded: ${fileName}`
-              : 'Upload Resume (.pdf, .docx, .txt)'}
-          </label>
-          {fileError && (
-            <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '6px', lineHeight: 1.5 }}>
-              {fileError}
-            </p>
           )}
         </div>
-      )}
-
-      <textarea
-        rows={5}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder={active.placeholder}
-        style={{
-          width: '100%',
-          resize: 'vertical',
-          padding: '16px',
-          borderRadius: '16px',
-          border: `2px solid ${accent.from}22`,
-          fontSize: '14px',
-          lineHeight: 1.6,
-          color: '#111',
-          outline: 'none',
-          marginBottom: '16px',
-          fontFamily: 'inherit',
-          background: accent.soft,
-          transition: 'border-color 0.3s ease',
-        }}
-        onFocus={(e) => {
-          e.currentTarget.style.borderColor = accent.from;
-        }}
-        onBlur={(e) => {
-          e.currentTarget.style.borderColor = `${accent.from}22`;
-        }}
-      />
-
-      <motion.button
+      </div>
+      <button
         type="button"
-        onClick={runTool}
-        disabled={phase === 'loading'}
-        whileHover={{ y: -2, boxShadow: `0 12px 32px ${accent.soft}` }}
-        whileTap={{ scale: 0.98 }}
+        onClick={closePanel}
+        aria-label="Close tool"
+        className="tool-close-btn"
         style={{
-          width: '100%',
-          display: 'inline-flex',
+          border: 'none',
+          background: 'rgba(0,0,0,0.05)',
+          width: '36px',
+          height: '36px',
+          borderRadius: '12px',
+          display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '10px',
-          padding: '16px 28px',
-          background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
-          color: '#fff',
-          border: 'none',
-          borderRadius: '14px',
-          fontWeight: 700,
-          fontSize: '15px',
-          cursor: phase === 'loading' ? 'wait' : 'pointer',
-          opacity: phase === 'loading' ? 0.85 : 1,
-          boxShadow: `0 8px 24px ${accent.soft}`,
+          cursor: 'pointer',
+          color: '#666',
+          flexShrink: 0,
+          transition: 'all 0.2s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'rgba(0,0,0,0.1)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
         }}
       >
-        {phase === 'loading' ? (
-          <>
-            <motion.span
-              aria-hidden
-              animate={{ rotate: 360 }}
-              transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-              style={{
-                width: '16px',
-                height: '16px',
-                borderRadius: '50%',
-                border: '2px solid rgba(255,255,255,0.3)',
-                borderTopColor: '#fff',
-                display: 'inline-block',
-              }}
-            />
-            Analyzing…
-          </>
-        ) : (
-          <>
-            <Sparkles size={18} strokeWidth={2.5} aria-hidden />
-            {active.cta}
-          </>
-        )}
-      </motion.button>
+        <X size={18} strokeWidth={2.5} />
+      </button>
+    </div>
+  );
 
-      <AnimatePresence>
-        {(phase === 'loading' || phase === 'done') && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            style={{
-              marginTop: '20px',
-              padding: '20px',
-              borderRadius: '16px',
-              background: accent.soft,
-              border: `2px solid ${accent.from}33`,
-              overflow: 'hidden',
-            }}
-          >
-            <p
-              style={{
-                fontSize: '11px',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.8px',
-                color: accent.from,
-                marginBottom: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <Sparkles size={14} strokeWidth={2.5} />
-              AI Insight
-            </p>
-            {phase === 'loading' ? (
-              <TypingDots />
-            ) : (
-              <p style={{ fontSize: '14.5px', lineHeight: 1.7, color: '#222' }}>
-                {typedResult}
-                <motion.span
-                  animate={{ opacity: [1, 0] }}
-                  transition={{ duration: 0.6, repeat: Infinity }}
-                  style={{
-                    display: 'inline-block',
-                    width: '2px',
-                    height: '16px',
-                    background: accent.from,
-                    marginLeft: '3px',
-                    verticalAlign: 'middle',
-                  }}
-                />
-              </p>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+  if (!isMobileVariant) {
+    return (
+      <div style={{ position: 'relative' }}>
+        {header}
+        {uploadBlock}
+        {textarea}
+        {runButton}
+        {resultBlock}
+      </div>
+    );
+  }
+
+  // Mobile: sticky header, scrollable middle, sticky CTA footer
+  return (
+    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+      <div style={{ flexShrink: 0 }}>{header}</div>
+
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          paddingTop: '14px',
+          paddingBottom: '8px',
+        }}
+      >
+        <p style={{ fontSize: '13px', color: '#666', marginBottom: '14px', lineHeight: 1.5 }}>
+          {active.description}
+        </p>
+        {uploadBlock}
+        {textarea}
+        {resultBlock}
+      </div>
+
+      <div
+        style={{
+          flexShrink: 0,
+          paddingTop: '12px',
+          paddingBottom: 'max(14px, env(safe-area-inset-bottom))',
+          borderTop: '1px solid rgba(0,0,0,0.06)',
+          background: '#fff',
+        }}
+      >
+        {runButton}
+      </div>
     </div>
   );
 }
