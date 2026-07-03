@@ -1,169 +1,518 @@
+'use client';
+
 export const dynamic = 'force-dynamic';
 
-import type { Metadata } from 'next';
-import PageLayout from '../components/PageLayout';
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   Target, DollarSign, Handshake, Globe2, FileCheck, TrendingUp,
-  Rocket, Globe, ArrowRight,
+  Rocket, Globe, ArrowRight, Users, Award, Clock, Briefcase,
 } from 'lucide-react';
-import { getCmsMap, parseCmsJson } from '@/lib/cms';
+import PageLayout from '../components/PageLayout';
 
-export const metadata: Metadata = {
-  title: 'Our Services — Placedly',
-  description: 'Two powerful verticals: Career Growth in India (CAP programme) and Study Abroad (140+ universities across UK, France, Germany & Dubai). One growth partner.',
-};
+/* ============================================================
+   DESIGN SYSTEM TOKENS
+   ============================================================ */
+const BRAND = ['#2563eb', '#7c8ff0', '#fb923c', '#f43f5e', '#a855f7'];
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ICON_MAP: Record<string, React.ComponentType<any>> = {
-  Target, DollarSign, Handshake, Globe2, FileCheck, TrendingUp
+  Target, DollarSign, Handshake, Globe2, FileCheck, TrendingUp,
 };
 
 const DEFAULT_DIFFERENTIATORS = [
-  { Icon: Target,      iconBg: '#fff7ed', iconColor: '#f97316', title: 'Domain Specialist',       desc: 'We specialize in BPO, US Healthcare Claims, Insurance Operations, and Finance — not generic careers. Deep domain expertise = better results.' },
-  { Icon: DollarSign,  iconBg: '#f0fdf4', iconColor: '#16a34a', title: 'Zero Upfront Model',       desc: 'We invest first — time, expertise, network. You pay only when your career genuinely grows. This is our commitment.' },
-  { Icon: Handshake,   iconBg: '#eff6ff', iconColor: '#2145fb', title: 'Direct Employer Access',   desc: 'Your profile reaches hiring managers directly — not portals. We have warm connections at EXL, Quatrro, eBiz, WNS, Optum & more.' },
-  { Icon: Globe2,      iconBg: '#faf5ff', iconColor: '#7c3aed', title: 'Global University Network', desc: '140+ universities across UK, France, Germany & Dubai. Dedicated account manager. Application to visa — all handled.' },
-  { Icon: FileCheck,   iconBg: '#ecfeff', iconColor: '#0891b2', title: 'Transparent Agreements',   desc: 'Everything in writing. Signed service agreement before we start. No surprises, no hidden terms, ever.' },
-  { Icon: TrendingUp,  iconBg: '#f0fdf4', iconColor: '#16a34a', title: 'Proven Results',           desc: '300+ professionals placed. Average 60%+ career growth. Fastest placement in 9 days. Numbers speak for themselves.' },
+  { icon: 'Target', title: 'Domain Specialist', desc: 'We specialize in BPO, US Healthcare Claims, Insurance Operations, and Finance — not generic careers. Deep domain expertise = better results.' },
+  { icon: 'DollarSign', title: 'Zero Upfront Model', desc: 'We invest first — time, expertise, network. You pay only when your career genuinely grows. This is our commitment.' },
+  { icon: 'Handshake', title: 'Direct Employer Access', desc: 'Your profile reaches hiring managers directly — not portals. We have warm connections at EXL, Quatrro, eBiz, WNS, Optum & more.' },
+  { icon: 'Globe2', title: 'Global University Network', desc: '140+ universities across UK, France, Germany & Dubai. Dedicated account manager. Application to visa — all handled.' },
+  { icon: 'FileCheck', title: 'Transparent Agreements', desc: 'Everything in writing. Signed service agreement before we start. No surprises, no hidden terms, ever.' },
+  { icon: 'TrendingUp', title: 'Proven Results', desc: '300+ professionals placed. Average 60%+ career growth. Fastest placement in 9 days. Numbers speak for themselves.' },
 ];
 
 const careerFeatures = ['ATS Resume + LinkedIn Rebuild', '3 Mock Interview Sessions', 'Direct Employer Connect (10–15 companies)', 'Salary Negotiation Support', 'Zero upfront — pay after placement'];
-const studyFeatures  = ['University & Course Shortlisting', 'Application Management', 'Dedicated Account Manager', 'Visa Guidance & Documentation', '50,000+ Course Knowledge Base'];
+const studyFeatures = ['University & Course Shortlisting', 'Application Management', 'Dedicated Account Manager', 'Visa Guidance & Documentation', '50,000+ Course Knowledge Base'];
 
+const STATS = [
+  { icon: Users, value: '300+', label: 'Professionals Placed' },
+  { icon: TrendingUp, value: '60%+', label: 'Avg. Career Growth' },
+  { icon: Clock, value: '9 Days', label: 'Fastest Placement' },
+  { icon: Award, value: '140+', label: 'Partner Universities' },
+];
+
+type DiffItem = { title?: string; desc?: string; icon?: string };
 type SvcCmsData = {
   services?: Array<{ id?: string; title?: string; tag?: string; desc?: string; color?: string; features?: string[] }>;
-  diff?: Array<{ title?: string; desc?: string }>;
+  diff?: DiffItem[];
 };
 
-export default async function ServicesPage() {
-  const cmsMap = await getCmsMap('services:');
-  const svcCms = parseCmsJson<SvcCmsData>(cmsMap, 'services:data', {});
+/* ============================================================
+   PRIMITIVES
+   ============================================================ */
+function AmbientBlobs({ scale = 1 }: { scale?: number }) {
+  return (
+    <>
+      <motion.div
+        aria-hidden
+        style={{
+          position: 'absolute', top: '-8%', left: '-6%', width: 420, height: 420, borderRadius: '50%',
+          background: `radial-gradient(circle, rgba(37,99,235,${0.13 * scale}) 0%, transparent 70%)`,
+          filter: 'blur(110px)', pointerEvents: 'none', zIndex: 0,
+        }}
+        animate={{ x: [0, 40, 0], y: [0, 30, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        aria-hidden
+        style={{
+          position: 'absolute', bottom: '-10%', right: '-6%', width: 460, height: 460, borderRadius: '50%',
+          background: `radial-gradient(circle, rgba(249,115,22,${0.12 * scale}) 0%, transparent 70%)`,
+          filter: 'blur(120px)', pointerEvents: 'none', zIndex: 0,
+        }}
+        animate={{ x: [0, -30, 0], y: [0, -40, 0] }}
+        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+      />
+    </>
+  );
+}
 
-  const differentiators = (svcCms.diff && svcCms.diff.length > 0)
-    ? svcCms.diff.map((d, i) => {
-        const def = DEFAULT_DIFFERENTIATORS[i] ?? DEFAULT_DIFFERENTIATORS[0];
-        return { Icon: def.Icon, iconBg: def.iconBg, iconColor: def.iconColor, title: d.title ?? def.title, desc: d.desc ?? def.desc };
+function Eyebrow({ children, center = false }: { children: React.ReactNode; center?: boolean }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: center ? 'center' : 'flex-start', marginBottom: 16 }}>
+      <span style={{ width: 20, height: 3, borderRadius: 999, background: 'linear-gradient(90deg,#2563eb,#fb923c)', flexShrink: 0 }} />
+      <span style={{
+        fontSize: 11.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em',
+        backgroundImage: 'linear-gradient(90deg,#2563eb,#7c8ff0)',
+        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', whiteSpace: 'nowrap',
+      }}>{children}</span>
+      <span style={{ width: 20, height: 3, borderRadius: 999, background: 'linear-gradient(90deg,#fb923c,#2563eb)', flexShrink: 0 }} />
+    </div>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function GradientHeading({ children, size = 'clamp(1.8rem, 4vw, 2.75rem)', align = 'left', as: Tag = 'h2' }: any) {
+  const Comp = Tag as React.ElementType;
+  return (
+    <Comp style={{
+      fontSize: size, fontWeight: 900, letterSpacing: '-0.02em', lineHeight: 1.1, textAlign: align, margin: 0,
+      backgroundImage: 'linear-gradient(270deg,#2563eb,#7c8ff0,#fb923c,#f43f5e,#a855f7,#2563eb)',
+      backgroundSize: '300% 300%', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+      backgroundClip: 'text', animation: 'svcGradientShift 6s ease infinite',
+    }}>{children}</Comp>
+  );
+}
+
+function ShineButton({
+  href, children, variant, external = false,
+}: {
+  href: string; children: React.ReactNode;
+  variant: 'orange' | 'blue' | 'white' | 'ghost-dark';
+  external?: boolean;
+}) {
+  return (
+    <motion.a
+      href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener noreferrer' : undefined}
+      whileHover={{ y: -3 }}
+      whileTap={{ y: 0, scale: 0.98 }}
+      className={`svc-shine-btn svc-shine-btn--${variant}`}
+    >
+      <span className="svc-shine-sweep" aria-hidden />
+      <span style={{ position: 'relative', zIndex: 1, display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+        {children}
+        <motion.span
+          style={{ display: 'flex' }}
+          animate={{ x: [0, 4, 0] }}
+          transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <ArrowRight size={14} strokeWidth={2.5} />
+        </motion.span>
+      </span>
+    </motion.a>
+  );
+}
+
+function BrandCard({ index, accent, children }: { index: number; accent: string; children: React.ReactNode }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.55, ease: EASE, delay: index * 0.08 }}
+      whileHover={{ y: -6 }}
+      className="svc-brand-card"
+      style={{
+        position: 'relative', background: '#fff', borderRadius: 22, border: '1px solid rgba(15,23,42,0.06)',
+        padding: '30px 26px', overflow: 'hidden',
+      }}
+    >
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: 3,
+        background: `linear-gradient(90deg, ${accent}, ${BRAND[(index + 1) % BRAND.length]})`,
+      }} />
+      <div style={{
+        position: 'absolute', right: 14, bottom: -20, fontSize: 88, fontWeight: 900, lineHeight: 1,
+        backgroundImage: `linear-gradient(135deg, ${accent}22, transparent)`,
+        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+        userSelect: 'none', pointerEvents: 'none',
+      }}>{String(index + 1).padStart(2, '0')}</div>
+      <div style={{ position: 'relative', zIndex: 1 }}>{children}</div>
+    </motion.div>
+  );
+}
+
+/* ============================================================
+   PAGE
+   ============================================================ */
+export default function ServicesPage() {
+  const [focus, setFocus] = useState<'career' | 'study' | null>(null);
+  const [differentiators, setDifferentiators] = useState(DEFAULT_DIFFERENTIATORS);
+
+  useEffect(() => {
+    fetch('/api/admin/content?prefix=services:')
+      .then(r => r.json())
+      .then((map: Record<string, string>) => {
+        try {
+          const raw = map['services:data'];
+          if (!raw) return;
+          const p: SvcCmsData = JSON.parse(raw);
+          if (Array.isArray(p.diff) && p.diff.length > 0) {
+            setDifferentiators(
+              p.diff.map((d, i) => {
+                const def = DEFAULT_DIFFERENTIATORS[i] ?? DEFAULT_DIFFERENTIATORS[0];
+                return { icon: d.icon ?? def.icon, title: d.title ?? def.title, desc: d.desc ?? def.desc };
+              })
+            );
+          }
+        } catch { /* keep defaults */ }
       })
-    : DEFAULT_DIFFERENTIATORS;
-
+      .catch(() => {});
+  }, []);
 
   return (
     <PageLayout>
-      {/* ── Hero ── */}
-      <section className="page-hero">
-        <div className="container">
-          <div className="page-hero-inner">
-            <nav className="page-hero-breadcrumb">
-              <a href="/">Home</a><span>›</span>
-              <span style={{ color: 'var(--c-body)' }}>Services</span>
-            </nav>
-            <div className="page-hero-tag">
-              <div className="page-hero-tag-dot" />
-              <span>Our Services</span>
+      <style jsx global>{`
+        @keyframes svcGradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        .svc-brand-card { transition: box-shadow .3s ease, border-color .3s ease; }
+        .svc-brand-card:hover { box-shadow: 0 24px 60px rgba(37,99,235,0.14); border-color: rgba(37,99,235,0.15); }
+
+        .svc-vertical-card {
+          position: relative; border-radius: 24px; padding: 40px; color: #fff;
+          display: flex; flex-direction: column; gap: 20px; overflow: hidden; cursor: pointer;
+          transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease, filter 0.4s ease;
+        }
+        .svc-vertical-card:hover { transform: translateY(-8px); }
+        .svc-vertical-card--dim { filter: brightness(0.82) saturate(0.85); }
+
+        .svc-feature-row { display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateX(-8px); animation: svcFeatureIn 0.5s ease forwards; }
+        @keyframes svcFeatureIn { to { opacity: 1; transform: translateX(0); } }
+
+        .svc-shine-btn {
+          position: relative; display: inline-flex; align-items: center; gap: 8px;
+          padding: 13px 26px; border-radius: 999px; font-weight: 700; font-size: 14px;
+          font-family: 'Poppins', sans-serif; text-decoration: none; overflow: hidden; isolation: isolate;
+          border: 1px solid transparent; cursor: pointer;
+          transition: box-shadow 0.28s cubic-bezier(0.22,1,0.36,1), filter 0.28s ease;
+        }
+        .svc-shine-btn--orange {
+          background: linear-gradient(135deg,#fb923c,#f43f5e); color: #fff;
+          box-shadow: 0 8px 22px rgba(251,146,60,0.32);
+        }
+        .svc-shine-btn--orange:hover { box-shadow: 0 16px 34px rgba(244,63,94,0.4); filter: brightness(1.06); }
+        .svc-shine-btn--blue {
+          background: linear-gradient(135deg,#2563eb,#7c8ff0); color: #fff;
+          box-shadow: 0 8px 22px rgba(37,99,235,0.32);
+        }
+        .svc-shine-btn--blue:hover { box-shadow: 0 16px 34px rgba(37,99,235,0.42); filter: brightness(1.06); }
+        .svc-shine-btn--white {
+          background: #ffffff; color: #2563eb; box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+        }
+        .svc-shine-btn--white:hover { box-shadow: 0 16px 34px rgba(0,0,0,0.16); }
+        .svc-shine-btn--ghost-dark {
+          background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.25);
+        }
+        .svc-shine-btn--ghost-dark:hover { border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.06); }
+
+        .svc-shine-sweep {
+          position: absolute; top: 0; left: -130%; width: 55%; height: 100%;
+          background: linear-gradient(115deg, transparent, rgba(255,255,255,0.5), transparent);
+          transform: skewX(-20deg); transition: left 0.65s ease; z-index: 0; pointer-events: none;
+        }
+        .svc-shine-btn:hover .svc-shine-sweep { left: 140%; }
+
+        .svc-quickmatch-btn {
+          display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 999px;
+          font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1.5px solid rgba(15,23,42,0.08);
+          background: #fff; color: #374151; transition: all 0.25s ease; font-family: inherit;
+        }
+        .svc-quickmatch-btn:hover { border-color: rgba(37,99,235,0.3); box-shadow: 0 8px 20px rgba(37,99,235,0.1); }
+        .svc-quickmatch-btn.active { color: #fff; border-color: transparent; }
+
+        .svc-verticals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 860px) { .svc-verticals-grid { grid-template-columns: 1fr; } }
+
+        .svc-diff-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        @media (max-width: 900px) { .svc-diff-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 560px) { .svc-diff-grid { grid-template-columns: 1fr; } }
+
+        .svc-stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        @media (max-width: 580px) { .svc-stats-strip { grid-template-columns: repeat(2, 1fr); } }
+
+        .svc-quickmatch-row { display: flex; gap: 12px; justify-content: flex-start; flex-wrap: wrap; }
+      `}</style>
+
+      {/* ══════════════════ HERO ══════════════════ */}
+      <section style={{ position: 'relative', overflow: 'hidden', background: '#fbfbfd', padding: 'clamp(90px, 12vw, 130px) 0 clamp(56px, 8vw, 90px)' }}>
+        <AmbientBlobs />
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+          <nav style={{ display: 'flex', gap: 8, fontSize: 13, color: '#94a3b8', marginBottom: 24 }}>
+            <a href="/" style={{ color: 'inherit', textDecoration: 'none' }}>Home</a>
+            <span>›</span>
+            <span style={{ color: '#374151' }}>Services</span>
+          </nav>
+
+          <Eyebrow>Our Services</Eyebrow>
+
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, ease: EASE }}>
+            <GradientHeading as="h1" size="clamp(2rem, 5vw, 3.2rem)">
+              Everything You Need to Grow.
+            </GradientHeading>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
+            style={{ fontSize: 16, color: '#64748b', maxWidth: 520, margin: '18px 0 32px' }}
+          >
+            Two powerful verticals. One growth partner.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: EASE, delay: 0.2 }}
+          >
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', marginBottom: 12 }}>
+              Not sure where to start? Tell us your goal:
             </div>
-            <h1 className="page-hero-title">
-              Everything You Need<br /><em>to Grow.</em>
-            </h1>
-            <p className="page-hero-subtitle">
-              Two powerful verticals. One growth partner.
-            </p>
-          </div>
+            <div className="svc-quickmatch-row">
+              <button
+                type="button"
+                onClick={() => setFocus(focus === 'career' ? null : 'career')}
+                className={`svc-quickmatch-btn${focus === 'career' ? ' active' : ''}`}
+                style={focus === 'career' ? { background: 'linear-gradient(135deg,#fb923c,#f43f5e)' } : {}}
+              >
+                <Briefcase size={15} /> I want a job in India
+              </button>
+              <button
+                type="button"
+                onClick={() => setFocus(focus === 'study' ? null : 'study')}
+                className={`svc-quickmatch-btn${focus === 'study' ? ' active' : ''}`}
+                style={focus === 'study' ? { background: 'linear-gradient(135deg,#2563eb,#7c8ff0)' } : {}}
+              >
+                <Globe size={15} /> I want to study abroad
+              </button>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── Two Verticals ── */}
-      <section className="inner-section">
-        <div className="container">
-          <div className="svc-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '80px' }}>
+      {/* ══════════════════ TWO VERTICALS ══════════════════ */}
+      <section style={{ position: 'relative', background: '#ffffff', padding: '0 0 clamp(64px, 9vw, 100px)' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+          <div className="svc-verticals-grid" style={{ marginBottom: 80 }}>
 
             {/* Career */}
-            <div style={{ background: '#0b0d20', borderRadius: '24px', padding: '40px', color: '#fff', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ width: '52px', height: '52px', borderRadius: '14px', background: 'rgba(249,115,22,0.15)', border: '1px solid rgba(249,115,22,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Rocket size={26} color="#f97316" />
-              </div>
-              <div>
-                <div style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: '8px' }}>Vertical 01</div>
-                <div style={{ fontSize: '22px', fontWeight: 800, marginBottom: '12px' }}>Career Growth — India</div>
-                <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.72)', lineHeight: 1.7 }}>
+            <motion.div
+              initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ duration: 0.55, ease: EASE }}
+              onMouseEnter={() => setFocus('career')} onMouseLeave={() => setFocus(null)}
+              className={`svc-vertical-card${focus === 'study' ? ' svc-vertical-card--dim' : ''}`}
+              style={{
+                background: 'linear-gradient(135deg, #0b0d20 0%, #1a1040 100%)',
+                boxShadow: focus === 'career' ? '0 24px 60px rgba(251,146,60,0.25)' : '0 8px 30px rgba(0,0,0,0.15)',
+              }}
+            >
+              <div style={{
+                position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(251,146,60,0.18) 0%, transparent 70%)', filter: 'blur(50px)', pointerEvents: 'none',
+              }} />
+              <motion.div
+                style={{
+                  width: 52, height: 52, borderRadius: 14, background: 'rgba(249,115,22,0.15)',
+                  border: '1px solid rgba(249,115,22,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  position: 'relative', zIndex: 1,
+                }}
+                animate={{ rotate: focus === 'career' ? [0, -8, 8, 0] : 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Rocket size={26} color="#fb923c" />
+              </motion.div>
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 8 }}>Vertical 01</div>
+                <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, letterSpacing: '-0.01em' }}>Career Growth — India</div>
+                <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.72)', lineHeight: 1.7 }}>
                   Land roles at top MNCs — EXL, Quatrro, eBiz, WNS, Optum &amp; more. Resume transformation, interview mastery, direct employer connect.
                 </p>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {careerFeatures.map(item => (
-                  <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ width: '20px', height: '20px', minWidth: '20px', borderRadius: '50%', background: 'rgba(249,115,22,0.18)', border: '1px solid rgba(249,115,22,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', zIndex: 1 }}>
+                {careerFeatures.map((item, i) => (
+                  <div key={item} className="svc-feature-row" style={{ animationDelay: `${i * 0.08}s` }}>
+                    <div style={{ width: 20, height: 20, minWidth: 20, borderRadius: '50%', background: 'rgba(249,115,22,0.18)', border: '1px solid rgba(249,115,22,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <ArrowRight size={10} color="#fb923c" strokeWidth={3} />
                     </div>
-                    <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>{item}</span>
+                    <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.8)' }}>{item}</span>
                   </div>
                 ))}
               </div>
-              <a href="/cap" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '13px 20px', background: '#f97316', color: '#fff', borderRadius: '10px', fontWeight: 700, fontSize: '14px', textDecoration: 'none', fontFamily: "'Poppins',sans-serif", width: 'fit-content', boxShadow: '0 4px 18px rgba(249,115,22,0.35)' }}>
-                Explore CAP →
-              </a>
-            </div>
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <ShineButton href="/cap" variant="orange">Explore CAP</ShineButton>
+              </div>
+            </motion.div>
 
             {/* Study Abroad */}
-            <div style={{ background: '#2145fb', borderRadius: '24px', padding: '40px', color: '#fff', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ width: '52px', height: '52px', borderRadius: '14px', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <motion.div
+              initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
+              onMouseEnter={() => setFocus('study')} onMouseLeave={() => setFocus(null)}
+              className={`svc-vertical-card${focus === 'career' ? ' svc-vertical-card--dim' : ''}`}
+              style={{
+                background: 'linear-gradient(135deg, #2563eb 0%, #1a38d4 100%)',
+                boxShadow: focus === 'study' ? '0 24px 60px rgba(37,99,235,0.3)' : '0 8px 30px rgba(37,99,235,0.2)',
+              }}
+            >
+              <div style={{
+                position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(255,255,255,0.16) 0%, transparent 70%)', filter: 'blur(50px)', pointerEvents: 'none',
+              }} />
+              <motion.div
+                style={{
+                  width: 52, height: 52, borderRadius: 14, background: 'rgba(255,255,255,0.15)',
+                  border: '1px solid rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  position: 'relative', zIndex: 1,
+                }}
+                animate={{ rotate: focus === 'study' ? [0, -8, 8, 0] : 0 }}
+                transition={{ duration: 0.5 }}
+              >
                 <Globe size={26} color="#ffffff" />
-              </div>
-              <div>
-                <div style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: '8px' }}>Vertical 02</div>
-                <div style={{ fontSize: '22px', fontWeight: 800, marginBottom: '12px' }}>Study Abroad — Go Global</div>
-                <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.72)', lineHeight: 1.7 }}>
+              </motion.div>
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 8 }}>Vertical 02</div>
+                <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, letterSpacing: '-0.01em' }}>Study Abroad — Go Global</div>
+                <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.72)', lineHeight: 1.7 }}>
                   140+ universities in UK, France, Germany &amp; Dubai. Course shortlisting, applications, visa guidance — end to end.
                 </p>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {studyFeatures.map(item => (
-                  <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ width: '20px', height: '20px', minWidth: '20px', borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', zIndex: 1 }}>
+                {studyFeatures.map((item, i) => (
+                  <div key={item} className="svc-feature-row" style={{ animationDelay: `${i * 0.08}s` }}>
+                    <div style={{ width: 20, height: 20, minWidth: 20, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <ArrowRight size={10} color="#fff" strokeWidth={3} />
                     </div>
-                    <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>{item}</span>
+                    <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.8)' }}>{item}</span>
                   </div>
                 ))}
               </div>
-              <a href="/study-visa" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '13px 20px', background: '#fff', color: '#2145fb', borderRadius: '10px', fontWeight: 700, fontSize: '14px', textDecoration: 'none', fontFamily: "'Poppins',sans-serif", width: 'fit-content' }}>
-                Study Visa →
-              </a>
-            </div>
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <ShineButton href="/study-visa" variant="white">Study Visa</ShineButton>
+              </div>
+            </motion.div>
           </div>
 
-          {/* Why Placedly */}
-          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-            <div className="section-eyebrow" style={{ justifyContent: 'center' }}>
-              <div className="section-eyebrow-bar" />
-              Why Placedly
-            </div>
-            <h2 className="section-heading">What Makes Us <em>Different</em></h2>
-          </div>
-          <div className="svc-diff-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '20px' }}>
-            {differentiators.map(({ Icon, iconBg, iconColor, title, desc }) => (
-              <div key={title} style={{ background: '#fff', borderRadius: '16px', padding: '28px', border: '1px solid #eef0f6', boxShadow: '0 1px 4px rgba(0,0,0,.04)' }}>
-                <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                  <Icon size={20} color={iconColor} />
+          {/* ── Stats strip ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="svc-stats-strip"
+            style={{
+              background: '#f8faff', border: '1px solid rgba(15,23,42,0.06)', borderRadius: 20,
+              padding: '32px 28px', marginBottom: 80,
+            }}
+          >
+            {STATS.map((s, i) => (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ duration: 0.5, ease: EASE, delay: i * 0.08 }}
+                style={{ display: 'flex', alignItems: 'center', gap: 14 }}
+              >
+                <div style={{
+                  width: 44, height: 44, borderRadius: 12, background: `${BRAND[i % BRAND.length]}15`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                }}>
+                  <s.icon size={20} color={BRAND[i % BRAND.length]} />
                 </div>
-                <div style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', marginBottom: '8px' }}>{title}</div>
-                <div style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.65 }}>{desc}</div>
-              </div>
+                <div>
+                  <div style={{
+                    fontSize: '1.5rem', fontWeight: 900, lineHeight: 1,
+                    backgroundImage: `linear-gradient(90deg, ${BRAND[i % BRAND.length]}, ${BRAND[(i + 1) % BRAND.length]})`,
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                  }}>{s.value}</div>
+                  <div style={{ fontSize: 12, color: '#8b95a5', fontWeight: 600, marginTop: 2 }}>{s.label}</div>
+                </div>
+              </motion.div>
             ))}
+          </motion.div>
+
+          {/* ── Why Placedly ── */}
+          <div style={{ textAlign: 'center', marginBottom: 40 }}>
+            <Eyebrow center>Why Placedly</Eyebrow>
+            <GradientHeading align="center">What Makes Us Different</GradientHeading>
+          </div>
+          <div className="svc-diff-grid">
+            {differentiators.map((d, i) => {
+              const Icon = ICON_MAP[d.icon ?? 'Target'] ?? Target;
+              const color = BRAND[i % BRAND.length];
+              return (
+                <BrandCard key={d.title} index={i} accent={color}>
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12, background: `${color}18`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16,
+                  }}>
+                    <Icon size={20} color={color} />
+                  </div>
+                  <div style={{ fontSize: 15.5, fontWeight: 800, color: '#0f172a', marginBottom: 8 }}>{d.title}</div>
+                  <div style={{ fontSize: 14, color: '#64748b', lineHeight: 1.65 }}>{d.desc}</div>
+                </BrandCard>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section style={{ background: '#ffffff', padding: '80px 0' }}>
-        <div className="container">
-          <div className="page-dark-cta" style={{ background: '#0b0d20', borderRadius: '24px', padding: '72px 64px', textAlign: 'center' }}>
-            <h2 style={{ fontSize: 'clamp(1.6rem,3vw,2.4rem)', fontWeight: 900, color: '#fff', lineHeight: 1.2, letterSpacing: '-0.5px', marginBottom: '12px' }}>Not Sure Which Service Is Right for You?</h2>
-            <p style={{ fontSize: '15px', color: 'rgba(255,255,255,.6)', marginBottom: '32px', maxWidth: '480px', margin: '0 auto 32px' }}>Talk to our team — free consultation, no obligation. We&apos;ll tell you honestly which path makes the most sense for your goals.</p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <a href="/contact" style={{ display: 'inline-flex', alignItems: 'center', background: '#f97316', color: '#fff', fontWeight: 700, fontSize: '14px', fontFamily: 'Poppins,sans-serif', padding: '14px 32px', borderRadius: '999px', textDecoration: 'none', boxShadow: '0 4px 16px rgba(249,115,22,.35)' }}>Get Free Consultation</a>
-              <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', background: 'transparent', color: '#fff', fontWeight: 500, fontSize: '14px', fontFamily: 'Poppins,sans-serif', padding: '14px 32px', borderRadius: '999px', textDecoration: 'none', border: '1.5px solid rgba(255,255,255,.25)' }}>WhatsApp Us</a>
+      {/* ══════════════════ DARK CTA ══════════════════ */}
+      <section style={{ background: '#ffffff', padding: '0 0 clamp(64px, 9vw, 100px)' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.55, ease: EASE }}
+            style={{
+              position: 'relative', overflow: 'hidden',
+              background: 'linear-gradient(135deg, #0b0d20 0%, #1a1040 50%, #0d1836 100%)',
+              borderRadius: 28, padding: 'clamp(48px, 8vw, 80px) clamp(24px, 6vw, 64px)', textAlign: 'center',
+            }}
+          >
+            <AmbientBlobs scale={1.4} />
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <Eyebrow center>Free Consultation</Eyebrow>
+              <GradientHeading align="center" size="clamp(1.6rem, 3.5vw, 2.4rem)">
+                Not Sure Which Service Is Right for You?
+              </GradientHeading>
+              <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', margin: '16px auto 36px', maxWidth: 480, lineHeight: 1.7 }}>
+                Talk to our team — free consultation, no obligation. We&apos;ll tell you honestly which path makes the most sense for your goals.
+              </p>
+              <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <ShineButton href="/contact" variant="orange">Get Free Consultation</ShineButton>
+                <ShineButton href="https://wa.me/919876543210" variant="ghost-dark" external>WhatsApp Us</ShineButton>
+              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
     </PageLayout>
