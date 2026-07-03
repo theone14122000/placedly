@@ -10,7 +10,9 @@ type Company = {
   logo?: string;
 };
 
-/* ── Default hiring partners (with real domains for live logos) ── */
+/* ── Default hiring partners (name + logo) ──
+   `domain` auto-generates a logo via Clearbit's free logo API.
+   You can also pass an explicit `logo` URL to override. */
 const DEFAULT_COMPANIES: Company[] = [
   { name: 'EXL Services',      domain: 'exlservice.com' },
   { name: 'Quatrro',           domain: 'quatrro.com' },
@@ -26,8 +28,8 @@ const DEFAULT_COMPANIES: Company[] = [
   { name: 'Conifer Health',    domain: 'coniferhealth.com' },
 ];
 
-const MARQUEE_DURATION = 38; // seconds — single strip speed
-const REPEATS = 3; // how many times the full list repeats before looping
+const MARQUEE_DURATION = 38; // seconds — single strip scroll speed
+const REPEATS = 3;           // full-list repeats before the loop resets
 
 function rotateList<T>(items: T[], offset: number): T[] {
   if (!items.length) return items;
@@ -43,11 +45,17 @@ function buildSequence(companies: Company[]): Company[] {
   return sequence;
 }
 
+function logoSrc(company: Company): string | undefined {
+  if (company.logo) return company.logo;
+  if (company.domain) return `https://logo.clearbit.com/${company.domain}`;
+  return undefined;
+}
+
 /**
  * Parses company data from CMS.
  * Priority:
  *  1. `hp:marqueeCompaniesJson` — JSON array of { name, domain?, logo? }
- *  2. `hp:marqueeCompanies`     — legacy comma-separated plain names (no logos)
+ *  2. `hp:marqueeCompanies`     — legacy comma-separated plain names
  *  3. DEFAULT_COMPANIES
  */
 function parseCompanies(cms: Cms): Company[] {
@@ -72,7 +80,7 @@ function parseCompanies(cms: Cms): Company[] {
         if (cleaned.length) return cleaned;
       }
     } catch {
-      // fall through to next source
+      /* fall through */
     }
   }
 
@@ -85,24 +93,36 @@ function parseCompanies(cms: Cms): Company[] {
   return DEFAULT_COMPANIES;
 }
 
-function CompanyLogo({ company }: { company: Company }) {
-  const src = company.logo || (company.domain ? `https://logo.clearbit.com/${company.domain}` : undefined);
+function CompanyChip({ company }: { company: Company }) {
+  const src = logoSrc(company);
 
   return (
     <span className="placedly-strip-item">
-      {src && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={src}
-          alt=""
+      <span className="placedly-strip-logo-wrap">
+        {src ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={src}
+            alt={`${company.name} logo`}
+            className="placedly-strip-logo"
+            loading="lazy"
+            onError={(e) => {
+              // Hide broken image and reveal the initials fallback
+              const img = e.currentTarget;
+              img.style.display = 'none';
+              const fallback = img.nextElementSibling as HTMLElement | null;
+              if (fallback) fallback.style.display = 'flex';
+            }}
+          />
+        ) : null}
+        <span
+          className="placedly-strip-fallback"
+          style={{ display: src ? 'none' : 'flex' }}
           aria-hidden
-          className="placedly-strip-logo"
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.style.display = 'none';
-          }}
-        />
-      )}
+        >
+          {company.name.charAt(0).toUpperCase()}
+        </span>
+      </span>
       <span className="placedly-strip-name">{company.name}</span>
     </span>
   );
@@ -129,12 +149,12 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
         <div className="placedly-strip-track">
           <div className="placedly-strip-inner">
             {sequence.map((c, i) => (
-              <CompanyLogo key={`a-${c.name}-${i}`} company={c} />
+              <CompanyChip key={`a-${c.name}-${i}`} company={c} />
             ))}
           </div>
           <div className="placedly-strip-inner" aria-hidden>
             {sequence.map((c, i) => (
-              <CompanyLogo key={`b-${c.name}-${i}`} company={c} />
+              <CompanyChip key={`b-${c.name}-${i}`} company={c} />
             ))}
           </div>
         </div>
@@ -164,14 +184,14 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
           line-height: 1.6;
         }
 
-        /* ── Thin strip container ── */
+        /* ── Single thin strip ── */
         .placedly-strip {
           position: relative;
           overflow: hidden;
           background: #fff;
           border-top: 1px solid rgba(15, 23, 42, 0.06);
           border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-          padding: 16px 0;
+          padding: 14px 0;
         }
 
         .placedly-strip-edge {
@@ -203,30 +223,60 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
         .placedly-strip-inner {
           display: flex;
           align-items: center;
-          gap: 40px;
-          padding-right: 40px;
+          gap: 36px;
+          padding-right: 36px;
           flex-shrink: 0;
         }
 
+        /* ── Each company chip: logo + name ── */
         .placedly-strip-item {
           display: inline-flex;
           align-items: center;
           gap: 10px;
           white-space: nowrap;
+          padding: 4px 6px;
+          border-radius: 10px;
+          transition: background 0.25s ease;
+        }
+        .placedly-strip-item:hover {
+          background: rgba(15, 23, 42, 0.035);
+        }
+
+        .placedly-strip-logo-wrap {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 26px;
+          height: 26px;
+          flex-shrink: 0;
         }
 
         .placedly-strip-logo {
-          height: 22px;
+          max-height: 24px;
+          max-width: 26px;
           width: auto;
-          max-width: 100px;
+          height: auto;
           object-fit: contain;
           filter: grayscale(1);
-          opacity: 0.55;
+          opacity: 0.7;
           transition: filter 0.3s ease, opacity 0.3s ease;
         }
         .placedly-strip-item:hover .placedly-strip-logo {
           filter: grayscale(0);
           opacity: 1;
+        }
+
+        /* Fallback badge (shown when no logo / image fails) */
+        .placedly-strip-fallback {
+          width: 26px;
+          height: 26px;
+          border-radius: 7px;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          font-weight: 800;
+          color: #fff;
+          background: linear-gradient(135deg, #6366f1, #8b5cf6);
         }
 
         .placedly-strip-name {
@@ -249,18 +299,23 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
             padding: 36px 0;
           }
           .placedly-strip {
-            padding: 14px 0;
+            padding: 12px 0;
           }
           .placedly-strip-edge {
             width: 40px;
           }
           .placedly-strip-inner {
-            gap: 28px;
-            padding-right: 28px;
+            gap: 24px;
+            padding-right: 24px;
+          }
+          .placedly-strip-logo-wrap,
+          .placedly-strip-fallback {
+            width: 22px;
+            height: 22px;
           }
           .placedly-strip-logo {
-            height: 18px;
-            max-width: 76px;
+            max-height: 20px;
+            max-width: 22px;
           }
           .placedly-strip-name {
             font-size: 12px;
