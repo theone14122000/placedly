@@ -79,17 +79,7 @@ const HP_DEFAULTS: Record<string, string> = {
   /* CTA Banner */
   'hp:ctaBannerHeadline': 'We Only Get Paid After You Get Placed.',
   'hp:ctaBannerSub':      'Free consultation. No upfront cost. Start today.',
-  /* Footer */
-  'hp:footerDesc':      "India's career growth and study abroad consultancy. Career Assistance Programme: 12% Success Share, post-placement only. Study Abroad: UK · France · Germany · Dubai. Zero upfront. We grow when you grow.",
-  'hp:footerCtaText':   'Grow Careers. Grow Global.',
-  'hp:footerInstagram': 'https://www.instagram.com/',
-  'hp:footerTwitter':   'https://twitter.com/',
-  'hp:footerLinkedin':  'https://linkedin.com/',
-  'hp:footerFacebook':  'https://www.facebook.com/',
-  'hp:footerEmail':     'hello@placedly.in',
-  'hp:footerWa':        '919876543210',
-  'hp:waNumber':        '919876543210',
-  'hp:footerCopyright': '© 2026 Placedly · Career Assistance Programme · Study Abroad Consultancy · India · CAP Fee: 12% of Annual CTC · Career Assistance Fee — Not a Placement Fee · Collected post-offer letter only · All engagements governed by signed Candidate Service Agreement',
+
 };
 
 export default async function Home() {
@@ -110,7 +100,7 @@ export default async function Home() {
         <StudyDestinationsMarquee />
         <Testimonials />
         <Faq />
-        <Footer cms={cms} />
+        <Footer />
         <FloatingWhatsApp cms={cms} />
         <CapFloatingCta label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'} />
         <PlacedlyFixes />
