@@ -380,23 +380,40 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
+           STAGE / NETWORK SECTION
+           CHANGED: zero bottom margin/padding so stats bar sits
+           immediately below the floating cards
+         ============================================================ */
+        .placedly-lift-hero-stage {
+          margin-bottom: 0 !important;
+          padding-bottom: 0 !important;
+        }
+        .placedly-lift-network {
+          margin-bottom: 0 !important;
+          padding-bottom: 0 !important;
+        }
+
+        /* ============================================================
            STATS BAR
-           CHANGED: opacity 0.6 applied to the whole bar
+           CHANGED: retained 0.6 opacity (60%) but tightened margin
+           to 8px top / 0 bottom — kills the gap entirely
          ============================================================ */
         .placedly-hero-stats-bar {
           display: flex;
           flex-wrap: wrap;
           align-items: stretch;
           justify-content: center;
-          gap: 12px;
-          margin: clamp(28px, 4vw, 48px) auto clamp(40px, 6vw, 64px);
+          gap: 10px;
+          /* CHANGED: 8px top / 0 bottom — was 16/0 in last pass, now even tighter */
+          margin: 8px auto 0 !important;
           max-width: 1000px;
           width: 100%;
           padding: 0 16px;
-          opacity: 0.6 !important; /* CHANGED: stats bar at 60% opacity */
+          /* KEPT: 0.6 opacity as requested */
+          opacity: 0.6 !important;
           transition: opacity 0.25s ease;
         }
-        .placedly-hero-stats-bar:hover { opacity: 1 !important; } /* bonus: full on hover */
+        .placedly-hero-stats-bar:hover { opacity: 1 !important; }
 
         .placedly-hero-stat-pill {
           position: relative;
@@ -408,12 +425,12 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           background: #ffffff;
           border: 1px solid #e7ebf3;
           border-radius: 999px;
-          padding: 10px 16px 10px 10px;
-          box-shadow: 0 4px 14px rgba(15,23,42,0.06);
+          padding: 8px 14px 8px 8px;        /* CHANGED: tighter padding (was 10/16/10/10) */
+          box-shadow: 0 2px 10px rgba(15,23,42,0.05);  /* CHANGED: lighter shadow (was 14px blur) */
           overflow: hidden;
           isolation: isolate;
           cursor: default;
-          transition: box-shadow 0.25s ease, transform 0.25s ease;
+          transition: box-shadow 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
         }
 
         .placedly-hero-stat-pill-shine {
@@ -431,8 +448,8 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         .placedly-hero-stat-pill-icon {
           position: relative;
           z-index: 1;
-          width: 32px;
-          height: 32px;
+          width: 30px;                    /* CHANGED: smaller (was 32px) */
+          height: 30px;                   /* CHANGED: smaller (was 32px) */
           border-radius: 50%;
           flex-shrink: 0;
           display: flex;
@@ -452,16 +469,16 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           z-index: 1;
           display: flex;
           flex-direction: column;
-          line-height: 1.2;
+          line-height: 1.15;             /* CHANGED: tighter (was 1.2) */
           min-width: 0;
           flex: 1;
         }
         .placedly-hero-stat-pill-text strong {
-          font-size: 14.5px;
+          font-size: 14px;                /* CHANGED: tighter (was 14.5px) */
           color: #1e3a8a;
         }
         .placedly-hero-stat-pill-text span {
-          font-size: 10.5px;
+          font-size: 10px;                /* CHANGED: tighter (was 10.5px) */
           color: #64748b;
           white-space: nowrap;
           overflow: hidden;
@@ -473,7 +490,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           .placedly-hero-stat-pill { flex: 1 1 0; }
         }
         @media (max-width: 720px) {
-          .placedly-hero-stat-pill { flex: 1 1 calc(50% - 6px); }
+          .placedly-hero-stat-pill { flex: 1 1 calc(50% - 5px); }
         }
         @media (max-width: 420px) {
           .placedly-hero-stat-pill { flex: 1 1 100%; }
