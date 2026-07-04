@@ -1,805 +1,1143 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import Link from 'next/link';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  ArrowUpRight, ArrowUp, MapPin, Mail, MessageCircle,
-  Rocket, Sparkles, Shield, Clock, Zap,
-  CheckCircle2, Globe, Star,
+  Calculator,
+  FileSearch,
+  FileText,
+  GraduationCap,
+  MessageSquare,
+  PenLine,
+  Rocket,
+  Search,
+  Sparkles,
+  Target,
+  Upload,
+  X,
+  ChevronDown,
   type LucideIcon,
 } from 'lucide-react';
 
-/* ── Brand tokens ── */
-const G = {
-  blue:   '#2563eb',
-  indigo: '#7c8ff0',
-  orange: '#fb923c',
-  rose:   '#f43f5e',
-  purple: '#a855f7',
-  green:  '#16a34a',
+/* ─────────────────────────────────────────────────────────
+   DESIGN SYSTEM TOKENS
+───────────────────────────────────────────────────────── */
+const GEOM_FONT = `'Inter','Manrope','Geist','Plus Jakarta Sans',system-ui,sans-serif`;
+
+type Category = 'career' | 'study';
+type Tool = {
+  id: string;
+  title: string;
+  description: string;
+  Icon: LucideIcon;
+  placeholder: string;
+  cta: string;
+  sampleResult: string;
+  category: Category;
+  popular?: boolean;
+};
+type Accent = { from: string; soft: string };
+
+/* ── Solid accent per category (no gradients) ── */
+const CATEGORY_META: Record<Category | 'all', { label: string } & Accent> = {
+  all:    { label: 'All Tools',       from: '#2563eb', soft: 'rgba(37,99,235,0.07)'  },
+  career: { label: 'Career & Resume', from: '#2563eb', soft: 'rgba(37,99,235,0.07)'  },
+  study:  { label: 'Study Abroad',    from: '#0891b2', soft: 'rgba(8,145,178,0.07)'  },
 };
 
-const GRAD = `linear-gradient(270deg,${G.blue},${G.indigo},${G.orange},${G.rose},${G.purple},${G.blue})`;
-const DOT_COLORS = [G.blue, G.orange, G.purple, G.green, G.rose, G.indigo];
-
-/* ── Social Icons ── */
-const IgIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="2" width="20" height="20" rx="5" />
-    <circle cx="12" cy="12" r="4" />
-    <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-  </svg>
-);
-const TwIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-  </svg>
-);
-const LiIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" />
-    <rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" />
-  </svg>
-);
-const FbIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-  </svg>
-);
-
-/* ── Live ticker ── */
-const TICKER_ITEMS = [
-  { emoji: '🎉', text: 'Ankit R. placed at WNS', detail: '₹6.4L CTC' },
-  { emoji: '⚡', text: 'Priya S. got interview call', detail: '9 days flat' },
-  { emoji: '🚀', text: '47 candidates', detail: 'active hiring connect' },
-  { emoji: '✅', text: 'Rohit K. signed offer', detail: '52% hike' },
-  { emoji: '🎯', text: 'Vikram T. landed Sr. Analyst', detail: 'EXL Healthcare' },
-  { emoji: '📄', text: 'Simran K. resume rebuilt', detail: '3 offers in 2 weeks' },
-];
-
-/* ── Nav columns ── */
-const NAV_COLS = [
+const TOOLS: Tool[] = [
   {
-    heading: 'Company',
-    color: G.orange,
-    links: [
-      { label: 'Home',      href: '/',          badge: null },
-      { label: 'About Us',  href: '/about-us',  badge: null },
-      { label: 'Contact',   href: '/contact',   badge: null },
-      { label: 'Vacancies', href: '#vacancies', badge: 'Hiring' },
-    ],
+    id: 'ats', title: 'ATS Resume Score Checker',
+    description: 'Instant AI scan for keyword match, formatting, and ATS readability.',
+    Icon: FileSearch, placeholder: 'Paste your resume text or upload a file below…',
+    cta: 'Check ATS Score',
+    sampleResult: 'ATS Score: 82/100 — Strong keyword alignment for Claims Analyst roles.',
+    category: 'career', popular: true,
   },
   {
-    heading: 'Programmes',
-    color: G.purple,
-    links: [
-      { label: 'CAP Programme',  href: '/cap',        badge: 'Popular' },
-      { label: 'Study Abroad',   href: '/study-visa', badge: null },
-      { label: 'Resume Writing', href: '/services',   badge: null },
-      { label: 'Interview Prep', href: '/services',   badge: null },
-    ],
+    id: 'resume', title: 'Resume Analyzer',
+    description: 'Deep AI review of impact, clarity, and role positioning.',
+    Icon: FileText, placeholder: 'Paste your resume text or upload a file below…',
+    cta: 'Analyze Resume',
+    sampleResult: 'Priority fixes: lead with quantified outcomes, tighten summary to 3 lines.',
+    category: 'career',
   },
   {
-    heading: 'Legal',
-    color: G.blue,
-    links: [
-      { label: 'Terms & Services', href: '/terms',   badge: null },
-      { label: 'Privacy Policy',   href: '/privacy', badge: null },
-      { label: 'Career Blog',      href: '/blog',    badge: 'New' },
-      { label: 'Success Stories',  href: '/stories', badge: null },
-    ],
+    id: 'interview', title: 'Interview Question Generator',
+    description: 'Role-specific questions with suggested answer frameworks.',
+    Icon: MessageSquare, placeholder: 'Enter job title, company, or domain…',
+    cta: 'Generate Questions',
+    sampleResult: '5 questions ready — including denial management scenario and STAR prompt.',
+    category: 'career',
+  },
+  {
+    id: 'salary', title: 'Salary Estimator',
+    description: 'Market-informed CTC ranges for your profile and city.',
+    Icon: Calculator, placeholder: 'Role, years of experience, and location…',
+    cta: 'Estimate Salary',
+    sampleResult: 'Estimated range: ₹6.8 – ₹9.4 LPA for Senior Claims Analyst in NCR.',
+    category: 'career', popular: true,
+  },
+  {
+    id: 'career-path', title: 'Career Path Advisor',
+    description: 'AI roadmap from your current role to your next milestone.',
+    Icon: Target, placeholder: 'Where you are today and where you want to be…',
+    cta: 'Build Roadmap',
+    sampleResult: 'Suggested path: Analyst → Senior Analyst → Team Lead.',
+    category: 'career',
+  },
+  {
+    id: 'eligibility', title: 'Study Abroad Eligibility Checker',
+    description: 'Quick read on academic fit, intake windows, and budget band.',
+    Icon: GraduationCap, placeholder: 'Degree, GPA/percentage, target country, and intake…',
+    cta: 'Check Eligibility',
+    sampleResult: 'Strong fit for UK & Germany MSc programmes in Business / Analytics.',
+    category: 'study', popular: true,
+  },
+  {
+    id: 'university', title: 'University Match Tool',
+    description: 'AI shortlist aligned to profile, budget, and career goals.',
+    Icon: Sparkles, placeholder: 'Programme interest, budget range, and preferred countries…',
+    cta: 'Match Universities',
+    sampleResult: '8 universities matched — including Manchester, Aston, and ESSEC.',
+    category: 'study',
+  },
+  {
+    id: 'sop', title: 'SOP Assistant',
+    description: 'Structure, tone, and differentiation guidance for your statement.',
+    Icon: PenLine, placeholder: 'Paste a draft SOP or bullet your background and goals…',
+    cta: 'Improve SOP',
+    sampleResult: 'Opening hook strengthened, career pivot clarified.',
+    category: 'study',
   },
 ];
 
-/* ── Achievements marquee ── */
-const ACHIEVEMENTS = [
-  { icon: <Star size={11} color={G.orange} />, text: '300+ Professionals Placed' },
-  { icon: <Zap size={11} color={G.blue} />, text: '40% Average Salary Hike' },
-  { icon: <Globe size={11} color={G.purple} />, text: '140+ University Partners' },
-  { icon: <CheckCircle2 size={11} color={G.green} />, text: 'Zero Upfront Cost' },
-  { icon: <Rocket size={11} color={G.rose} />, text: 'Fastest Offer: 9 Days' },
-  { icon: <Shield size={11} color={G.indigo} />, text: '50+ Hiring Partners' },
+const FILTERS: (Category | 'all')[] = ['all', 'career', 'study'];
+const UPLOAD_ENABLED_IDS = ['ats', 'resume'];
+
+const HEADLINE_WORDS: { text: string; dwell: number }[] = [
+  { text: 'Grow Career.', dwell: 1400 },
+  { text: 'Go Global.',   dwell: 1400 },
+  { text: 'Go Placedly.', dwell: 2200 },
 ];
 
-type Cms = Record<string, string>;
-
-/* ════════════════════════════════
-   GRADIENT TEXT
-════════════════════════════════ */
-function GradText({ children }: { children: React.ReactNode }) {
-  return (
-    <span style={{
-      backgroundImage: GRAD, backgroundSize: '300% 300%',
-      WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-      backgroundClip: 'text', animation: 'ft-grad 6s ease infinite', display: 'inline',
-    }}>
-      {children}
-    </span>
-  );
-}
-
-/* ════════════════════════════════
-   INTERACTIVE SOCIAL BUTTON
-════════════════════════════════ */
-function SocialBtn({ href, label, Icon, color, bg }: {
-  href: string; label: string;
-  Icon: React.ComponentType; color: string; bg: string;
-}) {
-  const [h, setH] = useState(false);
-  return (
-    <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
-      onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        width: '40px', height: '40px', borderRadius: '12px',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: h ? bg : 'rgba(255,255,255,0.05)',
-        border: `1.5px solid ${h ? color + '50' : 'rgba(255,255,255,0.08)'}`,
-        color: h ? color : 'rgba(255,255,255,0.5)',
-        transition: 'all .2s cubic-bezier(.22,1,.36,1)',
-        transform: h ? 'translateY(-4px) scale(1.08)' : 'translateY(0) scale(1)',
-        boxShadow: h ? `0 8px 20px ${color}35` : 'none',
-        textDecoration: 'none', cursor: 'pointer', flexShrink: 0,
-      }}
-    >
-      <Icon />
-    </a>
-  );
-}
-
-/* ════════════════════════════════
-   INTERACTIVE NAV LINK
-════════════════════════════════ */
-function FooterLink({ href, label, badge }: { href: string; label: string; badge: string | null }) {
-  const [h, setH] = useState(false);
-  const isExt = href.startsWith('http');
-  const badgeColors: Record<string, { bg: string; text: string }> = {
-    'Popular': { bg: `${G.orange}20`, text: G.orange },
-    'New':     { bg: `${G.green}20`,  text: G.green  },
-    'Hiring':  { bg: `${G.blue}20`,   text: G.blue   },
-  };
-  const bc = badge ? badgeColors[badge] : null;
-
-  const inner = (
-    <>
-      <span style={{
-        width: '5px', height: '5px', borderRadius: '50%', flexShrink: 0,
-        background: h ? G.blue : 'rgba(255,255,255,0.2)',
-        transition: 'background .15s ease, transform .15s ease',
-        transform: h ? 'scale(1.4)' : 'scale(1)',
-      }} />
-      <span style={{ flex: 1 }}>{label}</span>
-      {badge && bc && (
-        <span style={{
-          fontSize: '8.5px', fontWeight: 800, letterSpacing: '0.04em',
-          padding: '2px 6px', borderRadius: '999px',
-          background: bc.bg, color: bc.text, flexShrink: 0,
-        }}>
-          {badge}
-        </span>
-      )}
-      <ArrowUpRight size={11} style={{
-        opacity: h ? 0.7 : 0, flexShrink: 0,
-        transition: 'opacity .15s ease',
-      }} />
-    </>
-  );
-
-  const style: React.CSSProperties = {
-    display: 'flex', alignItems: 'center', gap: '8px',
-    fontSize: '13px', fontWeight: 500,
-    color: h ? '#fff' : 'rgba(255,255,255,0.5)',
-    textDecoration: 'none',
-    transition: 'color .15s ease, transform .15s ease',
-    transform: h ? 'translateX(5px)' : 'translateX(0)',
-    cursor: 'pointer', padding: '3px 0',
-  };
-
-  return isExt
-    ? <a href={href} target="_blank" rel="noopener noreferrer" style={style} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}>{inner}</a>
-    : <Link href={href} style={style} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}>{inner}</Link>;
-}
-
-/* ════════════════════════════════
-   MOUSE-TRACKED CTA CARD
-════════════════════════════════ */
-function CtaCard({ ctaText, ctaHref, wa }: { ctaText: string; ctaHref: string; wa: string }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [mouse, setMouse] = useState({ x: 50, y: 50 });
-  const [hCard, setHCard] = useState(false);
-
-  const onMove = useCallback((e: React.MouseEvent) => {
-    if (!cardRef.current) return;
-    const r = cardRef.current.getBoundingClientRect();
-    setMouse({
-      x: ((e.clientX - r.left) / r.width) * 100,
-      y: ((e.clientY - r.top) / r.height) * 100,
-    });
-  }, []);
-
-  return (
-    <div
-      ref={cardRef}
-      onMouseMove={onMove}
-      onMouseEnter={() => setHCard(true)}
-      onMouseLeave={() => setHCard(false)}
-      style={{
-        position: 'relative', borderRadius: '24px', overflow: 'hidden',
-        padding: 'clamp(28px,4.5vw,44px) clamp(24px,5vw,56px)',
-        background: 'rgba(255,255,255,0.025)',
-        border: `1px solid ${hCard ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.07)'}`,
-        backdropFilter: 'blur(16px)',
-        transition: 'border-color .3s ease, box-shadow .3s ease',
-        boxShadow: hCard ? `0 32px 64px rgba(37,99,235,0.2)` : '0 4px 24px rgba(0,0,0,0.2)',
-      }}
-    >
-      {/* Dynamic spotlight */}
-      <div aria-hidden style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: `radial-gradient(280px circle at ${mouse.x}% ${mouse.y}%, ${G.blue}18, transparent 60%)`,
-        transition: hCard ? 'none' : 'opacity .4s ease',
-        opacity: hCard ? 1 : 0,
-      }} />
-
-      {/* Static orbs */}
-      <div aria-hidden style={{ position: 'absolute', top: '-40px', left: '8%', width: '200px', height: '200px', borderRadius: '50%', background: `radial-gradient(circle,${G.blue}28 0%,transparent 70%)`, filter: 'blur(48px)', pointerEvents: 'none' }} />
-      <div aria-hidden style={{ position: 'absolute', bottom: '-30px', right: '6%', width: '170px', height: '170px', borderRadius: '50%', background: `radial-gradient(circle,${G.orange}22 0%,transparent 70%)`, filter: 'blur(48px)', pointerEvents: 'none' }} />
-
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '28px', flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: '240px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
-            <span style={{ width: '16px', height: '2px', borderRadius: '999px', background: `linear-gradient(90deg,${G.blue},${G.orange})` }} />
-            <span style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.13em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>
-              Zero Upfront · Pay After Offer
-            </span>
-            <span style={{ width: '16px', height: '2px', borderRadius: '999px', background: `linear-gradient(90deg,${G.orange},${G.blue})` }} />
-          </div>
-          <h2 style={{ fontSize: 'clamp(1.4rem,2.8vw,2.2rem)', fontWeight: 900, lineHeight: 1.12, letterSpacing: '-0.8px', marginBottom: '8px', color: '#fff' }}>
-            Ready to <GradText>Transform Your Career?</GradText>
-          </h2>
-          <p style={{ fontSize: '13.5px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, maxWidth: '400px', margin: 0 }}>
-            Join 300+ professionals who trusted Placedly. Get placed, get paid more — or you pay nothing.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flexShrink: 0 }}>
-          <Link href={ctaHref}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              backgroundImage: `linear-gradient(135deg,${G.blue},${G.indigo})`,
-              color: '#fff', fontWeight: 700, fontSize: '14px',
-              padding: '13px 28px', borderRadius: '999px', textDecoration: 'none',
-              boxShadow: `0 8px 24px ${G.blue}45`, transition: 'transform .15s ease, box-shadow .2s ease',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 14px 32px ${G.blue}55`; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = `0 8px 24px ${G.blue}45`; }}
-          >
-            <Rocket size={14} /> {ctaText} <ArrowUpRight size={13} />
-          </Link>
-          <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              background: 'rgba(37,211,102,0.1)', border: '1px solid rgba(37,211,102,0.28)',
-              color: '#4ade80', fontWeight: 600, fontSize: '13px',
-              padding: '11px 24px', borderRadius: '999px', textDecoration: 'none',
-              transition: 'all .15s ease',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(37,211,102,0.2)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(37,211,102,0.1)'; e.currentTarget.style.transform = ''; }}
-          >
-            <MessageCircle size={13} /> WhatsApp Us
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ════════════════════════════════
-   SCROLL-TO-TOP WITH PROGRESS RING
-════════════════════════════════ */
-function ScrollTopBtn() {
-  const [hovered, setHovered] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [show, setShow] = useState(false);
-
+/* ── helpers ── */
+function useIsMobile(bp = 900) {
+  const [v, setV] = useState(false);
   useEffect(() => {
-    const fn = () => {
-      const h = document.documentElement;
-      const max = h.scrollHeight - h.clientHeight;
-      const scrolled = window.pageYOffset;
-      setProgress(max > 0 ? (scrolled / max) * 100 : 0);
-      setShow(scrolled > 300);
-    };
-    window.addEventListener('scroll', fn, { passive: true });
-    return () => window.removeEventListener('scroll', fn);
-  }, []);
+    const mq = window.matchMedia(`(max-width:${bp}px)`);
+    const fn = () => setV(mq.matches);
+    fn(); mq.addEventListener('change', fn);
+    return () => mq.removeEventListener('change', fn);
+  }, [bp]);
+  return v;
+}
 
-  const r = 17, circ = 2 * Math.PI * r;
+function useTypewriter(text: string, active: boolean, speed = 10) {
+  const [out, setOut] = useState('');
+  useEffect(() => {
+    if (!active || !text) { setOut(''); return; }
+    let i = 0; setOut('');
+    const id = window.setInterval(() => {
+      i += 2; setOut(text.slice(0, i));
+      if (i >= text.length) clearInterval(id);
+    }, speed);
+    return () => clearInterval(id);
+  }, [text, active, speed]);
+  return out;
+}
+
+/* ── file extraction (unchanged logic) ── */
+function loadScriptOnce(src: string): Promise<void> {
+  return new Promise((res, rej) => {
+    if (document.querySelector(`script[data-loaded-src="${src}"]`)) { res(); return; }
+    const s = document.createElement('script');
+    s.src = src; s.async = true; s.dataset.loadedSrc = src;
+    s.onload = () => res(); s.onerror = () => rej(new Error('Failed to load library.'));
+    document.body.appendChild(s);
+  });
+}
+async function extractPdfText(file: File): Promise<string> {
+  await loadScriptOnce('https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js');
+  const lib = (window as any).pdfjsLib;
+  lib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.worker.min.js';
+  const pdf = await lib.getDocument({ data: await file.arrayBuffer() }).promise;
+  let t = '';
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const c = await page.getTextContent();
+    t += c.items.map((x: any) => x.str).join(' ') + '\n';
+  }
+  return t.trim();
+}
+async function extractDocxText(file: File): Promise<string> {
+  await loadScriptOnce('https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js');
+  const m = (window as any).mammoth;
+  return ((await m.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value as string).trim();
+}
+async function extractTextFromFile(file: File): Promise<string> {
+  if (file.size > 8 * 1024 * 1024) throw new Error('File is too large (max 8MB).');
+  const n = file.name.toLowerCase();
+  if (file.type === 'text/plain' || n.endsWith('.txt')) return (await file.text()).trim();
+  if (file.type === 'application/pdf' || n.endsWith('.pdf')) return extractPdfText(file);
+  if (n.endsWith('.docx')) return extractDocxText(file);
+  if (n.endsWith('.doc')) throw new Error('Legacy .doc not supported — save as .docx or .pdf.');
+  const t = await file.text().catch(() => '');
+  if (t && /[a-zA-Z]{20,}/.test(t)) return t.trim();
+  throw new Error('Unsupported format. Please upload .pdf, .docx, or .txt.');
+}
+
+/* ── analysis engines (unchanged logic) ── */
+const ACTION_VERBS = ['managed','led','built','created','improved','increased','reduced','achieved','developed','implemented','designed','coordinated','negotiated','resolved','streamlined','automated','delivered','launched','trained','mentored','analyzed','optimized','generated','processed','handled','executed','supervised','drove','spearheaded','collaborated'];
+const DOMAIN_KEYWORDS: Record<string,string[]> = {
+  healthcare: ['claims','icd-10','cpt','denial','healthcare','medical billing','prior authorization','hipaa'],
+  insurance:  ['insurance','underwriting','policy','premium',"lloyd's",'reinsurance','actuarial','claims adjuster'],
+  finance:    ['accounts','reconciliation','audit','gaap','forecasting','budgeting','accounts payable','accounts receivable'],
+  bpo:        ['bpo','kpo','call center','call centre','customer service','sla','process improvement'],
+};
+const SECTION_HEADERS = ['summary','objective','experience','work experience','education','skills','certifications','projects','achievements'];
+
+function analyzeAts(text: string): string {
+  const clean = text.trim();
+  if (clean.length < 50) return 'Paste at least a few sentences of resume content — or upload a file above — to generate an accurate ATS score.';
+  const lower = clean.toLowerCase();
+  const wordCount = clean.split(/\s+/).filter(Boolean).length;
+  const hasEmail = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i.test(clean);
+  const hasPhone = /(\+?\d[\d\s-]{8,}\d)/.test(clean);
+  const foundSections = SECTION_HEADERS.filter(s => lower.includes(s));
+  const bulletCount = (clean.match(/(^|\n)\s*[•\-*]/g)||[]).length;
+  const verbHits = ACTION_VERBS.filter(v => lower.includes(v));
+  const quantHits = (clean.match(/(\d+%|₹\s?\d|\$\s?\d|\d+\s?(lpa|lakh|crore|hours|days|months|years|clients|agents))/gi)||[]).length;
+  const domainMatches: {domain:string;hits:string[]}[] = [];
+  Object.entries(DOMAIN_KEYWORDS).forEach(([domain,words]) => {
+    const hits = words.filter(w => lower.includes(w));
+    if (hits.length) domainMatches.push({domain,hits});
+  });
+  let score = 0;
+  score += hasEmail?8:0; score += hasPhone?7:0;
+  score += Math.min(foundSections.length,5)*6;
+  score += Math.min(bulletCount,8)*2.5;
+  score += Math.min(verbHits.length,8)*2;
+  score += Math.min(quantHits,6)*2.5;
+  score += domainMatches.length?Math.min(domainMatches.reduce((a,d)=>a+d.hits.length,0),4)*2:0;
+  score += wordCount>=250&&wordCount<=900?4:0;
+  score = Math.max(8,Math.min(97,Math.round(score)));
+  const missing = SECTION_HEADERS.filter(s=>!foundSections.includes(s)).slice(0,3);
+  const domainLabel = domainMatches.length?domainMatches.map(d=>d.domain).join(', '):'no specific domain detected';
+  const contactNote = hasEmail&&hasPhone?'complete':`incomplete (add ${[!hasEmail&&'email',!hasPhone&&'phone'].filter(Boolean).join(' & ')})`;
+  return `ATS Score: ${score}/100 — Word count: ${wordCount}. Contact info: ${contactNote}. Sections found: ${foundSections.length?foundSections.join(', '):'none clearly detected'}. Bullets: ${bulletCount}. Action verbs: ${verbHits.length}${verbHits.length?` (${verbHits.slice(0,5).join(', ')})`:''}.  Quantified achievements: ${quantHits}. Domain: ${domainLabel}.${missing.length?` Consider adding: ${missing.join(', ')}.`:''}`;
+}
+function analyzeResume(text: string): string {
+  const clean = text.trim();
+  if (clean.length < 50) return 'Paste your resume — or upload a file above — so we can run a structural analysis.';
+  const lower = clean.toLowerCase();
+  const wordCount = clean.split(/\s+/).filter(Boolean).length;
+  const sentences = clean.split(/[.!?]+/).filter(s=>s.trim().length>2);
+  const bulletLines = clean.split('\n').filter(l=>/^\s*[•\-*]/.test(l));
+  const quantifiedBullets = bulletLines.filter(l=>/\d/.test(l));
+  const foundSections = SECTION_HEADERS.filter(s=>lower.includes(s));
+  const missing = SECTION_HEADERS.filter(s=>!foundSections.includes(s));
+  const avgLen = sentences.length?Math.round(wordCount/sentences.length):0;
+  const weakPhrases = ['responsible for','worked on','helped with','duties included','tasked with'];
+  const weakHits = weakPhrases.filter(w=>lower.includes(w));
+  const quantRate = bulletLines.length?Math.round((quantifiedBullets.length/bulletLines.length)*100):0;
+  const notes:string[] = [];
+  notes.push(`Length: ${wordCount} words across ${sentences.length} sentences (avg ${avgLen} words/sentence).`);
+  notes.push(`Sections detected: ${foundSections.length?foundSections.join(', '):'none clearly labeled'}.`);
+  if (missing.length) notes.push(`Consider adding: ${missing.slice(0,3).join(', ')}.`);
+  notes.push(`Bullet points: ${bulletLines.length}, of which ${quantifiedBullets.length} (${quantRate}%) include a number or metric.`);
+  if (quantRate<40) notes.push('Add more quantified outcomes (%, ₹, time saved, volume) to strengthen impact.');
+  if (weakHits.length) notes.push(`Replace passive phrasing (${weakHits.join(', ')}) with strong action verbs.`);
+  if (avgLen>28) notes.push('Tighten bullets to under ~20 words for readability.');
+  return notes.join(' ');
+}
+const QUESTION_BANK:Record<string,string[]> = {
+  healthcare:['Walk me through how you handle a denied claim from identification to resolution.','How do you ensure HIPAA compliance while processing claims data?','Describe a time you reduced claim processing turnaround time.'],
+  insurance:['How do you assess risk when underwriting a new policy?',"Explain how you would handle a high-value Lloyd's market claim dispute.",'What KPIs do you track in your current claims/underwriting role?'],
+  finance:['Walk me through a month-end reconciliation process you have owned.','How do you handle a discrepancy found during an audit?','Describe your approach to variance analysis in budgeting.'],
+  bpo:['How do you manage SLA pressure during high call volume periods?','Describe a time you improved a process that boosted team efficiency.','How do you handle an escalated, dissatisfied customer?'],
+  generic:['Tell me about a challenge you faced in your current role and how you resolved it.','Why are you looking to make a move at this point in your career?','Describe a time you exceeded a target or KPI.'],
+};
+function generateInterviewQuestions(input: string): string {
+  const clean = input.trim();
+  if (!clean) return 'Enter a job title, company, or domain so we can tailor real interview questions.';
+  const lower = clean.toLowerCase();
+  let pool = QUESTION_BANK.generic; let domainLabel = 'general professional';
+  if (/(claim|healthcare|medical|icd|cpt|denial)/.test(lower)) { pool=QUESTION_BANK.healthcare; domainLabel='US Healthcare Claims'; }
+  else if (/(insur|underwrit|lloyd|policy|premium)/.test(lower)) { pool=QUESTION_BANK.insurance; domainLabel='Insurance & Underwriting'; }
+  else if (/(financ|account|audit|reconcil|budget)/.test(lower)) { pool=QUESTION_BANK.finance; domainLabel='Finance & Accounts'; }
+  else if (/(bpo|kpo|call cent|customer service|operations)/.test(lower)) { pool=QUESTION_BANK.bpo; domainLabel='BPO/KPO Operations'; }
+  const questions = [...pool,'Tell me about a time you dealt with a tight deadline under pressure — STAR format recommended.'].slice(0,5);
+  return `${questions.length} questions for ${domainLabel}: ${questions.map((q,i)=>`${i+1}. ${q}`).join(' ')}`;
+}
+const SALARY_BASE:Record<string,number> = {healthcare:4.8,insurance:5.2,finance:5.0,bpo:3.6,generic:4.0};
+const CITY_MULTIPLIER:Record<string,number> = {noida:1.05,delhi:1.1,gurugram:1.12,gurgaon:1.12,mumbai:1.2,bangalore:1.18,bengaluru:1.18,pune:1.08,hyderabad:1.1,chennai:1.05,kolkata:0.92};
+function estimateSalary(input: string): string {
+  const clean = input.trim();
+  if (!clean) return 'Enter role, years of experience, and location (e.g. "Senior Claims Analyst, 4 years, Noida").';
+  const lower = clean.toLowerCase();
+  const expMatch = lower.match(/(\d+(\.\d+)?)\s*(\+)?\s*(yrs?|years?)/);
+  const years = expMatch?parseFloat(expMatch[1]):1;
+  let domain = 'generic';
+  if (/(claim|healthcare|medical)/.test(lower)) domain='healthcare';
+  else if (/(insur|underwrit)/.test(lower)) domain='insurance';
+  else if (/(financ|account)/.test(lower)) domain='finance';
+  else if (/(bpo|kpo|call cent|operations)/.test(lower)) domain='bpo';
+  const city = Object.keys(CITY_MULTIPLIER).find(c=>lower.includes(c));
+  const cm = city?CITY_MULTIPLIER[city]:1;
+  const sm = /senior|lead|manager/.test(lower)?1.25:/junior|associate|fresher/.test(lower)?0.85:1;
+  const base = SALARY_BASE[domain];
+  const em = 1+Math.min(years,10)*0.13;
+  const low = +(base*em*cm*sm*0.88).toFixed(1);
+  const high = +(base*em*cm*sm*1.18).toFixed(1);
+  const cityLabel = city?city.charAt(0).toUpperCase()+city.slice(1):null;
+  return `Estimated range: ₹${low} – ₹${high} LPA for a ${domain!=='generic'?domain:'general'} profile with ~${years} yrs experience${cityLabel?` in ${cityLabel}`:''}.`;
+}
+const CAREER_LADDERS:Record<string,string[]> = {
+  healthcare:['Claims Associate','Claims Analyst','Senior Claims Analyst','Claims Team Lead','Claims Manager'],
+  insurance:['Underwriting Associate','Underwriter','Senior Underwriter','Underwriting Team Lead','Underwriting Manager'],
+  finance:['Accounts Executive','Senior Accounts Executive','Finance Analyst','Finance Team Lead','Finance Manager'],
+  bpo:['Process Associate','Senior Process Associate','Team Lead','Assistant Manager - Operations','Operations Manager'],
+  generic:['Associate','Senior Associate','Team Lead','Manager','Senior Manager'],
+};
+function buildCareerPath(input: string): string {
+  const clean = input.trim();
+  if (!clean) return 'Describe your current role and where you want to be in 12–24 months.';
+  const lower = clean.toLowerCase();
+  let domain = 'generic';
+  if (/(claim|healthcare|medical)/.test(lower)) domain='healthcare';
+  else if (/(insur|underwrit)/.test(lower)) domain='insurance';
+  else if (/(financ|account)/.test(lower)) domain='finance';
+  else if (/(bpo|kpo|call cent|operations)/.test(lower)) domain='bpo';
+  const ladder = CAREER_LADDERS[domain];
+  let ci = /manager/.test(lower)?3:/lead/.test(lower)?2:/senior/.test(lower)?1:0;
+  const next = ladder.slice(ci+1,ci+3);
+  return `Current level: ${ladder[ci]} (${domain} track). Next steps: ${next.length?next.join(' → '):'Consider a lateral move or people-management track'}. Recommended actions: strengthen quantified achievements, complete 2–3 mock interviews, and pursue 1–2 warm referrals.`;
+}
+const COUNTRY_THRESHOLDS:Record<string,number> = {uk:60,germany:65,france:55,dubai:50,uae:50,canada:65,australia:60,singapore:70};
+function checkEligibility(input: string): string {
+  const clean = input.trim();
+  if (!clean) return 'Enter your degree, GPA/percentage, target country, and intake.';
+  const lower = clean.toLowerCase();
+  const pct = lower.match(/(\d{2,3}(\.\d+)?)\s*%/);
+  const gpa = lower.match(/(\d(\.\d{1,2})?)\s*(cgpa|gpa)/);
+  let percentage: number|null = pct?parseFloat(pct[1]):gpa?parseFloat(gpa[1])*10:null;
+  const country = Object.keys(COUNTRY_THRESHOLDS).find(c=>lower.includes(c));
+  const threshold = country?COUNTRY_THRESHOLDS[country]:null;
+  if (!percentage) return `Please include your percentage or CGPA so we can compare against ${country?country.toUpperCase():'destination'} entry thresholds.`;
+  if (!country||!threshold) return `Detected academic score: ${percentage}%. Please mention a target country (UK, Germany, France, Dubai, Canada, Australia, or Singapore).`;
+  return percentage>=threshold
+    ?`Eligible — your ${percentage}% clears the typical ${threshold}%+ requirement for ${country.toUpperCase()} postgraduate programmes.`
+    :`Below typical threshold — ${country.toUpperCase()} programmes generally look for ${threshold}%+, you're at ${percentage}%. A strong SOP or relevant work experience could still make you competitive.`;
+}
+const UNIVERSITIES = [
+  {name:'University of Manchester',country:'uk',programme:'business',budgetLPA:28},
+  {name:'Aston University',country:'uk',programme:'business',budgetLPA:22},
+  {name:'University of Sheffield',country:'uk',programme:'engineering',budgetLPA:24},
+  {name:'ESSEC Business School',country:'france',programme:'business',budgetLPA:26},
+  {name:'EM Lyon',country:'france',programme:'business',budgetLPA:24},
+  {name:'TU Munich',country:'germany',programme:'engineering',budgetLPA:8},
+  {name:'RWTH Aachen',country:'germany',programme:'engineering',budgetLPA:7},
+  {name:'University of Wollongong Dubai',country:'dubai',programme:'business',budgetLPA:18},
+  {name:'Heriot-Watt Dubai',country:'dubai',programme:'engineering',budgetLPA:16},
+  {name:'University of Toronto',country:'canada',programme:'business',budgetLPA:32},
+  {name:'University of Melbourne',country:'australia',programme:'business',budgetLPA:30},
+  {name:'NUS Singapore',country:'singapore',programme:'business',budgetLPA:27},
+];
+function matchUniversities(input: string): string {
+  const clean = input.trim();
+  if (!clean) return 'Enter programme interest, budget range, and preferred countries.';
+  const lower = clean.toLowerCase();
+  const budgetMatch = lower.match(/(\d{1,3})\s*(lpa|lakh)/);
+  const budget = budgetMatch?parseFloat(budgetMatch[1]):null;
+  const programme = /engineer/.test(lower)?'engineering':/business|mba|management/.test(lower)?'business':null;
+  const countries = Object.keys(COUNTRY_THRESHOLDS).filter(c=>lower.includes(c));
+  let matches = UNIVERSITIES.filter(u=>{
+    const cOk = countries.length?countries.includes(u.country):true;
+    const pOk = programme?u.programme===programme:true;
+    const bOk = budget?u.budgetLPA<=budget*1.15:true;
+    return cOk&&pOk&&bOk;
+  });
+  if (!matches.length) matches = UNIVERSITIES.filter(u=>countries.length?countries.includes(u.country):true).slice(0,4);
+  const list = matches.slice(0,6).map(u=>`${u.name} (${u.country.toUpperCase()}, ~₹${u.budgetLPA}L total cost)`).join(', ');
+  return `${matches.length} universities matched: ${list||'No exact matches — try broadening budget or country.'}`;
+}
+const SOP_CLICHES = ['since childhood','passion for','from a young age','always dreamed',"in today's world",'i am writing this'];
+function analyzeSop(input: string): string {
+  const clean = input.trim();
+  if (clean.length < 80) return 'Paste your draft SOP (at least a paragraph) so we can give real, text-based feedback.';
+  const lower = clean.toLowerCase();
+  const wordCount = clean.split(/\s+/).filter(Boolean).length;
+  const paragraphs = clean.split(/\n\s*\n/).filter(Boolean);
+  const clicheHits = SOP_CLICHES.filter(c=>lower.includes(c));
+  const mentionsGoals = /(goal|aspir|aim to|plan to|career objective)/.test(lower);
+  const mentionsWhy = /(why i (chose|am applying)|this university|this programme|this program)/.test(lower);
+  const mentionsFuture = /(after (graduat|completing)|post-study|upon completion|return to)/.test(lower);
+  const notes:string[] = [];
+  notes.push(`Length: ${wordCount} words across ${paragraphs.length||1} paragraph(s).`);
+  if (wordCount<400) notes.push('SOPs typically run 500–1000 words — consider expanding.');
+  if (wordCount>1200) notes.push('On the longer side — tighten to keep the reader engaged.');
+  if (clicheHits.length) notes.push(`Remove generic openers: "${clicheHits.join('", "')}" — replace with a specific moment or achievement.`);
+  notes.push(mentionsGoals?'Career goals are clearly stated.':'Career goals not clearly stated — add a specific objective.');
+  notes.push(mentionsWhy?'Good — you explain why this university/programme.':'Add a paragraph on why this specific university/programme.');
+  notes.push(mentionsFuture?'Closing ties to post-study plans — good.':'Add a closing line connecting the degree to your future plans.');
+  return notes.join(' ');
+}
+function computeToolResult(tool: Tool, input: string): string {
+  switch (tool.id) {
+    case 'ats':         return analyzeAts(input);
+    case 'resume':      return analyzeResume(input);
+    case 'interview':   return generateInterviewQuestions(input);
+    case 'salary':      return estimateSalary(input);
+    case 'career-path': return buildCareerPath(input);
+    case 'eligibility': return checkEligibility(input);
+    case 'university':  return matchUniversities(input);
+    case 'sop':         return analyzeSop(input);
+    default:            return 'Analysis complete.';
+  }
+}
+
+/* ── Rotating headline banner ── */
+function RotatingHeadlineBanner() {
+  const [index, setIndex] = useState(0);
+  const current = HEADLINE_WORDS[index];
+  useEffect(() => {
+    const id = window.setTimeout(()=>setIndex(i=>(i+1)%HEADLINE_WORDS.length), current.dwell);
+    return ()=>clearTimeout(id);
+  }, [index, current.dwell]);
 
   return (
-    <button
-      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      aria-label="Scroll to top"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+    <motion.div
+      initial={{ opacity:0, y:12 }}
+      whileInView={{ opacity:1, y:0 }}
+      viewport={{ once:true, amount:0.4 }}
+      transition={{ duration:0.5 }}
       style={{
-        position: 'relative', width: '44px', height: '44px', borderRadius: '50%',
-        border: 'none', cursor: 'pointer', flexShrink: 0,
-        background: hovered ? `linear-gradient(135deg,${G.blue},${G.indigo})` : 'rgba(255,255,255,0.07)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'all .2s ease',
-        transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
-        boxShadow: hovered ? `0 8px 20px ${G.blue}40` : 'none',
-        opacity: show ? 1 : 0.35,
-      }}
-    >
-      <svg width="44" height="44" style={{ position: 'absolute', inset: 0, transform: 'rotate(-90deg)' }}>
-        <circle cx="22" cy="22" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="2" />
-        <circle cx="22" cy="22" r={r} fill="none"
-          stroke={hovered ? 'rgba(255,255,255,0.6)' : G.blue} strokeWidth="2.5"
-          strokeDasharray={circ} strokeDashoffset={circ - (progress / 100) * circ}
-          strokeLinecap="round"
-          style={{ transition: 'stroke-dashoffset .12s linear, stroke .2s ease' }}
-        />
-      </svg>
-      <ArrowUp size={15} color={hovered ? '#fff' : 'rgba(255,255,255,0.65)'} style={{ position: 'relative', zIndex: 1 }} />
-    </button>
-  );
-}
-
-/* ════════════════════════════════
-   ANIMATED TICKER PILL
-════════════════════════════════ */
-function LiveTicker({ items, idx, visible }: { items: typeof TICKER_ITEMS; idx: number; visible: boolean }) {
-  const item = items[idx];
-  return (
-    <div style={{
-      display: 'inline-flex', alignItems: 'center', gap: '10px',
-      background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: '999px', padding: '6px 16px 6px 8px', overflow: 'hidden',
-    }}>
-      <span style={{
-        display: 'inline-flex', alignItems: 'center', gap: '5px',
-        fontSize: '9px', fontWeight: 800, color: '#ef4444',
-        background: 'rgba(239,68,68,0.15)', padding: '3px 8px', borderRadius: '999px', flexShrink: 0,
-      }}>
-        <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#ef4444', display: 'inline-block', animation: 'ft-ticker-dot 1.4s ease-in-out infinite' }} />
-        LIVE
-      </span>
-      <span style={{
-        display: 'inline-flex', alignItems: 'center', gap: '6px',
-        opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(5px)',
-        transition: 'opacity .3s ease, transform .3s ease',
-        whiteSpace: 'nowrap', overflow: 'hidden',
-      }}>
-        <span style={{ fontSize: '13px' }}>{item.emoji}</span>
-        <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>{item.text}</span>
-        <span style={{
-          fontSize: '10.5px', fontWeight: 700, padding: '2px 7px', borderRadius: '999px',
-          background: `${DOT_COLORS[idx % DOT_COLORS.length]}20`,
-          color: DOT_COLORS[idx % DOT_COLORS.length],
-          border: `1px solid ${DOT_COLORS[idx % DOT_COLORS.length]}30`,
-        }}>{item.detail}</span>
-      </span>
-    </div>
-  );
-}
-
-/* ════════════════════════════════
-   ACHIEVEMENT MARQUEE
-════════════════════════════════ */
-function AchievementMarquee() {
-  const doubled = [...ACHIEVEMENTS, ...ACHIEVEMENTS];
-  return (
-    <div style={{ overflow: 'hidden', position: 'relative', maskImage: 'linear-gradient(90deg,transparent,black 8%,black 92%,transparent)' }}>
-      <div style={{ display: 'flex', gap: '0', animation: 'ft-marquee 22s linear infinite', width: 'max-content' }}>
-        {doubled.map((a, i) => (
-          <div key={i} style={{
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            padding: '7px 20px', whiteSpace: 'nowrap',
-            borderRight: '1px solid rgba(255,255,255,0.06)',
-          }}>
-            {a.icon}
-            <span style={{ fontSize: '11.5px', fontWeight: 600, color: 'rgba(255,255,255,0.45)' }}>{a.text}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ════════════════════════════════
-   NEWSLETTER SECTION
-════════════════════════════════ */
-function Newsletter() {
-  const [email, setEmail] = useState('');
-  const [state, setState] = useState<'idle' | 'loading' | 'done'>('idle');
-  const [focused, setFocused] = useState(false);
-
-  const handle = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.includes('@')) return;
-    setState('loading');
-    setTimeout(() => setState('done'), 900);
-  };
-
-  return (
-    <div style={{
-      position: 'relative', overflow: 'hidden',
-      background: 'rgba(255,255,255,0.025)',
-      border: '1px solid rgba(255,255,255,0.07)',
-      borderRadius: '18px', padding: '24px 28px',
-    }}>
-      {/* Subtle orb */}
-      <div aria-hidden style={{ position: 'absolute', top: '-30px', right: '-20px', width: '140px', height: '140px', borderRadius: '50%', background: `radial-gradient(circle,${G.indigo}20 0%,transparent 70%)`, filter: 'blur(30px)', pointerEvents: 'none' }} />
-
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: '200px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <div style={{ width: '26px', height: '26px', borderRadius: '8px', background: `${G.orange}18`, border: `1px solid ${G.orange}30`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Sparkles size={13} color={G.orange} />
-            </div>
-            <span style={{ fontSize: '14px', fontWeight: 800, color: '#fff' }}>Career Tips & Placement Alerts</span>
-          </div>
-          <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.38)', margin: 0, paddingLeft: '34px' }}>
-            Weekly insights — no spam, unsubscribe anytime.
-          </p>
-        </div>
-
-        {state === 'done' ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', animation: 'ft-pop .4s ease' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <CheckCircle2 size={16} color="#4ade80" />
-            </div>
-            <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#4ade80' }}>You&apos;re in! Watch your inbox.</span>
-          </div>
-        ) : (
-          <form onSubmit={handle} style={{ display: 'flex', gap: '8px', flex: 1, maxWidth: '360px' }}>
-            <div style={{ flex: 1, position: 'relative' }}>
-              <input
-                type="email" required placeholder="your@email.com"
-                value={email} onChange={e => setEmail(e.target.value)}
-                onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
-                style={{
-                  width: '100%', padding: '10px 14px', borderRadius: '10px',
-                  border: `1.5px solid ${focused ? G.blue : 'rgba(255,255,255,0.1)'}`,
-                  background: focused ? 'rgba(37,99,235,0.08)' : 'rgba(255,255,255,0.05)',
-                  color: '#fff', fontSize: '13px', fontFamily: 'inherit',
-                  outline: 'none', boxSizing: 'border-box',
-                  transition: 'border-color .15s ease, background .15s ease',
-                  boxShadow: focused ? `0 0 0 3px ${G.blue}18` : 'none',
-                }}
-              />
-            </div>
-            <button type="submit" disabled={state === 'loading'}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: '6px',
-                padding: '10px 18px', borderRadius: '10px', border: 'none',
-                backgroundImage: state === 'loading' ? 'none' : `linear-gradient(135deg,${G.blue},${G.indigo})`,
-                background: state === 'loading' ? 'rgba(255,255,255,0.08)' : undefined,
-                color: state === 'loading' ? 'rgba(255,255,255,0.4)' : '#fff',
-                fontWeight: 700, fontSize: '13px',
-                cursor: state === 'loading' ? 'wait' : 'pointer',
-                fontFamily: 'inherit', whiteSpace: 'nowrap',
-                boxShadow: state !== 'loading' ? `0 4px 14px ${G.blue}35` : 'none',
-                transition: 'transform .15s ease',
-                position: 'relative', overflow: 'hidden',
-              }}
-              onMouseEnter={e => { if (state !== 'loading') e.currentTarget.style.transform = 'translateY(-1px)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = ''; }}
-            >
-              {state === 'loading' ? (
-                <span style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'ft-spin .7s linear infinite', display: 'inline-block' }} />
-              ) : (
-                <><Sparkles size={12} /> Subscribe</>
-              )}
-            </button>
-          </form>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ════════════════════════════════
-   CONTACT CARD (interactive)
-════════════════════════════════ */
-function ContactItem({ Icon, color, text, href, label }: {
-  Icon: LucideIcon;
-  color: string; text: string; href: string | null; label: string;
-}) {
-  const [h, setH] = useState(false);
-  const inner = (
-    <div
-      onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        display: 'flex', alignItems: 'center', gap: '10px',
-        padding: '10px 12px', borderRadius: '12px',
-        background: h ? `${color}10` : 'rgba(255,255,255,0.03)',
-        border: `1px solid ${h ? color + '25' : 'rgba(255,255,255,0.06)'}`,
-        transition: 'all .2s ease',
-        transform: h ? 'translateX(4px)' : 'translateX(0)',
-        cursor: href ? 'pointer' : 'default',
-        height: '100%', boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '8px',
+        margin: '0 auto clamp(20px,3.5vw,32px)',
+        maxWidth: '540px',
+        width: '100%',
+        padding: 'clamp(14px,3vw,20px) clamp(16px,4vw,24px)',
+        borderRadius: '16px',
+        background: '#ffffff',
+        border: '1px solid rgba(15,23,42,0.08)',
+        boxShadow: '0 2px 12px rgba(15,23,42,0.06)',
+        textAlign: 'center',
+        fontFamily: GEOM_FONT,
       }}
     >
       <div style={{
-        width: '30px', height: '30px', borderRadius: '9px', flexShrink: 0,
-        background: h ? `${color}20` : 'rgba(255,255,255,0.06)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'background .2s ease',
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        gap: '10px', fontSize: 'clamp(1rem,2.4vw,1.45rem)',
+        fontWeight: 700, letterSpacing: '-0.02em', flexWrap: 'wrap', width: '100%',
       }}>
-        <Icon size={14} color={h ? color : 'rgba(255,255,255,0.5)'} />
+        <motion.span
+          animate={{ rotate:[0,-8,8,0] }}
+          transition={{ duration:2.2, repeat:Infinity, ease:'easeInOut' }}
+          style={{
+            display:'inline-flex', width:'26px', height:'26px', borderRadius:'8px',
+            background:'#2563eb', color:'#fff',
+            alignItems:'center', justifyContent:'center', flexShrink:0,
+          }}
+        >
+          <Rocket size={13} strokeWidth={2.2} />
+        </motion.span>
+
+        <span style={{
+          position:'relative', display:'inline-block',
+          minWidth:'clamp(120px,22vw,180px)', height:'1.3em', textAlign:'left',
+        }}>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={current.text}
+              initial={{ y:12, opacity:0 }}
+              animate={{ y:0, opacity:1 }}
+              exit={{ y:-12, opacity:0 }}
+              transition={{ duration:0.32, ease:[0.22,1,0.36,1] }}
+              style={{
+                position:'absolute', left:0, top:0, whiteSpace:'nowrap',
+                /* solid color — no gradient text */
+                color: '#2563eb',
+              }}
+            >
+              {current.text}
+            </motion.span>
+          </AnimatePresence>
+        </span>
       </div>
-      <div style={{ minWidth: 0 }}>
-        <div style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
-        <div style={{ fontSize: '12.5px', fontWeight: 600, color: h ? color : 'rgba(255,255,255,0.6)', transition: 'color .15s ease', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{text}</div>
+
+      <p style={{
+        fontSize:'clamp(0.78rem,1.1vw,0.9rem)', color:'#64748b',
+        lineHeight:1.55, maxWidth:'440px', margin:0, fontFamily: GEOM_FONT,
+      }}>
+        From CV to Offer. Home to Abroad.{' '}
+        <span style={{ fontWeight:600, color:'#1e293b' }}>
+          Your Career Co-Pilot — One Place, One Partner.
+        </span>
+      </p>
+    </motion.div>
+  );
+}
+
+/* ── Mobile bottom sheet ── */
+function MobileToolSheet({ onClose, titleId, children }: {
+  onClose: () => void; titleId: string; children: React.ReactNode;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(()=>{ ref.current?.focus(); },[]);
+  return (
+    <>
+      <motion.div
+        key="backdrop"
+        initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
+        transition={{duration:0.22}}
+        onClick={onClose}
+        style={{ position:'fixed', inset:0, background:'rgba(15,23,42,0.5)', zIndex:60 }}
+      />
+      <motion.div
+        key="sheet"
+        ref={ref} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1}
+        initial={{y:'100%'}} animate={{y:0}} exit={{y:'100%'}}
+        transition={{ type:'spring', damping:32, stiffness:300 }}
+        drag="y" dragConstraints={{top:0,bottom:0}} dragElastic={{top:0,bottom:0.5}}
+        onDragEnd={(_e,info)=>{ if(info.offset.y>110||info.velocity.y>700) onClose(); }}
+        style={{
+          position:'fixed', left:0, right:0, bottom:0, zIndex:61,
+          background:'#fff', borderRadius:'20px 20px 0 0',
+          maxHeight:'92vh', display:'flex', flexDirection:'column',
+          boxShadow:'0 -16px 48px rgba(15,23,42,0.18)', outline:'none', touchAction:'none',
+        }}
+      >
+        <div aria-hidden style={{ display:'flex', justifyContent:'center', padding:'10px 0 2px', cursor:'grab', flexShrink:0 }}>
+          <span style={{ width:'36px', height:'4px', borderRadius:'999px', background:'rgba(15,23,42,0.15)' }} />
+        </div>
+        <div style={{ flex:1, minHeight:0, display:'flex', flexDirection:'column', padding:'4px 16px 0', touchAction:'pan-y' }}>
+          {children}
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
+/* ── Typing dots ── */
+function TypingDots() {
+  return (
+    <div style={{ display:'flex', gap:'6px', padding:'6px 0' }}>
+      {[0,1,2].map(i=>(
+        <motion.span key={i}
+          animate={{ y:[0,-6,0] }}
+          transition={{ duration:0.7, repeat:Infinity, delay:i*0.15 }}
+          style={{ width:'7px', height:'7px', borderRadius:'50%', background:'#94a3b8', display:'inline-block' }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN COMPONENT
+═══════════════════════════════════════════════════════ */
+export default function UtilityToolsSection() {
+  const [category, setCategory] = useState<Category|'all'>('all');
+  const [activeId, setActiveId] = useState<string|null>(null);
+  const [input, setInput] = useState('');
+  const [phase, setPhase] = useState<'idle'|'loading'|'done'>('idle');
+  const [resultText, setResultText] = useState('');
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [fileName, setFileName] = useState('');
+  const [fileError, setFileError] = useState('');
+  const isMobile = useIsMobile();
+
+  const active = TOOLS.find(t=>t.id===activeId)??null;
+  const accent: Accent = active ? CATEGORY_META[active.category] : CATEGORY_META[category];
+
+  const filteredTools = useMemo(()=>TOOLS.filter(t=>category==='all'||t.category===category),[category]);
+  const typedResult = useTypewriter(resultText, phase==='done');
+
+  const runTool = useCallback(()=>{
+    if (!active) return;
+    setPhase('loading');
+    window.setTimeout(()=>{
+      setResultText(computeToolResult(active, input));
+      setPhase('done');
+    }, 900);
+  },[active, input]);
+
+  const handleFileUpload = useCallback(async(file: File)=>{
+    setFileError(''); setFileName(file.name); setIsExtracting(true);
+    try {
+      const text = await extractTextFromFile(file);
+      if (!text||text.trim().length<20) throw new Error('Could not extract text. Please paste instead.');
+      setInput(text);
+    } catch(err:any) {
+      setFileError(err?.message||'Could not read this file. Please paste your text instead.');
+    } finally { setIsExtracting(false); }
+  },[]);
+
+  const openTool = (tool: Tool) => {
+    setActiveId(tool.id); setInput(''); setPhase('idle');
+    setResultText(''); setFileName(''); setFileError('');
+  };
+  const closePanel = useCallback(()=>{
+    setActiveId(null); setPhase('idle'); setInput('');
+    setResultText(''); setFileName(''); setFileError('');
+  },[]);
+
+  useEffect(()=>{
+    document.body.style.overflow = (isMobile&&active)?'hidden':'';
+    return ()=>{ document.body.style.overflow=''; };
+  },[isMobile,active]);
+
+  useEffect(()=>{
+    if (!active) return;
+    const fn = (e:KeyboardEvent)=>{ if(e.key==='Escape') closePanel(); };
+    window.addEventListener('keydown',fn);
+    return ()=>window.removeEventListener('keydown',fn);
+  },[active,closePanel]);
+
+  const mobileTitleId = active?`mobile-tool-title-${active.id}`:undefined;
+
+  return (
+    <section
+      id="utility-tools"
+      style={{
+        position:'relative',
+        padding:'clamp(48px,7vw,88px) clamp(16px,4vw,24px)',
+        overflow:'hidden',
+        background:'#f8fafc',
+        fontFamily: GEOM_FONT,
+      }}
+    >
+      {/* subtle background blobs — solid, very faint */}
+      <div aria-hidden style={{
+        position:'absolute', top:'-10%', right:'-6%', width:'380px', height:'380px',
+        borderRadius:'50%', background:'rgba(37,99,235,0.04)', filter:'blur(80px)',
+        zIndex:0, pointerEvents:'none',
+      }}/>
+      <div aria-hidden style={{
+        position:'absolute', bottom:'-12%', left:'-8%', width:'420px', height:'420px',
+        borderRadius:'50%', background:'rgba(8,145,178,0.04)', filter:'blur(90px)',
+        zIndex:0, pointerEvents:'none',
+      }}/>
+
+      <div style={{ position:'relative', zIndex:1, maxWidth:'1200px', margin:'0 auto' }}>
+
+        {/* ── Header ── */}
+        <motion.div
+          initial={{opacity:0,y:16}} whileInView={{opacity:1,y:0}}
+          viewport={{once:true,amount:0.3}} transition={{duration:0.5}}
+          style={{ textAlign:'center', marginBottom:'clamp(20px,3vw,32px)' }}
+        >
+          {/* eyebrow */}
+          <span style={{
+            display:'inline-flex', alignItems:'center', gap:'6px',
+            fontSize:'11px', fontWeight:600, textTransform:'uppercase',
+            letterSpacing:'0.14em', color:'#2563eb',
+            background:'rgba(37,99,235,0.07)',
+            border:'1px solid rgba(37,99,235,0.14)',
+            borderRadius:'999px', padding:'5px 12px',
+            marginBottom:'14px',
+          }}>
+            <Sparkles size={13} strokeWidth={2.25} aria-hidden />
+            Utility Tools
+          </span>
+
+          {/* heading — solid, no gradient */}
+          <h2 style={{
+            fontSize:'clamp(1.75rem,3.8vw,2.9rem)',
+            fontWeight:700,
+            lineHeight:1.12,
+            letterSpacing:'-0.025em',
+            color:'#0f172a',
+            margin:'0 0 12px',
+          }}>
+            AI-Powered Tools Built for Real Career Decisions
+          </h2>
+
+          <p style={{
+            fontSize:'clamp(0.9rem,1.3vw,1.05rem)',
+            color:'#64748b',
+            maxWidth:'580px',
+            margin:'0 auto',
+            lineHeight:1.65,
+          }}>
+            Interactive assistants for resumes, interviews, salaries, study abroad, and more —
+            designed to feel fast, useful, and advisor-grade.
+          </p>
+        </motion.div>
+
+        {/* ── Rotating banner ── */}
+        <RotatingHeadlineBanner />
+
+        {/* ── Category filter ── */}
+        <div style={{ display:'flex', justifyContent:'center', marginBottom:'clamp(20px,2.8vw,28px)' }}>
+          <div
+            role="tablist" aria-label="Filter tools"
+            style={{
+              display:'inline-flex', gap:'4px', flexWrap:'wrap', justifyContent:'center',
+              background:'#ffffff', padding:'5px', borderRadius:'999px',
+              boxShadow:'0 2px 10px rgba(15,23,42,0.07)',
+              border:'1px solid rgba(15,23,42,0.07)',
+            }}
+          >
+            {FILTERS.map(f=>{
+              const meta = CATEGORY_META[f];
+              const isActive = category===f;
+              return (
+                <button key={f} type="button" role="tab" aria-selected={isActive}
+                  onClick={()=>setCategory(f)}
+                  style={{
+                    position:'relative', padding:'9px 20px', borderRadius:'999px',
+                    border:'none', fontWeight:600, fontSize:'13px', cursor:'pointer',
+                    background: isActive ? '#2563eb' : 'transparent',
+                    color: isActive ? '#ffffff' : '#64748b',
+                    transition:'all 0.2s ease',
+                    whiteSpace:'nowrap',
+                    fontFamily: GEOM_FONT,
+                  }}
+                >
+                  {meta.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── Tool toggle bar ── */}
+        <motion.div
+          initial={{opacity:0,y:10}} animate={{opacity:1,y:0}}
+          transition={{duration:0.4}}
+          style={{ marginBottom:'clamp(16px,2.5vw,24px)' }}
+        >
+          <div className="tools-toggle-wrap">
+            <div
+              className="tools-toggle-bar"
+              style={{
+                background:'#ffffff', borderRadius:'999px', padding:'6px',
+                boxShadow:'0 2px 12px rgba(15,23,42,0.08)',
+                border:'1px solid rgba(15,23,42,0.07)',
+                display:'flex', flexWrap:'wrap', gap:'4px',
+                justifyContent:'center', alignItems:'center',
+              }}
+            >
+              {filteredTools.map(tool=>{
+                const meta = CATEGORY_META[tool.category];
+                const isActive = activeId===tool.id;
+                return (
+                  <motion.button
+                    key={tool.id} type="button"
+                    onClick={()=>openTool(tool)}
+                    whileHover={{scale:1.02}} whileTap={{scale:0.97}}
+                    style={{
+                      display:'inline-flex', alignItems:'center', gap:'7px',
+                      padding:'9px 16px', borderRadius:'999px', border:'none',
+                      /* solid fill when active — no gradient */
+                      background: isActive ? '#2563eb' : 'rgba(15,23,42,0.03)',
+                      color: isActive ? '#ffffff' : '#475569',
+                      fontSize:'13px', fontWeight:600, cursor:'pointer',
+                      transition:'all 0.2s ease',
+                      boxShadow: isActive ? '0 4px 14px rgba(37,99,235,0.22)' : 'none',
+                      fontFamily: GEOM_FONT,
+                    }}
+                  >
+                    <tool.Icon size={15} strokeWidth={2} />
+                    <span className="tool-title-desktop">{tool.title}</span>
+                    <span className="tool-title-mobile">{tool.title.split(' ')[0]}</span>
+                    {tool.popular && (
+                      <span className="tool-hot-badge" style={{
+                        fontSize:'9px', fontWeight:700, letterSpacing:'0.4px',
+                        background: isActive ? 'rgba(255,255,255,0.22)' : 'rgba(37,99,235,0.1)',
+                        color: isActive ? '#fff' : '#2563eb',
+                        borderRadius:'999px', padding:'2px 6px',
+                      }}>HOT</span>
+                    )}
+                    {isActive && (
+                      <ChevronDown size={13} strokeWidth={2.5} className="tool-chevron" />
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+            <span className="tools-toggle-fade tools-toggle-fade--left" aria-hidden />
+            <span className="tools-toggle-fade tools-toggle-fade--right" aria-hidden />
+          </div>
+        </motion.div>
+
+        {/* ── Desktop panel ── */}
+        {!isMobile && (
+          <AnimatePresence mode="wait">
+            {active && (
+              <motion.div
+                key={active.id}
+                initial={{opacity:0,y:-8,height:0}}
+                animate={{opacity:1,y:0,height:'auto'}}
+                exit={{opacity:0,y:-8,height:0}}
+                transition={{duration:0.28, ease:[0.22,1,0.36,1]}}
+                style={{overflow:'hidden'}}
+              >
+                <div style={{
+                  maxWidth:'860px', margin:'0 auto',
+                  background:'#ffffff', borderRadius:'20px',
+                  padding:'clamp(22px,3.5vw,32px)',
+                  boxShadow:'0 8px 32px rgba(15,23,42,0.1)',
+                  border:'1px solid rgba(15,23,42,0.07)',
+                }}>
+                  <ToolPanel
+                    active={active} accent={accent}
+                    input={input} setInput={setInput}
+                    phase={phase} typedResult={typedResult}
+                    runTool={runTool} closePanel={closePanel}
+                    onFileUpload={handleFileUpload}
+                    isExtracting={isExtracting} fileName={fileName} fileError={fileError}
+                    variant="desktop"
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
       </div>
+
+      {/* ── Mobile sheet ── */}
+      {isMobile && (
+        <AnimatePresence>
+          {active && mobileTitleId && (
+            <MobileToolSheet key="mobile-sheet" onClose={closePanel} titleId={mobileTitleId}>
+              <ToolPanel
+                active={active} accent={accent}
+                input={input} setInput={setInput}
+                phase={phase} typedResult={typedResult}
+                runTool={runTool} closePanel={closePanel}
+                onFileUpload={handleFileUpload}
+                isExtracting={isExtracting} fileName={fileName} fileError={fileError}
+                variant="mobile" titleId={mobileTitleId}
+              />
+            </MobileToolSheet>
+          )}
+        </AnimatePresence>
+      )}
+
+      <style>{`
+        /* ── font & box-sizing ── */
+        #utility-tools, #utility-tools * {
+          font-family: ${GEOM_FONT};
+          font-feature-settings: "ss01","cv11","cv02";
+          font-optical-sizing: auto;
+          box-sizing: border-box;
+        }
+
+        /* ── toggle bar responsive ── */
+        .tools-toggle-wrap { position: relative; }
+
+        .tools-toggle-fade {
+          display: none;
+          position: absolute; top: 0; bottom: 0; width: 24px;
+          pointer-events: none; z-index: 2;
+        }
+
+        @media (max-width: 900px) {
+          .tool-title-desktop { display: none; }
+          .tool-title-mobile  { display: inline; }
+
+          .tools-toggle-bar {
+            flex-wrap: nowrap !important;
+            justify-content: flex-start !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x proximity;
+            padding: 6px 12px !important;
+            gap: 6px !important;
+            scrollbar-width: none;
+          }
+          .tools-toggle-bar::-webkit-scrollbar { display: none; }
+          .tools-toggle-bar > button {
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            padding: 10px 14px !important;
+            min-height: 42px;
+          }
+          .tool-hot-badge { display: none; }
+          .tool-chevron   { display: none; }
+
+          .tools-toggle-fade { display: block; }
+          .tools-toggle-fade--left  {
+            left: 0;
+            background: linear-gradient(90deg, #f8fafc, rgba(248,250,252,0));
+          }
+          .tools-toggle-fade--right {
+            right: 0;
+            background: linear-gradient(270deg, #f8fafc, rgba(248,250,252,0));
+          }
+
+          .tool-textarea     { font-size: 16px !important; }
+          .tool-close-btn    { width: 40px !important; height: 40px !important; }
+          .tool-upload-label { padding: 11px 14px !important; min-height: 42px; }
+        }
+
+        @media (min-width: 901px) {
+          .tool-title-desktop { display: inline; }
+          .tool-title-mobile  { display: none;   }
+        }
+      `}</style>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   TOOL PANEL
+═══════════════════════════════════════════════════════ */
+function ToolPanel({
+  active, accent, input, setInput, phase, typedResult,
+  runTool, closePanel, onFileUpload, isExtracting, fileName, fileError,
+  variant='desktop', titleId,
+}: {
+  active: Tool|null; accent: Accent;
+  input: string; setInput:(v:string)=>void;
+  phase:'idle'|'loading'|'done'; typedResult:string;
+  runTool:()=>void; closePanel:()=>void;
+  onFileUpload:(f:File)=>void;
+  isExtracting:boolean; fileName:string; fileError:string;
+  variant?:'desktop'|'mobile'; titleId?:string;
+}) {
+  if (!active) return null;
+  const isMob = variant==='mobile';
+  const supportsUpload = UPLOAD_ENABLED_IDS.includes(active.id);
+
+  /* ── header ── */
+  const header = (
+    <div style={{
+      display:'flex', justifyContent:'space-between', alignItems:'flex-start',
+      marginBottom: isMob?'12px':'18px',
+      paddingBottom: isMob?'12px':0,
+      borderBottom: isMob?'1px solid rgba(15,23,42,0.07)':'none',
+    }}>
+      <div style={{ display:'flex', gap:'12px', alignItems:'center', minWidth:0 }}>
+        {/* icon box — solid color, no gradient */}
+        <span style={{
+          width: isMob?'42px':'48px', height: isMob?'42px':'48px',
+          borderRadius:'14px', display:'flex', alignItems:'center', justifyContent:'center',
+          background: accent.from, color:'#fff', flexShrink:0,
+          boxShadow:`0 4px 14px ${accent.soft}`,
+        }}>
+          <active.Icon size={isMob?20:22} strokeWidth={2} />
+        </span>
+
+        <div style={{ minWidth:0 }}>
+          <p style={{
+            fontSize:'10px', fontWeight:600, textTransform:'uppercase',
+            letterSpacing:'0.12em', color: accent.from, marginBottom:'3px',
+          }}>
+            Placedly AI Tool
+          </p>
+          <h3
+            id={titleId}
+            style={{
+              fontSize: isMob?'1rem':'clamp(1.05rem,1.8vw,1.3rem)',
+              fontWeight:700, lineHeight:1.3, letterSpacing:'-0.02em',
+              color:'#0f172a', margin:0,
+              /* NO gradient text */
+            }}
+          >
+            {active.title}
+          </h3>
+          {!isMob && (
+            <p style={{ fontSize:'13px', color:'#64748b', marginTop:'4px', lineHeight:1.5 }}>
+              {active.description}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <button
+        type="button" onClick={closePanel} aria-label="Close tool"
+        className="tool-close-btn"
+        style={{
+          border:'none', background:'rgba(15,23,42,0.05)',
+          width:'34px', height:'34px', borderRadius:'10px',
+          display:'flex', alignItems:'center', justifyContent:'center',
+          cursor:'pointer', color:'#64748b', flexShrink:0,
+          transition:'background 0.18s',
+        }}
+        onMouseEnter={e=>{ e.currentTarget.style.background='rgba(15,23,42,0.1)'; }}
+        onMouseLeave={e=>{ e.currentTarget.style.background='rgba(15,23,42,0.05)'; }}
+      >
+        <X size={16} strokeWidth={2.5} />
+      </button>
     </div>
   );
 
-  return href ? (
-    <a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-      {inner}
-    </a>
-  ) : <div>{inner}</div>;
-}
+  /* ── upload ── */
+  const uploadBlock = supportsUpload && (
+    <div style={{ marginBottom:'12px' }}>
+      <input
+        type="file" id={`ru-${active.id}-${variant}`}
+        accept=".pdf,.doc,.docx,.txt" style={{ display:'none' }}
+        onChange={e=>{ const f=e.target.files?.[0]; if(f) onFileUpload(f); e.target.value=''; }}
+      />
+      <label
+        htmlFor={`ru-${active.id}-${variant}`}
+        className="tool-upload-label"
+        style={{
+          display:'inline-flex', alignItems:'center', gap:'8px',
+          padding:'8px 14px', borderRadius:'999px',
+          border:`1.5px dashed rgba(37,99,235,0.3)`,
+          background: accent.soft, color: accent.from,
+          fontSize:'12.5px', fontWeight:600,
+          cursor: isExtracting?'wait':'pointer',
+          transition:'border-color 0.2s',
+        }}
+      >
+        <Upload size={14} strokeWidth={2.25} />
+        {isExtracting?'Reading file…':fileName?`Uploaded: ${fileName}`:'Upload Resume (.pdf, .docx, .txt)'}
+      </label>
+      {fileError && (
+        <p style={{ fontSize:'12px', color:'#dc2626', marginTop:'6px', lineHeight:1.5 }}>{fileError}</p>
+      )}
+    </div>
+  );
 
-/* ════════════════════════════════
-   MAIN FOOTER
-════════════════════════════════ */
-export default function Footer({ cms = {} }: { cms?: Cms }) {
-  const [tickerIdx, setTickerIdx]         = useState(0);
-  const [tickerVisible, setTickerVisible] = useState(true);
-  const [visible, setVisible]             = useState(false);
-  const footerRef = useRef<HTMLElement>(null);
+  /* ── textarea ── */
+  const textarea = (
+    <textarea
+      rows={isMob?4:5} value={input}
+      onChange={e=>setInput(e.target.value)}
+      placeholder={active.placeholder}
+      className="tool-textarea"
+      style={{
+        width:'100%', resize:'vertical', padding:'14px',
+        borderRadius:'12px',
+        border:`1.5px solid rgba(15,23,42,0.1)`,
+        fontSize:'14px', lineHeight:1.62, color:'#0f172a',
+        outline:'none', marginBottom:'14px',
+        fontFamily: GEOM_FONT,
+        background:'#f8fafc',
+        transition:'border-color 0.2s',
+      }}
+      onFocus={e=>{ e.currentTarget.style.borderColor=accent.from; }}
+      onBlur={e=>{  e.currentTarget.style.borderColor='rgba(15,23,42,0.1)'; }}
+    />
+  );
 
-  /* CMS */
-  const desc      = cms['hp:footerDesc']      ?? "India's career growth and study abroad consultancy. Career Assistance Programme: 12% Success Share, post-placement only. Study Abroad: UK · France · Germany · Dubai. Zero upfront.";
-  const ctaText   = cms['hp:footerCtaText']   ?? 'Start Your Journey';
-  const ctaHref   = cms['hp:footerCtaHref']   ?? '/contact';
-  const instagram = cms['hp:footerInstagram'] ?? 'https://www.instagram.com/';
-  const twitter   = cms['hp:footerTwitter']   ?? 'https://twitter.com/';
-  const linkedin  = cms['hp:footerLinkedin']  ?? 'https://linkedin.com/';
-  const facebook  = cms['hp:footerFacebook']  ?? 'https://www.facebook.com/';
-  const emailAddr = cms['hp:footerEmail']     ?? 'hello@placedly.in';
-  const wa        = cms['hp:footerWa']        ?? cms['hp:waNumber'] ?? '919910116901';
-  const copyright = cms['hp:footerCopyright'] ?? '© 2026 Placedly · Career Assistance Programme · Study Abroad Consultancy · India · CAP Fee: 12% of Annual CTC · Collected post-offer letter only';
+  /* ── run button — solid, no gradient ── */
+  const runButton = (
+    <motion.button
+      type="button" onClick={runTool} disabled={phase==='loading'}
+      whileHover={{ y:-2, boxShadow:`0 8px 24px rgba(37,99,235,0.22)` }}
+      whileTap={{ scale:0.98 }}
+      style={{
+        width:'100%', display:'inline-flex', alignItems:'center',
+        justifyContent:'center', gap:'9px',
+        padding:'14px 24px',
+        background: accent.from,      /* solid — no gradient */
+        color:'#fff', border:'none', borderRadius:'12px',
+        fontWeight:700, fontSize:'14.5px',
+        cursor: phase==='loading'?'wait':'pointer',
+        opacity: phase==='loading'?0.82:1,
+        boxShadow:`0 4px 16px rgba(37,99,235,0.2)`,
+        transition:'opacity 0.18s, box-shadow 0.18s',
+        fontFamily: GEOM_FONT,
+      }}
+    >
+      {phase==='loading'?(
+        <>
+          <motion.span aria-hidden
+            animate={{rotate:360}} transition={{duration:0.75,repeat:Infinity,ease:'linear'}}
+            style={{
+              width:'15px',height:'15px',borderRadius:'50%',
+              border:'2px solid rgba(255,255,255,0.3)',borderTopColor:'#fff',display:'inline-block',
+            }}
+          />
+          Analyzing…
+        </>
+      ):(
+        <>
+          <Sparkles size={16} strokeWidth={2.5} aria-hidden />
+          {active.cta}
+        </>
+      )}
+    </motion.button>
+  );
 
-  /* Reveal */
-  useEffect(() => {
-    const el = footerRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVisible(true); },
-      { threshold: 0.04 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  /* Ticker */
-  useEffect(() => {
-    const t = setInterval(() => {
-      setTickerVisible(false);
-      setTimeout(() => { setTickerIdx(i => (i + 1) % TICKER_ITEMS.length); setTickerVisible(true); }, 350);
-    }, 3600);
-    return () => clearInterval(t);
-  }, []);
-
-  const socials = [
-    { href: instagram, label: 'Instagram', Icon: IgIcon, color: '#e1306c', bg: '#fff0f5' },
-    { href: twitter,   label: 'Twitter/X', Icon: TwIcon, color: '#1d9bf0', bg: '#e8f5fd' },
-    { href: linkedin,  label: 'LinkedIn',  Icon: LiIcon, color: '#0077b5', bg: '#e8f4fb' },
-    { href: facebook,  label: 'Facebook',  Icon: FbIcon, color: '#1877f2', bg: '#e8f0fe' },
-  ];
-
-  const contacts = [
-    { Icon: MessageCircle, color: G.green,  text: `+91 ${wa.slice(-10)}`, href: `https://wa.me/${wa}`, label: 'WhatsApp' },
-    { Icon: Mail,          color: G.blue,   text: emailAddr,              href: `mailto:${emailAddr}`, label: 'Email' },
-    { Icon: MapPin,        color: G.orange, text: 'Delhi NCR, India',     href: null,                  label: 'Office' },
-    { Icon: Clock,         color: G.purple, text: 'Mon–Sat 9AM–7PM',      href: null,                  label: 'Hours' },
-  ];
-
-  return (
-    <>
-      <style>{`
-        @keyframes ft-grad      { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-        @keyframes ft-blob-a    { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(20px,15px) scale(1.05)} }
-        @keyframes ft-blob-b    { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-15px,-10px) scale(1.04)} }
-        @keyframes ft-blob-c    { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(10px,-20px) scale(1.06)} }
-        @keyframes ft-ticker-dot{ 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.3)} }
-        @keyframes ft-spin      { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-        @keyframes ft-pop       { 0%{transform:scale(.7);opacity:0} 70%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1} }
-        @keyframes ft-marquee   { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-
-        /* Responsive grids */
-        .ft-main-grid    { display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:40px; align-items:start; }
-        .ft-contacts-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-        .ft-bottom-row   { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
-
-        @media (max-width:1024px){ .ft-main-grid{ grid-template-columns:1fr 1fr; gap:28px; } }
-        @media (max-width:640px) {
-          .ft-main-grid    { grid-template-columns:1fr; gap:24px; }
-          .ft-contacts-row { grid-template-columns:1fr 1fr; }
-          .ft-bottom-row   { flex-direction:column; text-align:center; }
-        }
-        @media (max-width:380px) {
-          .ft-contacts-row { grid-template-columns:1fr; }
-        }
-      `}</style>
-
-      <footer ref={footerRef} style={{
-        position: 'relative', overflow: 'hidden',
-        background: 'linear-gradient(165deg,#04060e 0%,#080b1e 45%,#0e0e34 100%)',
-      }}>
-
-        {/* ── Animated ambient orbs ── */}
-        {[
-          { top: '-130px', left: '-110px', size: '520px', color: `${G.blue}1c`, anim: 'ft-blob-a 17s ease-in-out infinite' },
-          { top: '15%',  right: '-130px', size: '440px', color: `${G.orange}16`, anim: 'ft-blob-b 19s ease-in-out infinite 1.5s' },
-          { bottom: '-80px', left: '30%', size: '360px', color: `${G.purple}12`, anim: 'ft-blob-c 21s ease-in-out infinite 3s' },
-          { top: '55%', left: '55%',     size: '280px', color: `${G.rose}0e`,   anim: 'ft-blob-a 24s ease-in-out infinite 5s' },
-        ].map((orb, i) => (
-          <div key={i} aria-hidden style={{
-            position: 'absolute', borderRadius: '50%', pointerEvents: 'none',
-            width: orb.size, height: orb.size,
-            top: orb.top ?? 'auto', left: (orb as { left?: string }).left ?? 'auto',
-            right: (orb as { right?: string }).right ?? 'auto',
-            bottom: (orb as { bottom?: string }).bottom ?? 'auto',
-            background: `radial-gradient(circle,${orb.color} 0%,transparent 70%)`,
-            filter: 'blur(80px)', animation: orb.anim,
-          }} />
-        ))}
-
-        {/* ══════════ CONTENT STACK — single consistent spacing scale ══════════ */}
-        <div style={{
-          position: 'relative', zIndex: 1,
-          paddingTop: 'clamp(40px, 6vw, 56px)',
-          display: 'flex', flexDirection: 'column',
-          gap: 'clamp(28px, 4vw, 36px)',
-        }}>
-
-          {/* CTA CARD */}
-          <div className="container" style={{
-            opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(18px)',
-            transition: 'opacity .6s ease, transform .6s ease',
+  /* ── result block ── */
+  const resultBlock = (
+    <AnimatePresence>
+      {(phase==='loading'||phase==='done') && (
+        <motion.div
+          initial={{opacity:0,y:8,height:0}}
+          animate={{opacity:1,y:0,height:'auto'}}
+          exit={{opacity:0,height:0}}
+          transition={{duration:0.26}}
+          style={{
+            marginTop:'16px', padding:'18px', borderRadius:'14px',
+            background: accent.soft,
+            border:`1px solid rgba(37,99,235,0.12)`,
+            overflow:'hidden',
+          }}
+        >
+          <p style={{
+            fontSize:'10.5px', fontWeight:700, textTransform:'uppercase',
+            letterSpacing:'0.1em', color: accent.from,
+            marginBottom:'10px', display:'flex', alignItems:'center', gap:'7px',
           }}>
-            <CtaCard ctaText={ctaText} ctaHref={ctaHref} wa={wa} />
-          </div>
-
-          {/* LIVE TICKER */}
-          <div className="container">
-            <LiveTicker items={TICKER_ITEMS} idx={tickerIdx} visible={tickerVisible} />
-          </div>
-
-          {/* ACHIEVEMENT MARQUEE */}
-          <div style={{
-            borderTop: '1px solid rgba(255,255,255,0.05)',
-            borderBottom: '1px solid rgba(255,255,255,0.05)',
-            padding: '10px 0',
-          }}>
-            <AchievementMarquee />
-          </div>
-
-          {/* MAIN GRID */}
-          <div className="container">
-            <div
-              className="ft-main-grid"
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? 'translateY(0)' : 'translateY(14px)',
-                transition: 'opacity .7s ease .15s, transform .7s ease .15s',
-              }}
-            >
-              {/* Brand Column */}
-              <div>
-                <Link href="/" style={{ display: 'inline-block', marginBottom: '16px' }}>
-                  <img src="/logo-dark.png" alt="Placedly" style={{ height: '34px', width: 'auto' }} loading="lazy" />
-                </Link>
-
-                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', lineHeight: 1.75, marginBottom: '16px', maxWidth: '280px' }}>
-                  {desc}
-                </p>
-
-                {/* Trust pills */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '16px' }}>
-                  {[
-                    { label: 'Zero Upfront', color: G.blue },
-                    { label: '12% Post-Offer', color: G.orange },
-                    { label: 'Pan-India', color: G.purple },
-                    { label: 'Study Abroad', color: G.green },
-                  ].map(t => (
-                    <span key={t.label} style={{
-                      fontSize: '9.5px', fontWeight: 700, letterSpacing: '0.02em',
-                      color: t.color, background: `${t.color}14`,
-                      border: `1px solid ${t.color}28`,
-                      borderRadius: '999px', padding: '3px 9px',
-                    }}>
-                      {t.label}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Socials */}
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '18px', flexWrap: 'wrap' }}>
-                  {socials.map(s => <SocialBtn key={s.label} {...s} />)}
-                </div>
-
-                {/* Contact items — now in a 2×2 row grid: WhatsApp | Email  //  Office | Hours */}
-                <div className="ft-contacts-row">
-                  {contacts.map(c => <ContactItem key={c.label} {...c} />)}
-                </div>
-              </div>
-
-              {/* Nav Columns */}
-              {NAV_COLS.map(col => (
-                <div key={col.heading}>
-                  <div style={{ marginBottom: '4px' }}>
-                    <span style={{
-                      fontSize: '10px', fontWeight: 800, letterSpacing: '0.13em',
-                      textTransform: 'uppercase',
-                      backgroundImage: `linear-gradient(90deg,${col.color},${G.indigo})`,
-                      WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text', display: 'inline-block',
-                    }}>
-                      {col.heading}
-                    </span>
-                  </div>
-                  <div style={{
-                    height: '2px', width: '32px', borderRadius: '999px', marginBottom: '14px',
-                    background: `linear-gradient(90deg,${col.color},transparent)`,
-                  }} />
-                  <nav style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    {col.links.map(l => (
-                      <FooterLink key={l.label} href={l.href} label={l.label} badge={l.badge} />
-                    ))}
-                  </nav>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* NEWSLETTER */}
-          <div className="container">
-            <Newsletter />
-          </div>
-
-          {/* DIVIDER WITH LOGO CENTRE */}
-          <div className="container">
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg,transparent,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.08))' }} />
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0,
-                padding: '4px 14px', borderRadius: '999px',
-                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
-              }}>
-                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: GRAD, animation: 'ft-ticker-dot 2s ease-in-out infinite' }} />
-                <span style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em' }}>PLACEDLY</span>
-              </div>
-              <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg,rgba(255,255,255,0.08),rgba(255,255,255,0.08) 50%,transparent)' }} />
-            </div>
-          </div>
-
-          {/* BOTTOM BAR */}
-          <div className="container" style={{ paddingBottom: 'clamp(20px, 3vw, 24px)' }}>
-            <div className="ft-bottom-row">
-              <p style={{ fontSize: '10.5px', color: 'rgba(255,255,255,0.24)', lineHeight: 1.65, flex: 1, margin: 0 }}>
-                {copyright}
+            <Sparkles size={13} strokeWidth={2.5} /> AI Insight
+          </p>
+          {phase==='loading'
+            ? <TypingDots />
+            : (
+              <p style={{ fontSize:'14px', lineHeight:1.72, color:'#1e293b' }}>
+                {typedResult}
+                <motion.span
+                  animate={{opacity:[1,0]}}
+                  transition={{duration:0.55,repeat:Infinity}}
+                  style={{
+                    display:'inline-block', width:'2px', height:'15px',
+                    background: accent.from, marginLeft:'3px', verticalAlign:'middle',
+                  }}
+                />
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '18px', flexShrink: 0 }}>
-                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.22)', whiteSpace: 'nowrap' }}>
-                  Made with{' '}
-                  <span style={{ backgroundImage: `linear-gradient(90deg,${G.rose},${G.orange})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>♥</span>
-                  {' '}in India
-                </span>
-                <ScrollTopBtn />
-              </div>
-            </div>
-          </div>
+            )
+          }
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 
-        </div>
-      </footer>
-    </>
+  /* ── desktop layout ── */
+  if (!isMob) return (
+    <div>
+      {header}
+      {uploadBlock}
+      {textarea}
+      {runButton}
+      {resultBlock}
+    </div>
+  );
+
+  /* ── mobile layout ── */
+  return (
+    <div style={{ position:'relative', display:'flex', flexDirection:'column', height:'100%', minHeight:0 }}>
+      <div style={{ flexShrink:0 }}>{header}</div>
+      <div style={{
+        flex:1, minHeight:0, overflowY:'auto',
+        WebkitOverflowScrolling:'touch', paddingTop:'12px', paddingBottom:'8px',
+      }}>
+        <p style={{ fontSize:'13px', color:'#64748b', marginBottom:'12px', lineHeight:1.5 }}>
+          {active.description}
+        </p>
+        {uploadBlock}
+        {textarea}
+        {resultBlock}
+      </div>
+      <div style={{
+        flexShrink:0, paddingTop:'10px',
+        paddingBottom:'max(12px, env(safe-area-inset-bottom))',
+        borderTop:'1px solid rgba(15,23,42,0.07)', background:'#fff',
+      }}>
+        {runButton}
+      </div>
+    </div>
   );
 }

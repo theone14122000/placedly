@@ -21,6 +21,9 @@ import HiringPartnersMarquee from './HiringPartnersMarquee';
 
 type HeroCms = { [k: string]: string };
 
+/* Modern geometric sans-serif stack (Outfit + Poppins primary, Geist / Inter / system fallbacks) */
+const GEOM_FONT_STACK = `"Outfit", "Poppins", "Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
+
 /** Static portrait URLs — loose zig-zag spacing like reference hero */
 const SCATTER_AVATARS = [
   {
@@ -186,19 +189,64 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
 
         /* ============================================================
-           MODERN GEOMETRIC SANS-SERIF — applied to hero text elements
+           FONT — Modern Geometric Sans-Serif
+           Applied universally inside the hero scope so every
+           text element uses the same Outfit / Poppins stack
+           with Inter / Manrope / Geist fallbacks.
            ============================================================ */
-        .placedly-lift-hero-title,
-        .placedly-lift-hero-sub,
-        .placedly-hero-cta-pill,
-        .placedly-hero-cta-pill-label,
-        .placedly-lift-name,
-        .placedly-lift-role,
-        .placedly-lift-card-line,
-        .placedly-lift-glass-pill-text,
-        .placedly-hero-stat-pill-text {
-          font-family: 'Outfit', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        .placedly-lift-hero,
+        .placedly-lift-hero * {
+          font-family: ${GEOM_FONT_STACK};
+          font-feature-settings: "ss01", "cv11", "cv02";
+          font-optical-sizing: auto;
+        }
+
+        .placedly-lift-hero-title {
+          font-weight: 700;
+          letter-spacing: -0.025em;
+        }
+
+        .placedly-lift-hero-sub {
+          font-weight: 400;
+          letter-spacing: -0.011em;
+        }
+
+        .placedly-hero-cta-pill {
+          font-weight: 700;
+          letter-spacing: 0.005em;
+        }
+
+        .placedly-lift-name {
+          font-weight: 700;
           letter-spacing: -0.01em;
+        }
+
+        .placedly-lift-role {
+          font-weight: 500;
+          letter-spacing: 0;
+        }
+
+        .placedly-lift-card-line {
+          font-weight: 500;
+          letter-spacing: -0.005em;
+        }
+
+        .placedly-lift-glass-pill-text strong {
+          font-weight: 700;
+          letter-spacing: -0.005em;
+        }
+        .placedly-lift-glass-pill-text span {
+          font-weight: 500;
+          letter-spacing: 0;
+        }
+
+        .placedly-hero-stat-pill-text strong {
+          font-weight: 800;
+          letter-spacing: -0.02em;
+        }
+        .placedly-hero-stat-pill-text span {
+          font-weight: 500;
+          letter-spacing: 0;
         }
 
         /* ============================================================
