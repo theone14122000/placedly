@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import UtilityToolsSection from './components/UtilityToolsSection';
@@ -19,6 +17,8 @@ import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import PlacedlyFixes from './components/PlacedlyFixes';
 import { getCmsMap } from '@/lib/cms';
+
+export const dynamic = 'force-dynamic';
 
 const HP_DEFAULTS: Record<string, string> = {
   /* Hero */
@@ -79,7 +79,16 @@ const HP_DEFAULTS: Record<string, string> = {
   /* CTA Banner */
   'hp:ctaBannerHeadline': 'We Only Get Paid After You Get Placed.',
   'hp:ctaBannerSub':      'Free consultation. No upfront cost. Start today.',
-
+  /* Footer */
+  'hp:footerDesc':      "India's career growth and study abroad consultancy. CAP: 12% Success Share, post-placement only. Study Abroad: UK · France · Germany · Dubai. Zero upfront. We grow when you grow.",
+  'hp:footerCtaText':   'Start Your Journey',
+  'hp:footerInstagram': 'https://www.instagram.com/',
+  'hp:footerTwitter':   'https://twitter.com/',
+  'hp:footerLinkedin':  'https://linkedin.com/',
+  'hp:footerFacebook':  'https://www.facebook.com/',
+  'hp:footerEmail':     'hello@placedly.in',
+  'hp:footerWa':        '919876543210',
+  'hp:footerCopyright': '© 2026 Placedly · CAP · Study Abroad · India · CAP Fee: 12% of Annual CTC · Post-offer letter only · All engagements governed by signed Candidate Service Agreement',
 };
 
 export default async function Home() {
@@ -88,19 +97,32 @@ export default async function Home() {
 
   return (
     <>
+      <style>{`
+        /* Safeguard: ensure footer is always visible + above any floating CTA */
+        .page-wrapper > footer.placedly-footer {
+          position: relative !important;
+          z-index: 1 !important;
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+        }
+      `}</style>
+
       <div className="page-wrapper">
         <Navbar />
         <Hero cms={cms} />
         <UtilityToolsSection />
         <Services cms={cms} />
-        <OurProcessSection />          {/* ← added here, directly below Services */}
+        <OurProcessSection />
         <CapJourneySection cms={cms} />
         <HowItWorks cms={cms} />
         <Industries />
         <StudyDestinationsMarquee />
         <Testimonials />
         <Faq />
-        <Footer />
+        <Cta />
+        <ServiceWidgetSection />
+        <Footer cms={cms} />
         <FloatingWhatsApp cms={cms} />
         <CapFloatingCta label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'} />
         <PlacedlyFixes />
