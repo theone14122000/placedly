@@ -21,7 +21,7 @@ import HiringPartnersMarquee from './HiringPartnersMarquee';
 
 type HeroCms = { [k: string]: string };
 
-/* Modern geometric sans-serif stack */
+/* Modern geometric sans-serif stack — FORCED with !important */
 const GEOM_FONT_STACK = `"Outfit", "Poppins", "Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
 
 /** Static portrait URLs — loose zig-zag spacing like reference hero */
@@ -185,81 +185,114 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
   return (
     <section id="Top" className="placedly-lift-hero">
+      {/* ============================================================
+           FONT IMPORT — loaded once for the whole hero
+         ============================================================ */}
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Geist:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      />
+
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Geist:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
         /* ============================================================
            FONT — Modern Geometric Sans-Serif
-           Applied universally inside the hero scope so every
-           text element uses the same Outfit / Poppins stack
-           with Inter / Manrope / Geist fallbacks.
-           ============================================================ */
+           FORCED with !important so global styles can't override.
+           Applied universally inside the hero scope.
+         ============================================================ */
         .placedly-lift-hero,
-        .placedly-lift-hero * {
-          font-family: ${GEOM_FONT_STACK};
-          font-feature-settings: "ss01", "cv11", "cv02";
-          font-optical-sizing: auto;
-          letter-spacing: -0.011em;
+        .placedly-lift-hero *,
+        .placedly-lift-hero h1,
+        .placedly-lift-hero h2,
+        .placedly-lift-hero h3,
+        .placedly-lift-hero h4,
+        .placedly-lift-hero h5,
+        .placedly-lift-hero h6,
+        .placedly-lift-hero p,
+        .placedly-lift-hero span,
+        .placedly-lift-hero a,
+        .placedly-lift-hero button,
+        .placedly-lift-hero strong,
+        .placedly-lift-hero small,
+        .placedly-lift-hero em,
+        .placedly-lift-hero b {
+          font-family: ${GEOM_FONT_STACK} !important;
+          font-feature-settings: "ss01", "cv11", "cv02" !important;
+          font-optical-sizing: auto !important;
+          letter-spacing: -0.011em !important;
         }
 
         /* Display headline */
-        .placedly-lift-hero-title {
-          font-weight: 700;
-          letter-spacing: -0.028em;
+        .placedly-lift-hero-title,
+        .placedly-lift-hero h1.placedly-lift-hero-title {
+          font-weight: 700 !important;
+          letter-spacing: -0.028em !important;
+          font-family: ${GEOM_FONT_STACK} !important;
         }
 
         /* Subheadline */
         .placedly-lift-hero-sub {
-          font-weight: 400;
-          letter-spacing: -0.012em;
+          font-weight: 400 !important;
+          letter-spacing: -0.012em !important;
+          font-family: ${GEOM_FONT_STACK} !important;
         }
 
         /* CTA pills */
         .placedly-hero-cta-pill {
-          font-weight: 600;
-          letter-spacing: -0.005em;
+          font-weight: 600 !important;
+          letter-spacing: -0.005em !important;
+          font-family: ${GEOM_FONT_STACK} !important;
         }
 
         /* Profile card name */
         .placedly-lift-name {
-          font-weight: 700;
-          letter-spacing: -0.015em;
+          font-weight: 700 !important;
+          letter-spacing: -0.015em !important;
+          font-family: ${GEOM_FONT_STACK} !important;
         }
 
         /* Profile card role */
         .placedly-lift-role {
-          font-weight: 500;
-          letter-spacing: -0.003em;
+          font-weight: 500 !important;
+          letter-spacing: -0.003em !important;
+          font-family: ${GEOM_FONT_STACK} !important;
         }
 
         /* Profile card line */
         .placedly-lift-card-line {
-          font-weight: 500;
-          letter-spacing: -0.008em;
+          font-weight: 500 !important;
+          letter-spacing: -0.008em !important;
+          font-family: ${GEOM_FONT_STACK} !important;
         }
         .placedly-lift-card-line strong {
-          font-weight: 700;
-          letter-spacing: -0.01em;
+          font-weight: 700 !important;
+          letter-spacing: -0.01em !important;
+          font-family: ${GEOM_FONT_STACK} !important;
         }
 
         /* Glass pill (Shared / Recommended) */
         .placedly-lift-glass-pill-text strong {
-          font-weight: 700;
-          letter-spacing: -0.008em;
+          font-weight: 700 !important;
+          letter-spacing: -0.008em !important;
+          font-family: ${GEOM_FONT_STACK} !important;
         }
         .placedly-lift-glass-pill-text span {
-          font-weight: 500;
-          letter-spacing: -0.003em;
+          font-weight: 500 !important;
+          letter-spacing: -0.003em !important;
+          font-family: ${GEOM_FONT_STACK} !important;
         }
 
         /* Stat pill */
         .placedly-hero-stat-pill-text strong {
-          font-weight: 800;
-          letter-spacing: -0.025em;
+          font-weight: 800 !important;
+          letter-spacing: -0.025em !important;
+          font-family: ${GEOM_FONT_STACK} !important;
         }
         .placedly-hero-stat-pill-text span {
-          font-weight: 500;
-          letter-spacing: -0.003em;
+          font-weight: 500 !important;
+          letter-spacing: -0.003em !important;
+          font-family: ${GEOM_FONT_STACK} !important;
         }
 
         /* ============================================================
@@ -342,7 +375,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           height: 26px;
           border-radius: 50%;
           background: rgba(255,255,255,0.2);
-          flex-srink: 0;
+          flex-shrink: 0;
         }
 
         .placedly-hero-cta-pill-label {
