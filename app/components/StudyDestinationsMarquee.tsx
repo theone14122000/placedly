@@ -2,17 +2,9 @@
 
 import { FadeUp } from './motion';
 
-const HEADING_GRADIENT =
-  'linear-gradient(270deg, #2563eb 0%, #4f46e5 20%, #f97316 45%, #f43f5e 65%, #9333ea 85%, #2563eb 100%)';
-
-const gradientTextStyle: React.CSSProperties = {
-  backgroundImage: HEADING_GRADIENT,
-  backgroundSize: '200% 200%',
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  color: 'transparent',
-};
+// Gradient text removed — heading is now plain text (inherits color from parent).
+// const HEADING_GRADIENT = '...';
+// const gradientTextStyle: React.CSSProperties = { ... };
 
 const UKFlag = () => (
   <svg width="28" height="18" viewBox="0 0 60 40" aria-hidden>
@@ -109,7 +101,13 @@ function DestinationItem({ dest }: { dest: Destination }) {
       <span className="placedly-dest-icon" style={{ background: dest.iconBg }}>
         <dest.Flag />
       </span>
-      <span className="placedly-dest-label">{dest.label}</span>
+      {/* CHANGED: country name now uses thin (300) weight */}
+      <span
+        className="placedly-dest-label"
+        style={{ fontWeight: 300 }}
+      >
+        {dest.label}
+      </span>
     </span>
   );
 }
@@ -158,7 +156,8 @@ export default function StudyDestinationsMarquee() {
   return (
     <section className="placedly-destinations-section" aria-label="Study abroad destinations">
       <FadeUp className="placedly-destinations-header">
-        <h2 className="placedly-destinations-title" style={gradientTextStyle}>
+        {/* CHANGED: heading back to default weight (no inline fontWeight) → bold from CSS */}
+        <h2 className="placedly-destinations-title">
           Study Abroad Destinations We Support
         </h2>
         <p className="placedly-destinations-sub">
