@@ -9,7 +9,7 @@ const testimonials = [
   {
     details: (
       <>
-        <strong>+73% CTC Growth ★★★★★</strong>
+        <strong className="placedly-testimonial-highlight">+73% CTC Growth ★★★★★</strong>
         <br />
         &quot;4 years in US healthcare claims and my career had stalled at ₹4.2L. Placedly rebuilt my resume from scratch, coached me for the domain round, and sent my profile directly to a hiring manager at EXL. 18 days later — offer letter in hand at ₹7.3L. I paid the Success Share happily.&quot;
       </>
@@ -21,7 +21,7 @@ const testimonials = [
   {
     details: (
       <>
-        <strong>+71% CTC Growth ★★★★★</strong>
+        <strong className="placedly-testimonial-highlight">+71% CTC Growth ★★★★★</strong>
         <br />
         &quot;I had a 14-month career gap and had been rejected by three agencies. Placedly didn&apos;t just take my case — they coached me on exactly how to own my gap in an interview. Three weeks later, placed at an MNC in Noida. Knowing they only earn after I land the role is what gave me the confidence to try.&quot;
       </>
@@ -33,7 +33,7 @@ const testimonials = [
   {
     details: (
       <>
-        <strong>+68% CTC Growth ★★★★★</strong>
+        <strong className="placedly-testimonial-highlight">+68% CTC Growth ★★★★★</strong>
         <br />
         &quot;I was in BPO for 5 years wanting to break into insurance ops. Placedly knew which companies were actively hiring and introduced me directly to the hiring manager. Got placed on my very first interview. Worth every rupee of the Success Share.&quot;
       </>
@@ -71,14 +71,17 @@ type TestimonialItem = {
   img: string;
 };
 
+/* Modern geometric sans-serif stack */
+const GEOM_FONT_STACK = `"Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
+
 function TestimonialCard({ t }: { t: TestimonialItem }) {
   return (
     <article className="placedly-genz-glass placedly-testimonial-card">
-      <Quote className="placedly-testimonial-quote-icon" size={28} strokeWidth={1.5} aria-hidden />
+      <Quote className="placedly-testimonial-quote-icon" size={26} strokeWidth={1.5} aria-hidden />
       <div className="placedly-testimonial-body">{t.details}</div>
       <div className="placedly-testimonial-author">
         <img src={t.img} alt={t.name} loading="lazy" className="placedly-testimonial-avatar" />
-        <div>
+        <div className="placedly-testimonial-author-info">
           <h3 className="placedly-testimonial-name">{t.name}</h3>
           <p className="placedly-testimonial-date">{t.date}</p>
         </div>
@@ -113,7 +116,6 @@ function TestimonialsCarousel({ items }: { items: TestimonialItem[] }) {
 
   const maxIndex = Math.max(0, items.length - perView);
 
-  // translate track by measuring the first slide width + gap
   const applyTransform = useCallback(
     (index: number) => {
       const track = trackRef.current;
@@ -169,7 +171,7 @@ function TestimonialsCarousel({ items }: { items: TestimonialItem[] }) {
               role="tab"
               aria-selected={active === i}
               aria-label={`Go to slide ${i + 1}`}
-              className={active === i ? 'is-active' : ''}
+              className={`placedly-testimonials-dot${active === i ? ' is-active' : ''}`}
               onClick={() => setActive(i)}
             />
           ))}
@@ -236,6 +238,245 @@ export default function Testimonials() {
 
         <TestimonialsCarousel items={items} />
       </div>
+
+      <style>{`
+        /* ============================================================
+           FONT — Modern Geometric Sans-Serif
+           ============================================================ */
+        .placedly-testimonials-section,
+        .placedly-testimonials-section * {
+          font-family: ${GEOM_FONT_STACK};
+          font-feature-settings: "ss01", "cv11", "cv02";
+          font-optical-sizing: auto;
+          letter-spacing: -0.011em;
+        }
+
+        /* ============================================================
+           SECTION
+           ============================================================ */
+        .placedly-testimonials-section {
+          position: relative;
+          padding: clamp(72px, 9vw, 130px) clamp(16px, 5vw, 24px);
+          background: #f8fafc;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .placedly-genz-header {
+          text-align: center;
+          max-width: 760px;
+          margin: 0 auto clamp(40px, 6vw, 64px);
+        }
+
+        .placedly-genz-eyebrow {
+          display: inline-block;
+          padding: 6px 14px;
+          background: #eef2ff;
+          color: #1e1b4b;
+          font-weight: 600;
+          font-size: 12.5px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          border-radius: 999px;
+          margin: 0 0 18px;
+        }
+
+        .placedly-genz-title {
+          font-size: clamp(28px, 3.6vw, 44px);
+          font-weight: 700;
+          line-height: 1.12;
+          letter-spacing: -0.025em;
+          color: #0f172a;
+          margin: 0;
+        }
+
+        /* ============================================================
+           CAROUSEL
+           ============================================================ */
+        .placedly-testimonials-carousel {
+          position: relative;
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .placedly-testimonials-viewport {
+          overflow: hidden;
+          width: 100%;
+          padding: 4px;
+        }
+
+        .placedly-testimonials-track {
+          display: flex;
+          gap: 20px;
+          transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+          will-change: transform;
+        }
+
+        .placedly-testimonials-slide {
+          flex-shrink: 0;
+          min-width: 0;
+        }
+
+        /* ============================================================
+           CARD
+           ============================================================ */
+        .placedly-testimonial-card {
+          position: relative;
+          background: #ffffff;
+          border: 1px solid rgba(15, 23, 42, 0.06);
+          border-radius: 20px;
+          padding: 28px 24px 22px;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          box-shadow: 0 8px 28px rgba(15, 23, 42, 0.05);
+          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .placedly-testimonial-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+          border-color: rgba(37, 99, 235, 0.18);
+        }
+
+        .placedly-testimonial-quote-icon {
+          color: #2563eb;
+          opacity: 0.4;
+          flex-shrink: 0;
+        }
+
+        .placedly-testimonial-body {
+          font-size: 14.5px;
+          line-height: 1.7;
+          color: #475569;
+          flex: 1;
+        }
+
+        .placedly-testimonial-highlight {
+          display: inline-block;
+          font-size: 12.5px;
+          font-weight: 700;
+          color: #1e1b4b;
+          background: #eef2ff;
+          padding: 4px 10px;
+          border-radius: 999px;
+          margin-bottom: 10px;
+          letter-spacing: 0.005em;
+        }
+
+        /* ============================================================
+           AUTHOR
+           ============================================================ */
+        .placedly-testimonial-author {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding-top: 14px;
+          border-top: 1px solid rgba(15, 23, 42, 0.06);
+        }
+
+        .placedly-testimonial-avatar {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          object-fit: cover;
+          flex-shrink: 0;
+          background: #f1f5f9;
+        }
+
+        .placedly-testimonial-author-info {
+          min-width: 0;
+        }
+
+        .placedly-testimonial-name {
+          font-size: 14.5px;
+          font-weight: 700;
+          color: #0f172a;
+          margin: 0 0 2px;
+          line-height: 1.2;
+          letter-spacing: -0.01em;
+        }
+
+        .placedly-testimonial-date {
+          font-size: 12px;
+          color: #64748b;
+          margin: 0;
+          line-height: 1.3;
+          font-weight: 500;
+        }
+
+        /* ============================================================
+           DOTS
+           ============================================================ */
+        .placedly-testimonials-dots {
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+          margin-top: 28px;
+        }
+
+        .placedly-testimonials-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: rgba(15, 23, 42, 0.15);
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          transition: background 0.3s ease, width 0.3s ease, transform 0.3s ease;
+        }
+
+        .placedly-testimonials-dot:hover {
+          background: rgba(15, 23, 42, 0.3);
+        }
+
+        .placedly-testimonials-dot.is-active {
+          background: #0f172a;
+          width: 24px;
+          border-radius: 4px;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 1024px) {
+          .placedly-testimonial-card {
+            padding: 24px 20px 20px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .placedly-testimonials-section {
+            padding: 56px 16px;
+          }
+          .placedly-genz-header {
+            margin-bottom: 32px;
+          }
+          .placedly-genz-title {
+            font-size: clamp(1.6rem, 5vw, 2rem);
+          }
+          .placedly-testimonials-track {
+            gap: 14px;
+          }
+          .placedly-testimonial-card {
+            padding: 22px 18px 18px;
+            border-radius: 18px;
+          }
+          .placedly-testimonial-body {
+            font-size: 14px;
+          }
+          .placedly-testimonial-avatar {
+            width: 40px;
+            height: 40px;
+          }
+          .placedly-testimonials-dots {
+            margin-top: 22px;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -25,27 +25,23 @@ import {
 } from 'lucide-react';
 
 /* ────────────────────────────────────────────────────────────
-   Shared theme tokens — identical gradient used across the site
+   Shared theme tokens — matches Hero's flat blue palette
+   (deep navy / royal blue / sky blue) — no gradients
 ──────────────────────────────────────────────────────────── */
 
-const HEADING_GRADIENT =
-  'linear-gradient(270deg, #2563eb 0%, #4f46e5 20%, #f97316 45%, #f43f5e 65%, #9333ea 85%, #2563eb 100%)';
+const HEADING_COLOR = '#0f172a';
+const ACCENT_PRIMARY = '#2563eb';
 
-const headingGradientStyle: React.CSSProperties = {
-  backgroundImage: HEADING_GRADIENT,
-  backgroundSize: '200% 200%',
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  color: 'transparent',
+const headingStyle: React.CSSProperties = {
+  color: HEADING_COLOR,
 };
 
-const GRADIENT_STOPS = ['#2563eb', '#4f46e5', '#f97316', '#f43f5e', '#9333ea'];
+/* Cycle through the same 3 flat blues used across the Hero CTAs */
+const BLUE_SHADES = ['#1e3a8a', '#2563eb', '#0ea5e9'];
 
 function stepAccent(i: number) {
-  const from = GRADIENT_STOPS[i % GRADIENT_STOPS.length];
-  const to = GRADIENT_STOPS[(i + 1) % GRADIENT_STOPS.length];
-  return { from, to, soft: `${from}16`, border: `${from}30` };
+  const color = BLUE_SHADES[i % BLUE_SHADES.length];
+  return { color, soft: `${color}14`, border: `${color}30` };
 }
 
 /* ────────────────────────────────────────────────────────────
@@ -169,6 +165,7 @@ export default function OurProcessSection() {
   return (
     <section
       id="our-process"
+      className="process-section"
       style={{
         position: 'relative',
         padding: 'clamp(40px, 6vw, 64px) clamp(16px, 5vw, 24px)',
@@ -176,19 +173,33 @@ export default function OurProcessSection() {
         background: '#fafafa',
       }}
     >
-      {/* ambient recoloring blobs — smaller & subtler than a full-length section */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+
+        .process-section,
+        .process-section h2,
+        .process-section h3,
+        .process-section p,
+        .process-section span,
+        .process-section button {
+          font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          letter-spacing: -0.01em;
+        }
+      `}</style>
+
+      {/* ambient recoloring blobs — subtle flat blue tint, no rainbow gradient */}
       <motion.div
         aria-hidden
         className="process-blob"
         style={{ position: 'absolute', top: '-14%', left: '-8%', width: '320px', height: '320px', borderRadius: '50%', filter: 'blur(90px)', zIndex: 0, pointerEvents: 'none' }}
-        animate={{ background: `radial-gradient(circle, ${accent.from}26 0%, transparent 70%)` }}
+        animate={{ background: `radial-gradient(circle, ${accent.color}1a 0%, transparent 70%)` }}
         transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
       />
       <motion.div
         aria-hidden
         className="process-blob"
         style={{ position: 'absolute', bottom: '-16%', right: '-8%', width: '340px', height: '340px', borderRadius: '50%', filter: 'blur(100px)', zIndex: 0, pointerEvents: 'none' }}
-        animate={{ background: `radial-gradient(circle, ${accent.to}22 0%, transparent 70%)` }}
+        animate={{ background: `radial-gradient(circle, ${accent.color}14 0%, transparent 70%)` }}
         transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
       />
 
@@ -210,7 +221,7 @@ export default function OurProcessSection() {
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '1.4px',
-              color: accent.from,
+              color: accent.color,
               marginBottom: '10px',
               transition: 'color 0.4s ease',
             }}
@@ -225,7 +236,7 @@ export default function OurProcessSection() {
               lineHeight: 1.15,
               marginBottom: '10px',
               letterSpacing: '-0.02em',
-              ...headingGradientStyle,
+              ...headingStyle,
             }}
           >
             From Aspiration to Admission — We Handle It All
@@ -274,13 +285,10 @@ export default function OurProcessSection() {
                       aria-label={step.title}
                       className="process-step-btn"
                       style={{
-                        backgroundImage: isPassed
-                          ? `linear-gradient(135deg, ${stAccent.from}, ${stAccent.to})`
-                          : undefined,
-                        backgroundColor: isPassed ? undefined : '#fff',
+                        backgroundColor: isPassed ? stAccent.color : '#fff',
                         borderColor: isPassed ? 'transparent' : 'rgba(15,23,42,0.15)',
                         boxShadow: isActive
-                          ? `0 0 0 5px ${stAccent.from}22, 0 6px 16px ${stAccent.from}45`
+                          ? `0 0 0 5px ${stAccent.color}1f, 0 6px 16px ${stAccent.color}40`
                           : 'none',
                         transform: isActive ? 'scale(1.12)' : 'scale(1)',
                       }}
@@ -289,7 +297,7 @@ export default function OurProcessSection() {
                     </button>
                     <span
                       className="process-step-label"
-                      style={{ color: isActive ? stAccent.from : '#94a3b8', fontWeight: isActive ? 700 : 600 }}
+                      style={{ color: isActive ? stAccent.color : '#94a3b8', fontWeight: isActive ? 700 : 600 }}
                     >
                       {step.short}
                     </span>
@@ -297,8 +305,7 @@ export default function OurProcessSection() {
                       <span
                         className="process-connector"
                         style={{
-                          backgroundImage: i < activeStep ? HEADING_GRADIENT : undefined,
-                          backgroundColor: i < activeStep ? undefined : 'rgba(15,23,42,0.10)',
+                          backgroundColor: i < activeStep ? ACCENT_PRIMARY : 'rgba(15,23,42,0.10)',
                         }}
                       />
                     )}
@@ -317,16 +324,16 @@ export default function OurProcessSection() {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="process-panel"
-              style={{ borderColor: accent.border, boxShadow: `0 14px 32px ${accent.soft}` }}
+              style={{ borderColor: accent.border, boxShadow: `0 10px 26px ${accent.soft}` }}
             >
               <span
                 className="process-panel-icon"
-                style={{ backgroundImage: `linear-gradient(135deg, ${accent.from}, ${accent.to})` }}
+                style={{ backgroundColor: accent.color }}
               >
                 <active.Icon size={20} strokeWidth={2.2} color="#fff" />
               </span>
               <div>
-                <span className="process-panel-number" style={{ color: accent.from }}>
+                <span className="process-panel-number" style={{ color: accent.color }}>
                   Step {active.number}
                 </span>
                 <h3 className="process-panel-title">{active.title}</h3>
@@ -354,7 +361,7 @@ export default function OurProcessSection() {
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 letterSpacing: '1.4px',
-                color: '#6366f1',
+                color: ACCENT_PRIMARY,
                 marginBottom: '8px',
               }}
             >
@@ -368,7 +375,7 @@ export default function OurProcessSection() {
                 lineHeight: 1.2,
                 marginBottom: '6px',
                 letterSpacing: '-0.02em',
-                ...headingGradientStyle,
+                ...headingStyle,
               }}
             >
               What You Will Typically Need
@@ -391,7 +398,7 @@ export default function OurProcessSection() {
                   style={{ borderColor: isOpen ? docAccent.border : 'rgba(15,23,42,0.08)' }}
                 >
                   <span className="doc-chip-row">
-                    <span className="doc-chip-icon" style={{ background: docAccent.soft, color: docAccent.from }}>
+                    <span className="doc-chip-icon" style={{ background: docAccent.soft, color: docAccent.color }}>
                       <doc.Icon size={14} strokeWidth={2.1} />
                     </span>
                     <span className="doc-chip-label">{doc.label}</span>
@@ -399,7 +406,7 @@ export default function OurProcessSection() {
                       size={14}
                       strokeWidth={2.4}
                       className="doc-chip-chevron"
-                      style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', color: docAccent.from }}
+                      style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', color: docAccent.color }}
                     />
                   </span>
                   <AnimatePresence initial={false}>
@@ -436,14 +443,8 @@ export default function OurProcessSection() {
           transition={{ duration: 0.45 }}
           className="process-cta"
         >
-          <motion.div
-            aria-hidden
-            className="process-cta-sweep"
-            animate={{ x: ['-30%', '130%'] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: 'linear' }}
-          />
           <div className="process-cta-text">
-            <h3 style={headingGradientStyle}>Your Global Journey Starts With One Conversation</h3>
+            <h3 style={headingStyle}>Your Global Journey Starts With One Conversation</h3>
             <p>Book a free counselling session today — no obligations, just clarity.</p>
           </div>
           <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} style={{ position: 'relative', zIndex: 1, flexShrink: 0 }}>
@@ -520,8 +521,7 @@ export default function OurProcessSection() {
           height: 2px;
           margin: 0 4px;
           border-radius: 999px;
-          background-size: 200% 200%;
-          transition: background 0.4s ease;
+          transition: background-color 0.4s ease;
           flex-shrink: 0;
         }
 
@@ -632,9 +632,9 @@ export default function OurProcessSection() {
           margin: 16px auto 0;
           padding: 10px 16px;
           border-radius: 12px;
-          background: rgba(99, 102, 241, 0.06);
-          border: 1px solid rgba(99, 102, 241, 0.15);
-          color: #6366f1;
+          background: rgba(37, 99, 235, 0.06);
+          border: 1px solid rgba(37, 99, 235, 0.15);
+          color: ${ACCENT_PRIMARY};
         }
         .doc-advisor-note p {
           font-size: 12.5px;
@@ -642,7 +642,7 @@ export default function OurProcessSection() {
           color: #475569;
         }
 
-        /* ── Closing CTA ── */
+        /* ── Closing CTA — flat, solid, clean banner ── */
         .process-cta {
           position: relative;
           overflow: hidden;
@@ -654,15 +654,8 @@ export default function OurProcessSection() {
           margin-top: clamp(32px, 4.5vw, 48px);
           padding: clamp(20px, 3vw, 28px) clamp(22px, 4vw, 32px);
           border-radius: 22px;
-          background: linear-gradient(135deg, rgba(37,99,235,0.06) 0%, rgba(147,51,234,0.06) 100%);
+          background: #f4f7fd;
           border: 1px solid rgba(37,99,235,0.14);
-        }
-        .process-cta-sweep {
-          position: absolute;
-          top: 0; bottom: 0;
-          width: 40%;
-          background: linear-gradient(90deg, transparent, rgba(147,51,234,0.06), transparent);
-          pointer-events: none;
         }
         .process-cta-text { position: relative; z-index: 1; max-width: 420px; }
         .process-cta-text h3 {
@@ -688,25 +681,23 @@ export default function OurProcessSection() {
           font-weight: 700;
           font-size: 13.5px;
           color: #fff;
-          background-image: ${HEADING_GRADIENT};
-          background-size: 200% 200%;
-          border: 1px solid rgba(255,255,255,0.25);
-          box-shadow: 0 10px 24px rgba(79,70,229,0.26);
+          background-color: #2563eb;
+          border: 1px solid rgba(255,255,255,0.2);
+          box-shadow: 0 8px 20px rgba(37,99,235,0.24);
           overflow: hidden;
           isolation: isolate;
           white-space: nowrap;
-          transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s ease, filter 0.25s ease, background-position 0.6s ease;
+          transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s ease, filter 0.25s ease;
         }
         .process-cta-btn:hover {
-          filter: brightness(1.07);
-          box-shadow: 0 14px 30px rgba(79,70,229,0.34);
-          background-position: 100% 50%;
+          filter: brightness(1.06);
+          box-shadow: 0 12px 26px rgba(37,99,235,0.32);
         }
         .process-cta-btn-arrow { position: relative; z-index: 1; transition: transform 0.25s ease; }
         .process-cta-btn:hover .process-cta-btn-arrow { transform: translateX(3px); }
         .process-cta-btn-shine {
           position: absolute; top: 0; left: -130%; width: 55%; height: 100%;
-          background: linear-gradient(115deg, transparent, rgba(255,255,255,0.5), transparent);
+          background: linear-gradient(115deg, transparent, rgba(255,255,255,0.35), transparent);
           transform: skewX(-20deg);
           transition: left 0.6s ease;
           z-index: 0;

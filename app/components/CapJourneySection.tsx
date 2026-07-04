@@ -16,24 +16,8 @@ type JourneyStep = {
   href: string;
 };
 
-const HEADING_GRADIENT =
-  'linear-gradient(270deg, #2563eb 0%, #4f46e5 20%, #f97316 45%, #f43f5e 65%, #9333ea 85%, #2563eb 100%)';
-
-const gradientTextStyle: React.CSSProperties = {
-  backgroundImage: HEADING_GRADIENT,
-  backgroundSize: '200% 200%',
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  color: 'transparent',
-};
-
-const gradientButtonStyle: React.CSSProperties = {
-  backgroundImage: HEADING_GRADIENT,
-  backgroundSize: '200% 200%',
-  color: '#fff',
-  WebkitTextFillColor: '#fff',
-};
+/* Modern geometric sans-serif stack */
+const GEOM_FONT_STACK = `"Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
 
 const DEFAULT_STEPS: JourneyStep[] = [
   {
@@ -192,36 +176,27 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
       <div className="placedly-cap-journey-wrap">
         <FadeUp className="placedly-cap-journey-header">
           <p className="placedly-cap-journey-kicker">{kicker}</p>
-          <h2
-            id="cap-journey-title"
-            className="placedly-cap-journey-title"
-            style={gradientTextStyle}
-          >
+          <h2 id="cap-journey-title" className="placedly-cap-journey-title">
             {title}
           </h2>
           <p className="placedly-cap-journey-sub">{subtitle}</p>
         </FadeUp>
 
         <div className="placedly-cap-journey-scroll-layout">
-          <div
-            className="placedly-cap-journey-rail-col"
-            aria-hidden
-          >
+          <div className="placedly-cap-journey-rail-col" aria-hidden>
             <div className="placedly-cap-journey-rail">
               <div className="placedly-cap-journey-rail-track">
                 <div
                   className="placedly-cap-journey-rail-fill"
-                  style={{
-                    height: `${fillProgress * 100}%`,
-                    backgroundImage: HEADING_GRADIENT,
-                    backgroundSize: '200% 200%',
-                  }}
+                  style={{ height: `${fillProgress * 100}%` }}
                 />
               </div>
 
               <div className="placedly-cap-journey-rail-markers">
                 {DEFAULT_STEPS.map((step, index) => {
-                  const top = markerTops[index] ?? (index / (DEFAULT_STEPS.length - 1)) * 100;
+                  const top =
+                    markerTops[index] ??
+                    (index / (DEFAULT_STEPS.length - 1)) * 100;
                   const isLit =
                     fillProgress >= top / 100 - 0.02 || activeStep >= index;
 
@@ -229,15 +204,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                     <span
                       key={step.id}
                       className={`placedly-cap-journey-rail-marker${isLit ? ' is-lit' : ''}${activeStep === index ? ' is-active' : ''}`}
-                      style={{
-                        top: `${top}%`,
-                        ...(isLit
-                          ? {
-                              backgroundImage: HEADING_GRADIENT,
-                              backgroundSize: '200% 200%',
-                            }
-                          : {}),
-                      }}
+                      style={{ top: `${top}%` }}
                     />
                   );
                 })}
@@ -259,10 +226,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                       <span className="placedly-cap-journey-card-badge">
                         {String(index + 1).padStart(3, '0')}
                       </span>
-                      <h3
-                        className="placedly-cap-journey-card-title"
-                        style={gradientTextStyle}
-                      >
+                      <h3 className="placedly-cap-journey-card-title">
                         {step.title}
                       </h3>
                     </div>
@@ -280,8 +244,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
                       <p className="placedly-cap-journey-card-body">{step.body}</p>
                       <Link
                         href={step.href}
-                        className="placedly-cap-journey-card-link placedly-cap-readmore"
-                        style={gradientButtonStyle}
+                        className="placedly-cap-readmore"
                       >
                         <span className="placedly-cap-readmore-shine" aria-hidden />
                         <span className="placedly-cap-readmore-label">Read More</span>
@@ -299,6 +262,249 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
       </div>
 
       <style>{`
+        /* ============================================================
+           FONT — Modern Geometric Sans-Serif
+           ============================================================ */
+        .placedly-cap-journey {
+          font-family: ${GEOM_FONT_STACK};
+          font-feature-settings: "ss01", "cv11", "cv02";
+          font-optical-sizing: auto;
+          letter-spacing: -0.011em;
+        }
+
+        /* ============================================================
+           SECTION
+           ============================================================ */
+        .placedly-cap-journey {
+          position: relative;
+          width: 100%;
+          padding: 100px 24px;
+          background: #f8fafc;
+          overflow: hidden;
+        }
+
+        .placedly-cap-journey-bg {
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(60% 50% at 50% 0%, #eef2ff 0%, transparent 70%),
+            #f8fafc;
+          z-index: 0;
+        }
+
+        .placedly-cap-journey-wrap {
+          position: relative;
+          z-index: 1;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .placedly-cap-journey-header {
+          text-align: center;
+          max-width: 760px;
+          margin: 0 auto 60px;
+        }
+
+        .placedly-cap-journey-kicker {
+          display: inline-block;
+          padding: 6px 14px;
+          background: #eef2ff;
+          color: #1e1b4b;
+          font-weight: 600;
+          font-size: 12.5px;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          border-radius: 999px;
+          margin: 0 0 18px;
+        }
+
+        .placedly-cap-journey-title {
+          font-family: inherit;
+          font-size: clamp(30px, 4vw, 48px);
+          font-weight: 700;
+          line-height: 1.1;
+          letter-spacing: -0.025em;
+          color: #0f172a;
+          margin: 0 0 16px;
+        }
+
+        .placedly-cap-journey-sub {
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 1.6;
+          color: #475569;
+          margin: 0;
+          letter-spacing: -0.005em;
+        }
+
+        /* ============================================================
+           SCROLL LAYOUT
+           ============================================================ */
+        .placedly-cap-journey-scroll-layout {
+          display: grid;
+          grid-template-columns: 80px 1fr;
+          gap: 32px;
+          align-items: flex-start;
+        }
+
+        .placedly-cap-journey-rail-col {
+          position: sticky;
+          top: ${STICKY_TOP}px;
+          align-self: flex-start;
+        }
+
+        .placedly-cap-journey-rail {
+          position: relative;
+          width: 80px;
+          height: 360px;
+        }
+
+        .placedly-cap-journey-rail-track {
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 3px;
+          height: 100%;
+          background: #e2e8f0;
+          border-radius: 999px;
+          overflow: hidden;
+        }
+
+        .placedly-cap-journey-rail-fill {
+          width: 100%;
+          background: #0f172a;
+          border-radius: 999px;
+          transition: height 0.12s linear;
+        }
+
+        .placedly-cap-journey-rail-markers {
+          position: absolute;
+          inset: 0;
+        }
+
+        .placedly-cap-journey-rail-marker {
+          position: absolute;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          background: #ffffff;
+          border: 2px solid #cbd5e1;
+          transition: all 0.25s ease;
+        }
+
+        .placedly-cap-journey-rail-marker.is-lit {
+          background: #0f172a;
+          border-color: #0f172a;
+        }
+
+        .placedly-cap-journey-rail-marker.is-active {
+          width: 18px;
+          height: 18px;
+          background: #0f172a;
+          border-color: #0f172a;
+          box-shadow: 0 0 0 5px rgba(15, 23, 42, 0.08);
+        }
+
+        /* ============================================================
+           CARDS
+           ============================================================ */
+        .placedly-cap-journey-cards-col {
+          position: relative;
+        }
+
+        .placedly-cap-journey-track {
+          display: flex;
+          flex-direction: column;
+          gap: 28px;
+        }
+
+        .placedly-cap-journey-card {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 24px;
+          padding: 28px;
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+          transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .placedly-cap-journey-card.is-active {
+          border-color: #cbd5e1;
+          box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        .placedly-cap-journey-card-inner {
+          display: grid;
+          grid-template-columns: 1.1fr 1fr 1.2fr;
+          gap: 28px;
+          align-items: center;
+        }
+
+        .placedly-cap-journey-card-left {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+
+        .placedly-cap-journey-card-badge {
+          display: inline-block;
+          align-self: flex-start;
+          padding: 5px 12px;
+          background: #0f172a;
+          color: #ffffff;
+          font-weight: 600;
+          font-size: 12px;
+          letter-spacing: 0.05em;
+          border-radius: 999px;
+          font-variant-numeric: tabular-nums;
+        }
+
+        .placedly-cap-journey-card-title {
+          font-family: inherit;
+          font-size: clamp(22px, 2.2vw, 28px);
+          font-weight: 700;
+          line-height: 1.15;
+          letter-spacing: -0.02em;
+          color: #0f172a;
+          margin: 0;
+        }
+
+        .placedly-cap-journey-card-media {
+          border-radius: 16px;
+          overflow: hidden;
+          background: #f1f5f9;
+          aspect-ratio: 4 / 3;
+        }
+
+        .placedly-cap-journey-card-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        .placedly-cap-journey-card-right {
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+        }
+
+        .placedly-cap-journey-card-body {
+          font-size: 15px;
+          line-height: 1.6;
+          color: #475569;
+          margin: 0;
+          letter-spacing: -0.005em;
+        }
+
+        /* ============================================================
+           READ MORE BUTTON — clean, no gradient
+           ============================================================ */
         .placedly-cap-readmore {
           position: relative;
           display: inline-flex;
@@ -306,35 +512,37 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           gap: 10px;
           padding: 12px 20px 12px 24px;
           border-radius: 999px;
+          font-family: inherit;
           font-weight: 600;
           font-size: 14.5px;
-          letter-spacing: 0.01em;
-          border: 1px solid rgba(255,255,255,0.25);
+          letter-spacing: 0.005em;
+          text-decoration: none;
+          color: #ffffff;
+          background: #0f172a;
+          border: 1px solid #0f172a;
           box-shadow:
-            0 8px 20px rgba(37, 99, 235, 0.28),
-            0 2px 6px rgba(0, 0, 0, 0.12),
-            inset 0 1px 0 rgba(255,255,255,0.25);
+            0 6px 16px rgba(15, 23, 42, 0.18),
+            0 1px 2px rgba(15, 23, 42, 0.08);
           overflow: hidden;
           isolation: isolate;
-          transition: transform 0.28s cubic-bezier(0.22,1,0.36,1),
-                      box-shadow 0.28s cubic-bezier(0.22,1,0.36,1),
-                      filter 0.28s ease,
-                      background-position 0.6s ease;
+          transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                      box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                      background-color 0.25s ease,
+                      border-color 0.25s ease;
+          align-self: flex-start;
         }
 
         .placedly-cap-readmore:hover {
-          transform: translateY(-3px);
-          filter: brightness(1.07) saturate(1.05);
+          background: #1e293b;
+          border-color: #1e293b;
+          transform: translateY(-2px);
           box-shadow:
-            0 14px 30px rgba(37, 99, 235, 0.38),
-            0 4px 10px rgba(0, 0, 0, 0.16),
-            inset 0 1px 0 rgba(255,255,255,0.3);
-          background-position: 100% 50%;
+            0 12px 24px rgba(15, 23, 42, 0.24),
+            0 2px 4px rgba(15, 23, 42, 0.1);
         }
 
         .placedly-cap-readmore:active {
-          transform: translateY(-1px) scale(0.98);
-          filter: brightness(0.98);
+          transform: translateY(0) scale(0.98);
         }
 
         .placedly-cap-readmore-label {
@@ -351,14 +559,14 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           width: 24px;
           height: 24px;
           border-radius: 50%;
-          background: rgba(255, 255, 255, 0.22);
-          transition: transform 0.3s cubic-bezier(0.22,1,0.36,1),
+          background: rgba(255, 255, 255, 0.16);
+          transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
                       background 0.3s ease;
         }
 
         .placedly-cap-readmore:hover .placedly-cap-readmore-icon {
           transform: translateX(3px);
-          background: rgba(255, 255, 255, 0.32);
+          background: rgba(255, 255, 255, 0.24);
         }
 
         .placedly-cap-readmore-shine {
@@ -370,7 +578,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
           background: linear-gradient(
             115deg,
             transparent,
-            rgba(255, 255, 255, 0.5),
+            rgba(255, 255, 255, 0.18),
             transparent
           );
           transform: skewX(-20deg);
@@ -381,6 +589,89 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
 
         .placedly-cap-readmore:hover .placedly-cap-readmore-shine {
           left: 140%;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 960px) {
+          .placedly-cap-journey {
+            padding: 72px 18px;
+          }
+          .placedly-cap-journey-scroll-layout {
+            grid-template-columns: 56px 1fr;
+            gap: 20px;
+          }
+          .placedly-cap-journey-rail {
+            width: 56px;
+            height: 320px;
+          }
+          .placedly-cap-journey-card {
+            padding: 22px;
+          }
+          .placedly-cap-journey-card-inner {
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+          }
+          .placedly-cap-journey-card-media {
+            grid-column: 1 / -1;
+            order: -1;
+            aspect-ratio: 16 / 9;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .placedly-cap-journey {
+            padding: 56px 16px;
+          }
+          .placedly-cap-journey-header {
+            margin-bottom: 40px;
+          }
+          .placedly-cap-journey-sub {
+            font-size: 14.5px;
+          }
+          .placedly-cap-journey-scroll-layout {
+            grid-template-columns: 40px 1fr;
+            gap: 14px;
+          }
+          .placedly-cap-journey-rail {
+            width: 40px;
+            height: 280px;
+          }
+          .placedly-cap-journey-rail-track {
+            width: 2px;
+          }
+          .placedly-cap-journey-rail-marker {
+            width: 12px;
+            height: 12px;
+          }
+          .placedly-cap-journey-rail-marker.is-active {
+            width: 16px;
+            height: 16px;
+          }
+          .placedly-cap-journey-track {
+            gap: 18px;
+          }
+          .placedly-cap-journey-card {
+            padding: 20px;
+            border-radius: 20px;
+          }
+          .placedly-cap-journey-card-inner {
+            grid-template-columns: 1fr;
+            gap: 16px;
+          }
+          .placedly-cap-journey-card-title {
+            font-size: 22px;
+          }
+          .placedly-cap-journey-card-body {
+            font-size: 14.5px;
+          }
+          .placedly-cap-readmore {
+            width: 100%;
+            justify-content: center;
+            padding: 13px 20px;
+            font-size: 14px;
+          }
         }
       `}</style>
     </section>

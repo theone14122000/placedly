@@ -594,7 +594,7 @@ function computeToolResult(tool: Tool, input: string): string {
   }
 }
 
-/* ---------- rotating headline banner (unchanged) ---------- */
+/* ---------- rotating headline banner — cleaned up, solid blue, hero font ---------- */
 
 function RotatingHeadlineBanner() {
   const [index, setIndex] = useState(0);
@@ -618,44 +618,30 @@ function RotatingHeadlineBanner() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '10px',
-        margin: '0 auto clamp(28px, 4vw, 40px)',
-        maxWidth: '640px',
-        padding: 'clamp(18px, 3vw, 26px) clamp(20px, 4vw, 32px)',
-        borderRadius: '20px',
-        background:
-          'linear-gradient(135deg, rgba(37,99,235,0.06) 0%, rgba(251,146,60,0.06) 100%)',
-        border: '1px solid rgba(37,99,235,0.12)',
-        boxShadow: '0 10px 30px rgba(37,99,235,0.06)',
+        gap: '8px',
+        margin: '0 auto clamp(24px, 4vw, 36px)',
+        maxWidth: '560px',
+        width: '100%',
+        padding: 'clamp(16px, 3.5vw, 22px) clamp(16px, 4vw, 26px)',
+        borderRadius: '18px',
+        background: '#ffffff',
+        border: '1px solid #e7ebf3',
+        boxShadow: '0 6px 20px rgba(15,23,42,0.05)',
         textAlign: 'center',
-        overflow: 'hidden',
+        fontFamily: "'Outfit','Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
       }}
     >
-      <motion.div
-        aria-hidden
-        animate={{ x: ['-30%', '130%'] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: 'linear' }}
-        style={{
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          width: '40%',
-          background:
-            'linear-gradient(90deg, transparent, rgba(251,146,60,0.08), transparent)',
-          pointerEvents: 'none',
-        }}
-      />
-
       <div
         style={{
           display: 'inline-flex',
           alignItems: 'center',
+          justifyContent: 'center',
           gap: '8px',
-          fontSize: 'clamp(1.3rem, 3vw, 1.9rem)',
+          fontSize: 'clamp(1.1rem, 2.6vw, 1.55rem)',
           fontWeight: 800,
-          letterSpacing: '-0.01em',
-          position: 'relative',
-          zIndex: 1,
+          letterSpacing: '-0.015em',
+          flexWrap: 'wrap',
+          width: '100%',
         }}
       >
         <motion.span
@@ -663,24 +649,24 @@ function RotatingHeadlineBanner() {
           transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
           style={{
             display: 'inline-flex',
-            width: '30px',
-            height: '30px',
-            borderRadius: '9px',
-            background: 'linear-gradient(135deg, #2563eb, #fb923c)',
+            width: '26px',
+            height: '26px',
+            borderRadius: '8px',
+            background: '#2563eb',
             color: '#fff',
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0,
           }}
         >
-          <Rocket size={15} strokeWidth={2.2} />
+          <Rocket size={13} strokeWidth={2.2} />
         </motion.span>
 
         <span
           style={{
             position: 'relative',
             display: 'inline-block',
-            minWidth: 'clamp(160px, 30vw, 230px)',
+            minWidth: 'clamp(130px, 24vw, 190px)',
             height: '1.3em',
             textAlign: 'left',
           }}
@@ -688,17 +674,17 @@ function RotatingHeadlineBanner() {
           <AnimatePresence mode="wait">
             <motion.span
               key={current.text}
-              initial={{ y: 18, opacity: 0 }}
+              initial={{ y: 14, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -18, opacity: 0 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              exit={{ y: -14, opacity: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
               style={{
                 position: 'absolute',
                 left: 0,
                 top: 0,
                 whiteSpace: 'nowrap',
-                ...headingGradientStyle,
-                fontSize: current.emphasis ? '1.06em' : '1em',
+                color: '#2563eb',
+                fontSize: current.emphasis ? '1.04em' : '1em',
               }}
             >
               {current.text}
@@ -709,12 +695,11 @@ function RotatingHeadlineBanner() {
 
       <p
         style={{
-          position: 'relative',
-          zIndex: 1,
-          fontSize: 'clamp(0.85rem, 1.3vw, 0.98rem)',
-          color: '#475569',
-          lineHeight: 1.6,
-          maxWidth: '520px',
+          fontSize: 'clamp(0.8rem, 1.2vw, 0.92rem)',
+          color: '#55607a',
+          lineHeight: 1.55,
+          maxWidth: '460px',
+          margin: 0,
         }}
       >
         From CV to Offer. Home to Abroad.{' '}
@@ -1280,6 +1265,8 @@ export default function UtilityToolsSection() {
       )}
 
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
+
         @media (max-width: 900px) {
           .tools-blob {
             display: none;

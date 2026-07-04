@@ -36,24 +36,8 @@ type TabDef = {
   accent: Accent;
 };
 
-const GRADIENT_STYLE: React.CSSProperties = {
-  backgroundImage:
-    'linear-gradient(270deg, #2563eb, #7c8ff0, #fb923c, #f43f5e, #a855f7, #2563eb)',
-  backgroundSize: '300% 300%',
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  backgroundClip: 'text',
-  animation: 'placedly-gradient-shift 6s ease infinite',
-  display: 'inline',
-};
-
-const GRADIENT_KEYFRAMES = `
-  @keyframes placedly-gradient-shift {
-    0%   { background-position: 0%   50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0%   50%; }
-  }
-`;
+/* Modern geometric sans-serif stack */
+const GEOM_FONT_STACK = `"Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
 
 const CAREER_DEFAULTS = [
   {
@@ -289,16 +273,7 @@ function TabBar({
   return (
     <>
       <div className="hiw-tabbar-desktop">
-        <div
-          role="tablist"
-          aria-label="How Placedly works"
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: '4px',
-            padding: '5px', borderRadius: '999px',
-            background: 'rgba(15,23,42,0.05)',
-            border: '1px solid rgba(15,23,42,0.08)',
-          }}
-        >
+        <div role="tablist" aria-label="How Placedly works" className="hiw-tabbar-strip">
           {tabs.map((tab) => (
             <TabButton key={tab.id} tab={tab} active={tab.id === activeId}
               tickKey={tickKey} onSelect={onSelect} />
@@ -306,17 +281,7 @@ function TabBar({
         </div>
       </div>
 
-      <div
-        className="hiw-tabbar-mobile"
-        role="tablist"
-        aria-label="How Placedly works"
-        style={{
-          gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px',
-          padding: '6px', borderRadius: '20px',
-          background: 'rgba(15,23,42,0.05)',
-          border: '1px solid rgba(15,23,42,0.08)',
-        }}
-      >
+      <div className="hiw-tabbar-mobile" role="tablist" aria-label="How Placedly works">
         {tabs.map((tab) => (
           <TabButton key={tab.id} tab={tab} active={tab.id === activeId}
             tickKey={tickKey} onSelect={onSelect} mobile />
@@ -338,50 +303,24 @@ function TabButton({
       role="tab"
       aria-selected={active}
       onClick={() => onSelect(tab.id)}
+      className={`placedly-hiw-tab${mobile ? ' placedly-hiw-tab--mobile' : ''}${active ? ' is-active' : ''}`}
       style={{
-        position: 'relative',
-        display: 'flex',
-        flexDirection: mobile ? 'column' : 'row',
-        alignItems: 'center',
-        justifyContent: mobile ? 'center' : 'flex-start',
-        gap: mobile ? '4px' : '6px',
-        padding: mobile ? '10px 6px' : '8px 16px',
-        borderRadius: mobile ? '14px' : '999px',
-        border: 'none', cursor: 'pointer',
-        fontSize: mobile ? '11px' : '13px',
-        fontWeight: active ? 700 : 500,
-        whiteSpace: 'nowrap', textAlign: 'center',
-        background: active ? '#ffffff' : 'transparent',
         color: active ? tab.accent.from : 'rgba(15,23,42,0.50)',
         boxShadow: active
           ? `0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px ${tab.accent.border}`
           : 'none',
-        transition: 'background 0.3s, color 0.3s, box-shadow 0.3s',
-        overflow: 'hidden',
-        width: mobile ? '100%' : undefined,
       }}
     >
       <tab.Icon
         size={mobile ? 16 : 14}
         strokeWidth={2.2}
         aria-hidden
-        style={{
-          color: active ? tab.accent.from : 'rgba(15,23,42,0.35)',
-          transition: 'color 0.3s', flexShrink: 0,
-        }}
+        className="placedly-hiw-tab-icon"
+        style={{ color: active ? tab.accent.from : 'rgba(15,23,42,0.35)' }}
       />
       <span
-        style={
-          active
-            ? {
-                backgroundImage: `linear-gradient(135deg,${tab.accent.from},${tab.accent.to})`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                lineHeight: 1.2,
-              }
-            : { lineHeight: 1.2 }
-        }
+        className="placedly-hiw-tab-label"
+        style={active ? { color: tab.accent.from } : undefined}
       >
         {tab.label}
       </span>
@@ -390,16 +329,11 @@ function TabButton({
         <motion.span
           key={`${tab.id}-${tickKey}`}
           aria-hidden
+          className="placedly-hiw-tab-progress"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: INTERVAL_MS / 1000, ease: 'linear' }}
-          style={{
-            position: 'absolute', left: 0, right: 0, bottom: 0,
-            height: '3px', transformOrigin: 'left',
-            borderRadius: '0 0 999px 999px',
-            background: `linear-gradient(90deg,${tab.accent.from},${tab.accent.to})`,
-            opacity: 0.6,
-          }}
+          style={{ background: tab.accent.from }}
         />
       )}
     </button>
@@ -408,60 +342,40 @@ function TabButton({
 
 /* ════════════════════════════════════════
    Tab Panel
-   STRATEGY:
-   - Visual is rendered FIRST in DOM
-   - On desktop, the panel uses CSS grid with
-     "visual copy" template (visual LEFT, copy RIGHT)
-   - On mobile, grid stacks to "visual" / "copy"
-   - We use !important + direct child selectors to
-     beat any global CSS that may target these classes
 ════════════════════════════════════════ */
 function TabPanel({ tab }: { tab: TabDef }) {
   return (
     <div className="placedly-hiw-panel-inner">
       <div
         aria-hidden
-        style={{
-          position: 'absolute', inset: '-30px', zIndex: 0, pointerEvents: 'none',
-          background: `radial-gradient(circle at 25% 20%,${tab.accent.from}22,transparent 60%)`,
-          filter: 'blur(50px)',
-        }}
+        className="placedly-hiw-panel-glow"
+        style={{ background: `radial-gradient(circle at 25% 20%,${tab.accent.from}22,transparent 60%)` }}
       />
 
-      {/* VISUAL — rendered first so it appears on top on mobile */}
       <motion.div
         className="placedly-hiw-panel-visual"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -6 }}
         transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-        style={{ position: 'relative', zIndex: 1 }}
       >
         <tab.Visual />
       </motion.div>
 
-      {/* COPY — rendered second, appears below on mobile */}
       <motion.div
         className="placedly-hiw-panel-copy"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -6 }}
         transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
-        style={{ position: 'relative', zIndex: 1 }}
       >
-        <h3
-          className="placedly-hiw-panel-title"
-          style={{ position: 'relative', paddingLeft: '16px', color: 'inherit', WebkitTextFillColor: 'initial' }}
-        >
+        <h3 className="placedly-hiw-panel-title">
           <span
             aria-hidden
-            style={{
-              position: 'absolute', left: 0, top: '4px', bottom: '4px',
-              width: '4px', borderRadius: '4px',
-              background: `linear-gradient(180deg,${tab.accent.from},${tab.accent.to})`,
-            }}
+            className="placedly-hiw-panel-accent-bar"
+            style={{ background: tab.accent.from }}
           />
-          <span style={GRADIENT_STYLE}>{tab.title}</span>
+          <span style={{ color: '#0f172a' }}>{tab.title}</span>
         </h3>
 
         <p className="placedly-hiw-panel-desc">{tab.details}</p>
@@ -471,10 +385,8 @@ function TabPanel({ tab }: { tab: TabDef }) {
             href={tab.cta.href}
             className="placedly-hiw-step-cta"
             style={{
-              background: `linear-gradient(135deg,${tab.accent.from},${tab.accent.to})`,
-              boxShadow: `0 10px 26px ${tab.accent.soft}`,
-              borderColor: 'transparent',
-              color: '#fff',
+              background: tab.accent.from,
+              boxShadow: `0 8px 20px ${tab.accent.soft}`,
             }}
           >
             {tab.cta.label}
@@ -537,12 +449,7 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
     >
       <div className="placedly-hiw-container">
         <FadeUp className="placedly-hiw-header">
-          <h2
-            className="placedly-hiw-title"
-            style={{ color: 'inherit', WebkitTextFillColor: 'initial' }}
-          >
-            <span style={GRADIENT_STYLE}>{title}</span>
-          </h2>
+          <h2 className="placedly-hiw-title">{title}</h2>
           <p className="placedly-hiw-subtitle">{subtitle}</p>
         </FadeUp>
 
@@ -566,9 +473,94 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
       </div>
 
       <style>{`
-        ${GRADIENT_KEYFRAMES}
+        /* ============================================================
+           FONT — Modern Geometric Sans-Serif
+           ============================================================ */
+        .placedly-hiw-section,
+        .placedly-hiw-section * {
+          font-family: ${GEOM_FONT_STACK};
+          font-feature-settings: "ss01", "cv11", "cv02";
+          font-optical-sizing: auto;
+          letter-spacing: -0.011em;
+        }
 
-        /* ── Tab bar responsive ── */
+        /* ============================================================
+           SECTION
+           ============================================================ */
+        .placedly-hiw-section {
+          position: relative;
+          width: 100%;
+          padding: clamp(72px, 9vw, 130px) clamp(16px, 5vw, 24px);
+          background: #f8fafc;
+        }
+
+        .placedly-hiw-container {
+          position: relative;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .placedly-hiw-header {
+          text-align: center;
+          max-width: 760px;
+          margin: 0 auto 48px;
+        }
+
+        .placedly-hiw-title {
+          font-size: clamp(28px, 3.6vw, 44px);
+          font-weight: 700;
+          line-height: 1.12;
+          letter-spacing: -0.025em;
+          color: #0f172a;
+          margin: 0 0 14px;
+        }
+
+        .placedly-hiw-subtitle {
+          font-size: clamp(15px, 1.2vw, 17px);
+          line-height: 1.6;
+          color: #475569;
+          margin: 0;
+          font-weight: 400;
+        }
+
+        /* ============================================================
+           SHOWCASE / PANEL
+           ============================================================ */
+        .placedly-hiw-showcase {
+          width: 100%;
+        }
+
+        .placedly-hiw-panel {
+          position: relative;
+          background: #ffffff;
+          border: 1px solid rgba(15, 23, 42, 0.06);
+          border-radius: 24px;
+          padding: clamp(20px, 3vw, 40px);
+          box-shadow: 0 18px 50px rgba(15, 23, 42, 0.06);
+        }
+
+        .placedly-hiw-panel-footer {
+          display: flex;
+          justify-content: center;
+          margin-top: 24px;
+          padding-top: 20px;
+          border-top: 1px solid rgba(15, 23, 42, 0.05);
+        }
+
+        .placedly-hiw-panel-glow {
+          position: absolute;
+          inset: -30px;
+          z-index: 0;
+          pointer-events: none;
+          filter: blur(50px);
+        }
+
+        /* ============================================================
+           TAB BAR
+           ============================================================ */
         .hiw-tabbar-desktop {
           display: flex !important;
           justify-content: center;
@@ -579,13 +571,74 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           margin-bottom: 20px;
         }
 
-        /* ════════════════════════════════════════════════════
-           PANEL LAYOUT — the fix
+        .hiw-tabbar-strip {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 5px;
+          border-radius: 999px;
+          background: rgba(15, 23, 42, 0.05);
+          border: 1px solid rgba(15, 23, 42, 0.08);
+        }
 
-           The inner panel is a 2-col grid on desktop and
-           stacks on mobile. Visual is FIRST in DOM, so on
-           mobile it naturally lands on top.
-        ════════════════════════════════════════════════════ */
+        .placedly-hiw-tab {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 6px;
+          padding: 8px 16px;
+          border-radius: 999px;
+          border: none;
+          cursor: pointer;
+          font-size: 13px;
+          font-weight: 600;
+          white-space: nowrap;
+          text-align: center;
+          background: transparent;
+          transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+          overflow: hidden;
+          font-family: inherit;
+        }
+
+        .placedly-hiw-tab--mobile {
+          flex-direction: column;
+          justify-content: center;
+          gap: 4px;
+          padding: 10px 6px;
+          border-radius: 14px;
+          font-size: 11px;
+          width: 100%;
+        }
+
+        .placedly-hiw-tab.is-active {
+          background: #ffffff;
+        }
+
+        .placedly-hiw-tab-icon {
+          flex-shrink: 0;
+          transition: color 0.3s;
+        }
+
+        .placedly-hiw-tab-label {
+          line-height: 1.2;
+          transition: color 0.3s;
+        }
+
+        .placedly-hiw-tab-progress {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 3px;
+          transform-origin: left;
+          border-radius: 0 0 999px 999px;
+          opacity: 0.6;
+        }
+
+        /* ============================================================
+           PANEL INNER LAYOUT
+           ============================================================ */
         div.placedly-hiw-panel-inner {
           display: grid !important;
           grid-template-columns: 1fr 1fr !important;
@@ -598,68 +651,264 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           grid-area: visual !important;
           min-width: 0 !important;
           width: 100% !important;
+          position: relative;
+          z-index: 1;
         }
         div.placedly-hiw-panel-inner > .placedly-hiw-panel-copy {
           grid-area: copy !important;
           min-width: 0 !important;
           width: 100% !important;
+          position: relative;
+          z-index: 1;
         }
 
-        /* Accent-driven dynamic colours */
-        .placedly-hiw-mock-tag {
-          background: var(--hiw-accent-soft) !important;
-          color: var(--hiw-accent-from) !important;
-          border-color: var(--hiw-accent-border) !important;
+        /* ============================================================
+           COPY
+           ============================================================ */
+        .placedly-hiw-panel-title {
+          position: relative;
+          padding-left: 16px;
+          font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+          font-weight: 700;
+          line-height: 1.2;
+          letter-spacing: -0.02em;
+          color: #0f172a;
+          margin: 0 0 14px;
         }
-        .placedly-hiw-mock-spark { color: var(--hiw-accent-from) !important; }
-        .placedly-hiw-mock-arrow { color: var(--hiw-accent-from) !important; }
-        .placedly-hiw-mock-card--cta {
-          background: var(--hiw-accent-soft) !important;
-          border-color: var(--hiw-accent-border) !important;
+
+        .placedly-hiw-panel-accent-bar {
+          position: absolute;
+          left: 0;
+          top: 4px;
+          bottom: 4px;
+          width: 4px;
+          border-radius: 4px;
         }
+
+        .placedly-hiw-panel-desc {
+          font-size: 15px;
+          line-height: 1.7;
+          color: #475569;
+          margin: 0 0 22px;
+        }
+
+        .placedly-hiw-step-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 22px;
+          color: #ffffff;
+          border: none;
+          border-radius: 999px;
+          font-weight: 600;
+          font-size: 14.5px;
+          text-decoration: none;
+          transition: transform 0.25s ease, filter 0.25s ease;
+        }
+        .placedly-hiw-step-cta:hover {
+          transform: translateY(-2px);
+          filter: brightness(1.08);
+        }
+
+        /* ============================================================
+           VISUALS
+           ============================================================ */
+        .placedly-hiw-visual {
+          position: relative;
+          width: 100%;
+          min-height: 360px;
+          border-radius: 20px;
+          padding: 24px;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .placedly-hiw-visual--warm   { background: linear-gradient(135deg, #fef3e8 0%, #ffe2c4 100%); }
+        .placedly-hiw-visual--sunset { background: linear-gradient(135deg, #fce8f3 0%, #ffe1d4 100%); }
+        .placedly-hiw-visual--peach  { background: linear-gradient(135deg, #e0fbe8 0%, #d6f4f0 100%); }
+
+        .placedly-hiw-mock {
+          width: 100%;
+          max-width: 360px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .placedly-hiw-mock-card {
+          background: #ffffff;
+          border-radius: 14px;
+          padding: 14px;
+          box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+          border: 1px solid rgba(15, 23, 42, 0.04);
+        }
+
+        .placedly-hiw-mock-card--center { text-align: center; }
+        .placedly-hiw-mock-card--hero   { background: #ffffff; }
+        .placedly-hiw-mock-card--cta    { display: flex; align-items: center; gap: 10px; }
+
+        .placedly-hiw-mock-label {
+          font-size: 11.5px;
+          font-weight: 600;
+          color: #64748b;
+          margin: 0 0 10px;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+        }
+
+        .placedly-hiw-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        .placedly-hiw-tag {
+          font-size: 12px;
+          font-weight: 600;
+          padding: 5px 10px;
+          border-radius: 999px;
+          background: rgba(15, 23, 42, 0.06);
+          color: #334155;
+        }
+        .placedly-hiw-tag--study { background: rgba(249, 115, 22, 0.10); color: #c2410c; }
+
+        .placedly-hiw-mock-list {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          font-size: 13px;
+          color: #334155;
+          font-weight: 500;
+        }
+
+        .placedly-hiw-mock-dot {
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          margin-right: 8px;
+          vertical-align: middle;
+        }
+        .placedly-hiw-mock-dot--exl   { background: #6366f1; }
+        .placedly-hiw-mock-dot--optum { background: #10b981; }
+        .placedly-hiw-mock-dot--wns   { background: #f97316; }
+        .placedly-hiw-mock-dot--uk    { background: #3b82f6; }
+        .placedly-hiw-mock-dot--fr    { background: #ec4899; }
+        .placedly-hiw-mock-dot--de    { background: #0ea5e9; }
+
+        .placedly-hiw-mock-row { display: flex; align-items: center; gap: 12px; }
+
+        .placedly-hiw-mock-avatar {
+          display: inline-block;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: #e2e8f0;
+          flex-shrink: 0;
+        }
+        .placedly-hiw-mock-avatar--md   { width: 40px; height: 40px; background: #6366f1; }
+        .placedly-hiw-mock-avatar--sm   { width: 26px; height: 26px; background: #0f172a; color: #fff; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+        .placedly-hiw-mock-avatar--lg   { width: 64px; height: 64px; background: #ec4899; margin: 0 auto 8px; }
+        .placedly-hiw-mock-avatar--study { background: #f97316; }
+
+        .placedly-hiw-mock-meta { font-size: 12px; color: #64748b; font-weight: 500; }
+
+        .placedly-hiw-mock-sub  { font-size: 11.5px; color: #64748b; margin: 0 0 2px; font-weight: 500; }
+        .placedly-hiw-mock-title { font-size: 15px; font-weight: 700; color: #0f172a; margin: 0 0 2px; }
+        .placedly-hiw-mock-co   { font-size: 12px; color: #64748b; margin: 0; }
+        .placedly-hiw-mock-name { font-size: 15px; font-weight: 700; color: #0f172a; margin: 4px 0 0; }
+        .placedly-hiw-mock-role { font-size: 12px; color: #64748b; margin: 0 0 8px; }
+
+        .placedly-hiw-mock-spark { font-size: 16px; color: var(--hiw-accent-from); }
+        .placedly-hiw-mock-arrow { margin-left: auto; color: var(--hiw-accent-from); font-weight: 700; }
+
+        .placedly-hiw-mock-cta-title { font-size: 13px; font-weight: 700; color: #0f172a; margin: 0; }
+        .placedly-hiw-mock-cta-sub   { font-size: 11.5px; color: #64748b; margin: 2px 0 0; }
+
         .placedly-hiw-mock-chip {
-          background: var(--hiw-accent-soft) !important;
-          color: var(--hiw-accent-from) !important;
-        }
-        .placedly-hiw-mock-offer { color: var(--hiw-accent-from) !important; }
-        .placedly-hiw-mock-bubble {
-          background: var(--hiw-accent-soft) !important;
-          color: var(--hiw-accent-from) !important;
-          border-color: var(--hiw-accent-border) !important;
+          display: inline-block;
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          padding: 4px 10px;
+          border-radius: 999px;
+          background: rgba(16, 185, 129, 0.12);
+          color: #047857;
+          margin: 0 0 8px;
         }
 
-        /* ════════════════════════════════════════════════════
-           MOBILE  ≤ 639 px
-           Visual stacks on top, copy below — right under
-           the toggle bar.
-        ════════════════════════════════════════════════════ */
+        .placedly-hiw-mock-offer {
+          font-size: 20px;
+          font-weight: 800;
+          color: #047857;
+          margin: 0 0 12px;
+          letter-spacing: -0.02em;
+        }
+
+        .placedly-hiw-mock-avatars { display: flex; justify-content: center; gap: -8px; margin-bottom: 10px; }
+        .placedly-hiw-mock-avatars > * + * { margin-left: -8px; }
+
+        .placedly-hiw-mock-bubble {
+          font-size: 12.5px;
+          color: #6366f1;
+          background: rgba(99, 102, 241, 0.10);
+          border: 1px solid rgba(99, 102, 241, 0.20);
+          padding: 8px 12px;
+          border-radius: 12px;
+          margin: 8px 0;
+        }
+        .placedly-hiw-mock-bubble--purple { color: #0e7490; background: rgba(14, 165, 233, 0.10); border-color: rgba(14, 165, 233, 0.20); }
+
+        .placedly-hiw-mock-thanks { font-size: 12px; color: #64748b; margin: 6px 0 0; }
+
+        /* ============================================================
+           MOBILE
+           ============================================================ */
+        @media (max-width: 900px) {
+          .placedly-hiw-panel-inner { gap: 32px !important; }
+        }
         @media (max-width: 639px) {
           .hiw-tabbar-desktop { display: none !important; }
-          .hiw-tabbar-mobile  { display: grid !important; }
+          .hiw-tabbar-mobile  {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 6px;
+            border-radius: 20px;
+            background: rgba(15, 23, 42, 0.05);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+          }
 
           div.placedly-hiw-panel-inner {
             grid-template-columns: 1fr !important;
             grid-template-areas:
               "visual"
               "copy" !important;
-            gap: 16px !important;
+            gap: 20px !important;
           }
 
           div.placedly-hiw-panel-inner > .placedly-hiw-panel-visual {
-            grid-area: visual !important;
             border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 4px 24px rgba(0,0,0,0.07);
           }
-          div.placedly-hiw-panel-inner > .placedly-hiw-panel-copy {
-            grid-area: copy !important;
-          }
-
           .placedly-hiw-panel-visual .placedly-hiw-visual {
             border-radius: 18px !important;
-            min-height: 200px;
+            min-height: 220px;
             height: auto !important;
           }
+
+          .placedly-hiw-panel { padding: 18px !important; border-radius: 20px; }
+          .placedly-hiw-section { padding: 48px 16px !important; }
+          .placedly-hiw-header { margin-bottom: 32px; }
+          .placedly-hiw-title { font-size: clamp(1.5rem, 5vw, 2rem) !important; }
+          .placedly-hiw-subtitle { font-size: 14px !important; }
 
           .placedly-hiw-panel-title {
             font-size: 1.15rem !important;
@@ -669,29 +918,14 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
           .placedly-hiw-panel-desc {
             font-size: 13.5px !important;
             line-height: 1.65 !important;
+            margin-bottom: 18px !important;
           }
           .placedly-hiw-step-cta {
-            width: 100% !important;
-            justify-content: center !important;
-            text-align: center !important;
-          }
-          .placedly-hiw-panel-footer {
-            display: flex;
+            width: 100%;
             justify-content: center;
-            margin-top: 16px;
+            text-align: center;
           }
-          .placedly-hiw-section {
-            padding-top: 40px !important;
-            padding-bottom: 40px !important;
-          }
-          .placedly-hiw-title {
-            font-size: clamp(1.25rem, 5vw, 1.6rem) !important;
-            line-height: 1.25 !important;
-          }
-          .placedly-hiw-subtitle {
-            font-size: 13.5px !important;
-            line-height: 1.65 !important;
-          }
+          .placedly-hiw-panel-footer { margin-top: 16px; padding-top: 16px; }
         }
       `}</style>
     </section>

@@ -110,8 +110,6 @@ export default async function Home() {
         <StudyDestinationsMarquee />
         <Testimonials />
         <Faq />
-        <Cta cms={cms} />
-        <ServiceWidgetSection />
         <Footer cms={cms} />
         <FloatingWhatsApp cms={cms} />
         <CapFloatingCta label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'} />
