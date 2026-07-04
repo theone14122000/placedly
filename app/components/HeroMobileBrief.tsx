@@ -123,7 +123,6 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             );
           })}
 
-          {/* Amber card — left side (unchanged) */}
           <motion.div
             className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-left"
             animate={{ y: [0, -5, 0] }}
@@ -149,7 +148,6 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             </p>
           </motion.div>
 
-          {/* Recommended pill — center (unchanged) */}
           <motion.div
             className="placedly-lift-mobile-rec"
             animate={{ y: [0, -4, 0] }}
@@ -162,7 +160,6 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             </span>
           </motion.div>
 
-          {/* Daniel card — forced to RIGHT-BOTTOM via new unique class */}
           <motion.div
             className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-right placedly-lift-card--mobile-daniel"
             animate={{ y: [0, 5, 0] }}
@@ -190,10 +187,6 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
         </div>
       </motion.div>
 
-      {/* ============================================================
-           NUCLEAR OVERRIDE — inline <style> rendered in the DOM.
-           No external stylesheet rule can win against this.
-         ============================================================ */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -257,18 +250,22 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               cursor: pointer !important;
               background-color: transparent !important;
               background-image: linear-gradient(135deg, #0a0a0a, #1a1a1a) !important;
-              box-shadow: 0 6px 16px rgba(0,0,0,0.28),
-                          inset 0 1px 0 rgba(255,255,255,0.06) !important;
+              /* CHANGED: rest shadow softened + inset highlight kept */
+              box-shadow: 0 2px 6px rgba(0,0,0,0.15),
+                          inset 0 1px 0 rgba(255,255,255,0.04) !important;
               transition: transform .25s ease, box-shadow .25s ease, filter .25s ease !important;
             }
+            /* CHANGED: hover shadow removed — the "shadow disappear" on hover */
             .placedly-hero-mobile-brief .placedly-hero-cta-pill:hover {
-              transform: translateY(-2px) !important;
-              box-shadow: 0 10px 22px rgba(0,0,0,0.38),
-                          inset 0 1px 0 rgba(255,255,255,0.12) !important;
+              transform: translateY(-1px) !important;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.12),
+                          inset 0 1px 0 rgba(255,255,255,0.04) !important;
+              filter: brightness(1.08) !important;
             }
             .placedly-hero-mobile-brief .placedly-hero-cta-pill:active {
               transform: translateY(0) !important;
               filter: brightness(0.94) !important;
+              box-shadow: none !important;
             }
 
             .placedly-hero-mobile-brief .placedly-hero-cta-pill--deep,
@@ -278,7 +275,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               background-image: linear-gradient(135deg, #0a0a0a, #1a1a1a) !important;
             }
 
-            /* Popup cards: hard ceiling so text can't escape */
+            /* CHANGED: popup cards — much less round (12px) for clearer text */
             .placedly-hero-mobile-brief .placedly-lift-card--mobile {
               max-width: 220px !important;
               width: max-content !important;
@@ -295,6 +292,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               margin: 0 !important;
               float: none !important;
               clear: none !important;
+              border-radius: 12px !important; /* CHANGED: was 9999px / pill */
             }
             .placedly-hero-mobile-brief .placedly-lift-card-line {
               font-size: 9.5px !important;
@@ -333,6 +331,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               margin: 0 !important;
               float: none !important;
               clear: none !important;
+              border-radius: 12px !important; /* CHANGED: also less round for consistency */
             }
             .placedly-hero-mobile-brief .placedly-lift-mobile-rec-text strong,
             .placedly-hero-mobile-brief .placedly-lift-mobile-rec-text span {
@@ -344,12 +343,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               color: inherit !important;
             }
 
-            /* ============================================================
-               DANIEL CARD — force to RIGHT side, BOTTOM
-               Triple-class + !important to beat any global rule on
-               .placedly-lift-card--mobile-right.
-               Tweak the two numbers below to nudge position.
-             ============================================================ */
+            /* Daniel card — right-bottom anchor (unchanged) */
             .placedly-hero-mobile-brief .placedly-lift-card--mobile.placedly-lift-card--mobile-right.placedly-lift-card--mobile-daniel,
             .placedly-hero-mobile-brief .placedly-lift-card--mobile-daniel.placedly-lift-card--mobile-daniel.placedly-lift-card--mobile-daniel {
               position: absolute !important;
