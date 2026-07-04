@@ -67,7 +67,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           transition={{ duration: 0.4 }}
         >
           <Link href="/" className="placedly-footer-logo">
-            <img loading="lazy" src="/logo-light.png" alt="Placedly" />
+            <img loading="lazy" src="/logo-dark.png" alt="Placedly" />
             <span>Placedly</span>
           </Link>
 
