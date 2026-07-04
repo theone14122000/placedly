@@ -127,7 +127,6 @@ function HeroCtaPill({
       transition={{ duration: 0.45, delay }}
       whileHover={{ y: -3, scale: 1.02 }}
       whileTap={{ scale: 0.97 }}
-      // CHANGED: removed flex:1 stretch — now auto-sizes to its content
       style={{ flex: '0 0 auto' }}
     >
       <Link href={href} className={`placedly-hero-cta-pill placedly-hero-cta-pill--${shade}`}>
@@ -285,16 +284,14 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
         /* ============================================================
            HERO CTA PILL SYSTEM
-           CHANGED: row max-width capped, pills no longer stretch.
-           Width is now content-driven via 'width: auto'.
          ============================================================ */
         .placedly-lift-hero-ctas {
           display: flex;
           align-items: stretch;
           gap: 10px;
           flex-wrap: wrap;
-          max-width: 520px;            /* caps the total row width */
-          margin: 0 auto;              /* keeps the cluster centered */
+          max-width: 520px;
+          margin: 0 auto;
         }
 
         .placedly-hero-cta-pill {
@@ -302,7 +299,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          /* CHANGED: width auto + min-width removed — pills size to content */
           width: auto !important;
           min-width: 0;
           padding: 6px 12px 6px 6px;
@@ -379,15 +375,14 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         @media (max-width: 640px) {
-          /* CHANGED: on phones, fall back to stacked + full width
-             so they remain comfortable to tap, not crammed. */
           .placedly-lift-hero-ctas { flex-direction: column; max-width: 360px; }
           .placedly-hero-cta-pill { width: 100% !important; justify-content: center; }
         }
 
         /* ============================================================
            STATS BAR
-           ============================================================ */
+           CHANGED: opacity 0.6 applied to the whole bar
+         ============================================================ */
         .placedly-hero-stats-bar {
           display: flex;
           flex-wrap: wrap;
@@ -398,7 +393,10 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           max-width: 1000px;
           width: 100%;
           padding: 0 16px;
+          opacity: 0.6 !important; /* CHANGED: stats bar at 60% opacity */
+          transition: opacity 0.25s ease;
         }
+        .placedly-hero-stats-bar:hover { opacity: 1 !important; } /* bonus: full on hover */
 
         .placedly-hero-stat-pill {
           position: relative;
@@ -483,7 +481,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
         /* ============================================================
            THINNER POP-UP CARDS
-           ============================================================ */
+         ============================================================ */
         .placedly-lift-hero .placedly-lift-card {
           padding: 10px 14px !important;
         }
