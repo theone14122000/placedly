@@ -127,7 +127,8 @@ function HeroCtaPill({
       transition={{ duration: 0.45, delay }}
       whileHover={{ y: -3, scale: 1.02 }}
       whileTap={{ scale: 0.97 }}
-      style={{ flex: '1 1 0', minWidth: 0 }}
+      // CHANGED: removed flex:1 stretch — now auto-sizes to its content
+      style={{ flex: '0 0 auto' }}
     >
       <Link href={href} className={`placedly-hero-cta-pill placedly-hero-cta-pill--${shade}`}>
         <span className="placedly-hero-cta-pill-shine" aria-hidden />
@@ -185,9 +186,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
   return (
     <section id="Top" className="placedly-lift-hero">
-      {/* ============================================================
-           FONT IMPORT — loaded once for the whole hero
-         ============================================================ */}
       <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Geist:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
@@ -198,8 +196,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
         /* ============================================================
            FONT — Modern Geometric Sans-Serif
-           FORCED with !important so global styles can't override.
-           Applied universally inside the hero scope.
          ============================================================ */
         .placedly-lift-hero,
         .placedly-lift-hero *,
@@ -223,7 +219,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           letter-spacing: -0.011em !important;
         }
 
-        /* Display headline */
         .placedly-lift-hero-title,
         .placedly-lift-hero h1.placedly-lift-hero-title {
           font-weight: 700 !important;
@@ -231,35 +226,30 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           font-family: ${GEOM_FONT_STACK} !important;
         }
 
-        /* Subheadline */
         .placedly-lift-hero-sub {
           font-weight: 400 !important;
           letter-spacing: -0.012em !important;
           font-family: ${GEOM_FONT_STACK} !important;
         }
 
-        /* CTA pills */
         .placedly-hero-cta-pill {
           font-weight: 600 !important;
           letter-spacing: -0.005em !important;
           font-family: ${GEOM_FONT_STACK} !important;
         }
 
-        /* Profile card name */
         .placedly-lift-name {
           font-weight: 700 !important;
           letter-spacing: -0.015em !important;
           font-family: ${GEOM_FONT_STACK} !important;
         }
 
-        /* Profile card role */
         .placedly-lift-role {
           font-weight: 500 !important;
           letter-spacing: -0.003em !important;
           font-family: ${GEOM_FONT_STACK} !important;
         }
 
-        /* Profile card line */
         .placedly-lift-card-line {
           font-weight: 500 !important;
           letter-spacing: -0.008em !important;
@@ -271,7 +261,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           font-family: ${GEOM_FONT_STACK} !important;
         }
 
-        /* Glass pill (Shared / Recommended) */
         .placedly-lift-glass-pill-text strong {
           font-weight: 700 !important;
           letter-spacing: -0.008em !important;
@@ -283,7 +272,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           font-family: ${GEOM_FONT_STACK} !important;
         }
 
-        /* Stat pill */
         .placedly-hero-stat-pill-text strong {
           font-weight: 800 !important;
           letter-spacing: -0.025em !important;
@@ -296,14 +284,17 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           HERO CTA PILL SYSTEM — 3 buttons, sized to match the stats
-           bar pill, unified black background / white text.
-           ============================================================ */
+           HERO CTA PILL SYSTEM
+           CHANGED: row max-width capped, pills no longer stretch.
+           Width is now content-driven via 'width: auto'.
+         ============================================================ */
         .placedly-lift-hero-ctas {
           display: flex;
           align-items: stretch;
           gap: 10px;
           flex-wrap: wrap;
+          max-width: 520px;            /* caps the total row width */
+          margin: 0 auto;              /* keeps the cluster centered */
         }
 
         .placedly-hero-cta-pill {
@@ -311,8 +302,9 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          width: 100%;
-          /* tighter padding than stats pill for a more compact button */
+          /* CHANGED: width auto + min-width removed — pills size to content */
+          width: auto !important;
+          min-width: 0;
           padding: 6px 12px 6px 6px;
           border-radius: 999px;
           font-size: 11px;
@@ -326,7 +318,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           transition: box-shadow 0.28s cubic-bezier(0.22,1,0.36,1), filter 0.28s ease;
         }
 
-        /* Unified black background — all three shades identical now */
         .placedly-hero-cta-pill--deep,
         .placedly-hero-cta-pill--royal,
         .placedly-hero-cta-pill--sky {
@@ -353,7 +344,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
         .placedly-hero-cta-pill:hover .placedly-hero-cta-pill-shine { left: 140%; }
 
-        /* icon circle — smaller than stat pill icon (32px) */
         .placedly-hero-cta-pill-icon {
           position: relative;
           z-index: 1;
@@ -389,12 +379,14 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         @media (max-width: 640px) {
-          .placedly-lift-hero-ctas { flex-direction: column; }
-          .placedly-hero-cta-pill { justify-content: center; }
+          /* CHANGED: on phones, fall back to stacked + full width
+             so they remain comfortable to tap, not crammed. */
+          .placedly-lift-hero-ctas { flex-direction: column; max-width: 360px; }
+          .placedly-hero-cta-pill { width: 100% !important; justify-content: center; }
         }
 
         /* ============================================================
-           STATS BAR — pill-shaped, sits beneath the video/stage section
+           STATS BAR
            ============================================================ */
         .placedly-hero-stats-bar {
           display: flex;
@@ -478,16 +470,10 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           text-overflow: ellipsis;
         }
 
-        /* Force 4 columns at desktop so labels never get truncated */
         @media (min-width: 900px) {
-          .placedly-hero-stats-bar {
-            flex-wrap: nowrap;
-          }
-          .placedly-hero-stat-pill {
-            flex: 1 1 0;
-          }
+          .placedly-hero-stats-bar { flex-wrap: nowrap; }
+          .placedly-hero-stat-pill { flex: 1 1 0; }
         }
-
         @media (max-width: 720px) {
           .placedly-hero-stat-pill { flex: 1 1 calc(50% - 6px); }
         }
@@ -496,7 +482,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           THINNER POP-UP CARDS (left/right profile cards)
+           THINNER POP-UP CARDS
            ============================================================ */
         .placedly-lift-hero .placedly-lift-card {
           padding: 10px 14px !important;
@@ -679,7 +665,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           </div>
         </motion.div>
 
-        {/* ── Stats bar — pill-shaped, beneath the video/stage section ── */}
         <div className="placedly-hero-stats-bar">
           {HERO_STATS.map((stat, i) => (
             <HeroStatPill
