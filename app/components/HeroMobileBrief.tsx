@@ -46,9 +46,9 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Your next opportunity,
+          Grow your career,
           <br />
-          powered by trust.
+          through people you trust.
         </motion.h1>
 
         <motion.p
@@ -160,10 +160,17 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             </span>
           </motion.div>
 
+          {/* Daniel card — moved to RIGHT side, BOTTOM via inline style only */}
           <motion.div
             className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-right"
             animate={{ y: [0, 5, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+            style={{
+              top: 'auto',
+              bottom: '12px',
+              left: 'auto',
+              right: '12px',
+            }}
           >
             <div className="placedly-lift-card-profile">
               <img
@@ -289,7 +296,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               word-wrap: break-word !important;
               overflow-wrap: anywhere !important;
               white-space: normal !important;
-              position: relative !important;
+              position: absolute !important;
               inset: auto !important;
               margin: 0 !important;
               float: none !important;
