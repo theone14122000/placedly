@@ -68,7 +68,7 @@ const HERO_CARD_AVATARS = {
   right: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face',
 } as const;
 
-/* ─── 3 CTA pills — same blue family, distinct shades each ─── */
+/* ─── 3 CTA pills — unified black style, sized like the stats bar pill ─── */
 const HERO_CTAS = [
   {
     id: 'candidates',
@@ -132,7 +132,7 @@ function HeroCtaPill({
       <Link href={href} className={`placedly-hero-cta-pill placedly-hero-cta-pill--${shade}`}>
         <span className="placedly-hero-cta-pill-shine" aria-hidden />
         <span className="placedly-hero-cta-pill-icon">
-          <Icon size={15} strokeWidth={2.15} />
+          <Icon size={13} strokeWidth={2.15} />
         </span>
         <span className="placedly-hero-cta-pill-label">{label}</span>
         <motion.span
@@ -140,7 +140,7 @@ function HeroCtaPill({
           animate={{ x: [0, 3, 0] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut', delay: delay + 0.3 }}
         >
-          <ArrowRight size={12} strokeWidth={2.5} />
+          <ArrowRight size={11} strokeWidth={2.5} />
         </motion.span>
       </Link>
     </motion.div>
@@ -296,7 +296,8 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           HERO CTA PILL SYSTEM — 3 buttons, distinct blue shades
+           HERO CTA PILL SYSTEM — 3 buttons, sized to match the stats
+           bar pill, unified black background / white text.
            ============================================================ */
         .placedly-lift-hero-ctas {
           display: flex;
@@ -311,12 +312,13 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           align-items: center;
           gap: 8px;
           width: 100%;
-          padding: 11px 16px 11px 10px;
+          /* same padding as .placedly-hero-stat-pill */
+          padding: 10px 16px 10px 10px;
           border-radius: 999px;
-          font-size: 13px;
+          font-size: 12.5px;
           text-decoration: none;
           color: #ffffff;
-          border: 1px solid rgba(255,255,255,0.22);
+          border: 1px solid rgba(255,255,255,0.14);
           overflow: hidden;
           isolation: isolate;
           cursor: pointer;
@@ -324,40 +326,26 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           transition: box-shadow 0.28s cubic-bezier(0.22,1,0.36,1), filter 0.28s ease;
         }
 
-        /* Deep royal blue — For Candidates */
-        .placedly-hero-cta-pill--deep {
-          background-image: linear-gradient(135deg, #1e3a8a, #2563eb);
-          box-shadow: 0 8px 20px rgba(30, 58, 138, 0.34), inset 0 1px 0 rgba(255,255,255,0.2);
-        }
-        .placedly-hero-cta-pill--deep:hover {
-          box-shadow: 0 14px 30px rgba(30, 58, 138, 0.46), inset 0 1px 0 rgba(255,255,255,0.26);
-        }
-
-        /* Classic blue — For Recruiters */
-        .placedly-hero-cta-pill--royal {
-          background-image: linear-gradient(135deg, #2563eb, #3b82f6);
-          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.32), inset 0 1px 0 rgba(255,255,255,0.2);
-        }
-        .placedly-hero-cta-pill--royal:hover {
-          box-shadow: 0 14px 30px rgba(37, 99, 235, 0.44), inset 0 1px 0 rgba(255,255,255,0.26);
-        }
-
-        /* Sky blue — Study Abroad */
+        /* Unified black background — all three shades identical now */
+        .placedly-hero-cta-pill--deep,
+        .placedly-hero-cta-pill--royal,
         .placedly-hero-cta-pill--sky {
-          background-image: linear-gradient(135deg, #0ea5e9, #38bdf8);
-          box-shadow: 0 8px 20px rgba(14, 165, 233, 0.32), inset 0 1px 0 rgba(255,255,255,0.2);
+          background-image: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255,255,255,0.08);
         }
+        .placedly-hero-cta-pill--deep:hover,
+        .placedly-hero-cta-pill--royal:hover,
         .placedly-hero-cta-pill--sky:hover {
-          box-shadow: 0 14px 30px rgba(14, 165, 233, 0.44), inset 0 1px 0 rgba(255,255,255,0.26);
+          box-shadow: 0 10px 22px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255,255,255,0.12);
         }
 
-        .placedly-hero-cta-pill:active { filter: brightness(0.97); }
+        .placedly-hero-cta-pill:active { filter: brightness(0.94); }
 
         .placedly-hero-cta-pill-shine {
           position: absolute;
           top: 0; left: -130%;
           width: 55%; height: 100%;
-          background: linear-gradient(115deg, transparent, rgba(255,255,255,0.5), transparent);
+          background: linear-gradient(115deg, transparent, rgba(255,255,255,0.35), transparent);
           transform: skewX(-20deg);
           transition: left 0.6s ease;
           z-index: 0;
@@ -365,16 +353,17 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
         .placedly-hero-cta-pill:hover .placedly-hero-cta-pill-shine { left: 140%; }
 
+        /* icon circle — same size as stat pill icon (32px) */
         .placedly-hero-cta-pill-icon {
           position: relative;
           z-index: 1;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 26px;
-          height: 26px;
+          width: 24px;
+          height: 24px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.2);
+          background: rgba(255,255,255,0.14);
           flex-shrink: 0;
         }
 
@@ -391,10 +380,10 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 20px;
-          height: 20px;
+          width: 18px;
+          height: 18px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.2);
+          background: rgba(255,255,255,0.14);
           margin-left: auto;
           flex-shrink: 0;
         }

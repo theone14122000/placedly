@@ -62,7 +62,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
           {MOBILE_SUBLINE}
         </motion.p>
 
-        {/* NEW: CTA row — isolated class namespace, no impact on cards/bg */}
+        {/* NEW: CTA row — isolated class namespace, forced single row */}
         <motion.div
           className="placedly-hero-cta-row"
           initial={{ opacity: 0, y: 12 }}
@@ -175,18 +175,20 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
         </div>
       </motion.div>
 
-      {/* Scoped styles — only touches the new CTA row, nothing else */}
+      {/* Scoped styles — only affects the new CTA row, nothing else on the page */}
       <style jsx>{`
         .placedly-hero-cta-row {
-          display: flex;
-          flex-direction: row;
-          flex-wrap: nowrap;
+          display: flex !important;
+          flex-direction: row !important;
+          flex-wrap: nowrap !important;
           align-items: center;
           justify-content: center;
-          gap: clamp(8px, 2vw, 14px);
+          gap: clamp(6px, 1.8vw, 14px);
           margin-top: 18px;
           width: 100%;
+          max-width: 100%;
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
           scrollbar-width: none;
           -ms-overflow-style: none;
         }
@@ -195,16 +197,18 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
         }
 
         .placedly-hero-cta-pill {
+          flex: 0 0 auto !important;
+          display: inline-flex !important;
+          flex-direction: row !important;
           font-family: 'Inter', 'Sora', 'Manrope', system-ui, sans-serif;
           font-weight: 600;
-          font-size: clamp(11.5px, 2.6vw, 13.5px);
+          font-size: clamp(10.5px, 2.4vw, 13.5px);
           letter-spacing: 0.01em;
           color: #ffffff;
           white-space: nowrap;
-          display: inline-flex;
           align-items: center;
           justify-content: center;
-          padding: clamp(8px, 2vw, 11px) clamp(14px, 3.4vw, 20px);
+          padding: clamp(7px, 1.8vw, 11px) clamp(11px, 2.8vw, 20px);
           border-radius: 9999px;
           border: none;
           cursor: pointer;
