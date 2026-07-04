@@ -18,6 +18,9 @@ const G = {
   purple: '#a855f7',
 };
 
+/* Modern Geometric Sans-Serif stack — FORCED on every element */
+const FONT_STACK = `"Outfit", "Poppins", "Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
+
 const STEP_COLORS = [G.blue, G.purple, G.orange];
 const STEP_META = [
   { label: 'Personal Info', Icon: User },
@@ -203,6 +206,7 @@ export default function CAPApplyClient() {
             We&apos;ve received your application. Our team will review it and send your login credentials to{' '}
             <strong style={{ color: '#0b0d20' }}>{form.email}</strong> once approved — usually within 1–2 business days.
           </p>
+          {/* CHANGED: button is now solid black, no gradient */}
           <Link href="/" className="capa-btn capa-btn-primary" style={{ display: 'inline-flex' }}>
             <Rocket size={15} /> Back to Home
           </Link>
@@ -543,6 +547,40 @@ export default function CAPApplyClient() {
         @keyframes capa-confetti-fall { 0%{transform:translateY(-20px) rotate(0deg); opacity:0} 10%{opacity:1} 100%{transform:translateY(420px) rotate(360deg); opacity:0} }
         @keyframes capa-check-draw { from{ stroke-dashoffset: 24 } to{ stroke-dashoffset: 0 } }
 
+        /* CHANGED: Modern Geometric Sans-Serif — FORCED on every element */
+        .capa-page, .capa-page *,
+        .capa-success-wrap, .capa-success-wrap *,
+        .capa-modal, .capa-modal *,
+        .capa-page h1, .capa-page h2, .capa-page h3, .capa-page h4,
+        .capa-page h5, .capa-page h6,
+        .capa-success-wrap h1, .capa-success-wrap h2, .capa-success-wrap h3,
+        .capa-modal h1, .capa-modal h2, .capa-modal h3,
+        .capa-page p, .capa-success-wrap p, .capa-modal p,
+        .capa-page span, .capa-success-wrap span, .capa-modal span,
+        .capa-page a, .capa-success-wrap a, .capa-modal a,
+        .capa-page button, .capa-success-wrap button, .capa-modal button,
+        .capa-page strong, .capa-success-wrap strong, .capa-modal strong,
+        .capa-page small, .capa-success-wrap small, .capa-modal small,
+        .capa-page em, .capa-success-wrap em, .capa-modal em,
+        .capa-page b, .capa-success-wrap b, .capa-modal b,
+        .capa-page div, .capa-success-wrap div, .capa-modal div,
+        .capa-page label, .capa-modal label,
+        .capa-page input, .capa-page select, .capa-page textarea {
+          font-family: ${FONT_STACK} !important;
+          font-feature-settings: "ss01", "cv11", "cv02" !important;
+          font-optical-sizing: auto !important;
+          letter-spacing: -0.011em !important;
+        }
+
+        /* CHANGED: every button on this page is pill-shaped */
+        .capa-btn,
+        .capa-modal button,
+        .capa-modal .capa-checkbox {
+          border-radius: 999px !important;
+        }
+        /* Keep the checkbox square (it's a custom checkbox, not a button) */
+        .capa-modal .capa-checkbox { border-radius: 5px !important; }
+
         .capa-page { position:relative; min-height:100vh; background:#f8faff; font-family:'Poppins',sans-serif; padding:48px 20px 64px; overflow:hidden; }
         .capa-container { max-width:660px; margin:0 auto; position:relative; z-index:1; }
 
@@ -591,8 +629,9 @@ export default function CAPApplyClient() {
 
         .capa-btn { display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:14px; padding:13px 26px; border-radius:999px; text-decoration:none; border:none; cursor:pointer; transition:transform .2s ease, box-shadow .2s ease; font-family:inherit; }
         .capa-btn:hover { transform:translateY(-2px); }
-        .capa-btn-primary { background-image:linear-gradient(135deg, ${G.blue}, ${G.indigo}); color:#fff; box-shadow:0 8px 22px ${G.blue}35; }
-        .capa-btn-primary:hover { box-shadow:0 14px 32px ${G.blue}50; }
+        /* CHANGED: button background is now SOLID BLACK, no gradient */
+        .capa-btn-primary { background:#0b0d20; color:#fff; box-shadow:0 8px 22px rgba(0,0,0,0.25); }
+        .capa-btn-primary:hover { box-shadow:0 14px 32px rgba(0,0,0,0.35); }
         .capa-btn-ghost { background:#f1f5f9; color:#374151; box-shadow:none; }
         .capa-btn-ghost:hover { background:#e2e8f0; }
         .capa-arrow { display:inline-flex; animation:capa-arrow-bounce 1.3s ease-in-out infinite; }

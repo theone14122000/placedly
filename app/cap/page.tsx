@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/* ── Brand tokens ── */
+/* ── Brand tokens (kept for icon colors and decorative backgrounds only) ── */
 const G = {
   blue:   '#2563eb',
   indigo: '#7c8ff0',
@@ -30,7 +30,15 @@ const G = {
   purple: '#a855f7',
 };
 
+/* Single text color for light backgrounds */
+const TEXT_DARK = '#0b0d20';
+/* Single text color for dark backgrounds */
+const TEXT_LIGHT = '#ffffff';
+
 const DOT_COLORS = [G.blue, G.orange, G.purple, '#16a34a', G.rose, '#0891b2', G.blue];
+
+/* Modern Geometric Sans-Serif stack */
+const FONT_STACK = `"Outfit", "Poppins", "Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
 
 /* ── Icon registry ── */
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -209,25 +217,24 @@ const DEFAULT_SHARE_TABLE = [
 /* ════════════════════════════════════════════════════════════
    Reusable Server Primitives
 ════════════════════════════════════════════════════════════ */
-function GradientText({
+
+/* CHANGED: GradientText → plain span with solid color, no gradient */
+function AccentText({
   children,
   tag: Tag = 'span',
   style = {},
+  dark = false,
 }: {
   children: React.ReactNode;
   tag?: 'h1' | 'h2' | 'span';
   style?: React.CSSProperties;
+  dark?: boolean;
 }) {
   return (
     <Tag
       style={{
-        backgroundImage: `linear-gradient(270deg, ${G.blue}, ${G.indigo}, ${G.orange}, ${G.rose}, ${G.purple}, ${G.blue})`,
-        backgroundSize: '300% 300%',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
-        animation: 'cap-grad 6s ease infinite',
-        display: 'inline-block',
+        display: 'inline',
+        color: dark ? TEXT_LIGHT : TEXT_DARK,
         ...style,
       }}
     >
@@ -236,6 +243,7 @@ function GradientText({
   );
 }
 
+/* CHANGED: SectionLabel uses plain solid color text instead of gradient */
 function SectionLabel({
   text,
   center = false,
@@ -260,22 +268,9 @@ function SectionLabel({
         width: center ? '100%' : 'auto',
       }}
     >
-      <span style={{ width: '18px', height: '2.5px', borderRadius: '999px', background: `linear-gradient(90deg, ${G.blue}, ${G.orange})` }} />
-      <span
-        style={
-          light
-            ? { color: 'rgba(255,255,255,0.5)' }
-            : {
-                backgroundImage: `linear-gradient(90deg, ${G.blue}, ${G.indigo})`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }
-        }
-      >
-        {text}
-      </span>
-      <span style={{ width: '18px', height: '2.5px', borderRadius: '999px', background: `linear-gradient(90deg, ${G.orange}, ${G.blue})` }} />
+      <span style={{ width: '18px', height: '2.5px', borderRadius: '999px', background: TEXT_DARK, opacity: 0.4 }} />
+      <span style={{ color: light ? 'rgba(255,255,255,0.6)' : TEXT_DARK }}>{text}</span>
+      <span style={{ width: '18px', height: '2.5px', borderRadius: '999px', background: TEXT_DARK, opacity: 0.4 }} />
     </div>
   );
 }
@@ -308,19 +303,16 @@ export default async function CapPage() {
     secondaryCtaLink: cms.hero?.secondaryCtaLink ?? '#how-it-works',
   };
 
-  /* ── Live activity ── */
   const liveActivity =
     cms.liveActivity && cms.liveActivity.length > 0
       ? cms.liveActivity
       : DEFAULT_LIVE_ACTIVITY;
 
-  /* ── Hero stats ── */
   const heroStats =
     cms.stats && cms.stats.length > 0
       ? cms.stats.map((s) => ({ num: s.value ?? '', label: s.label ?? '' }))
       : DEFAULT_STATS;
 
-  /* ── Included ── */
   const included = {
     heading:         cms.included?.heading         ?? 'Everything You Get',
     headingGradient: cms.included?.headingGradient ?? 'in the CAP',
@@ -332,7 +324,6 @@ export default async function CapPage() {
     ctaLink: cms.included?.ctaLink ?? '/cap/apply',
   };
 
-  /* ── Success share ── */
   const sharePercent  = cms.successShare?.percent    ?? 12;
   const calcDefault   = cms.successShare?.calcDefault ?? 500000;
   const successShare  = {
@@ -351,13 +342,11 @@ export default async function CapPage() {
   const fmtINR  = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN');
   const fmtLakh = (n: number) => '₹' + (n / 100000).toFixed(2).replace(/\.00$/, '') + 'L';
 
-  /* ── Share table ── */
   const shareTable =
     cms.shareTable && cms.shareTable.length > 0
       ? cms.shareTable
       : DEFAULT_SHARE_TABLE;
 
-  /* ── Domains ── */
   const rawDomains =
     cms.domains && cms.domains.length > 0 ? cms.domains : DEFAULT_DOMAINS;
 
@@ -379,7 +368,6 @@ export default async function CapPage() {
     };
   });
 
-  /* ── Steps ── */
   const mergedSteps = DEFAULT_STEPS.map((step, i) => {
     const match =
       cms.steps?.find((s) => s.number === step.num || s.id === step.num) ??
@@ -394,13 +382,11 @@ export default async function CapPage() {
     };
   });
 
-  /* ── Journey heading — FIX: was undefined before ── */
   const journey = {
     heading:         cms.journey?.heading         ?? 'Your 7-Step',
     headingGradient: cms.journey?.headingGradient ?? 'Career Roadmap',
   };
 
-  /* ── CTA ── */
   const cta = {
     title:          cms.cta?.title          ?? 'Ready to Transform Your Career?',
     body:           cms.cta?.body           ?? 'Zero upfront. Pay only after you succeed.',
@@ -410,7 +396,6 @@ export default async function CapPage() {
     whatsappText:   cms.cta?.whatsappText   ?? 'WhatsApp Us',
   };
 
-  /* ── Sticky CTA ── */
   const stickyCta = {
     title:    cms.stickyCta?.title    ?? 'Ready to grow?',
     subtitle: cms.stickyCta?.subtitle ?? 'Zero upfront — pay after offer.',
@@ -418,13 +403,9 @@ export default async function CapPage() {
     ctaLink:  cms.stickyCta?.ctaLink  ?? '/cap/apply',
   };
 
-  /* ═══════════════════════════════════════════
-     RENDER
-  ═══════════════════════════════════════════ */
   return (
     <PageLayout>
 
-      {/* ════ SCROLL PROGRESS ════ */}
       <div className="cap-progress-track" aria-hidden>
         <div className="cap-progress-fill" data-scroll-progress />
       </div>
@@ -434,7 +415,6 @@ export default async function CapPage() {
         <AmbientBlobs />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
 
-          {/* Breadcrumb */}
           <nav className="cap-breadcrumb reveal" data-reveal aria-label="Breadcrumb">
             <a href="/">Home</a>
             <span className="cap-sep">›</span>
@@ -448,16 +428,16 @@ export default async function CapPage() {
 
             <h1 className="cap-h1 reveal" data-reveal data-delay="0.04">
               {hero.titlePlain}{' '}
-              <GradientText tag="span" style={{ display: 'inline' }}>
+              {/* CHANGED: GradientText → AccentText (plain black, no gradient) */}
+              <AccentText tag="span" style={{ display: 'inline' }}>
                 {hero.titleGradient}
-              </GradientText>
+              </AccentText>
             </h1>
 
             <p className="cap-lead reveal" data-reveal data-delay="0.08">
               {hero.subtitle}
             </p>
 
-            {/* Live ticker */}
             <div className="cap-ticker reveal" data-reveal data-delay="0.12">
               <span className="cap-ticker-live">
                 <span className="cap-ticker-dot" /> LIVE
@@ -480,7 +460,7 @@ export default async function CapPage() {
             </div>
           </div>
 
-          {/* Stats strip */}
+          {/* Stats strip — CHANGED: numbers are plain black, not gradient */}
           <div className="cap-stats-4">
             {heroStats.map((s, i) => (
               <div
@@ -494,12 +474,6 @@ export default async function CapPage() {
                 <div
                   className="cap-stat-num"
                   data-countup={s.num}
-                  style={{
-                    backgroundImage: `linear-gradient(135deg, ${DOT_COLORS[i % DOT_COLORS.length]}, ${G.indigo})`,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}
                 >
                   {s.num}
                 </div>
@@ -515,12 +489,11 @@ export default async function CapPage() {
         <div className="container">
           <div className="cap-two-col">
 
-            {/* Left: Benefits */}
             <div className="reveal" data-reveal>
               <SectionLabel text="What's Included" />
               <h2 className="cap-h2">
                 {included.heading}{' '}
-                <GradientText tag="span">{included.headingGradient}</GradientText>
+                <AccentText tag="span">{included.headingGradient}</AccentText>
               </h2>
               <p className="cap-body">{included.body}</p>
 
@@ -534,7 +507,7 @@ export default async function CapPage() {
                   >
                     <CheckCircle2
                       size={15}
-                      color={G.blue}
+                      color={TEXT_DARK}
                       style={{ flexShrink: 0, marginTop: '2px' }}
                     />
                     <span>{b}</span>
@@ -556,13 +529,12 @@ export default async function CapPage() {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', position: 'relative', zIndex: 1 }}>
                 <TrendingUp size={18} color={G.orange} />
-                <div style={{ fontSize: '16px', fontWeight: 800 }}>{successShare.title}</div>
+                <div style={{ fontSize: '16px', fontWeight: 800, color: TEXT_LIGHT }}>{successShare.title}</div>
               </div>
               <p style={{ fontSize: '12.5px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.5, marginBottom: '12px', position: 'relative', zIndex: 1 }}>
                 {successShare.subtitle}
               </p>
 
-              {/* Calculator */}
               <div className="cap-calc" style={{ position: 'relative', zIndex: 5 }}>
                 <div className="cap-calc-head">
                   <Calculator size={12} color={G.orange} />
@@ -603,14 +575,13 @@ export default async function CapPage() {
                   </div>
                   <div className="cap-calc-result">
                     <span className="cap-calc-result-k">Return</span>
-                    <span className="cap-calc-result-v" style={{ color: '#fff' }} data-ctc-roi>
+                    <span className="cap-calc-result-v" style={{ color: TEXT_LIGHT }} data-ctc-roi>
                       {initRoi}x ROI
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Share table */}
               <table
                 className="cap-share-table"
                 style={{ position: 'relative', zIndex: 1, marginTop: '12px' }}
@@ -632,7 +603,7 @@ export default async function CapPage() {
                         data-ctc-row
                         data-ctc-num={ctcNum}
                       >
-                        <td style={{ fontWeight: 600, color: '#fff' }}>{row.ctc}</td>
+                        <td style={{ fontWeight: 600, color: TEXT_LIGHT }}>{row.ctc}</td>
                         <td style={{ color: G.orange }}>{row.fee}</td>
                         <td>
                           <span style={{ color: '#4ade80', fontWeight: 700 }}>{row.net}</span>
@@ -644,7 +615,7 @@ export default async function CapPage() {
                 </tbody>
               </table>
 
-              <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.35)', marginTop: '10px', position: 'relative', zIndex: 1 }}>
+              <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.45)', marginTop: '10px', position: 'relative', zIndex: 1 }}>
                 {successShare.note}
               </p>
             </div>
@@ -663,14 +634,13 @@ export default async function CapPage() {
           <div className="cap-center reveal" data-reveal>
             <SectionLabel text="Specialist Networks" center />
             <h2 className="cap-h2">
-              Target <GradientText tag="span">Specialist Domains</GradientText>
+              Target <AccentText tag="span">Specialist Domains</AccentText>
             </h2>
             <p className="cap-body" style={{ margin: '0 auto', textAlign: 'center', maxWidth: '420px' }}>
               Filter by industry or tap any card to flip for placement metrics.
             </p>
           </div>
 
-          {/* Filter pills */}
           <div className="cap-domain-filters reveal" data-reveal>
             {[
               { id: 'all',     label: 'All Domains' },
@@ -690,7 +660,6 @@ export default async function CapPage() {
             ))}
           </div>
 
-          {/* Domain cards */}
           <div className="cap-domains-3">
             {mergedDomains.map((d, i) => (
               <div
@@ -709,7 +678,6 @@ export default async function CapPage() {
                 >
                   <div className="cap-flip-inner" data-flip-inner>
 
-                    {/* Front */}
                     <div
                       className="cap-domain-card cap-flip-face"
                       data-spotlight-card
@@ -754,10 +722,9 @@ export default async function CapPage() {
                       </div>
                     </div>
 
-                    {/* Back */}
                     <div
                       className="cap-domain-card cap-flip-face cap-flip-back"
-                      style={{ background: `linear-gradient(160deg, ${d.iconColor}, #0b0d20)` }}
+                      style={{ background: `linear-gradient(160deg, ${d.iconColor}, ${TEXT_DARK})` }}
                     >
                       <div className="cap-domain-back-title">{d.title}</div>
                       <div className="cap-domain-back-stats">
@@ -792,14 +759,12 @@ export default async function CapPage() {
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="cap-center reveal" data-reveal>
             <SectionLabel text="The Roadmap" center />
-            {/* FIX: journey is now properly defined above */}
             <h2 className="cap-h2">
               {journey.heading}{' '}
-              <GradientText tag="span">{journey.headingGradient}</GradientText>
+              <AccentText tag="span">{journey.headingGradient}</AccentText>
             </h2>
           </div>
 
-          {/* Autoplay controls */}
           <div className="cap-journey-controls reveal" data-reveal>
             <button
               type="button"
@@ -815,7 +780,6 @@ export default async function CapPage() {
             </span>
           </div>
 
-          {/* Step nav pills */}
           <div className="cap-step-nav reveal" data-reveal>
             {mergedSteps.map((step, i) => (
               <button
@@ -833,7 +797,6 @@ export default async function CapPage() {
             ))}
           </div>
 
-          {/* Journey timeline */}
           <div className="cap-journey" data-journey-track>
             <div className="cap-journey-rail" />
             <div className="cap-journey-rail-fill" data-journey-fill />
@@ -921,7 +884,7 @@ export default async function CapPage() {
             <div style={{ position: 'relative', zIndex: 1 }}>
               <SectionLabel text="Take Action" center light />
               <h2 className="cap-cta-h2">
-                <GradientText tag="span">{cta.title}</GradientText>
+                <AccentText tag="span" dark>{cta.title}</AccentText>
               </h2>
               <p className="cap-cta-body">{cta.body}</p>
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -972,32 +935,80 @@ export default async function CapPage() {
 
       {/* ════ STYLES ════ */}
       <style>{`
-        /* ── Keyframes ── */
-        @keyframes cap-grad        { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        /* CHANGED: removed @keyframes cap-grad (text-gradient animation) */
         @keyframes cap-blob-a      { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,15px)} }
         @keyframes cap-blob-b      { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-15px,-10px)} }
         @keyframes cap-arrow-bounce{ 0%,100%{transform:translateX(0)} 50%{transform:translateX(3px)} }
         @keyframes cap-pulse-ring  { 0%{transform:scale(1);opacity:.5} 70%{transform:scale(1.8);opacity:0} 100%{transform:scale(1.8);opacity:0} }
         @keyframes cap-ticker-dot-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.2)} }
         @keyframes cap-fade-slide  { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:translateY(0)} }
-
-        /* FIX: was referenced in CSS but never defined */
         @keyframes cap-row-in      { from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:translateX(0)} }
 
-        /* ── Reveal utility ── */
+        /* CHANGED: Modern Geometric Sans-Serif — FORCED on every element */
+        .cap-hero, .cap-section, .cap-cta, .cap-sticky-cta,
+        .cap-hero *, .cap-section *, .cap-cta *, .cap-sticky-cta *,
+        .cap-hero h1, .cap-hero h2, .cap-hero h3,
+        .cap-section h1, .cap-section h2, .cap-section h3,
+        .cap-hero p, .cap-section p, .cap-cta p,
+        .cap-hero span, .cap-section span, .cap-cta span,
+        .cap-hero a, .cap-section a, .cap-cta a,
+        .cap-hero button, .cap-section button,
+        .cap-hero strong, .cap-section strong,
+        .cap-hero small, .cap-section small,
+        .cap-hero em, .cap-section em, .cap-hero b, .cap-section b,
+        .cap-hero div, .cap-section div,
+        .cap-hero label, .cap-section label,
+        .cap-hero input, .cap-section input,
+        .cap-hero textarea, .cap-section textarea,
+        .cap-hero th, .cap-section th, .cap-hero td, .cap-section td {
+          font-family: ${FONT_STACK} !important;
+          font-feature-settings: "ss01", "cv11", "cv02" !important;
+          font-optical-sizing: auto !important;
+          letter-spacing: -0.011em !important;
+        }
+
+        /* CHANGED: all light-bg text → one color (deep black) */
+        .cap-hero,
+        .cap-hero h1, .cap-hero h2, .cap-hero h3,
+        .cap-section h1, .cap-section h2, .cap-section h3,
+        .cap-hero p, .cap-section p,
+        .cap-hero span, .cap-section span,
+        .cap-hero a, .cap-section a,
+        .cap-hero button, .cap-section button,
+        .cap-hero strong, .cap-section strong,
+        .cap-hero small, .cap-section small,
+        .cap-hero em, .cap-section em, .cap-hero b, .cap-section b,
+        .cap-hero div, .cap-section div,
+        .cap-hero label, .cap-section label,
+        .cap-hero th, .cap-section th,
+        .cap-hero td, .cap-section td {
+          color: ${TEXT_DARK} !important;
+        }
+
+        /* CHANGED: all dark-bg text (hero, CTA, share card) → one color (white) */
+        .cap-cta, .cap-cta h1, .cap-cta h2, .cap-cta h3,
+        .cap-cta p, .cap-cta span, .cap-cta a,
+        .cap-cta strong, .cap-cta small, .cap-cta em, .cap-cta b, .cap-cta div,
+        .cap-share-card, .cap-share-card span, .cap-share-card p, .cap-share-card div {
+          color: ${TEXT_LIGHT} !important;
+        }
+
+        /* CHANGED: every button inside this page is pill-shaped */
+        .cap-btn, .cap-play-btn, .cap-sticky-dismiss,
+        .cap-filter-pill, .cap-step-pill, .cap-domain-back-cta {
+          border-radius: 999px !important;
+        }
+
         .reveal { opacity:0; transform:translateY(18px); transition:opacity .4s cubic-bezier(.22,1,.36,1), transform .4s cubic-bezier(.22,1,.36,1); }
         .reveal.is-visible { opacity:1; transform:translateY(0); }
 
-        /* ── Scroll progress ── */
         .cap-progress-track { position:fixed; top:0; left:0; right:0; height:3px; background:transparent; z-index:9999; pointer-events:none; }
         .cap-progress-fill  { height:100%; width:0%; background:linear-gradient(90deg,${G.blue},${G.purple},${G.orange}); transition:width .1s linear; }
 
-        /* ── Ambient blobs ── */
         .cap-blob        { position:absolute; border-radius:50%; pointer-events:none; }
         .cap-blob-blue   { top:-100px; left:-100px; width:400px; height:400px; background:radial-gradient(circle,${G.blue}1e 0%,transparent 70%); filter:blur(90px); animation:cap-blob-a 14s ease-in-out infinite; }
         .cap-blob-orange { top:15%; right:-120px; width:340px; height:340px; background:radial-gradient(circle,${G.orange}1a 0%,transparent 70%); filter:blur(90px); animation:cap-blob-b 16s ease-in-out infinite 1s; }
 
-        /* ── Hero ── */
         .cap-hero       { position:relative; padding:calc(18px + 56px) 0 0; overflow:hidden; background:#fafbff; }
         .cap-breadcrumb { display:flex; align-items:center; gap:5px; font-size:12px; color:#94a3b8; margin-bottom:10px; }
         .cap-breadcrumb a { color:#94a3b8; text-decoration:none; }
@@ -1005,31 +1016,27 @@ export default async function CapPage() {
         .cap-sep     { color:#cbd5e1; }
         .cap-current { color:#475569; font-weight:500; }
 
-        /* ── Typography ── */
-        .cap-h1  { font-size:clamp(1.9rem,3.8vw,3rem); font-weight:900; line-height:1.1; letter-spacing:-1px; color:#0b0d20; margin-bottom:10px; }
-        .cap-h2  { font-size:clamp(1.5rem,2.5vw,2.1rem); font-weight:900; color:#0b0d20; line-height:1.14; letter-spacing:-0.5px; margin-bottom:8px; }
+        .cap-h1  { font-size:clamp(1.9rem,3.8vw,3rem); font-weight:900; line-height:1.1; letter-spacing:-1px; margin-bottom:10px; }
+        .cap-h2  { font-size:clamp(1.5rem,2.5vw,2.1rem); font-weight:900; line-height:1.14; letter-spacing:-0.5px; margin-bottom:8px; }
         .cap-lead{ font-size:14.5px; color:#64748b; line-height:1.65; max-width:520px; margin-bottom:12px; }
         .cap-body{ font-size:13.5px; color:#64748b; line-height:1.65; margin-bottom:12px; }
 
-        /* ── Live ticker ── */
         .cap-ticker      { display:inline-flex; align-items:center; gap:8px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:5px 12px 5px 6px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,.04); max-width:100%; overflow:hidden; }
         .cap-ticker-live { display:inline-flex; align-items:center; gap:4px; font-size:9.5px; font-weight:800; color:#ef4444; background:#fef2f2; padding:2px 6px; border-radius:999px; flex-shrink:0; }
         .cap-ticker-dot  { width:5px; height:5px; border-radius:50%; background:#ef4444; animation:cap-ticker-dot-pulse 1.4s ease-in-out infinite; }
         .cap-ticker-text { font-size:11.5px; font-weight:600; color:#374151; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; animation:cap-fade-slide .4s ease; }
 
-        /* ── Buttons ── */
         .cap-btn-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; }
         .cap-btn { display:inline-flex; align-items:center; gap:6px; font-weight:700; font-size:13px; padding:10px 22px; border-radius:999px; text-decoration:none; transition:transform .15s ease, box-shadow .2s ease; border:none; cursor:pointer; font-family:inherit; }
         .cap-btn:hover { transform:translateY(-2px); }
         .cap-btn-primary    { background-image:linear-gradient(135deg,${G.blue},${G.indigo}); color:#fff; box-shadow:0 6px 18px ${G.blue}30; }
         .cap-btn-warm       { background-image:linear-gradient(135deg,${G.orange},${G.rose}); color:#fff; box-shadow:0 6px 18px ${G.orange}35; }
-        .cap-btn-ghost      { background:#fff; color:#374151; border:1.5px solid #e2e8f0; box-shadow:0 2px 6px rgba(0,0,0,.04); }
+        .cap-btn-ghost      { background:#fff; color:${TEXT_DARK}; border:1.5px solid #e2e8f0; box-shadow:0 2px 6px rgba(0,0,0,.04); }
         .cap-btn-ghost:hover{ border-color:${G.blue}; }
         .cap-btn-ghost-dark { background:transparent; color:#fff; border:1.5px solid rgba(255,255,255,.25); }
         .cap-btn-ghost-dark:hover { border-color:rgba(255,255,255,.5); }
         .cap-arrow { display:inline-flex; animation:cap-arrow-bounce 1.3s ease-in-out infinite; }
 
-        /* ── Stats strip — FIX: added grid-template-columns ── */
         .cap-stats-4     { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid #eef2ff; }
         .cap-stat-cell   { text-align:center; padding:12px 10px; background:#fafbff; transition:background .25s ease; cursor:default; }
         .cap-stat-cell:hover { background:#fff; }
@@ -1037,29 +1044,24 @@ export default async function CapPage() {
         .cap-stat-cell:hover .cap-stat-num { transform:scale(1.05); }
         .cap-stat-label  { font-size:11px; color:#94a3b8; font-weight:600; }
 
-        /* ── Sections ── */
         .cap-section { padding:clamp(24px,4vw,44px) 0; }
         .cap-center  { text-align:center; margin-bottom:18px; }
         .cap-two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
 
-        /* ── Benefit rows ── */
         .cap-benefit { display:flex; align-items:flex-start; gap:8px; padding:5px 6px; border-radius:8px; transition:background .2s ease, transform .2s ease; }
         .cap-benefit:hover { background:#f0f6ff; transform:translateX(3px); }
         .cap-benefit span { font-size:13px; color:#374151; line-height:1.45; }
 
-        /* ── Success-share card ── */
         .cap-share-card { position:relative; overflow:hidden; background:linear-gradient(160deg,#0b0d20 0%,#14163a 100%); border-radius:18px; color:#fff; padding:20px; transition:transform .25s ease, box-shadow .25s ease; }
         .cap-share-card:hover { transform:translateY(-3px); box-shadow:0 16px 36px rgba(0,0,0,.25); }
         .cap-share-orb  { position:absolute; top:-50px; right:-50px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle,${G.blue}30 0%,transparent 70%); pointer-events:none; }
 
-        /* ── Calculator ── */
         .cap-calc { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px; }
         .cap-calc-head { display:flex; align-items:center; gap:5px; font-size:10px; font-weight:700; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:.4px; margin-bottom:8px; }
         .cap-calc-value-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
         .cap-calc-value-row span:first-child { font-size:11px; color:rgba(255,255,255,0.5); font-weight:600; }
         .cap-calc-ctc-display { font-size:17px; font-weight:900; color:#fff; }
 
-        /* ── Slider — fully unblocked ── */
         .cap-calc-range { position:relative; z-index:50; width:100%; -webkit-appearance:none; appearance:none; height:6px; border-radius:99px; background:linear-gradient(90deg,${G.blue},${G.orange}); outline:none; margin-bottom:10px; cursor:grab; touch-action:none; pointer-events:auto !important; display:block; }
         .cap-calc-range:active { cursor:grabbing; }
         .cap-calc-range::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:22px; height:22px; border-radius:50%; background:#fff; border:3px solid ${G.blue}; box-shadow:0 2px 8px rgba(0,0,0,.4); cursor:grab; transition:transform .15s ease; }
@@ -1071,22 +1073,17 @@ export default async function CapPage() {
         .cap-calc-result-k { display:block; font-size:8.5px; font-weight:700; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:.3px; margin-bottom:2px; }
         .cap-calc-result-v { display:block; font-size:12.5px; font-weight:800; }
 
-        /* ── Share table ── */
         .cap-share-table { width:100%; border-collapse:collapse; font-size:11.5px; }
         .cap-share-table th { padding:6px 4px; text-align:left; color:rgba(255,255,255,.45); font-weight:600; font-size:10px; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,.12); }
-
-        /* FIX: cap-row-in now defined above */
         .cap-share-row { border-bottom:1px solid rgba(255,255,255,.06); opacity:0; animation:cap-row-in .4s ease forwards; transition:background .2s ease; }
         .cap-share-row.is-highlighted { background:rgba(37,99,235,0.22); box-shadow:inset 0 0 0 1px ${G.blue}; }
         .cap-share-row td { padding:7px 4px; }
         .cap-roi-badge { margin-left:4px; background:rgba(74,222,128,.12); color:#4ade80; border:1px solid rgba(74,222,128,.2); border-radius:999px; padding:1px 5px; font-size:9.5px; font-weight:700; }
 
-        /* ── Domain filter pills ── */
         .cap-domain-filters { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-bottom:14px; }
         .cap-filter-pill { border:1.5px solid #e2e8f0; background:#fff; color:#64748b; font-size:11.5px; font-weight:700; padding:5px 12px; border-radius:999px; cursor:pointer; transition:all .2s ease; font-family:inherit; }
         .cap-filter-pill.is-active, .cap-filter-pill:hover { border-color:${G.blue}; color:${G.blue}; background:#eff6ff; }
 
-        /* ── Flip cards ── */
         .cap-domains-3   { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; align-items:stretch; }
         .cap-flip-outer  { perspective:1200px; height:100%; transition:opacity .3s ease; }
         .cap-flip-outer.is-hidden { display:none; }
@@ -1103,7 +1100,7 @@ export default async function CapPage() {
         .cap-domain-spotlight { position:absolute; inset:0; opacity:0; transition:opacity .25s ease; pointer-events:none; }
         .cap-flip-outer:hover .cap-domain-spotlight { opacity:1; }
         .cap-domain-strip { position:absolute; top:0; left:0; right:0; height:2.5px; }
-        .cap-domain-top   { display:flex; align-items:center; justify-content:space-between; gap:6px; position:relative; z-index:1; }
+        .cap-domain-top   { display:flex; align-items:center; justify-content:space-between; gap:6px; position:relative; zIndex:1; }
         .cap-domain-icon  { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform .25s ease; }
         .cap-flip-outer:hover .cap-domain-icon { transform:scale(1.08) rotate(-4deg); }
         .cap-domain-badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:999px; font-size:9.5px; font-weight:700; white-space:nowrap; }
@@ -1118,7 +1115,6 @@ export default async function CapPage() {
         .cap-domain-back-k     { font-size:9.5px; color:rgba(255,255,255,.7); font-weight:600; }
         .cap-domain-back-cta   { display:inline-flex; align-items:center; justify-content:center; gap:4px; margin:0 14px; padding:6px 12px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); border-radius:999px; color:#fff; font-size:11px; font-weight:700; text-decoration:none; }
 
-        /* ── Journey ── */
         .cap-journey-controls { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
         .cap-play-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; border:1.5px solid #e2e8f0; background:#fff; cursor:pointer; font-size:11.5px; font-weight:700; color:#374151; transition:all .2s ease; font-family:inherit; }
         .cap-play-btn.is-playing { background:${G.blue}; border-color:${G.blue}; color:#fff; }
@@ -1153,7 +1149,6 @@ export default async function CapPage() {
         .cap-journey-title   { font-size:13.5px; font-weight:700; color:#0b0d20; }
         .cap-journey-badge   { margin-left:auto; padding:2px 7px; border-radius:999px; font-size:9.5px; font-weight:700; }
 
-        /* FIX: chevron rotation on open */
         .cap-journey-chevron { font-size:13px; color:#94a3b8; transition:transform .3s ease; flex-shrink:0; }
         .cap-journey-item.is-open .cap-journey-chevron { transform:rotate(180deg); }
 
@@ -1167,15 +1162,13 @@ export default async function CapPage() {
 
         .cap-journey-sparkle { position:absolute; bottom:10px; right:12px; opacity:.6; }
 
-        /* ── Dark CTA ── */
         .cap-cta { position:relative; border-radius:20px; padding:clamp(24px,4vw,36px) clamp(16px,4vw,40px); text-align:center; overflow:hidden; background:linear-gradient(135deg,#0b0d20 0%,#1a1040 50%,#0d1836 100%); }
         .cap-cta-orb { position:absolute; border-radius:50%; filter:blur(60px); pointer-events:none; }
         .cap-cta-orb-blue   { top:-60px; left:10%; width:240px; height:240px; background:radial-gradient(circle,${G.blue}35 0%,transparent 70%); }
         .cap-cta-orb-orange { bottom:-40px; right:8%; width:200px; height:200px; background:radial-gradient(circle,${G.orange}30 0%,transparent 70%); }
-        .cap-cta-h2   { font-size:clamp(1.4rem,2.8vw,2rem); font-weight:900; line-height:1.18; margin-bottom:8px; }
-        .cap-cta-body { font-size:13px; color:rgba(255,255,255,.6); max-width:400px; margin:0 auto 16px; line-height:1.65; }
+        .cap-cta-h2   { font-size:clamp(1.4rem,2.8vw,2rem); font-weight:900; line-height:1.18; margin-bottom:8px; color:#fff; }
+        .cap-cta-body { font-size:13px; color:rgba(255,255,255,.7); max-width:400px; margin:0 auto 16px; line-height:1.65; }
 
-        /* ── Sticky bar ── */
         .cap-sticky-cta { position:fixed; bottom:0; left:0; right:0; z-index:998; transform:translateY(120%); transition:transform .35s cubic-bezier(.22,1,.36,1); pointer-events:none; }
         .cap-sticky-cta.is-visible { transform:translateY(0); pointer-events:auto; }
         .cap-sticky-cta-inner { max-width:840px; margin:0 auto; background:#fff; border:1px solid #e2e8f0; border-radius:12px 12px 0 0; box-shadow:0 -6px 24px rgba(0,0,0,.1); padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
@@ -1185,7 +1178,6 @@ export default async function CapPage() {
         .cap-sticky-dismiss { all:unset; display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:#f1f5f9; color:#64748b; cursor:pointer; }
         .cap-sticky-dismiss:hover { background:#e2e8f0; }
 
-        /* ── Responsive ── */
         @media (max-width: 900px) { .cap-step-nav { display:none; } }
         @media (max-width: 860px) {
           .cap-two-col    { grid-template-columns:1fr !important; gap:20px !important; }
@@ -1212,7 +1204,6 @@ export default async function CapPage() {
 
   ready(function () {
 
-    /* ── Scroll progress ── */
     var progressFill = document.querySelector('[data-scroll-progress]');
     function updateProgress() {
       var h = document.documentElement;
@@ -1221,7 +1212,6 @@ export default async function CapPage() {
       if (progressFill) progressFill.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
     }
 
-    /* ── Intersection reveal ── */
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
@@ -1233,7 +1223,6 @@ export default async function CapPage() {
     }, { threshold: 0.1, rootMargin: '-30px' });
     document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
 
-    /* ── Count-up ── */
     function runCountUp(el) {
       var target = el.getAttribute('data-countup') || '';
       var match = target.match(/[\\d.]+/);
@@ -1268,7 +1257,6 @@ export default async function CapPage() {
       });
     });
 
-    /* ── Live ticker ── */
     var tickerText = document.querySelector('[data-ticker-text]');
     var activities = ${JSON.stringify(liveActivity)};
     var tickerIdx = 0;
@@ -1283,7 +1271,6 @@ export default async function CapPage() {
       }, 3200);
     }
 
-    /* ── Spotlight paint ── */
     document.querySelectorAll('[data-spotlight-card]').forEach(function (card) {
       card.addEventListener('mousemove', function (e) {
         var rect = card.getBoundingClientRect();
@@ -1292,7 +1279,6 @@ export default async function CapPage() {
       });
     });
 
-    /* ── Domain filter ── */
     var filterBtns  = document.querySelectorAll('[data-domain-filter]');
     var domainCards = document.querySelectorAll('[data-domain-category]');
     filterBtns.forEach(function (btn) {
@@ -1307,7 +1293,6 @@ export default async function CapPage() {
       });
     });
 
-    /* ── Slider calculator ── */
     var slider     = document.querySelector('[data-ctc-slider]');
     var ctcValueEl = document.querySelector('[data-ctc-value]');
     var feeEl      = document.querySelector('[data-ctc-fee]');
@@ -1343,7 +1328,6 @@ export default async function CapPage() {
       updateCalc();
     }
 
-    /* ── Flip cards ── */
     document.querySelectorAll('[data-flip-card]').forEach(function (card) {
       function toggle(e) {
         if (e.target && e.target.closest('a')) return;
@@ -1356,7 +1340,6 @@ export default async function CapPage() {
       });
     });
 
-    /* ── Journey ── */
     var journeyItems   = Array.prototype.slice.call(document.querySelectorAll('[data-journey-step]'));
     var stepPills      = Array.prototype.slice.call(document.querySelectorAll('[data-step-pill]'));
     var fill           = document.querySelector('[data-journey-fill]');
@@ -1380,7 +1363,6 @@ export default async function CapPage() {
       }
     }
 
-    /* Scroll-driven rail + active step */
     var track = document.querySelector('[data-journey-track]');
     function updateJourneyFromScroll() {
       if (!track || !fill || autoplayOn) return;
@@ -1414,7 +1396,6 @@ export default async function CapPage() {
     updateJourneyFromScroll();
     updateProgress();
 
-    /* Step pill nav */
     stepPills.forEach(function (pill, idx) {
       pill.addEventListener('click', function () {
         stopAutoplay();
@@ -1425,7 +1406,6 @@ export default async function CapPage() {
       });
     });
 
-    /* Accordion toggle */
     document.querySelectorAll('[data-journey-toggle]').forEach(function (btn, idx) {
       btn.addEventListener('click', function () {
         var item = journeyItems[idx];
@@ -1436,7 +1416,6 @@ export default async function CapPage() {
       });
     });
 
-    /* Autoplay */
     var playBtn   = document.querySelector('[data-journey-play]');
     var playIcon  = document.querySelector('[data-play-icon]');
     var playLabel = document.querySelector('[data-play-label]');
@@ -1467,7 +1446,6 @@ export default async function CapPage() {
       if (autoplayOn) stopAutoplay(); else startAutoplay();
     });
 
-    /* ── Sticky CTA ── */
     var stickyBar = document.querySelector('[data-sticky-cta]');
     var dismissed = false;
     try { dismissed = sessionStorage.getItem('cap_sticky_dismissed') === '1'; } catch(e) {}
@@ -1487,7 +1465,6 @@ export default async function CapPage() {
     }
     updateStickyBar();
 
-    /* ── Magnetic buttons ── */
     document.querySelectorAll('[data-magnetic]').forEach(function (btn) {
       btn.addEventListener('mousemove', function (e) {
         var r = btn.getBoundingClientRect();
@@ -1498,7 +1475,7 @@ export default async function CapPage() {
       btn.addEventListener('mouseleave', function () { btn.style.transform = ''; });
     });
 
-  }); // ready
+  });
 })();
           `,
         }}
