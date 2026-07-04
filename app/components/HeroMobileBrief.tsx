@@ -1,31 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Sparkles,
-  Briefcase,
-  Building2,
-  Globe,
-  ShieldCheck,
-  Users,
-  Award,
-  ArrowRight,
-  Signal,
-  Wifi,
-  BatteryFull,
-  type LucideIcon,
-} from 'lucide-react';
-import Link from 'next/link';
+import { Sparkles } from 'lucide-react';
 import HeroGradientBg from './HeroGradientBg';
 import HeroBgVideo from './HeroBgVideo';
 
 type HeroCms = { [k: string]: string };
 
-/* Modern geometric sans-serif stack (same as Hero) */
-const GEOM_FONT_STACK = `"Outfit", "Poppins", "Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
-
-/* Five profile circles — 2 tilted left (lower), 1 center, 2 tilted right (higher) */
+/** Five profile circles — 2 tilted left (lower), 1 center, 2 tilted right (higher) */
 const SCATTER_AVATARS = [
   { src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face', top: '52%', left: '12%', size: 26, rotate: -14, blur: true },
   { src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&crop=face', top: '4%', left: '56%', size: 34, center: true },
@@ -38,21 +20,6 @@ const HERO_CARD_AVATARS = {
   right: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face',
 } as const;
 
-/* 3 CTA pills — same blue-shade system as desktop Hero */
-const HERO_CTAS = [
-  { id: 'candidates', icon: Briefcase, cmsKey: 'hp:heroPrimaryCtaText',   fallback: 'For Candidates', href: '/contact',    shade: 'deep' as const },
-  { id: 'recruiters', icon: Building2, cmsKey: 'hp:heroRecruiterCtaText', fallback: 'For Recruiters', href: '/recruiters', shade: 'royal' as const },
-  { id: 'study',      icon: Globe,     cmsKey: 'hp:heroSecondaryCtaText', fallback: 'Study Abroad',   href: '/study-visa', shade: 'sky' as const },
-] as const;
-
-/* Stats bar — same 4 items as desktop Hero */
-const HERO_STATS = [
-  { icon: ShieldCheck, value: '40+', label: 'Companies Trusted' },
-  { icon: Users,       value: '1K+', label: 'Candidates Placed' },
-  { icon: Globe,       value: '20+', label: 'Countries' },
-  { icon: Award,       value: '10+', label: 'Yrs Experience' },
-] as const;
-
 const MOBILE_SUBLINE = (
   <>
     <span className="placedly-liftoff-m-sub-line">
@@ -64,489 +31,15 @@ const MOBILE_SUBLINE = (
   </>
 );
 
-/* ─── CTA Pill (matches desktop Hero) ─── */
-function MobileCtaPill({
-  href, label, icon: Icon, shade, delay = 0,
-}: {
-  href: string; label: string; icon: LucideIcon;
-  shade: 'deep' | 'royal' | 'sky'; delay?: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay }}
-      whileTap={{ scale: 0.96 }}
-      style={{ flex: '1 1 0', minWidth: 0 }}
-    >
-      <Link href={href} className={`mb-cta-pill mb-cta-pill--${shade}`}>
-        <span className="mb-cta-pill-shine" aria-hidden />
-        <span className="mb-cta-pill-icon">
-          <Icon size={13} strokeWidth={2.2} />
-        </span>
-        <span className="mb-cta-pill-label">{label}</span>
-        <motion.span
-          className="mb-cta-pill-arrow"
-          animate={{ x: [0, 2, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut', delay: delay + 0.3 }}
-        >
-          <ArrowRight size={11} strokeWidth={2.5} />
-        </motion.span>
-      </Link>
-    </motion.div>
-  );
-}
-
-/* ─── Stat Pill (matches desktop Hero) ─── */
-function MobileStatPill({
-  icon: Icon, value, label, delay = 0,
-}: {
-  icon: LucideIcon; value: string; label: string; delay?: number;
-}) {
-  return (
-    <motion.div
-      className="mb-stat-pill"
-      initial={{ opacity: 0, y: 10, scale: 0.94 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.35, delay }}
-    >
-      <span className="mb-stat-pill-icon">
-        <Icon size={13} strokeWidth={2.15} />
-      </span>
-      <span className="mb-stat-pill-text">
-        <strong>{value}</strong>
-        <span>{label}</span>
-      </span>
-    </motion.div>
-  );
-}
-
-/* ─── Status Bar (mobile system look) ─── */
-function StatusBar() {
-  const [time, setTime] = useState<string>('');
-
-  useEffect(() => {
-    const update = () => {
-      const d = new Date();
-      const h = d.getHours();
-      const m = d.getMinutes().toString().padStart(2, '0');
-      setTime(`${h}:${m}`);
-    };
-    update();
-    const t = setInterval(update, 30_000);
-    return () => clearInterval(t);
-  }, []);
-
-  return (
-    <div className="mb-status-bar" aria-hidden>
-      <span className="mb-status-time">{time}</span>
-      <div className="mb-status-right">
-        <Signal size={11} strokeWidth={2.4} />
-        <Wifi size={11} strokeWidth={2.4} />
-        <BatteryFull size={13} strokeWidth={2.2} />
-      </div>
-    </div>
-  );
-}
-
-export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
-  const offerRole      = cms['hp:heroOfferRole']      ?? 'Head of Marketing';
-  const offerName      = cms['hp:heroOfferName']      ?? 'Amber';
-  const admitName      = cms['hp:heroAdmitName']      ?? 'Daniel';
-  const admitInterest  = cms['hp:heroAdmitInterest']  ?? 'Early stage AI';
+export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
+  const admitInterest = 'Early stage AI';
+  const offerName = 'Amber';
+  const recommendName = 'Daniel';
 
   return (
     <div className="placedly-hero-mobile-brief" aria-label="Mobile hero">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
-
-        /* ============================================================
-           FONT — Modern Geometric Sans-Serif
-           ============================================================ */
-        .placedly-hero-mobile-brief,
-        .placedly-hero-mobile-brief * {
-          font-family: ${GEOM_FONT_STACK};
-          font-feature-settings: "ss01", "cv11", "cv02";
-          font-optical-sizing: auto;
-        }
-
-        /* ============================================================
-           WRAPPER
-           ============================================================ */
-        .placedly-hero-mobile-brief {
-          position: relative;
-          overflow: hidden;
-          padding: 0 0 clamp(20px, 4vw, 28px);
-        }
-
-        /* ============================================================
-           STATUS BAR
-           ============================================================ */
-        .mb-status-bar {
-          position: relative;
-          z-index: 5;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 10px 18px 6px;
-          font-size: 12px;
-          font-weight: 700;
-          letter-spacing: -0.01em;
-          font-variant-numeric: tabular-nums;
-        }
-
-        .mb-status-time {
-          font-size: 13px;
-          font-weight: 700;
-          color: #0f172a;
-        }
-
-        .mb-status-right {
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          color: #0f172a;
-        }
-
-        /* ============================================================
-           COPY
-           ============================================================ */
-        .placedly-lift-hero-copy {
-          position: relative;
-          z-index: 2;
-          text-align: center;
-          padding: clamp(16px, 4vw, 24px) 18px 0;
-        }
-
-        .placedly-liftoff-m-headline {
-          font-size: clamp(1.7rem, 7vw, 2.1rem);
-          font-weight: 700;
-          line-height: 1.16;
-          letter-spacing: -0.025em;
-          color: #0f172a;
-          margin: 0 0 10px;
-        }
-
-        .placedly-liftoff-m-sub {
-          font-size: 14px;
-          font-weight: 400;
-          line-height: 1.55;
-          letter-spacing: -0.005em;
-          color: #475569;
-          max-width: 320px;
-          margin: 0 auto 20px;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .placedly-liftoff-m-sub-line {
-          display: block;
-        }
-
-        /* ============================================================
-           CTA pills — same blue-shade system as desktop
-           ============================================================ */
-        .mb-cta-row {
-          position: relative;
-          z-index: 2;
-          display: flex;
-          gap: 8px;
-          width: 100%;
-          padding: 0 18px;
-          margin-bottom: clamp(20px, 4vw, 28px);
-        }
-
-        .mb-cta-pill {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-          width: 100%;
-          padding: 12px 10px;
-          border-radius: 999px;
-          font-weight: 700;
-          font-size: 12px;
-          letter-spacing: 0.005em;
-          text-decoration: none;
-          color: #ffffff;
-          border: 1px solid rgba(255,255,255,0.22);
-          overflow: hidden;
-          isolation: isolate;
-          white-space: nowrap;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .mb-cta-pill:active { transform: scale(0.96); }
-
-        .mb-cta-pill--deep {
-          background-image: linear-gradient(135deg, #1e3a8a, #2563eb);
-          box-shadow: 0 6px 16px rgba(30, 58, 138, 0.3);
-        }
-        .mb-cta-pill--royal {
-          background-image: linear-gradient(135deg, #2563eb, #3b82f6);
-          box-shadow: 0 6px 16px rgba(37, 99, 235, 0.28);
-        }
-        .mb-cta-pill--sky {
-          background-image: linear-gradient(135deg, #0ea5e9, #38bdf8);
-          box-shadow: 0 6px 16px rgba(14, 165, 233, 0.28);
-        }
-
-        .mb-cta-pill-shine {
-          position: absolute;
-          top: 0; left: -130%;
-          width: 55%; height: 100%;
-          background: linear-gradient(115deg, transparent, rgba(255,255,255,0.5), transparent);
-          transform: skewX(-20deg);
-          z-index: 0;
-          pointer-events: none;
-          transition: left 0.6s ease;
-        }
-        .mb-cta-pill:hover .mb-cta-pill-shine { left: 140%; }
-
-        .mb-cta-pill-icon {
-          position: relative;
-          z-index: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-        }
-
-        .mb-cta-pill-label {
-          position: relative;
-          z-index: 1;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .mb-cta-pill-arrow {
-          position: relative;
-          z-index: 1;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 18px;
-          height: 18px;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.2);
-          flex-shrink: 0;
-        }
-
-        /* ============================================================
-           STAGE / SCENE
-           ============================================================ */
-        .placedly-lift-hero-stage--liftoff {
-          padding: 0 18px;
-        }
-
-        .placedly-lift-mobile-scene {
-          position: relative;
-          width: 100%;
-          height: 220px;
-          max-width: 480px;
-          margin: 0 auto;
-          border-radius: 18px;
-          overflow: hidden;
-          background: linear-gradient(135deg, #f8faff, #f0f7ff);
-          border: 1px solid #eef2f9;
-        }
-
-        /* Bokeh avatars */
-        .placedly-lift-mobile-bokeh {
-          position: absolute;
-          border-radius: 50%;
-          overflow: hidden;
-        }
-        .placedly-lift-mobile-bokeh img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          border-radius: 50%;
-          border: 1.5px solid #fff;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-          display: block;
-        }
-        .placedly-lift-mobile-bokeh.is-center img {
-          border: 2.5px solid #fff;
-          box-shadow: 0 5px 16px rgba(37,99,235,0.30);
-        }
-        .placedly-lift-mobile-bokeh.is-blur img {
-          filter: blur(1.5px);
-          opacity: 0.7;
-        }
-
-        /* Profile cards (compact, same as Hero thin variant) */
-        .placedly-lift-card--mobile {
-          position: absolute;
-          background: #ffffff;
-          border-radius: 11px;
-          padding: 8px 10px;
-          box-shadow: 0 6px 16px rgba(15, 23, 42, 0.10);
-          border: 1px solid rgba(15, 23, 42, 0.06);
-          z-index: 10;
-        }
-        .placedly-lift-card--mobile-left {
-          left: 2%;
-          bottom: 14%;
-          width: 124px;
-        }
-        .placedly-lift-card--mobile-right {
-          right: 2%;
-          top: 30%;
-          width: 124px;
-        }
-        .placedly-lift-card-profile {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          margin-bottom: 4px;
-        }
-        .placedly-lift-avatar--photo {
-          width: 26px;
-          height: 26px;
-          border-radius: 50%;
-          object-fit: cover;
-          flex-shrink: 0;
-          background: #f1f5f9;
-        }
-        .placedly-lift-card-identity { min-width: 0; }
-        .placedly-lift-name {
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: -0.01em;
-          color: #0f172a;
-          margin: 0;
-          line-height: 1.1;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .placedly-lift-role {
-          font-size: 9.5px;
-          font-weight: 500;
-          color: #64748b;
-          margin: 0;
-          line-height: 1.2;
-        }
-        .placedly-lift-card-line {
-          font-size: 10.5px;
-          font-weight: 500;
-          letter-spacing: -0.005em;
-          color: #475569;
-          margin: 0;
-          line-height: 1.3;
-        }
-        .placedly-lift-card-line strong {
-          color: #2563eb;
-          font-weight: 700;
-        }
-
-        /* Recommended glass pill */
-        .placedly-lift-mobile-rec {
-          position: absolute;
-          top: 8%;
-          right: 4%;
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          background: #ffffff;
-          border: 1px solid #dbeafe;
-          border-radius: 999px;
-          padding: 5px 10px 5px 6px;
-          box-shadow: 0 3px 10px rgba(37, 99, 235, 0.10);
-          z-index: 9;
-          white-space: nowrap;
-        }
-        .placedly-lift-mobile-rec > svg {
-          color: #2563eb;
-          flex-shrink: 0;
-        }
-        .placedly-lift-mobile-rec-text {
-          display: flex;
-          flex-direction: column;
-          line-height: 1.1;
-        }
-        .placedly-lift-mobile-rec-text strong {
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: -0.005em;
-          color: #2563eb;
-        }
-        .placedly-lift-mobile-rec-text span {
-          font-size: 10.5px;
-          font-weight: 500;
-          color: #0f172a;
-        }
-
-        /* ============================================================
-           STATS BAR — same 4 pills as desktop
-           ============================================================ */
-        .mb-stats-bar {
-          position: relative;
-          z-index: 2;
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 8px;
-          width: 100%;
-          padding: clamp(20px, 4vw, 28px) 18px 0;
-        }
-
-        .mb-stat-pill {
-          position: relative;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          background: #ffffff;
-          border: 1px solid #e7ebf3;
-          border-radius: 999px;
-          padding: 9px 12px 9px 8px;
-          box-shadow: 0 3px 10px rgba(15,23,42,0.05);
-          overflow: hidden;
-          isolation: isolate;
-        }
-
-        .mb-stat-pill-icon {
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
-          flex-shrink: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: linear-gradient(135deg, #eff6ff, #dbeafe);
-          border: 1.5px solid #bfdbfe;
-          color: #1e40af;
-        }
-
-        .mb-stat-pill-text {
-          display: flex;
-          flex-direction: column;
-          line-height: 1.18;
-          min-width: 0;
-        }
-        .mb-stat-pill-text strong {
-          font-size: 13px;
-          font-weight: 800;
-          letter-spacing: -0.02em;
-          color: #1e3a8a;
-        }
-        .mb-stat-pill-text span {
-          font-size: 9.5px;
-          font-weight: 500;
-          color: #64748b;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      `}</style>
-
       <HeroGradientBg />
       <HeroBgVideo />
-
-      {/* ── Status bar ── */}
-      <StatusBar />
-
-      {/* ── Copy ── */}
       <div className="placedly-lift-hero-copy">
         <motion.h1
           className="placedly-liftoff-m-headline"
@@ -569,21 +62,6 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
         </motion.p>
       </div>
 
-      {/* ── 3 CTA pills ── */}
-      <div className="mb-cta-row">
-        {HERO_CTAS.map((cta, i) => (
-          <MobileCtaPill
-            key={cta.id}
-            href={cta.href}
-            label={cms[cta.cmsKey] ?? cta.fallback}
-            icon={cta.icon}
-            shade={cta.shade}
-            delay={0.16 + i * 0.06}
-          />
-        ))}
-      </div>
-
-      {/* ── Visual scene ── */}
       <motion.div
         className="placedly-lift-hero-stage placedly-lift-hero-stage--liftoff"
         initial={{ opacity: 0, y: 20 }}
@@ -596,20 +74,20 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
             const rotate = 'rotate' in person ? person.rotate : 0;
             const isBlur = 'blur' in person && person.blur;
             return (
-              <div
-                key={`${person.src}-${i}`}
-                className={`placedly-lift-mobile-bokeh${isCenter ? ' is-center' : ''}${isBlur ? ' is-blur' : ''}`}
-                style={{
-                  top: person.top,
-                  left: person.left,
-                  width: person.size,
-                  height: person.size,
-                  zIndex: isCenter ? 6 : i + 2,
-                  transform: isCenter ? 'translateX(-50%)' : `rotate(${rotate}deg)`,
-                }}
-              >
-                <img src={person.src} alt="" width={person.size} height={person.size} loading="lazy" decoding="async" />
-              </div>
+            <div
+              key={`${person.src}-${i}`}
+              className={`placedly-lift-mobile-bokeh${isCenter ? ' is-center' : ''}${isBlur ? ' is-blur' : ''}`}
+              style={{
+                top: person.top,
+                left: person.left,
+                width: person.size,
+                height: person.size,
+                zIndex: isCenter ? 6 : i + 2,
+                transform: isCenter ? 'translateX(-50%)' : `rotate(${rotate}deg)`,
+              }}
+            >
+              <img src={person.src} alt="" width={person.size} height={person.size} loading="lazy" decoding="async" />
+            </div>
             );
           })}
 
@@ -634,7 +112,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               </div>
             </div>
             <p className="placedly-lift-card-line">
-              Hiring a <strong>{offerRole}</strong>
+              Hiring a <strong>Head of Marketing</strong>
             </p>
           </motion.div>
 
@@ -646,7 +124,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
             <Sparkles size={11} strokeWidth={2.25} aria-hidden />
             <span className="placedly-lift-mobile-rec-text">
               <strong>Recommended</strong>
-              <span>{admitName}</span>
+              <span>{recommendName}</span>
             </span>
           </motion.div>
 
@@ -666,8 +144,8 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
                 decoding="async"
               />
               <div className="placedly-lift-card-identity">
-                <p className="placedly-lift-name">{admitName}</p>
-                <p className="placedly-lift-role">Marketing Leader</p>
+                <p className="placedly-lift-name">{recommendName}</p>
+                <p className="placedly-lift-role">Marketing leader</p>
               </div>
             </div>
             <p className="placedly-lift-card-line">
@@ -676,19 +154,6 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           </motion.div>
         </div>
       </motion.div>
-
-      {/* ── Stats bar — same 4 items as desktop ── */}
-      <div className="mb-stats-bar">
-        {HERO_STATS.map((stat, i) => (
-          <MobileStatPill
-            key={stat.label}
-            icon={stat.icon}
-            value={stat.value}
-            label={stat.label}
-            delay={0.3 + i * 0.06}
-          />
-        ))}
-      </div>
     </div>
   );
 }

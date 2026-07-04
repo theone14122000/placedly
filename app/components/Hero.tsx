@@ -21,7 +21,7 @@ import HiringPartnersMarquee from './HiringPartnersMarquee';
 
 type HeroCms = { [k: string]: string };
 
-/* Modern geometric sans-serif stack (Outfit + Poppins primary, Geist / Inter / system fallbacks) */
+/* Modern geometric sans-serif stack */
 const GEOM_FONT_STACK = `"Outfit", "Poppins", "Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
 
 /** Static portrait URLs — loose zig-zag spacing like reference hero */
@@ -199,54 +199,67 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           font-family: ${GEOM_FONT_STACK};
           font-feature-settings: "ss01", "cv11", "cv02";
           font-optical-sizing: auto;
-        }
-
-        .placedly-lift-hero-title {
-          font-weight: 700;
-          letter-spacing: -0.025em;
-        }
-
-        .placedly-lift-hero-sub {
-          font-weight: 400;
           letter-spacing: -0.011em;
         }
 
-        .placedly-hero-cta-pill {
+        /* Display headline */
+        .placedly-lift-hero-title {
           font-weight: 700;
-          letter-spacing: 0.005em;
+          letter-spacing: -0.028em;
         }
 
+        /* Subheadline */
+        .placedly-lift-hero-sub {
+          font-weight: 400;
+          letter-spacing: -0.012em;
+        }
+
+        /* CTA pills */
+        .placedly-hero-cta-pill {
+          font-weight: 600;
+          letter-spacing: -0.005em;
+        }
+
+        /* Profile card name */
         .placedly-lift-name {
+          font-weight: 700;
+          letter-spacing: -0.015em;
+        }
+
+        /* Profile card role */
+        .placedly-lift-role {
+          font-weight: 500;
+          letter-spacing: -0.003em;
+        }
+
+        /* Profile card line */
+        .placedly-lift-card-line {
+          font-weight: 500;
+          letter-spacing: -0.008em;
+        }
+        .placedly-lift-card-line strong {
           font-weight: 700;
           letter-spacing: -0.01em;
         }
 
-        .placedly-lift-role {
-          font-weight: 500;
-          letter-spacing: 0;
-        }
-
-        .placedly-lift-card-line {
-          font-weight: 500;
-          letter-spacing: -0.005em;
-        }
-
+        /* Glass pill (Shared / Recommended) */
         .placedly-lift-glass-pill-text strong {
           font-weight: 700;
-          letter-spacing: -0.005em;
+          letter-spacing: -0.008em;
         }
         .placedly-lift-glass-pill-text span {
           font-weight: 500;
-          letter-spacing: 0;
+          letter-spacing: -0.003em;
         }
 
+        /* Stat pill */
         .placedly-hero-stat-pill-text strong {
           font-weight: 800;
-          letter-spacing: -0.02em;
+          letter-spacing: -0.025em;
         }
         .placedly-hero-stat-pill-text span {
           font-weight: 500;
-          letter-spacing: 0;
+          letter-spacing: -0.003em;
         }
 
         /* ============================================================
@@ -267,7 +280,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           width: 100%;
           padding: 11px 16px 11px 10px;
           border-radius: 999px;
-          font-weight: 700;
           font-size: 13px;
           text-decoration: none;
           color: #ffffff;
@@ -330,7 +342,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           height: 26px;
           border-radius: 50%;
           background: rgba(255,255,255,0.2);
-          flex-shrink: 0;
+          flex-srink: 0;
         }
 
         .placedly-hero-cta-pill-label {
@@ -431,12 +443,10 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
         .placedly-hero-stat-pill-text strong {
           font-size: 14.5px;
-          font-weight: 800;
           color: #1e3a8a;
         }
         .placedly-hero-stat-pill-text span {
           font-size: 11px;
-          font-weight: 500;
           color: #64748b;
           white-space: nowrap;
           overflow: hidden;
