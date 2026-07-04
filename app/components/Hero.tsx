@@ -132,7 +132,7 @@ function HeroCtaPill({
       <Link href={href} className={`placedly-hero-cta-pill placedly-hero-cta-pill--${shade}`}>
         <span className="placedly-hero-cta-pill-shine" aria-hidden />
         <span className="placedly-hero-cta-pill-icon">
-          <Icon size={13} strokeWidth={2.15} />
+          <Icon size={11} strokeWidth={2.15} />
         </span>
         <span className="placedly-hero-cta-pill-label">{label}</span>
         <motion.span
@@ -140,7 +140,7 @@ function HeroCtaPill({
           animate={{ x: [0, 3, 0] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut', delay: delay + 0.3 }}
         >
-          <ArrowRight size={11} strokeWidth={2.5} />
+          <ArrowRight size={9} strokeWidth={2.5} />
         </motion.span>
       </Link>
     </motion.div>
@@ -310,12 +310,12 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           position: relative;
           display: inline-flex;
           align-items: center;
-          gap: 8px;
+          gap: 6px;
           width: 100%;
-          /* same padding as .placedly-hero-stat-pill */
-          padding: 10px 16px 10px 10px;
+          /* tighter padding than stats pill for a more compact button */
+          padding: 6px 12px 6px 6px;
           border-radius: 999px;
-          font-size: 12.5px;
+          font-size: 11px;
           text-decoration: none;
           color: #ffffff;
           border: 1px solid rgba(255,255,255,0.14);
@@ -353,15 +353,15 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
         .placedly-hero-cta-pill:hover .placedly-hero-cta-pill-shine { left: 140%; }
 
-        /* icon circle — same size as stat pill icon (32px) */
+        /* icon circle — smaller than stat pill icon (32px) */
         .placedly-hero-cta-pill-icon {
           position: relative;
           z-index: 1;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 24px;
-          height: 24px;
+          width: 20px;
+          height: 20px;
           border-radius: 50%;
           background: rgba(255,255,255,0.14);
           flex-shrink: 0;
@@ -380,8 +380,8 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 18px;
-          height: 18px;
+          width: 14px;
+          height: 14px;
           border-radius: 50%;
           background: rgba(255,255,255,0.14);
           margin-left: auto;
