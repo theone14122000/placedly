@@ -28,18 +28,17 @@ const G = {
   purple: '#a855f7',
 };
 
-const GRAD =
-  'linear-gradient(270deg, #2563eb, #7c8ff0, #fb923c, #f43f5e, #a855f7, #2563eb)';
-
-const GRAD_TEXT: React.CSSProperties = {
-  backgroundImage: GRAD,
-  backgroundSize: '300% 300%',
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  backgroundClip: 'text',
-  animation: 'ab-grad 6s ease infinite',
-  display: 'inline',
-};
+// CHANGED: gradient text constants removed (kept commented for reference)
+// const GRAD = 'linear-gradient(270deg, #2563eb, #7c8ff0, #fb923c, #f43f5e, #a855f7, #2563eb)';
+// const GRAD_TEXT: React.CSSProperties = {
+//   backgroundImage: GRAD,
+//   backgroundSize: '300% 300%',
+//   WebkitBackgroundClip: 'text',
+//   WebkitTextFillColor: 'transparent',
+//   backgroundClip: 'text',
+//   animation: 'ab-grad 6s ease infinite',
+//   display: 'inline',
+// };
 
 /* ── Defaults ── */
 const DEFAULT_VALUES = [
@@ -105,11 +104,6 @@ export default async function AboutUsPage() {
 
       {/* ════════════════════ ENHANCED KEYFRAMES ════════════════════ */}
       <style>{`
-        @keyframes ab-grad {
-          0%   { background-position: 0%   50%; }
-          50%  { background-position: 100% 50%; }
-          100% { background-position: 0%   50%; }
-        }
         @keyframes ab-float-up   { 0%,100%{ transform:translateY(0) }  50%{ transform:translateY(-10px) } }
         @keyframes ab-float-down { 0%,100%{ transform:translateY(0) }  50%{ transform:translateY( 10px) } }
         @keyframes ab-fade-up {
@@ -138,8 +132,6 @@ export default async function AboutUsPage() {
         .ab-fade-up { opacity:0; animation: ab-fade-up 0.6s cubic-bezier(.22,1,.36,1) forwards; }
 
         /* ═══════════ ENHANCED INTERACTIVE STYLES ═══════════ */
-        
-        /* Interactive Buttons */
         .ab-btn {
           position: relative;
           overflow: hidden;
@@ -153,18 +145,13 @@ export default async function AboutUsPage() {
           transform: translateX(-100%);
           transition: transform 0.6s;
         }
-        .ab-btn:hover::before {
-          transform: translateX(100%);
-        }
+        .ab-btn:hover::before { transform: translateX(100%); }
         .ab-btn:hover {
           transform: translateY(-3px) scale(1.02);
           box-shadow: 0 20px 50px rgba(37,99,235,0.4) !important;
         }
-        .ab-btn:active {
-          transform: translateY(-1px) scale(0.98);
-        }
+        .ab-btn:active { transform: translateY(-1px) scale(0.98); }
 
-        /* Secondary Button */
         .ab-btn-secondary {
           position: relative;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -175,11 +162,9 @@ export default async function AboutUsPage() {
           background: rgba(37,99,235,0.05) !important;
           box-shadow: 0 12px 30px rgba(37,99,235,0.15) !important;
         }
-        .ab-btn-secondary:active {
-          transform: translateY(-1px) scale(0.98);
-        }
+        .ab-btn-secondary:active { transform: translateY(-1px) scale(0.98); }
 
-        /* Value Cards - Enhanced */
+        /* Value Cards */
         .ab-val-card { 
           position: relative;
           transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -199,17 +184,13 @@ export default async function AboutUsPage() {
           box-shadow: 0 30px 60px rgba(37,99,235,0.2) !important;
           border-color: transparent !important;
         }
-        .ab-val-card:hover::after {
-          opacity: 1;
-        }
+        .ab-val-card:hover::after { opacity: 1; }
         .ab-val-card .ab-val-strip {
           transform: scaleX(.35);
           transform-origin: left;
           transition: transform .5s cubic-bezier(.34,1.56,.64,1);
         }
-        .ab-val-card:hover .ab-val-strip { 
-          transform: scaleX(1); 
-        }
+        .ab-val-card:hover .ab-val-strip { transform: scaleX(1); }
         .ab-val-card .ab-val-icon {
           transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -218,35 +199,44 @@ export default async function AboutUsPage() {
           animation: ab-glow-pulse 2s infinite;
         }
 
-        /* Stat Cards - Enhanced */
+        /* CHANGED: Stat cards — thin + pill-shaped, horizontal row */
         .ab-stat-cell { 
           position: relative;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 16px;
+          background: #fff;
+          border: 1px solid #eef2ff;
+          border-radius: 999px;
+          box-shadow: 0 2px 8px rgba(15,23,42,0.04);
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           cursor: pointer;
         }
-        .ab-stat-cell::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(251,146,60,0.05));
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
         .ab-stat-cell:hover {
-          transform: translateY(-8px);
-          background: rgba(37,99,235,.05) !important;
-        }
-        .ab-stat-cell:hover::before {
-          opacity: 1;
+          transform: translateY(-3px);
+          box-shadow: 0 8px 20px rgba(37,99,235,0.10) !important;
+          border-color: ${G.blue}30;
         }
         .ab-stat-cell .ab-stat-icon {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .ab-stat-cell:hover .ab-stat-icon {
-          transform: scale(1.2) rotate(10deg);
+        .ab-stat-cell:hover .ab-stat-icon { transform: scale(1.15) rotate(8deg); }
+        .ab-stat-cell .ab-stat-text {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.1;
+          min-width: 0;
         }
 
-        /* Timeline dots - Enhanced */
+        /* Timeline dots */
         .ab-tl-dot { 
           animation: ab-pulse-dot 2.4s ease-in-out infinite;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -255,17 +245,10 @@ export default async function AboutUsPage() {
           transform: scale(1.3);
           animation: ab-glow-pulse 1.5s infinite;
         }
+        .ab-timeline-item { transition: all 0.3s ease; cursor: pointer; }
+        .ab-timeline-item:hover { transform: translateX(8px); }
 
-        /* Timeline Item */
-        .ab-timeline-item {
-          transition: all 0.3s ease;
-          cursor: pointer;
-        }
-        .ab-timeline-item:hover {
-          transform: translateX(8px);
-        }
-
-        /* Floating badges - Enhanced */
+        /* Floating badges */
         .ab-badge-left  { 
           animation: ab-float-up 5.5s ease-in-out infinite;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -280,16 +263,12 @@ export default async function AboutUsPage() {
           box-shadow: 0 20px 50px rgba(37,99,235,0.25) !important;
         }
 
-        /* Founder Card */
-        .ab-founder-card {
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .ab-founder-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .ab-founder-card:hover {
           transform: translateY(-8px);
           box-shadow: 0 30px 70px rgba(37,99,235,0.15) !important;
         }
 
-        /* Dark CTA Section */
         .ab-dark-cta .ab-cta-btn {
           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
@@ -303,63 +282,37 @@ export default async function AboutUsPage() {
           transform: translateX(-100%);
           transition: transform 0.6s;
         }
-        .ab-dark-cta .ab-cta-btn:hover::before {
-          transform: translateX(100%);
-        }
+        .ab-dark-cta .ab-cta-btn:hover::before { transform: translateX(100%); }
         .ab-dark-cta .ab-cta-btn:hover {
           transform: translateY(-5px) scale(1.05);
           box-shadow: 0 25px 60px rgba(37,99,235,0.6) !important;
         }
-        .ab-dark-cta .ab-cta-btn:active {
-          transform: translateY(-2px) scale(1.02);
-        }
+        .ab-dark-cta .ab-cta-btn:active { transform: translateY(-2px) scale(1.02); }
 
         /* responsive */
         @media (max-width: 860px) {
           .ab-two-col   { grid-template-columns: 1fr !important; gap: 40px !important; }
           .ab-values-3  { grid-template-columns: 1fr 1fr !important; }
+          .ab-stats-4   { flex-wrap: wrap !important; }
+          .ab-stat-cell { flex: 1 1 calc(50% - 6px) !important; }
           .ab-founder-card { flex-direction: column !important; padding: 32px !important; text-align: center; }
           .ab-mission-img  { height: 320px !important; }
-
-          /* FIX: kill sticky once the timeline grid stacks to 1 column —
-             otherwise the intro copy overlaps the timeline steps beneath it */
-          .ab-sticky-col {
-            position: static !important;
-            top: auto !important;
-          }
-
-          /* FIX: founder photo shrinks + centers instead of forcing overflow */
+          .ab-sticky-col { position: static !important; top: auto !important; }
           .ab-founder-card > div:first-child {
             width: 150px !important;
             height: 190px !important;
             margin: 0 auto;
           }
-
-          /* FIX: floating badges shouldn't hang off the edge of the viewport */
           .ab-badge-left  { left: 0 !important; padding: 10px 14px !important; }
           .ab-badge-right { right: 0 !important; padding: 10px 14px !important; }
-
-          /* FIX: give the dark CTA breathing room on tablets too, not just phones */
           .ab-dark-cta { padding: 56px 28px !important; }
-
-          /* Safety net: prevents floating badges / negative-offset elements
-             from ever creating a horizontal scrollbar on small screens */
           section { overflow-x: hidden; }
         }
         @media (max-width: 580px) {
-          .ab-stats-4  { grid-template-columns: repeat(2,1fr) !important; }
-          .ab-values-3 { grid-template-columns: 1fr !important; }
-          .ab-dark-cta { padding: 48px 20px !important; }
-
-          /* FIX: 4→2 col stat grid needs its own border logic */
-          .ab-stat-cell:nth-child(2n)  { border-right: none !important; }
-          .ab-stat-cell:nth-child(n+3) { border-top: 1px solid #eef2ff; }
-
-          /* FIX: hero CTA row stacks cleanly on small phones */
-          .ab-hero-actions { flex-direction: column !important; align-items: stretch !important; }
-          .ab-hero-actions a { justify-content: center !important; }
-
-          /* FIX: timeline connector shouldn't be squished on ultra-narrow screens */
+          .ab-stats-4   { flex-direction: column !important; }
+          .ab-stat-cell { width: 100% !important; }
+          .ab-values-3  { grid-template-columns: 1fr !important; }
+          .ab-dark-cta  { padding: 48px 20px !important; }
           .ab-timeline-item { gap: 14px !important; }
         }
       `}</style>
@@ -367,7 +320,7 @@ export default async function AboutUsPage() {
       {/* ════════════════════ HERO ════════════════════ */}
       <section style={{
         position: 'relative',
-        padding: 'calc(56px + 80px) 0 0',
+        padding: 'calc(56px + 80px) 0 32px',
         overflow: 'hidden',
         background: '#f8faff',
       }}>
@@ -394,23 +347,24 @@ export default async function AboutUsPage() {
           </nav>
 
           <div style={{ maxWidth:'780px' }} className="ab-fade-up">
-            {/* Eyebrow */}
+            {/* Eyebrow — gradient removed, now plain text */}
             <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'20px' }}>
               <span style={{ width:'22px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
-              <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', backgroundImage:`linear-gradient(90deg,${G.blue},${G.indigo})`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>Our Story</span>
+              <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color: G.blue }}>Our Story</span>
               <span style={{ width:'22px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.orange},${G.blue})` }}/>
             </div>
 
-            <h1 style={{ fontSize:'clamp(2.4rem,5vw,4rem)', fontWeight:900, lineHeight:1.08, letterSpacing:'-1.5px', color:'#0b0d20', marginBottom:'22px', WebkitTextFillColor:'initial' }}>
+            {/* CHANGED: gradient span removed, plain colored text */}
+            <h1 style={{ fontSize:'clamp(2.4rem,5vw,4rem)', fontWeight:900, lineHeight:1.08, letterSpacing:'-1.5px', color:'#0b0d20', marginBottom:'22px' }}>
               We&apos;re Not Just a<br/>Placement Agency.{' '}
-              <span style={GRAD_TEXT}>We&apos;re Career Partners.</span>
+              <span style={{ color: G.blue }}>We&apos;re Career Partners.</span>
             </h1>
 
             <p style={{ fontSize:'17px', color:'#64748b', lineHeight:1.75, maxWidth:'540px', marginBottom:'36px' }}>
               Born in Delhi NCR. Built for every professional who deserves better — a better role, a better salary, and a career that actually reflects their potential.
             </p>
 
-            <div className="ab-hero-actions" style={{ display:'flex', gap:'12px', flexWrap:'wrap', marginBottom:'64px' }}>
+            <div className="ab-hero-actions" style={{ display:'flex', gap:'12px', flexWrap:'wrap', marginBottom:'40px' }}>
               <a href="/contact" className="ab-btn" style={{
                 display:'inline-flex', alignItems:'center', gap:'8px',
                 backgroundImage:`linear-gradient(135deg,${G.blue},${G.indigo})`,
@@ -432,30 +386,23 @@ export default async function AboutUsPage() {
             </div>
           </div>
 
-          {/* Stats strip */}
-          <div className="ab-stats-4" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', borderTop:'1px solid #eef2ff' }}>
+          {/* CHANGED: Stats strip — thin pill-shaped horizontal row */}
+          <div className="ab-stats-4" style={{ display:'flex', gap:'12px', flexWrap:'wrap', justifyContent:'center' }}>
             {stats.map((s, i) => {
               const IconComp = s.Icon ?? Users;
               const col      = s.color ?? G.blue;
               return (
-                <div key={i} className="ab-stat-cell" style={{
-                  textAlign:'center', padding:'32px 16px',
-                  borderRight: i < stats.length-1 ? '1px solid #eef2ff' : 'none',
-                }}>
+                <div key={i} className="ab-stat-cell">
                   <div className="ab-stat-icon" style={{
-                    width:'44px', height:'44px', borderRadius:'12px',
                     background:`${col}15`,
-                    display:'flex', alignItems:'center', justifyContent:'center',
-                    margin:'0 auto 12px',
                   }}>
-                    <IconComp size={20} color={col}/>
+                    <IconComp size={15} color={col}/>
                   </div>
-                  <div style={{
-                    fontSize:'2rem', fontWeight:900, lineHeight:1, marginBottom:'6px',
-                    backgroundImage:`linear-gradient(135deg,${col},${G.indigo})`,
-                    WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
-                  }}>{s.num}</div>
-                  <div style={{ fontSize:'12px', color:'#94a3b8', fontWeight:500 }}>{s.label}</div>
+                  <div className="ab-stat-text">
+                    {/* CHANGED: gradient number → plain colored bold */}
+                    <div style={{ fontSize:'15px', fontWeight:800, lineHeight:1, color: col }}>{s.num}</div>
+                    <div style={{ fontSize:'10.5px', color:'#94a3b8', fontWeight:500, marginTop:'2px' }}>{s.label}</div>
+                  </div>
                 </div>
               );
             })}
@@ -467,15 +414,16 @@ export default async function AboutUsPage() {
       <section id="our-story" style={{ padding:'96px 0', background:'#fff' }}>
         <div className="container">
           <div className="ab-two-col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'72px', alignItems:'center' }}>
-            {/* Copy */}
             <div className="ab-fade-up" style={{ animationDelay:'.1s' }}>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', fontSize:'11.5px', fontWeight:800, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'18px', backgroundImage:`linear-gradient(90deg,${G.blue},${G.indigo})`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
+              {/* CHANGED: gradient eyebrow → plain blue text */}
+              <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', fontSize:'11.5px', fontWeight:800, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'18px', color: G.blue }}>
                 <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})`, display:'inline-block' }}/>
                 Our Mission
               </div>
-              <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px', marginBottom:'22px', WebkitTextFillColor:'initial' }}>
+              {/* CHANGED: gradient "Accessible" → plain orange text */}
+              <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px', marginBottom:'22px' }}>
                 Making Career Growth{' '}
-                <span style={GRAD_TEXT}>Accessible</span>
+                <span style={{ color: G.orange }}>Accessible</span>
                 {' '}for Everyone
               </h2>
               <p style={{ fontSize:'15.5px', color:'#64748b', lineHeight:1.8, marginBottom:'16px' }}>
@@ -497,7 +445,6 @@ export default async function AboutUsPage() {
               </a>
             </div>
 
-            {/* Image collage */}
             <div className="ab-mission-img" style={{ position:'relative', height:'500px' }}>
               <div style={{
                 position:'absolute', top:0, left:0,
@@ -524,7 +471,7 @@ export default async function AboutUsPage() {
                   style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
               </div>
 
-              {/* Badge — Careers */}
+              {/* CHANGED: gradient numbers on floating badges → plain colored */}
               <div className="ab-badge-left" style={{
                 position:'absolute', bottom:'165px', left:'-20px',
                 background:'#fff', borderRadius:'16px',
@@ -537,12 +484,11 @@ export default async function AboutUsPage() {
                   <Trophy size={18} color={G.blue}/>
                 </div>
                 <div>
-                  <div style={{ fontSize:'20px', fontWeight:900, lineHeight:1, backgroundImage:`linear-gradient(135deg,${G.blue},${G.indigo})`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>300+</div>
+                  <div style={{ fontSize:'20px', fontWeight:900, lineHeight:1, color: G.blue }}>300+</div>
                   <div style={{ fontSize:'11px', color:'#94a3b8', marginTop:'2px' }}>Careers Transformed</div>
                 </div>
               </div>
 
-              {/* Badge — Partners */}
               <div className="ab-badge-right" style={{
                 position:'absolute', top:'60px', right:'-20px',
                 background:'#fff', borderRadius:'16px',
@@ -555,7 +501,7 @@ export default async function AboutUsPage() {
                   <Handshake size={18} color={G.orange}/>
                 </div>
                 <div>
-                  <div style={{ fontSize:'20px', fontWeight:900, lineHeight:1, backgroundImage:`linear-gradient(135deg,${G.orange},${G.rose})`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>50+</div>
+                  <div style={{ fontSize:'20px', fontWeight:900, lineHeight:1, color: G.orange }}>50+</div>
                   <div style={{ fontSize:'11px', color:'#94a3b8', marginTop:'2px' }}>Hiring Partners</div>
                 </div>
               </div>
@@ -568,14 +514,16 @@ export default async function AboutUsPage() {
       <section style={{ padding:'96px 0', background:'#f8faff' }}>
         <div className="container">
           <div style={{ textAlign:'center', marginBottom:'56px' }}>
+            {/* CHANGED: gradient eyebrow → plain blue */}
             <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'16px' }}>
               <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
-              <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', backgroundImage:`linear-gradient(90deg,${G.blue},${G.indigo})`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>What We Stand For</span>
+              <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color: G.blue }}>What We Stand For</span>
               <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.orange},${G.blue})` }}/>
             </div>
-            <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px', WebkitTextFillColor:'initial' }}>
+            {/* CHANGED: gradient "Drive Us" → plain orange */}
+            <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px' }}>
               The Principles That{' '}
-              <span style={GRAD_TEXT}>Drive Us</span>
+              <span style={{ color: G.orange }}>Drive Us</span>
             </h2>
           </div>
 
@@ -587,7 +535,6 @@ export default async function AboutUsPage() {
                 boxShadow:'0 2px 12px rgba(0,0,0,.04)',
                 position:'relative', overflow:'hidden',
               }}>
-                {/* top accent strip */}
                 <div className="ab-val-strip" style={{
                   position:'absolute', top:0, left:0, right:0, height:'3px',
                   background:`linear-gradient(90deg,${v.color},${G.indigo})`,
@@ -614,20 +561,20 @@ export default async function AboutUsPage() {
       <section style={{ padding:'96px 0', background:'#fff' }}>
         <div className="container">
           <div className="ab-two-col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'88px', alignItems:'start' }}>
-            {/* Sticky copy */}
             <div className="ab-sticky-col" style={{ position:'sticky', top:'100px' }}>
+              {/* CHANGED: gradient eyebrow → plain blue */}
               <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'18px' }}>
                 <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
-                <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', backgroundImage:`linear-gradient(90deg,${G.blue},${G.indigo})`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>Our Journey</span>
+                <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color: G.blue }}>Our Journey</span>
               </div>
-              <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px', marginBottom:'18px', WebkitTextFillColor:'initial' }}>
+              {/* CHANGED: gradient "300+ Placements" → plain orange */}
+              <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px', marginBottom:'18px' }}>
                 From Startup to{' '}
-                <span style={GRAD_TEXT}>300+ Placements</span>
+                <span style={{ color: G.orange }}>300+ Placements</span>
               </h2>
               <p style={{ fontSize:'15.5px', color:'#64748b', lineHeight:1.8, marginBottom:'32px' }}>
                 Every milestone was earned the hard way — one candidate at a time, one employer relationship at a time.
               </p>
-              {/* Progress bars */}
               <div style={{ background:'#f8faff', borderRadius:'16px', padding:'22px 24px', border:`1px solid ${G.blue}18` }}>
                 <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'14px' }}>
                   <Sparkles size={16} color={G.blue}/>
@@ -650,7 +597,6 @@ export default async function AboutUsPage() {
               </div>
             </div>
 
-            {/* Steps */}
             <div style={{ display:'flex', flexDirection:'column' }}>
               {timeline.map((item, i) => {
                 const col = DOT_COLORS[i % DOT_COLORS.length];
@@ -695,14 +641,16 @@ export default async function AboutUsPage() {
       <section style={{ padding:'96px 0', background:'#f8faff' }}>
         <div className="container">
           <div style={{ textAlign:'center', marginBottom:'52px' }}>
+            {/* CHANGED: gradient eyebrow → plain blue */}
             <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'16px' }}>
               <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
-              <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', backgroundImage:`linear-gradient(90deg,${G.blue},${G.indigo})`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>Leadership</span>
+              <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color: G.blue }}>Leadership</span>
               <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.orange},${G.blue})` }}/>
             </div>
-            <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px', WebkitTextFillColor:'initial' }}>
+            {/* CHANGED: gradient "Placedly" → plain orange */}
+            <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px' }}>
               The Person Behind{' '}
-              <span style={GRAD_TEXT}>Placedly</span>
+              <span style={{ color: G.orange }}>Placedly</span>
             </h2>
           </div>
 
@@ -714,7 +662,6 @@ export default async function AboutUsPage() {
             maxWidth:'900px', margin:'0 auto',
             position:'relative', overflow:'hidden',
           }}>
-            {/* Orb */}
             <div aria-hidden style={{
               position:'absolute', top:'-60px', right:'-60px',
               width:'260px', height:'260px', borderRadius:'50%',
@@ -722,7 +669,6 @@ export default async function AboutUsPage() {
               pointerEvents:'none',
             }}/>
 
-            {/* Photo */}
             <div style={{
               width:'190px', height:'230px', borderRadius:'20px',
               overflow:'hidden', flexShrink:0,
@@ -743,17 +689,13 @@ export default async function AboutUsPage() {
               <div style={{ fontSize:'24px', fontWeight:900, color:'#0b0d20', marginBottom:'4px' }}>
                 {founder.name ?? 'Our Founder'}
               </div>
-              <div style={{
-                fontSize:'13.5px', fontWeight:600, marginBottom:'22px',
-                backgroundImage:`linear-gradient(90deg,${G.blue},${G.indigo})`,
-                WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
-              }}>
+              {/* CHANGED: gradient role → plain blue text */}
+              <div style={{ fontSize:'13.5px', fontWeight:600, marginBottom:'22px', color: G.blue }}>
                 {founder.role ?? 'Founder & CEO, Placedly'}
               </div>
               <p style={{ fontSize:'15px', color:'#64748b', lineHeight:1.8, marginBottom:'26px' }}>
                 {founder.bio ?? "With a deep background in talent acquisition and career consulting across Delhi NCR's top MNCs, our founder built Placedly with a frustration-turned-mission: too many talented professionals were being left behind by a system that favoured connections over competence."}
               </p>
-              {/* Quote */}
               <div style={{
                 background:'#f8faff',
                 borderLeft:'4px solid transparent',
@@ -785,7 +727,6 @@ export default async function AboutUsPage() {
             overflow:'hidden',
             background:'linear-gradient(135deg,#0b0d20 0%,#1a1040 50%,#0d1836 100%)',
           }}>
-            {/* Orbs */}
             <div aria-hidden style={{
               position:'absolute', top:'-80px', left:'10%',
               width:'340px', height:'340px', borderRadius:'50%',
@@ -800,7 +741,6 @@ export default async function AboutUsPage() {
             }}/>
 
             <div style={{ position:'relative', zIndex:1 }}>
-              {/* Eyebrow */}
               <div style={{
                 display:'inline-flex', alignItems:'center', gap:'8px',
                 fontSize:'11px', fontWeight:700, letterSpacing:'0.1em',
@@ -812,14 +752,11 @@ export default async function AboutUsPage() {
                 <span style={{ width:'20px', height:'2px', borderRadius:'999px', background:`linear-gradient(90deg,${G.orange},${G.blue})` }}/>
               </div>
 
+              {/* CHANGED: gradient heading → plain white bold */}
               <h2 style={{
                 fontSize:'clamp(1.7rem,3.5vw,2.6rem)',
                 fontWeight:900, lineHeight:1.15, letterSpacing:'-0.6px',
-                marginBottom:'14px',
-                backgroundImage: GRAD,
-                backgroundSize:'300% 300%',
-                WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
-                animation:'ab-grad 6s ease infinite',
+                marginBottom:'14px', color:'#fff',
               }}>
                 Ready to Write Your Success Story?
               </h2>
