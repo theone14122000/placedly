@@ -31,14 +31,13 @@ const FbIcon = () => (
 type Cms = Record<string, string>;
 
 export default function Footer({ cms = {} }: { cms?: Cms }) {
-  const ctaText      = cms['hp:footerCtaText']   ?? 'Get Started';
-  const instagram   = cms['hp:footerInstagram'] ?? 'https://www.instagram.com/';
-  const twitter     = cms['hp:footerTwitter']   ?? 'https://twitter.com/';
-  const linkedin    = cms['hp:footerLinkedin']  ?? 'https://linkedin.com/';
-  const facebook    = cms['hp:footerFacebook']  ?? 'https://www.facebook.com/';
-  const email       = cms['hp:footerEmail']     ?? 'hello@placedly.in';
-  const wa          = cms['hp:footerWa']        ?? cms['hp:waNumber'] ?? '919876543210';
-  const copyright   = cms['hp:footerCopyright'] ?? '© 2026 Placedly · CAP · Study Abroad · India · CAP Fee: 12% of Annual CTC · Post-offer letter only';
+  const ctaText    = cms['hp:footerCtaText']   ?? 'Get Started';
+  const instagram = cms['hp:footerInstagram'] ?? 'https://www.instagram.com/';
+  const twitter   = cms['hp:footerTwitter']   ?? 'https://twitter.com/';
+  const linkedin  = cms['hp:footerLinkedin']  ?? 'https://linkedin.com/';
+  const facebook  = cms['hp:footerFacebook']  ?? 'https://www.facebook.com/';
+  const email     = cms['hp:footerEmail']     ?? 'hello@placedly.in';
+  const wa        = cms['hp:footerWa']        ?? cms['hp:waNumber'] ?? '919876543210';
 
   const socials = [
     { href: instagram, label: 'Instagram', Icon: IgIcon },
@@ -51,63 +50,53 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
     <footer className="placedly-footer">
       <div className="placedly-footer-wrap">
         <div className="placedly-footer-row">
-          {/* Brand */}
           <Link href="/" className="placedly-footer-brand">
             Placedly
           </Link>
 
-          {/* Links */}
-          <nav className="placedly-footer-links">
-            <Link href="/">Home</Link>
-            <Link href="/about-us">About</Link>
-            <Link href="/cap">CAP</Link>
-            <Link href="/study-visa">Study Abroad</Link>
-            <Link href="/services">Services</Link>
-            <Link href="/stories">Stories</Link>
-            <Link href="/contact">Contact</Link>
-            <Link href="/careers">Careers</Link>
-          </nav>
+          <span className="placedly-footer-divider" aria-hidden />
 
-          {/* Socials */}
-          <div className="placedly-footer-socials">
-            {socials.map(({ href, label, Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className="placedly-footer-social"
-              >
-                <Icon />
-              </a>
-            ))}
-          </div>
+          <Link href="/">Home</Link>
+          <Link href="/about-us">About</Link>
+          <Link href="/cap">CAP</Link>
+          <Link href="/study-visa">Study Abroad</Link>
+          <Link href="/services">Services</Link>
+          <Link href="/stories">Stories</Link>
+          <Link href="/contact">Contact</Link>
 
-          {/* CTA + Email + WhatsApp + Scroll-top */}
-          <div className="placedly-footer-actions">
-            <a
-              href={`https://wa.me/${wa}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="placedly-footer-contact"
-            >
-              WhatsApp
-            </a>
-            <a href={`mailto:${email}`} className="placedly-footer-contact">
-              {email}
-            </a>
-            <Link href="/contact" className="placedly-footer-cta">
-              {ctaText}
-              <ArrowUpRight size={12} strokeWidth={2.5} />
-            </Link>
-            <a href="#Top" className="placedly-footer-top" aria-label="Scroll to top">
-              <ArrowUp size={13} strokeWidth={2.5} />
-            </a>
-          </div>
+          <span className="placedly-footer-divider" aria-hidden />
+
+          <a href={instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="placedly-footer-social">
+            <IgIcon />
+          </a>
+          <a href={twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="placedly-footer-social">
+            <TwIcon />
+          </a>
+          <a href={linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="placedly-footer-social">
+            <LiIcon />
+          </a>
+          <a href={facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="placedly-footer-social">
+            <FbIcon />
+          </a>
+
+          <span className="placedly-footer-divider" aria-hidden />
+
+          <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer" className="placedly-footer-contact">
+            WhatsApp
+          </a>
+          <a href={`mailto:${email}`} className="placedly-footer-contact">
+            {email}
+          </a>
+
+          <Link href="/contact" className="placedly-footer-cta">
+            {ctaText}
+            <ArrowUpRight size={12} strokeWidth={2.5} />
+          </Link>
+
+          <a href="#Top" className="placedly-footer-top" aria-label="Scroll to top">
+            <ArrowUp size={13} strokeWidth={2.5} />
+          </a>
         </div>
-
-        <div className="placedly-footer-copy">{copyright}</div>
       </div>
 
       <style>{`
@@ -143,22 +132,30 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
         .placedly-footer-wrap {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 14px clamp(20px, 4vw, 40px);
+          padding: 12px clamp(20px, 4vw, 40px);
         }
 
         /* ============================================================
-           SINGLE ROW: brand + links + socials + actions
+           SINGLE ROW — all elements in one horizontal line
+           Wraps gracefully on small screens
          ============================================================ */
         .placedly-footer-row {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 24px;
+          gap: 14px;
           flex-wrap: wrap;
-          padding-bottom: 10px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
+        /* Subtle vertical separator between sections */
+        .placedly-footer-divider {
+          width: 1px;
+          height: 16px;
+          background: rgba(255, 255, 255, 0.12);
+          flex-shrink: 0;
+        }
+
+        /* Brand */
         .placedly-footer-brand {
           font-weight: 700 !important;
           font-size: 14.5px !important;
@@ -168,32 +165,21 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           flex-shrink: 0;
         }
 
-        .placedly-footer-links {
-          display: flex;
-          align-items: center;
-          gap: 18px;
-          flex-wrap: wrap;
-          flex: 1;
-        }
-
-        .placedly-footer-links a {
+        /* Default link style (nav links) */
+        .placedly-footer-row > a:not(.placedly-footer-brand):not(.placedly-footer-social):not(.placedly-footer-cta):not(.placedly-footer-top) {
           font-size: 12.5px !important;
           font-weight: 500 !important;
           color: rgba(255, 255, 255, 0.6) !important;
           text-decoration: none !important;
           transition: color 0.15s ease;
           white-space: nowrap;
+          flex-shrink: 0;
         }
-        .placedly-footer-links a:hover {
+        .placedly-footer-row > a:not(.placedly-footer-brand):not(.placedly-footer-social):not(.placedly-footer-cta):not(.placedly-footer-top):hover {
           color: #ffffff !important;
         }
 
-        .placedly-footer-socials {
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-        }
-
+        /* Social icons */
         .placedly-footer-social {
           width: 28px;
           height: 28px;
@@ -206,6 +192,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           color: rgba(255, 255, 255, 0.6) !important;
           text-decoration: none !important;
           transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+          flex-shrink: 0;
         }
         .placedly-footer-social:hover {
           background: rgba(255, 255, 255, 0.1) !important;
@@ -213,13 +200,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           transform: translateY(-1px);
         }
 
-        .placedly-footer-actions {
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          flex-wrap: wrap;
-        }
-
+        /* Contact links (WhatsApp, email) */
         .placedly-footer-contact {
           font-size: 11.5px !important;
           font-weight: 500 !important;
@@ -227,16 +208,18 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           text-decoration: none !important;
           transition: color 0.15s ease;
           white-space: nowrap;
+          flex-shrink: 0;
         }
         .placedly-footer-contact:hover {
           color: #ffffff !important;
         }
 
+        /* CTA button */
         .placedly-footer-cta {
           display: inline-flex;
           align-items: center;
           gap: 5px;
-          padding: 7px 14px;
+          padding: 6px 14px;
           background: #2563eb !important;
           color: #ffffff !important;
           border-radius: 999px;
@@ -246,6 +229,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           border: 1px solid #2563eb !important;
           letter-spacing: -0.005em !important;
           white-space: nowrap;
+          flex-shrink: 0;
           transition: background 0.2s ease, transform 0.2s ease;
         }
         .placedly-footer-cta:hover {
@@ -253,6 +237,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           transform: translateY(-1px);
         }
 
+        /* Scroll-top button */
         .placedly-footer-top {
           display: inline-flex;
           align-items: center;
@@ -265,6 +250,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           color: rgba(255, 255, 255, 0.7) !important;
           text-decoration: none !important;
           transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+          flex-shrink: 0;
         }
         .placedly-footer-top:hover {
           background: #2563eb !important;
@@ -274,46 +260,23 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
         }
 
         /* ============================================================
-           COPYRIGHT (single line under the row)
-         ============================================================ */
-        .placedly-footer-copy {
-          padding-top: 10px;
-          font-size: 10.5px !important;
-          font-weight: 500 !important;
-          color: rgba(255, 255, 255, 0.3) !important;
-          text-align: center;
-          letter-spacing: -0.003em !important;
-          line-height: 1.5;
-        }
-
-        /* ============================================================
-           RESPONSIVE — stack on small screens
+           RESPONSIVE — scroll horizontally on tiny screens
          ============================================================ */
         @media (max-width: 900px) {
           .placedly-footer-row {
-            gap: 14px;
-          }
-          .placedly-footer-links {
-            gap: 14px;
-            width: 100%;
-            order: 3;
-          }
-          .placedly-footer-actions {
-            width: 100%;
-            justify-content: flex-start;
-            order: 4;
+            gap: 10px;
           }
         }
-        @media (max-width: 640px) {
+        @media (max-width: 720px) {
           .placedly-footer-row {
-            flex-direction: column;
-            align-items: flex-start;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 4px;
           }
-          .placedly-footer-socials {
-            order: 2;
-          }
-          .placedly-footer-cta {
-            padding: 7px 12px;
+          .placedly-footer-row::-webkit-scrollbar {
+            display: none;
           }
         }
       `}</style>
