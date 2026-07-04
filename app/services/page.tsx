@@ -16,6 +16,9 @@ import PageLayout from '../components/PageLayout';
 const BRAND = ['#2563eb', '#7c8ff0', '#fb923c', '#f43f5e', '#a855f7'];
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+/* Modern Geometric Sans-Serif stack — FORCED on every element */
+const FONT_STACK = `"Outfit", "Poppins", "Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ICON_MAP: Record<string, React.ComponentType<any>> = {
   Target, DollarSign, Handshake, Globe2, FileCheck, TrendingUp,
@@ -76,29 +79,35 @@ function AmbientBlobs({ scale = 1 }: { scale?: number }) {
   );
 }
 
+/* CHANGED: plain text, no gradient on the label */
 function Eyebrow({ children, center = false }: { children: React.ReactNode; center?: boolean }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: center ? 'center' : 'flex-start', marginBottom: 16 }}>
-      <span style={{ width: 20, height: 3, borderRadius: 999, background: 'linear-gradient(90deg,#2563eb,#fb923c)', flexShrink: 0 }} />
+      <span style={{ width: 20, height: 3, borderRadius: 999, background: '#0b0d20', opacity: 0.4, flexShrink: 0 }} />
       <span style={{
         fontSize: 11.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em',
-        backgroundImage: 'linear-gradient(90deg,#2563eb,#7c8ff0)',
-        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', whiteSpace: 'nowrap',
+        color: '#0b0d20', whiteSpace: 'nowrap',
       }}>{children}</span>
-      <span style={{ width: 20, height: 3, borderRadius: 999, background: 'linear-gradient(90deg,#fb923c,#2563eb)', flexShrink: 0 }} />
+      <span style={{ width: 20, height: 3, borderRadius: 999, background: '#0b0d20', opacity: 0.4, flexShrink: 0 }} />
     </div>
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function GradientHeading({ children, size = 'clamp(1.8rem, 4vw, 2.75rem)', align = 'left', as: Tag = 'h2' }: any) {
+/* CHANGED: PlainHeading replaces GradientHeading — solid color, no gradient */
+function PlainHeading({
+  children, size = 'clamp(1.8rem, 4vw, 2.75rem)', align = 'left', as: Tag = 'h2', color,
+}: {
+  children: React.ReactNode;
+  size?: string;
+  align?: 'left' | 'center' | 'right';
+  as?: React.ElementType;
+  color?: string;
+}) {
   const Comp = Tag as React.ElementType;
   return (
     <Comp style={{
-      fontSize: size, fontWeight: 900, letterSpacing: '-0.02em', lineHeight: 1.1, textAlign: align, margin: 0,
-      backgroundImage: 'linear-gradient(270deg,#2563eb,#7c8ff0,#fb923c,#f43f5e,#a855f7,#2563eb)',
-      backgroundSize: '300% 300%', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-      backgroundClip: 'text', animation: 'svcGradientShift 6s ease infinite',
+      fontSize: size, fontWeight: 900, letterSpacing: '-0.02em', lineHeight: 1.1,
+      textAlign: align, margin: 0, color: color ?? '#0b0d20',
     }}>{children}</Comp>
   );
 }
@@ -107,9 +116,10 @@ function ShineButton({
   href, children, variant, external = false,
 }: {
   href: string; children: React.ReactNode;
-  variant: 'orange' | 'blue' | 'white' | 'ghost-dark';
+  variant: 'orange' | 'blue' | 'white' | 'ghost-dark' | 'black' | 'white-outline';
   external?: boolean;
 }) {
+  /* CHANGED: added 'black' and 'white-outline' variants for dark backgrounds */
   return (
     <motion.a
       href={href}
@@ -150,12 +160,12 @@ function BrandCard({ index, accent, children }: { index: number; accent: string;
     >
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: 3,
-        background: `linear-gradient(90deg, ${accent}, ${BRAND[(index + 1) % BRAND.length]})`,
+        background: '#0b0d20', opacity: 0.4,
       }} />
+      {/* CHANGED: large background number is now plain black, not gradient text */}
       <div style={{
         position: 'absolute', right: 14, bottom: -20, fontSize: 88, fontWeight: 900, lineHeight: 1,
-        backgroundImage: `linear-gradient(135deg, ${accent}22, transparent)`,
-        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+        color: '#0b0d20', opacity: 0.05,
         userSelect: 'none', pointerEvents: 'none',
       }}>{String(index + 1).padStart(2, '0')}</div>
       <div style={{ position: 'relative', zIndex: 1 }}>{children}</div>
@@ -194,14 +204,32 @@ export default function ServicesPage() {
   return (
     <PageLayout>
       <style jsx global>{`
-        @keyframes svcGradientShift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
+        /* Modern Geometric Sans-Serif — FORCED on everything */
+        .svc-page,
+        .svc-page *,
+        .svc-page h1, .svc-page h2, .svc-page h3, .svc-page h4, .svc-page h5, .svc-page h6,
+        .svc-page p, .svc-page span, .svc-page a, .svc-page button,
+        .svc-page strong, .svc-page small, .svc-page em, .svc-page b,
+        .svc-page div, .svc-page label, .svc-page input, .svc-page textarea {
+          font-family: ${FONT_STACK} !important;
+          font-feature-settings: "ss01", "cv11", "cv02" !important;
+          font-optical-sizing: auto !important;
+          letter-spacing: -0.011em !important;
         }
 
+        /* All text on light bg → same deep-black color */
+        .svc-page,
+        .svc-page h1, .svc-page h2, .svc-page h3, .svc-page h4, .svc-page h5, .svc-page h6,
+        .svc-page p, .svc-page span, .svc-page a, .svc-page button,
+        .svc-page strong, .svc-page small, .svc-page em, .svc-page b,
+        .svc-page div, .svc-page label {
+          color: #0b0d20 !important;
+        }
+
+        /* CHANGED: removed @keyframes svcGradientShift (text gradient animation) */
+
         .svc-brand-card { transition: box-shadow .3s ease, border-color .3s ease; }
-        .svc-brand-card:hover { box-shadow: 0 24px 60px rgba(37,99,235,0.14); border-color: rgba(37,99,235,0.15); }
+        .svc-brand-card:hover { box-shadow: 0 24px 60px rgba(0,0,0,0.10); border-color: rgba(15,23,42,0.10); }
 
         .svc-vertical-card {
           position: relative; border-radius: 24px; padding: 40px; color: #fff;
@@ -214,10 +242,11 @@ export default function ServicesPage() {
         .svc-feature-row { display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateX(-8px); animation: svcFeatureIn 0.5s ease forwards; }
         @keyframes svcFeatureIn { to { opacity: 1; transform: translateX(0); } }
 
+        /* Pill-shaped buttons */
         .svc-shine-btn {
           position: relative; display: inline-flex; align-items: center; gap: 8px;
           padding: 13px 26px; border-radius: 999px; font-weight: 700; font-size: 14px;
-          font-family: 'Poppins', sans-serif; text-decoration: none; overflow: hidden; isolation: isolate;
+          text-decoration: none; overflow: hidden; isolation: isolate;
           border: 1px solid transparent; cursor: pointer;
           transition: box-shadow 0.28s cubic-bezier(0.22,1,0.36,1), filter 0.28s ease;
         }
@@ -232,9 +261,19 @@ export default function ServicesPage() {
         }
         .svc-shine-btn--blue:hover { box-shadow: 0 16px 34px rgba(37,99,235,0.42); filter: brightness(1.06); }
         .svc-shine-btn--white {
-          background: #ffffff; color: #2563eb; box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+          background: #ffffff; color: #0b0d20; box-shadow: 0 8px 22px rgba(0,0,0,0.12);
         }
         .svc-shine-btn--white:hover { box-shadow: 0 16px 34px rgba(0,0,0,0.16); }
+        /* CHANGED: new solid-black button variant for dark backgrounds */
+        .svc-shine-btn--black {
+          background: #0b0d20; color: #ffffff;
+          box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+        }
+        .svc-shine-btn--black:hover { box-shadow: 0 16px 34px rgba(0,0,0,0.35); }
+        .svc-shine-btn--white-outline {
+          background: transparent; color: #ffffff; border: 1.5px solid #ffffff;
+        }
+        .svc-shine-btn--white-outline:hover { background: rgba(255,255,255,0.10); }
         .svc-shine-btn--ghost-dark {
           background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.25);
         }
@@ -250,10 +289,11 @@ export default function ServicesPage() {
         .svc-quickmatch-btn {
           display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 999px;
           font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1.5px solid rgba(15,23,42,0.08);
-          background: #fff; color: #374151; transition: all 0.25s ease; font-family: inherit;
+          background: #fff; transition: all 0.25s ease;
         }
-        .svc-quickmatch-btn:hover { border-color: rgba(37,99,235,0.3); box-shadow: 0 8px 20px rgba(37,99,235,0.1); }
-        .svc-quickmatch-btn.active { color: #fff; border-color: transparent; }
+        .svc-quickmatch-btn:hover { border-color: rgba(0,0,0,0.2); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+        /* CHANGED: active state is solid black, not gradient */
+        .svc-quickmatch-btn.active { background: #0b0d20; color: #ffffff; border-color: transparent; }
 
         .svc-verticals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         @media (max-width: 860px) { .svc-verticals-grid { grid-template-columns: 1fr; } }
@@ -268,253 +308,256 @@ export default function ServicesPage() {
         .svc-quickmatch-row { display: flex; gap: 12px; justify-content: flex-start; flex-wrap: wrap; }
       `}</style>
 
-      {/* ══════════════════ HERO ══════════════════ */}
-      <section style={{ position: 'relative', overflow: 'hidden', background: '#fbfbfd', padding: 'clamp(90px, 12vw, 130px) 0 clamp(56px, 8vw, 90px)' }}>
-        <AmbientBlobs />
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <nav style={{ display: 'flex', gap: 8, fontSize: 13, color: '#94a3b8', marginBottom: 24 }}>
-            <a href="/" style={{ color: 'inherit', textDecoration: 'none' }}>Home</a>
-            <span>›</span>
-            <span style={{ color: '#374151' }}>Services</span>
-          </nav>
+      <div className="svc-page">
 
-          <Eyebrow>Our Services</Eyebrow>
+        {/* ══════════════════ HERO ══════════════════ */}
+        <section style={{ position: 'relative', overflow: 'hidden', background: '#fbfbfd', padding: 'clamp(90px, 12vw, 130px) 0 clamp(56px, 8vw, 90px)' }}>
+          <AmbientBlobs />
+          <div style={{ position: 'relative', zIndex: 1, maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+            <nav style={{ display: 'flex', gap: 8, fontSize: 13, marginBottom: 24 }}>
+              <a href="/" style={{ textDecoration: 'none' }}>Home</a>
+              <span>›</span>
+              <span>Services</span>
+            </nav>
 
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, ease: EASE }}>
-            <GradientHeading as="h1" size="clamp(2rem, 5vw, 3.2rem)">
-              Everything You Need to Grow.
-            </GradientHeading>
-          </motion.div>
+            <Eyebrow>Our Services</Eyebrow>
 
-          <motion.p
-            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
-            style={{ fontSize: 16, color: '#64748b', maxWidth: 520, margin: '18px 0 32px' }}
-          >
-            Two powerful verticals. One growth partner.
-          </motion.p>
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, ease: EASE }}>
+              {/* CHANGED: GradientHeading → PlainHeading, no gradient */}
+              <PlainHeading as="h1" size="clamp(2rem, 5vw, 3.2rem)">
+                Everything You Need to Grow.
+              </PlainHeading>
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: EASE, delay: 0.2 }}
-          >
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', marginBottom: 12 }}>
-              Not sure where to start? Tell us your goal:
-            </div>
-            <div className="svc-quickmatch-row">
-              <button
-                type="button"
-                onClick={() => setFocus(focus === 'career' ? null : 'career')}
-                className={`svc-quickmatch-btn${focus === 'career' ? ' active' : ''}`}
-                style={focus === 'career' ? { background: 'linear-gradient(135deg,#fb923c,#f43f5e)' } : {}}
+            <motion.p
+              initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
+              style={{ fontSize: 16, maxWidth: 520, margin: '18px 0 32px' }}
+            >
+              Two powerful verticals. One growth partner.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: EASE, delay: 0.2 }}
+            >
+              <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>
+                Not sure where to start? Tell us your goal:
+              </div>
+              <div className="svc-quickmatch-row">
+                <button
+                  type="button"
+                  onClick={() => setFocus(focus === 'career' ? null : 'career')}
+                  className={`svc-quickmatch-btn${focus === 'career' ? ' active' : ''}`}
+                >
+                  <Briefcase size={15} /> I want a job in India
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFocus(focus === 'study' ? null : 'study')}
+                  className={`svc-quickmatch-btn${focus === 'study' ? ' active' : ''}`}
+                >
+                  <Globe size={15} /> I want to study abroad
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ══════════════════ TWO VERTICALS ══════════════════ */}
+        <section style={{ position: 'relative', background: '#ffffff', padding: '0 0 clamp(64px, 9vw, 100px)' }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+            <div className="svc-verticals-grid" style={{ marginBottom: 80 }}>
+
+              {/* Career */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ duration: 0.55, ease: EASE }}
+                onMouseEnter={() => setFocus('career')} onMouseLeave={() => setFocus(null)}
+                className={`svc-vertical-card${focus === 'study' ? ' svc-vertical-card--dim' : ''}`}
+                style={{
+                  background: 'linear-gradient(135deg, #0b0d20 0%, #1a1040 100%)',
+                  boxShadow: focus === 'career' ? '0 24px 60px rgba(0,0,0,0.30)' : '0 8px 30px rgba(0,0,0,0.15)',
+                }}
               >
-                <Briefcase size={15} /> I want a job in India
-              </button>
-              <button
-                type="button"
-                onClick={() => setFocus(focus === 'study' ? null : 'study')}
-                className={`svc-quickmatch-btn${focus === 'study' ? ' active' : ''}`}
-                style={focus === 'study' ? { background: 'linear-gradient(135deg,#2563eb,#7c8ff0)' } : {}}
+                <div style={{
+                  position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%',
+                  background: 'radial-gradient(circle, rgba(251,146,60,0.18) 0%, transparent 70%)', filter: 'blur(50px)', pointerEvents: 'none',
+                }} />
+                <motion.div
+                  style={{
+                    width: 52, height: 52, borderRadius: 14, background: 'rgba(249,115,22,0.15)',
+                    border: '1px solid rgba(249,115,22,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    position: 'relative', zIndex: 1,
+                  }}
+                  animate={{ rotate: focus === 'career' ? [0, -8, 8, 0] : 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Rocket size={26} color="#fb923c" />
+                </motion.div>
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 8 }}>Vertical 01</div>
+                  <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, letterSpacing: '-0.01em', color: '#ffffff' }}>Career Growth — India</div>
+                  <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.72)', lineHeight: 1.7 }}>
+                    Land roles at top MNCs — EXL, Quatrro, eBiz, WNS, Optum &amp; more. Resume transformation, interview mastery, direct employer connect.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', zIndex: 1 }}>
+                  {careerFeatures.map((item, i) => (
+                    <div key={item} className="svc-feature-row" style={{ animationDelay: `${i * 0.08}s` }}>
+                      <div style={{ width: 20, height: 20, minWidth: 20, borderRadius: '50%', background: 'rgba(249,115,22,0.18)', border: '1px solid rgba(249,115,22,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ArrowRight size={10} color="#fb923c" strokeWidth={3} />
+                      </div>
+                      <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.8)' }}>{item}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  {/* CHANGED: orange→rose gradient button kept (intentional button fill) */}
+                  <ShineButton href="/cap" variant="orange">Explore CAP</ShineButton>
+                </div>
+              </motion.div>
+
+              {/* Study Abroad */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
+                onMouseEnter={() => setFocus('study')} onMouseLeave={() => setFocus(null)}
+                className={`svc-vertical-card${focus === 'career' ? ' svc-vertical-card--dim' : ''}`}
+                style={{
+                  background: 'linear-gradient(135deg, #2563eb 0%, #1a38d4 100%)',
+                  boxShadow: focus === 'study' ? '0 24px 60px rgba(37,99,235,0.3)' : '0 8px 30px rgba(37,99,235,0.2)',
+                }}
               >
-                <Globe size={15} /> I want to study abroad
-              </button>
+                <div style={{
+                  position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%',
+                  background: 'radial-gradient(circle, rgba(255,255,255,0.16) 0%, transparent 70%)', filter: 'blur(50px)', pointerEvents: 'none',
+                }} />
+                <motion.div
+                  style={{
+                    width: 52, height: 52, borderRadius: 14, background: 'rgba(255,255,255,0.15)',
+                    border: '1px solid rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    position: 'relative', zIndex: 1,
+                  }}
+                  animate={{ rotate: focus === 'study' ? [0, -8, 8, 0] : 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Globe size={26} color="#ffffff" />
+                </motion.div>
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 8 }}>Vertical 02</div>
+                  <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, letterSpacing: '-0.01em', color: '#ffffff' }}>Study Abroad — Go Global</div>
+                  <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.72)', lineHeight: 1.7 }}>
+                    140+ universities in UK, France, Germany &amp; Dubai. Course shortlisting, applications, visa guidance — end to end.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', zIndex: 1 }}>
+                  {studyFeatures.map((item, i) => (
+                    <div key={item} className="svc-feature-row" style={{ animationDelay: `${i * 0.08}s` }}>
+                      <div style={{ width: 20, height: 20, minWidth: 20, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ArrowRight size={10} color="#fff" strokeWidth={3} />
+                      </div>
+                      <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.8)' }}>{item}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  {/* CHANGED: now white-outline pill (no fill, white border + text) — pure on dark card */}
+                  <ShineButton href="/study-visa" variant="white-outline">Study Visa</ShineButton>
+                </div>
+              </motion.div>
             </div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* ══════════════════ TWO VERTICALS ══════════════════ */}
-      <section style={{ position: 'relative', background: '#ffffff', padding: '0 0 clamp(64px, 9vw, 100px)' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <div className="svc-verticals-grid" style={{ marginBottom: 80 }}>
+            {/* ── Stats strip — CHANGED: numbers are plain black, not gradient ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: EASE }}
+              className="svc-stats-strip"
+              style={{
+                background: '#f8faff', border: '1px solid rgba(15,23,42,0.06)', borderRadius: 20,
+                padding: '32px 28px', marginBottom: 80,
+              }}
+            >
+              {STATS.map((s, i) => (
+                <motion.div
+                  key={s.label}
+                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease: EASE, delay: i * 0.08 }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 14 }}
+                >
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12, background: '#f1f5f9',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}>
+                    <s.icon size={20} color="#0b0d20" />
+                  </div>
+                  <div>
+                    {/* CHANGED: solid black, not gradient text */}
+                    <div style={{ fontSize: '1.5rem', fontWeight: 900, lineHeight: 1 }}>{s.value}</div>
+                    <div style={{ fontSize: 12, fontWeight: 600, marginTop: 2 }}>{s.label}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
 
-            {/* Career */}
+            {/* ── Why Placedly ── */}
+            <div style={{ textAlign: 'center', marginBottom: 40 }}>
+              <Eyebrow center>Why Placedly</Eyebrow>
+              <PlainHeading align="center">What Makes Us Different</PlainHeading>
+            </div>
+            <div className="svc-diff-grid">
+              {differentiators.map((d, i) => {
+                const Icon = ICON_MAP[d.icon ?? 'Target'] ?? Target;
+                return (
+                  <BrandCard key={d.title} index={i} accent="#0b0d20">
+                    <div style={{
+                      width: 44, height: 44, borderRadius: 12, background: '#f1f5f9',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16,
+                    }}>
+                      <Icon size={20} color="#0b0d20" />
+                    </div>
+                    <div style={{ fontSize: 15.5, fontWeight: 800, marginBottom: 8 }}>{d.title}</div>
+                    <div style={{ fontSize: 14, lineHeight: 1.65 }}>{d.desc}</div>
+                  </BrandCard>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════ DARK CTA ══════════════════ */}
+        <section style={{ background: '#ffffff', padding: '0 0 clamp(64px, 9vw, 100px)' }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
             <motion.div
               initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.55, ease: EASE }}
-              onMouseEnter={() => setFocus('career')} onMouseLeave={() => setFocus(null)}
-              className={`svc-vertical-card${focus === 'study' ? ' svc-vertical-card--dim' : ''}`}
               style={{
-                background: 'linear-gradient(135deg, #0b0d20 0%, #1a1040 100%)',
-                boxShadow: focus === 'career' ? '0 24px 60px rgba(251,146,60,0.25)' : '0 8px 30px rgba(0,0,0,0.15)',
+                position: 'relative', overflow: 'hidden',
+                background: '#0b0d20',
+                borderRadius: 28, padding: 'clamp(48px, 8vw, 80px) clamp(24px, 6vw, 64px)', textAlign: 'center',
               }}
             >
-              <div style={{
-                position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(251,146,60,0.18) 0%, transparent 70%)', filter: 'blur(50px)', pointerEvents: 'none',
-              }} />
-              <motion.div
-                style={{
-                  width: 52, height: 52, borderRadius: 14, background: 'rgba(249,115,22,0.15)',
-                  border: '1px solid rgba(249,115,22,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  position: 'relative', zIndex: 1,
-                }}
-                animate={{ rotate: focus === 'career' ? [0, -8, 8, 0] : 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Rocket size={26} color="#fb923c" />
-              </motion.div>
+              <AmbientBlobs scale={1.4} />
               <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 8 }}>Vertical 01</div>
-                <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, letterSpacing: '-0.01em' }}>Career Growth — India</div>
-                <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.72)', lineHeight: 1.7 }}>
-                  Land roles at top MNCs — EXL, Quatrro, eBiz, WNS, Optum &amp; more. Resume transformation, interview mastery, direct employer connect.
+                <Eyebrow center>Free Consultation</Eyebrow>
+                <PlainHeading align="center" color="#ffffff" size="clamp(1.6rem, 3.5vw, 2.4rem)">
+                  Not Sure Which Service Is Right for You?
+                </PlainHeading>
+                <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.7)', margin: '16px auto 36px', maxWidth: 480, lineHeight: 1.7 }}>
+                  Talk to our team — free consultation, no obligation. We&apos;ll tell you honestly which path makes the most sense for your goals.
                 </p>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', zIndex: 1 }}>
-                {careerFeatures.map((item, i) => (
-                  <div key={item} className="svc-feature-row" style={{ animationDelay: `${i * 0.08}s` }}>
-                    <div style={{ width: 20, height: 20, minWidth: 20, borderRadius: '50%', background: 'rgba(249,115,22,0.18)', border: '1px solid rgba(249,115,22,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <ArrowRight size={10} color="#fb923c" strokeWidth={3} />
-                    </div>
-                    <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.8)' }}>{item}</span>
-                  </div>
-                ))}
-              </div>
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <ShineButton href="/cap" variant="orange">Explore CAP</ShineButton>
-              </div>
-            </motion.div>
-
-            {/* Study Abroad */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
-              onMouseEnter={() => setFocus('study')} onMouseLeave={() => setFocus(null)}
-              className={`svc-vertical-card${focus === 'career' ? ' svc-vertical-card--dim' : ''}`}
-              style={{
-                background: 'linear-gradient(135deg, #2563eb 0%, #1a38d4 100%)',
-                boxShadow: focus === 'study' ? '0 24px 60px rgba(37,99,235,0.3)' : '0 8px 30px rgba(37,99,235,0.2)',
-              }}
-            >
-              <div style={{
-                position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(255,255,255,0.16) 0%, transparent 70%)', filter: 'blur(50px)', pointerEvents: 'none',
-              }} />
-              <motion.div
-                style={{
-                  width: 52, height: 52, borderRadius: 14, background: 'rgba(255,255,255,0.15)',
-                  border: '1px solid rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  position: 'relative', zIndex: 1,
-                }}
-                animate={{ rotate: focus === 'study' ? [0, -8, 8, 0] : 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Globe size={26} color="#ffffff" />
-              </motion.div>
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 8 }}>Vertical 02</div>
-                <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, letterSpacing: '-0.01em' }}>Study Abroad — Go Global</div>
-                <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.72)', lineHeight: 1.7 }}>
-                  140+ universities in UK, France, Germany &amp; Dubai. Course shortlisting, applications, visa guidance — end to end.
-                </p>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', zIndex: 1 }}>
-                {studyFeatures.map((item, i) => (
-                  <div key={item} className="svc-feature-row" style={{ animationDelay: `${i * 0.08}s` }}>
-                    <div style={{ width: 20, height: 20, minWidth: 20, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <ArrowRight size={10} color="#fff" strokeWidth={3} />
-                    </div>
-                    <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.8)' }}>{item}</span>
-                  </div>
-                ))}
-              </div>
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <ShineButton href="/study-visa" variant="white">Study Visa</ShineButton>
+                <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+                  {/* CHANGED: orange→rose button kept on dark CTA (intentional button fill, not text) */}
+                  <ShineButton href="/contact" variant="orange">Get Free Consultation</ShineButton>
+                  {/* CHANGED: ghost-dark → white-outline for cleaner look on pure black bg */}
+                  <ShineButton href="https://wa.me/919876543210" variant="white-outline" external>WhatsApp Us</ShineButton>
+                </div>
               </div>
             </motion.div>
           </div>
+        </section>
 
-          {/* ── Stats strip ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE }}
-            className="svc-stats-strip"
-            style={{
-              background: '#f8faff', border: '1px solid rgba(15,23,42,0.06)', borderRadius: 20,
-              padding: '32px 28px', marginBottom: 80,
-            }}
-          >
-            {STATS.map((s, i) => (
-              <motion.div
-                key={s.label}
-                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                transition={{ duration: 0.5, ease: EASE, delay: i * 0.08 }}
-                style={{ display: 'flex', alignItems: 'center', gap: 14 }}
-              >
-                <div style={{
-                  width: 44, height: 44, borderRadius: 12, background: `${BRAND[i % BRAND.length]}15`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                }}>
-                  <s.icon size={20} color={BRAND[i % BRAND.length]} />
-                </div>
-                <div>
-                  <div style={{
-                    fontSize: '1.5rem', fontWeight: 900, lineHeight: 1,
-                    backgroundImage: `linear-gradient(90deg, ${BRAND[i % BRAND.length]}, ${BRAND[(i + 1) % BRAND.length]})`,
-                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-                  }}>{s.value}</div>
-                  <div style={{ fontSize: 12, color: '#8b95a5', fontWeight: 600, marginTop: 2 }}>{s.label}</div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* ── Why Placedly ── */}
-          <div style={{ textAlign: 'center', marginBottom: 40 }}>
-            <Eyebrow center>Why Placedly</Eyebrow>
-            <GradientHeading align="center">What Makes Us Different</GradientHeading>
-          </div>
-          <div className="svc-diff-grid">
-            {differentiators.map((d, i) => {
-              const Icon = ICON_MAP[d.icon ?? 'Target'] ?? Target;
-              const color = BRAND[i % BRAND.length];
-              return (
-                <BrandCard key={d.title} index={i} accent={color}>
-                  <div style={{
-                    width: 44, height: 44, borderRadius: 12, background: `${color}18`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16,
-                  }}>
-                    <Icon size={20} color={color} />
-                  </div>
-                  <div style={{ fontSize: 15.5, fontWeight: 800, color: '#0f172a', marginBottom: 8 }}>{d.title}</div>
-                  <div style={{ fontSize: 14, color: '#64748b', lineHeight: 1.65 }}>{d.desc}</div>
-                </BrandCard>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ DARK CTA ══════════════════ */}
-      <section style={{ background: '#ffffff', padding: '0 0 clamp(64px, 9vw, 100px)' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <motion.div
-            initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.55, ease: EASE }}
-            style={{
-              position: 'relative', overflow: 'hidden',
-              background: 'linear-gradient(135deg, #0b0d20 0%, #1a1040 50%, #0d1836 100%)',
-              borderRadius: 28, padding: 'clamp(48px, 8vw, 80px) clamp(24px, 6vw, 64px)', textAlign: 'center',
-            }}
-          >
-            <AmbientBlobs scale={1.4} />
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              <Eyebrow center>Free Consultation</Eyebrow>
-              <GradientHeading align="center" size="clamp(1.6rem, 3.5vw, 2.4rem)">
-                Not Sure Which Service Is Right for You?
-              </GradientHeading>
-              <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', margin: '16px auto 36px', maxWidth: 480, lineHeight: 1.7 }}>
-                Talk to our team — free consultation, no obligation. We&apos;ll tell you honestly which path makes the most sense for your goals.
-              </p>
-              <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-                <ShineButton href="/contact" variant="orange">Get Free Consultation</ShineButton>
-                <ShineButton href="https://wa.me/919876543210" variant="ghost-dark" external>WhatsApp Us</ShineButton>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      </div>
     </PageLayout>
   );
 }
