@@ -7,7 +7,8 @@ import { FadeUp } from './motion';
 // const gradientTextStyle: React.CSSProperties = { ... };
 
 const UKFlag = () => (
-  <svg width="28" height="18" viewBox="0 0 60 40" aria-hidden>
+  // CHANGED: SVG height 18 → 14
+  <svg width="22" height="14" viewBox="0 0 60 40" aria-hidden>
     <rect width="60" height="40" fill="#012169" />
     <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" strokeWidth="8" />
     <path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" strokeWidth="5" />
@@ -16,21 +17,21 @@ const UKFlag = () => (
   </svg>
 );
 const FranceFlag = () => (
-  <svg width="28" height="18" viewBox="0 0 60 40" aria-hidden>
+  <svg width="22" height="14" viewBox="0 0 60 40" aria-hidden>
     <rect width="20" height="40" fill="#002395" />
     <rect x="20" width="20" height="40" fill="#fff" />
     <rect x="40" width="20" height="40" fill="#ED2939" />
   </svg>
 );
 const GermanyFlag = () => (
-  <svg width="28" height="18" viewBox="0 0 60 40" aria-hidden>
+  <svg width="22" height="14" viewBox="0 0 60 40" aria-hidden>
     <rect width="60" height="14" fill="#000" />
     <rect y="13" width="60" height="14" fill="#DD0000" />
     <rect y="26" width="60" height="14" fill="#FFCE00" />
   </svg>
 );
 const UAEFlag = () => (
-  <svg width="28" height="18" viewBox="0 0 60 40" aria-hidden>
+  <svg width="22" height="14" viewBox="0 0 60 40" aria-hidden>
     <rect width="60" height="40" fill="#fff" />
     <rect width="60" height="13" fill="#00732F" />
     <rect y="27" width="60" height="13" fill="#000" />
@@ -38,7 +39,7 @@ const UAEFlag = () => (
   </svg>
 );
 const CanadaFlag = () => (
-  <svg width="28" height="18" viewBox="0 0 60 40" aria-hidden>
+  <svg width="22" height="14" viewBox="0 0 60 40" aria-hidden>
     <rect width="60" height="40" fill="#fff" />
     <rect width="15" height="40" fill="#FF0000" />
     <rect x="45" width="15" height="40" fill="#FF0000" />
@@ -48,7 +49,7 @@ const CanadaFlag = () => (
   </svg>
 );
 const AustraliaFlag = () => (
-  <svg width="28" height="18" viewBox="0 0 60 40" aria-hidden>
+  <svg width="22" height="14" viewBox="0 0 60 40" aria-hidden>
     <rect width="60" height="40" fill="#00008B" />
     <text x="30" y="28" textAnchor="middle" fontSize="18" fill="#fff">
       ★
@@ -56,7 +57,7 @@ const AustraliaFlag = () => (
   </svg>
 );
 const SingaporeFlag = () => (
-  <svg width="28" height="18" viewBox="0 0 60 40" aria-hidden>
+  <svg width="22" height="14" viewBox="0 0 60 40" aria-hidden>
     <rect width="60" height="20" fill="#EF3340" />
     <rect y="20" width="60" height="20" fill="#fff" />
   </svg>
@@ -98,13 +99,25 @@ function buildRowSequence(items: Destination[]): Destination[] {
 function DestinationItem({ dest }: { dest: Destination }) {
   return (
     <span className="placedly-dest-item">
-      <span className="placedly-dest-icon" style={{ background: dest.iconBg }}>
+      {/* CHANGED: icon container height shrunk via inline style */}
+      <span
+        className="placedly-dest-icon"
+        style={{
+          background: dest.iconBg,
+          height: '22px',
+          minHeight: '22px',
+          padding: '3px 4px',
+        }}
+      >
         <dest.Flag />
       </span>
-      {/* CHANGED: country name now uses thin (300) weight */}
       <span
         className="placedly-dest-label"
-        style={{ fontWeight: 300 }}
+        style={{
+          fontSize: '13px',
+          fontWeight: 700,
+          letterSpacing: '-0.01em',
+        }}
       >
         {dest.label}
       </span>
@@ -156,7 +169,6 @@ export default function StudyDestinationsMarquee() {
   return (
     <section className="placedly-destinations-section" aria-label="Study abroad destinations">
       <FadeUp className="placedly-destinations-header">
-        {/* CHANGED: heading back to default weight (no inline fontWeight) → bold from CSS */}
         <h2 className="placedly-destinations-title">
           Study Abroad Destinations We Support
         </h2>
