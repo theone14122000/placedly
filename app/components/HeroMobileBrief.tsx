@@ -110,7 +110,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             );
           })}
 
-          {/* Popup cards — 100% untouched, no font/style changes */}
+          {/* Popup cards — structure untouched, only line/rec text resized in CSS */}
           <motion.div
             className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-left"
             animate={{ y: [0, -5, 0] }}
@@ -175,8 +175,11 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
         </div>
       </motion.div>
 
-      {/* Scoped styles — only affects the new CTA row, nothing else on the page */}
+      {/* Scoped styles — only affects the new CTA row + popup card text sizing */}
       <style jsx>{`
+        /* ============================================================
+           CTA ROW — forced single row, black/white pills
+           ============================================================ */
         .placedly-hero-cta-row {
           display: flex !important;
           flex-direction: row !important;
@@ -210,43 +213,63 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
           justify-content: center;
           padding: clamp(7px, 1.8vw, 11px) clamp(11px, 2.8vw, 20px);
           border-radius: 9999px;
-          border: none;
+          border: 1px solid rgba(255, 255, 255, 0.08);
           cursor: pointer;
           text-decoration: none;
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
+          transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
         }
         .placedly-hero-cta-pill:hover {
           transform: translateY(-2px);
         }
         .placedly-hero-cta-pill:active {
           transform: translateY(0);
+          filter: brightness(0.94);
         }
 
-        /* Deep royal blue — For Candidates */
-        .placedly-hero-cta-pill--deep {
-          background-image: linear-gradient(135deg, #1e3a8a, #2563eb);
-          box-shadow: 0 8px 20px rgba(30, 58, 138, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-        .placedly-hero-cta-pill--deep:hover {
-          box-shadow: 0 14px 30px rgba(30, 58, 138, 0.46), inset 0 1px 0 rgba(255, 255, 255, 0.26);
-        }
-
-        /* Classic blue — For Recruiters */
-        .placedly-hero-cta-pill--royal {
-          background-image: linear-gradient(135deg, #2563eb, #3b82f6);
-          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-        .placedly-hero-cta-pill--royal:hover {
-          box-shadow: 0 14px 30px rgba(37, 99, 235, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.26);
-        }
-
-        /* Sky blue — Study Abroad */
+        /* Unified black background — all three shades identical */
+        .placedly-hero-cta-pill--deep,
+        .placedly-hero-cta-pill--royal,
         .placedly-hero-cta-pill--sky {
-          background-image: linear-gradient(135deg, #0ea5e9, #38bdf8);
-          box-shadow: 0 8px 20px rgba(14, 165, 233, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          background-image: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
+        .placedly-hero-cta-pill--deep:hover,
+        .placedly-hero-cta-pill--royal:hover,
         .placedly-hero-cta-pill--sky:hover {
-          box-shadow: 0 14px 30px rgba(14, 165, 233, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.26);
+          box-shadow: 0 10px 22px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+
+        /* ============================================================
+           POP-UP CARDS — only text size reduced, font style kept.
+           The cards' own existing Modern Geometric Sans-Serif
+           inheritance is preserved; we just shrink the line + rec
+           text so it never overflows the card.
+           ============================================================ */
+        .placedly-lift-card-line {
+          font-size: 9.5px !important;
+          line-height: 1.25 !important;
+          letter-spacing: -0.005em !important;
+          word-break: break-word !important;
+          overflow-wrap: anywhere !important;
+        }
+        .placedly-lift-card-line strong {
+          font-size: 9.5px !important;
+          font-weight: 700 !important;
+        }
+
+        .placedly-lift-mobile-rec-text strong {
+          font-size: 9px !important;
+          line-height: 1.2 !important;
+        }
+        .placedly-lift-mobile-rec-text span {
+          font-size: 9px !important;
+          line-height: 1.2 !important;
+        }
+
+        /* Belt-and-suspenders: also tighten the card padding so the
+           smaller text has comfortable breathing room. */
+        .placedly-lift-card--mobile {
+          padding: 8px 10px !important;
         }
       `}</style>
     </div>
