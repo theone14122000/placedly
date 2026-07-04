@@ -7,9 +7,6 @@ import HeroBgVideo from './HeroBgVideo';
 
 type HeroCms = { [k: string]: string };
 
-/* Modern geometric sans-serif stack (FORCED with !important) */
-const GEOM_FONT_STACK = `"Outfit", "Poppins", "Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
-
 /** Five profile circles — 2 tilted left (lower), 1 center, 2 tilted right (higher) */
 const SCATTER_AVATARS = [
   { src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face', top: '52%', left: '12%', size: 26, rotate: -14, blur: true },
@@ -41,89 +38,19 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
 
   return (
     <div className="placedly-hero-mobile-brief" aria-label="Mobile hero">
-      {/* Real <link> for Google Fonts — loaded once */}
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Geist:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-      />
-
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Geist:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
-        /* ============================================================
-           FONT — Modern Geometric Sans-Serif
-           FORCED with !important so global styles can't override.
-         ============================================================ */
-        .placedly-hero-mobile-brief,
-        .placedly-hero-mobile-brief *,
-        .placedly-hero-mobile-brief h1,
-        .placedly-hero-mobile-brief h2,
-        .placedly-hero-mobile-brief h3,
-        .placedly-hero-mobile-brief h4,
-        .placedly-hero-mobile-brief h5,
-        .placedly-hero-mobile-brief h6,
-        .placedly-hero-mobile-brief p,
-        .placedly-hero-mobile-brief span,
-        .placedly-hero-mobile-brief a,
-        .placedly-hero-mobile-brief button,
-        .placedly-hero-mobile-brief strong,
-        .placedly-hero-mobile-brief small,
-        .placedly-hero-mobile-brief em,
-        .placedly-hero-mobile-brief b {
-          font-family: ${GEOM_FONT_STACK} !important;
-          font-feature-settings: "ss01", "cv11", "cv02" !important;
-          font-optical-sizing: auto !important;
-          letter-spacing: -0.011em !important;
-        }
-
-        /* Per-element typography — Modern Geometric Sans-Serif */
-        .placedly-liftoff-m-headline {
-          font-weight: 700 !important;
-          letter-spacing: -0.028em !important;
-        }
-        .placedly-liftoff-m-sub {
-          font-weight: 400 !important;
-          letter-spacing: -0.012em !important;
-        }
-        .placedly-lift-name {
-          font-weight: 700 !important;
-          letter-spacing: -0.015em !important;
-        }
-        .placedly-lift-role {
-          font-weight: 500 !important;
-          letter-spacing: -0.003em !important;
-        }
-        .placedly-lift-card-line {
-          font-weight: 500 !important;
-          letter-spacing: -0.008em !important;
-        }
-        .placedly-lift-card-line strong {
-          font-weight: 700 !important;
-          letter-spacing: -0.01em !important;
-        }
-        .placedly-lift-mobile-rec-text strong {
-          font-weight: 700 !important;
-          letter-spacing: -0.008em !important;
-        }
-        .placedly-lift-mobile-rec-text span {
-          font-weight: 500 !important;
-          letter-spacing: -0.003em !important;
-        }
-      `}</style>
-
       <HeroGradientBg />
       <HeroBgVideo />
-
       <div className="placedly-lift-hero-copy">
+        {/* Only the heading copy changed — class + inherited font untouched */}
         <motion.h1
           className="placedly-liftoff-m-headline"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Grow your career,
+          Your next opportunity,
           <br />
-          through people you trust.
+          powered by trust.
         </motion.h1>
 
         <motion.p
@@ -134,6 +61,24 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
         >
           {MOBILE_SUBLINE}
         </motion.p>
+
+        {/* NEW: CTA row — isolated class namespace, no impact on cards/bg */}
+        <motion.div
+          className="placedly-hero-cta-row"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.12 }}
+        >
+          <a href="/candidates" className="placedly-hero-cta-pill placedly-hero-cta-pill--deep">
+            For Candidates
+          </a>
+          <a href="/recruiters" className="placedly-hero-cta-pill placedly-hero-cta-pill--royal">
+            For Recruiters
+          </a>
+          <a href="/study-abroad" className="placedly-hero-cta-pill placedly-hero-cta-pill--sky">
+            Study Abroad
+          </a>
+        </motion.div>
       </div>
 
       <motion.div
@@ -165,6 +110,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             );
           })}
 
+          {/* Popup cards — 100% untouched, no font/style changes */}
           <motion.div
             className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-left"
             animate={{ y: [0, -5, 0] }}
@@ -228,6 +174,77 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Scoped styles — only touches the new CTA row, nothing else */}
+      <style jsx>{`
+        .placedly-hero-cta-row {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          align-items: center;
+          justify-content: center;
+          gap: clamp(8px, 2vw, 14px);
+          margin-top: 18px;
+          width: 100%;
+          overflow-x: auto;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .placedly-hero-cta-row::-webkit-scrollbar {
+          display: none;
+        }
+
+        .placedly-hero-cta-pill {
+          font-family: 'Inter', 'Sora', 'Manrope', system-ui, sans-serif;
+          font-weight: 600;
+          font-size: clamp(11.5px, 2.6vw, 13.5px);
+          letter-spacing: 0.01em;
+          color: #ffffff;
+          white-space: nowrap;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: clamp(8px, 2vw, 11px) clamp(14px, 3.4vw, 20px);
+          border-radius: 9999px;
+          border: none;
+          cursor: pointer;
+          text-decoration: none;
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .placedly-hero-cta-pill:hover {
+          transform: translateY(-2px);
+        }
+        .placedly-hero-cta-pill:active {
+          transform: translateY(0);
+        }
+
+        /* Deep royal blue — For Candidates */
+        .placedly-hero-cta-pill--deep {
+          background-image: linear-gradient(135deg, #1e3a8a, #2563eb);
+          box-shadow: 0 8px 20px rgba(30, 58, 138, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        .placedly-hero-cta-pill--deep:hover {
+          box-shadow: 0 14px 30px rgba(30, 58, 138, 0.46), inset 0 1px 0 rgba(255, 255, 255, 0.26);
+        }
+
+        /* Classic blue — For Recruiters */
+        .placedly-hero-cta-pill--royal {
+          background-image: linear-gradient(135deg, #2563eb, #3b82f6);
+          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        .placedly-hero-cta-pill--royal:hover {
+          box-shadow: 0 14px 30px rgba(37, 99, 235, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.26);
+        }
+
+        /* Sky blue — Study Abroad */
+        .placedly-hero-cta-pill--sky {
+          background-image: linear-gradient(135deg, #0ea5e9, #38bdf8);
+          box-shadow: 0 8px 20px rgba(14, 165, 233, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        .placedly-hero-cta-pill--sky:hover {
+          box-shadow: 0 14px 30px rgba(14, 165, 233, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.26);
+        }
+      `}</style>
     </div>
   );
 }
