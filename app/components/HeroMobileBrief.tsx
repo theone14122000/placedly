@@ -41,7 +41,6 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
       <HeroGradientBg />
       <HeroBgVideo />
       <div className="placedly-lift-hero-copy">
-        {/* Only the heading copy changed — class + inherited font untouched */}
         <motion.h1
           className="placedly-liftoff-m-headline"
           initial={{ opacity: 0, y: 16 }}
@@ -62,7 +61,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
           {MOBILE_SUBLINE}
         </motion.p>
 
-        {/* NEW: CTA row — isolated class namespace, forced single row */}
+        {/* CTA row — styling owned by globals.css */}
         <motion.div
           className="placedly-hero-cta-row"
           initial={{ opacity: 0, y: 12 }}
@@ -110,7 +109,6 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             );
           })}
 
-          {/* Popup cards — structure untouched, only line/rec text resized in CSS */}
           <motion.div
             className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-left"
             animate={{ y: [0, -5, 0] }}
@@ -174,104 +172,6 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
           </motion.div>
         </div>
       </motion.div>
-
-      {/* Scoped styles — only affects the new CTA row + popup card text sizing */}
-      <style jsx>{`
-        /* ============================================================
-           CTA ROW — forced single row, black/white pills
-           ============================================================ */
-        .placedly-hero-cta-row {
-          display: flex !important;
-          flex-direction: row !important;
-          flex-wrap: nowrap !important;
-          align-items: center;
-          justify-content: center;
-          gap: clamp(6px, 1.8vw, 14px);
-          margin-top: 18px;
-          width: 100%;
-          max-width: 100%;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
-        }
-        .placedly-hero-cta-row::-webkit-scrollbar {
-          display: none;
-        }
-
-        .placedly-hero-cta-pill {
-          flex: 0 0 auto !important;
-          display: inline-flex !important;
-          flex-direction: row !important;
-          font-family: 'Inter', 'Sora', 'Manrope', system-ui, sans-serif;
-          font-weight: 600;
-          font-size: clamp(10.5px, 2.4vw, 13.5px);
-          letter-spacing: 0.01em;
-          color: #ffffff;
-          white-space: nowrap;
-          align-items: center;
-          justify-content: center;
-          padding: clamp(7px, 1.8vw, 11px) clamp(11px, 2.8vw, 20px);
-          border-radius: 9999px;
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          cursor: pointer;
-          text-decoration: none;
-          transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
-        }
-        .placedly-hero-cta-pill:hover {
-          transform: translateY(-2px);
-        }
-        .placedly-hero-cta-pill:active {
-          transform: translateY(0);
-          filter: brightness(0.94);
-        }
-
-        /* Unified black background — all three shades identical */
-        .placedly-hero-cta-pill--deep,
-        .placedly-hero-cta-pill--royal,
-        .placedly-hero-cta-pill--sky {
-          background-image: linear-gradient(135deg, #0a0a0a, #1a1a1a);
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-        }
-        .placedly-hero-cta-pill--deep:hover,
-        .placedly-hero-cta-pill--royal:hover,
-        .placedly-hero-cta-pill--sky:hover {
-          box-shadow: 0 10px 22px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-        }
-
-        /* ============================================================
-           POP-UP CARDS — only text size reduced, font style kept.
-           The cards' own existing Modern Geometric Sans-Serif
-           inheritance is preserved; we just shrink the line + rec
-           text so it never overflows the card.
-           ============================================================ */
-        .placedly-lift-card-line {
-          font-size: 9.5px !important;
-          line-height: 1.25 !important;
-          letter-spacing: -0.005em !important;
-          word-break: break-word !important;
-          overflow-wrap: anywhere !important;
-        }
-        .placedly-lift-card-line strong {
-          font-size: 9.5px !important;
-          font-weight: 700 !important;
-        }
-
-        .placedly-lift-mobile-rec-text strong {
-          font-size: 9px !important;
-          line-height: 1.2 !important;
-        }
-        .placedly-lift-mobile-rec-text span {
-          font-size: 9px !important;
-          line-height: 1.2 !important;
-        }
-
-        /* Belt-and-suspenders: also tighten the card padding so the
-           smaller text has comfortable breathing room. */
-        .placedly-lift-card--mobile {
-          padding: 8px 10px !important;
-        }
-      `}</style>
     </div>
   );
 }
