@@ -89,7 +89,6 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
 
   return (
     <div className="placedly-hero-mobile-brief" aria-label="Mobile hero">
-      {/* Real <link> for Google Fonts — loaded once */}
       <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Geist:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
@@ -100,24 +99,14 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
 
         /* ============================================================
            FONT — Modern Geometric Sans-Serif
-           FORCED with !important so global styles can't override.
          ============================================================ */
         .placedly-hero-mobile-brief,
         .placedly-hero-mobile-brief *,
-        .placedly-hero-mobile-brief h1,
-        .placedly-hero-mobile-brief h2,
-        .placedly-hero-mobile-brief h3,
-        .placedly-hero-mobile-brief h4,
-        .placedly-hero-mobile-brief h5,
-        .placedly-hero-mobile-brief h6,
-        .placedly-hero-mobile-brief p,
-        .placedly-hero-mobile-brief span,
-        .placedly-hero-mobile-brief a,
-        .placedly-hero-mobile-brief button,
-        .placedly-hero-mobile-brief strong,
-        .placedly-hero-mobile-brief small,
-        .placedly-hero-mobile-brief em,
-        .placedly-hero-mobile-brief b {
+        .placedly-hero-mobile-brief h1, .placedly-hero-mobile-brief h2,
+        .placedly-hero-mobile-brief h3, .placedly-hero-mobile-brief h4,
+        .placedly-hero-mobile-brief p, .placedly-hero-mobile-brief span,
+        .placedly-hero-mobile-brief a, .placedly-hero-mobile-brief button,
+        .placedly-hero-mobile-brief strong, .placedly-hero-mobile-brief small {
           font-family: ${GEOM_FONT_STACK} !important;
           font-feature-settings: "ss01", "cv11", "cv02" !important;
           font-optical-sizing: auto !important;
@@ -158,7 +147,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           CTA pills — same blue-shade system as desktop Hero
+           CTA pills
            ============================================================ */
         .mb-cta-row {
           position: relative;
@@ -247,7 +236,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           STAGE / SCENE — preserved from original
+           STAGE / SCENE — fixed card sizing
            ============================================================ */
         .placedly-lift-hero-stage--liftoff {
           padding: 0 18px;
@@ -265,6 +254,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           border: 1px solid #eef2f9;
         }
 
+        /* Scatter avatars (bokeh) */
         .placedly-lift-mobile-bokeh {
           position: absolute;
           border-radius: 50%;
@@ -288,40 +278,49 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           opacity: 0.7;
         }
 
+        /* ============================================================
+           PROFILE CARDS — compact, height locked
+           This is the key fix: the cards were stretching to fill
+           the scene because they had no height set.
+         ============================================================ */
         .placedly-lift-card--mobile {
           position: absolute;
           background: #ffffff;
           border-radius: 11px;
-          padding: 8px 10px;
+          padding: 7px 9px;
           box-shadow: 0 6px 16px rgba(15, 23, 42, 0.10);
           border: 1px solid rgba(15, 23, 42, 0.06);
           z-index: 10;
+          width: 122px;
+          height: 56px;       /* ← FIX: explicit height so card stays compact */
+          overflow: hidden;   /* ← FIX: prevent any overflow from stretching the card */
         }
         .placedly-lift-card--mobile-left {
           left: 2%;
-          bottom: 14%;
-          width: 124px;
+          bottom: 18%;
         }
         .placedly-lift-card--mobile-right {
           right: 2%;
-          top: 30%;
-          width: 124px;
+          top: 38%;
         }
         .placedly-lift-card-profile {
           display: flex;
           align-items: center;
           gap: 6px;
-          margin-bottom: 4px;
+          margin-bottom: 3px;
         }
         .placedly-lift-avatar--photo {
-          width: 26px;
-          height: 26px;
+          width: 24px;
+          height: 24px;
           border-radius: 50%;
           object-fit: cover;
           flex-shrink: 0;
           background: #f1f5f9;
         }
-        .placedly-lift-card-identity { min-width: 0; }
+        .placedly-lift-card-identity { 
+          min-width: 0; 
+          flex: 1;
+        }
         .placedly-lift-name {
           font-size: 11px;
           color: #0f172a;
@@ -332,24 +331,33 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           text-overflow: ellipsis;
         }
         .placedly-lift-role {
-          font-size: 9.5px;
+          font-size: 9px;
           color: #64748b;
           margin: 0;
           line-height: 1.2;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .placedly-lift-card-line {
-          font-size: 10.5px;
+          font-size: 10px;
           color: #475569;
           margin: 0;
           line-height: 1.3;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .placedly-lift-card-line strong {
           color: #2563eb;
         }
 
+        /* ============================================================
+           RECOMMENDED PILL
+           ============================================================ */
         .placedly-lift-mobile-rec {
           position: absolute;
-          top: 8%;
+          top: 6%;
           right: 4%;
           display: inline-flex;
           align-items: center;
@@ -357,7 +365,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           background: #ffffff;
           border: 1px solid #dbeafe;
           border-radius: 999px;
-          padding: 5px 10px 5px 6px;
+          padding: 4px 10px 4px 6px;
           box-shadow: 0 3px 10px rgba(37, 99, 235, 0.10);
           z-index: 9;
           white-space: nowrap;
@@ -372,7 +380,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           line-height: 1.1;
         }
         .placedly-lift-mobile-rec-text strong {
-          font-size: 10px;
+          font-size: 9.5px;
           color: #2563eb;
         }
         .placedly-lift-mobile-rec-text span {
@@ -406,7 +414,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
         </motion.p>
       </div>
 
-      {/* ── 3 CTA pills (added) ── */}
+      {/* ── 3 CTA pills ── */}
       <div className="mb-cta-row">
         {HERO_CTAS.map((cta, i) => (
           <MobileCtaPill
@@ -450,7 +458,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           })}
 
           <motion.div
-            className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-left"
+            className="placedly-lift-card--mobile placedly-lift-card--mobile-left"
             animate={{ y: [0, -5, 0] }}
             transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
           >
@@ -458,9 +466,9 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               <img
                 src={HERO_CARD_AVATARS.left}
                 alt=""
-                className="placedly-lift-avatar placedly-lift-avatar--photo"
-                width={28}
-                height={28}
+                className="placedly-lift-avatar--photo"
+                width={24}
+                height={24}
                 loading="lazy"
                 decoding="async"
               />
@@ -487,7 +495,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           </motion.div>
 
           <motion.div
-            className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-right"
+            className="placedly-lift-card--mobile placedly-lift-card--mobile-right"
             animate={{ y: [0, 5, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
           >
@@ -495,9 +503,9 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               <img
                 src={HERO_CARD_AVATARS.right}
                 alt=""
-                className="placedly-lift-avatar placedly-lift-avatar--photo"
-                width={28}
-                height={28}
+                className="placedly-lift-avatar--photo"
+                width={24}
+                height={24}
                 loading="lazy"
                 decoding="async"
               />

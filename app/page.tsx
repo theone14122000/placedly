@@ -5,14 +5,11 @@ import Services from './components/Services';
 import OurProcessSection from './components/OurProcessSection';
 import CapJourneySection from './components/CapJourneySection';
 import CapFloatingCta from './components/CapFloatingCta';
-import AboutUs from './components/AboutUs';
 import HowItWorks from './components/HowItWorks';
 import Industries from './components/Industries';
 import StudyDestinationsMarquee from './components/StudyDestinationsMarquee';
 import Testimonials from './components/Testimonials';
 import Faq from './components/Faq';
-import Cta from './components/Cta';
-import ServiceWidgetSection from './components/ServiceWidgetSection';
 import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import PlacedlyFixes from './components/PlacedlyFixes';
@@ -81,13 +78,6 @@ const HP_DEFAULTS: Record<string, string> = {
   'hp:ctaBannerSub':      'Free consultation. No upfront cost. Start today.',
   /* Footer */
   'hp:footerDesc':      "India's career growth and study abroad consultancy. CAP: 12% Success Share, post-placement only. Study Abroad: UK · France · Germany · Dubai. Zero upfront. We grow when you grow.",
-  'hp:footerCtaText':   'Start Your Journey',
-  'hp:footerInstagram': 'https://www.instagram.com/',
-  'hp:footerTwitter':   'https://twitter.com/',
-  'hp:footerLinkedin':  'https://linkedin.com/',
-  'hp:footerFacebook':  'https://www.facebook.com/',
-  'hp:footerEmail':     'hello@placedly.in',
-  'hp:footerWa':        '919876543210',
   'hp:footerCopyright': '© 2026 Placedly · CAP · Study Abroad · India · CAP Fee: 12% of Annual CTC · Post-offer letter only · All engagements governed by signed Candidate Service Agreement',
 };
 

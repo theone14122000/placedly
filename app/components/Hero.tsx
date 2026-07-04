@@ -104,7 +104,7 @@ const HERO_STATS = [
   { icon: ShieldCheck, value: '40+', label: 'Companies Trusted Us' },
   { icon: Users, value: '1K+', label: 'Candidates Placed' },
   { icon: Globe, value: '20+', label: 'Countries' },
-  { icon: Award, value: '10+', label: 'Years of Industry Experience' },
+  { icon: Award, value: '10+', label: 'Years Experience' },
 ] as const;
 
 function HeroCtaPill({
@@ -412,10 +412,11 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           flex-wrap: wrap;
           align-items: stretch;
           justify-content: center;
-          gap: 10px;
-          margin: clamp(20px, 3vw, 32px) auto 0;
-          max-width: 920px;
+          gap: 12px;
+          margin: clamp(28px, 4vw, 48px) auto clamp(40px, 6vw, 64px);
+          max-width: 1000px;
           width: 100%;
+          padding: 0 16px;
         }
 
         .placedly-hero-stat-pill {
@@ -424,10 +425,11 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           align-items: center;
           gap: 10px;
           flex: 1 1 200px;
+          min-width: 0;
           background: #ffffff;
           border: 1px solid #e7ebf3;
           border-radius: 999px;
-          padding: 10px 18px 10px 10px;
+          padding: 10px 16px 10px 10px;
           box-shadow: 0 4px 14px rgba(15,23,42,0.06);
           overflow: hidden;
           isolation: isolate;
@@ -450,8 +452,8 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         .placedly-hero-stat-pill-icon {
           position: relative;
           z-index: 1;
-          width: 34px;
-          height: 34px;
+          width: 32px;
+          height: 32px;
           border-radius: 50%;
           flex-shrink: 0;
           display: flex;
@@ -473,21 +475,32 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           flex-direction: column;
           line-height: 1.2;
           min-width: 0;
+          flex: 1;
         }
         .placedly-hero-stat-pill-text strong {
           font-size: 14.5px;
           color: #1e3a8a;
         }
         .placedly-hero-stat-pill-text span {
-          font-size: 11px;
+          font-size: 10.5px;
           color: #64748b;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
         }
 
+        /* Force 4 columns at desktop so labels never get truncated */
+        @media (min-width: 900px) {
+          .placedly-hero-stats-bar {
+            flex-wrap: nowrap;
+          }
+          .placedly-hero-stat-pill {
+            flex: 1 1 0;
+          }
+        }
+
         @media (max-width: 720px) {
-          .placedly-hero-stat-pill { flex: 1 1 calc(50% - 5px); }
+          .placedly-hero-stat-pill { flex: 1 1 calc(50% - 6px); }
         }
         @media (max-width: 420px) {
           .placedly-hero-stat-pill { flex: 1 1 100%; }
