@@ -28,17 +28,8 @@ const G = {
   purple: '#a855f7',
 };
 
-// CHANGED: gradient text constants removed (kept commented for reference)
-// const GRAD = 'linear-gradient(270deg, #2563eb, #7c8ff0, #fb923c, #f43f5e, #a855f7, #2563eb)';
-// const GRAD_TEXT: React.CSSProperties = {
-//   backgroundImage: GRAD,
-//   backgroundSize: '300% 300%',
-//   WebkitBackgroundClip: 'text',
-//   WebkitTextFillColor: 'transparent',
-//   backgroundClip: 'text',
-//   animation: 'ab-grad 6s ease infinite',
-//   display: 'inline',
-// };
+/* ── Modern geometric sans-serif stack — forced across whole page ── */
+const FONT_STACK = `"Outfit", "Poppins", "Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
 
 /* ── Defaults ── */
 const DEFAULT_VALUES = [
@@ -102,8 +93,36 @@ export default async function AboutUsPage() {
   return (
     <PageLayout>
 
-      {/* ════════════════════ ENHANCED KEYFRAMES ════════════════════ */}
+      {/* ════════════════════ ENHANCED KEYFRAMES + FONT ════════════════════ */}
       <style>{`
+        /* Modern geometric sans-serif — FORCED everywhere on the page */
+        .placedly-lift-hero, /* shared with main hero; safe to keep */
+        .ab-page,
+        .ab-page *,
+        .ab-page h1,
+        .ab-page h2,
+        .ab-page h3,
+        .ab-page h4,
+        .ab-page h5,
+        .ab-page h6,
+        .ab-page p,
+        .ab-page span,
+        .ab-page a,
+        .ab-page button,
+        .ab-page strong,
+        .ab-page small,
+        .ab-page em,
+        .ab-page b,
+        .ab-page div,
+        .ab-page label,
+        .ab-page input,
+        .ab-page textarea {
+          font-family: ${FONT_STACK} !important;
+          font-feature-settings: "ss01", "cv11", "cv02" !important;
+          font-optical-sizing: auto !important;
+          letter-spacing: -0.011em !important;
+        }
+
         @keyframes ab-float-up   { 0%,100%{ transform:translateY(0) }  50%{ transform:translateY(-10px) } }
         @keyframes ab-float-down { 0%,100%{ transform:translateY(0) }  50%{ transform:translateY( 10px) } }
         @keyframes ab-fade-up {
@@ -199,7 +218,7 @@ export default async function AboutUsPage() {
           animation: ab-glow-pulse 2s infinite;
         }
 
-        /* CHANGED: Stat cards — thin + pill-shaped, horizontal row */
+        /* Stat cards — thin + pill */
         .ab-stat-cell { 
           position: relative;
           display: flex;
@@ -236,7 +255,7 @@ export default async function AboutUsPage() {
           min-width: 0;
         }
 
-        /* Timeline dots */
+        /* Timeline */
         .ab-tl-dot { 
           animation: ab-pulse-dot 2.4s ease-in-out infinite;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -317,479 +336,474 @@ export default async function AboutUsPage() {
         }
       `}</style>
 
-      {/* ════════════════════ HERO ════════════════════ */}
-      <section style={{
-        position: 'relative',
-        padding: 'calc(56px + 80px) 0 32px',
-        overflow: 'hidden',
-        background: '#f8faff',
-      }}>
-        {/* Orbs */}
-        <div aria-hidden style={{
-          position:'absolute', top:'-120px', left:'-100px',
-          width:'500px', height:'500px', borderRadius:'50%',
-          background:`radial-gradient(circle,${G.blue}18 0%,transparent 70%)`,
-          filter:'blur(80px)', pointerEvents:'none',
-        }}/>
-        <div aria-hidden style={{
-          position:'absolute', top:'40px', right:'-80px',
-          width:'420px', height:'420px', borderRadius:'50%',
-          background:`radial-gradient(circle,${G.orange}14 0%,transparent 70%)`,
-          filter:'blur(90px)', pointerEvents:'none',
-        }}/>
+      <div className="ab-page">
 
-        <div className="container" style={{ position:'relative', zIndex:1 }}>
-          {/* Breadcrumb */}
-          <nav style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'13px', color:'#94a3b8', marginBottom:'28px' }}>
-            <a href="/" style={{ color:'#94a3b8', textDecoration:'none' }}>Home</a>
-            <span style={{ color:'#cbd5e1' }}>›</span>
-            <span style={{ color:'#475569', fontWeight:500 }}>About Us</span>
-          </nav>
+        {/* ════════════════════ HERO ════════════════════ */}
+        <section style={{
+          position: 'relative',
+          padding: 'calc(56px + 80px) 0 32px',
+          overflow: 'hidden',
+          background: '#f8faff',
+        }}>
+          {/* Orbs */}
+          <div aria-hidden style={{
+            position:'absolute', top:'-120px', left:'-100px',
+            width:'500px', height:'500px', borderRadius:'50%',
+            background:`radial-gradient(circle,${G.blue}18 0%,transparent 70%)`,
+            filter:'blur(80px)', pointerEvents:'none',
+          }}/>
+          <div aria-hidden style={{
+            position:'absolute', top:'40px', right:'-80px',
+            width:'420px', height:'420px', borderRadius:'50%',
+            background:`radial-gradient(circle,${G.orange}14 0%,transparent 70%)`,
+            filter:'blur(90px)', pointerEvents:'none',
+          }}/>
 
-          <div style={{ maxWidth:'780px' }} className="ab-fade-up">
-            {/* Eyebrow — gradient removed, now plain text */}
-            <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'20px' }}>
-              <span style={{ width:'22px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
-              <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color: G.blue }}>Our Story</span>
-              <span style={{ width:'22px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.orange},${G.blue})` }}/>
-            </div>
+          <div className="container" style={{ position:'relative', zIndex:1 }}>
+            {/* Breadcrumb */}
+            <nav style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'13px', color:'#94a3b8', marginBottom:'28px' }}>
+              <a href="/" style={{ color:'#94a3b8', textDecoration:'none' }}>Home</a>
+              <span style={{ color:'#cbd5e1' }}>›</span>
+              <span style={{ color:'#475569', fontWeight:500 }}>About Us</span>
+            </nav>
 
-            {/* CHANGED: gradient span removed, plain colored text */}
-            <h1 style={{ fontSize:'clamp(2.4rem,5vw,4rem)', fontWeight:900, lineHeight:1.08, letterSpacing:'-1.5px', color:'#0b0d20', marginBottom:'22px' }}>
-              We&apos;re Not Just a<br/>Placement Agency.{' '}
-              <span style={{ color: G.blue }}>We&apos;re Career Partners.</span>
-            </h1>
-
-            <p style={{ fontSize:'17px', color:'#64748b', lineHeight:1.75, maxWidth:'540px', marginBottom:'36px' }}>
-              Born in Delhi NCR. Built for every professional who deserves better — a better role, a better salary, and a career that actually reflects their potential.
-            </p>
-
-            <div className="ab-hero-actions" style={{ display:'flex', gap:'12px', flexWrap:'wrap', marginBottom:'40px' }}>
-              <a href="/contact" className="ab-btn" style={{
-                display:'inline-flex', alignItems:'center', gap:'8px',
-                backgroundImage:`linear-gradient(135deg,${G.blue},${G.indigo})`,
-                color:'#fff', fontWeight:700, fontSize:'14px',
-                padding:'14px 30px', borderRadius:'999px',
-                textDecoration:'none', boxShadow:`0 8px 24px ${G.blue}35`,
-              }}>
-                <Rocket size={15}/> Start Your Journey
-              </a>
-              <a href="#our-story" className="ab-btn-secondary" style={{
-                display:'inline-flex', alignItems:'center', gap:'8px',
-                background:'#fff', color:'#374151', fontWeight:500, fontSize:'14px',
-                padding:'14px 30px', borderRadius:'999px',
-                textDecoration:'none', border:'1.5px solid #e2e8f0',
-                boxShadow:'0 2px 8px rgba(0,0,0,.05)',
-              }}>
-                Read Our Story <ArrowRight size={14}/>
-              </a>
-            </div>
-          </div>
-
-          {/* CHANGED: Stats strip — thin pill-shaped horizontal row */}
-          <div className="ab-stats-4" style={{ display:'flex', gap:'12px', flexWrap:'wrap', justifyContent:'center' }}>
-            {stats.map((s, i) => {
-              const IconComp = s.Icon ?? Users;
-              const col      = s.color ?? G.blue;
-              return (
-                <div key={i} className="ab-stat-cell">
-                  <div className="ab-stat-icon" style={{
-                    background:`${col}15`,
-                  }}>
-                    <IconComp size={15} color={col}/>
-                  </div>
-                  <div className="ab-stat-text">
-                    {/* CHANGED: gradient number → plain colored bold */}
-                    <div style={{ fontSize:'15px', fontWeight:800, lineHeight:1, color: col }}>{s.num}</div>
-                    <div style={{ fontSize:'10.5px', color:'#94a3b8', fontWeight:500, marginTop:'2px' }}>{s.label}</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════ MISSION ════════════════════ */}
-      <section id="our-story" style={{ padding:'96px 0', background:'#fff' }}>
-        <div className="container">
-          <div className="ab-two-col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'72px', alignItems:'center' }}>
-            <div className="ab-fade-up" style={{ animationDelay:'.1s' }}>
-              {/* CHANGED: gradient eyebrow → plain blue text */}
-              <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', fontSize:'11.5px', fontWeight:800, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'18px', color: G.blue }}>
-                <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})`, display:'inline-block' }}/>
-                Our Mission
+            <div style={{ maxWidth:'780px' }} className="ab-fade-up">
+              {/* Eyebrow */}
+              <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'20px' }}>
+                <span style={{ width:'22px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}></span>
+                <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color: G.blue }}>Our Story</span>
+                <span style={{ width:'22px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.orange},${G.blue})` }}></span>
               </div>
-              {/* CHANGED: gradient "Accessible" → plain orange text */}
-              <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px', marginBottom:'22px' }}>
-                Making Career Growth{' '}
-                <span style={{ color: G.orange }}>Accessible</span>
-                {' '}for Everyone
-              </h2>
-              <p style={{ fontSize:'15.5px', color:'#64748b', lineHeight:1.8, marginBottom:'16px' }}>
-                Placedly was founded with one deeply held belief: exceptional careers shouldn&apos;t be a privilege reserved for people with the right connections. Every professional deserves expert guidance, real employer access, and a fair shot at the role they want.
+
+              {/* CHANGED: all heading text is plain black, no gradient */}
+              <h1 style={{ fontSize:'clamp(2.4rem,5vw,4rem)', fontWeight:900, lineHeight:1.08, letterSpacing:'-1.5px', color:'#0b0d20', marginBottom:'22px' }}>
+                We&apos;re Not Just a<br/>Placement Agency.{' '}
+                <span style={{ color: G.blue }}>We&apos;re Career Partners.</span>
+              </h1>
+
+              <p style={{ fontSize:'17px', color:'#475569', lineHeight:1.75, maxWidth:'540px', marginBottom:'36px' }}>
+                Born in Delhi NCR. Built for every professional who deserves better — a better role, a better salary, and a career that actually reflects their potential.
               </p>
-              <p style={{ fontSize:'15.5px', color:'#374151', lineHeight:1.8, marginBottom:'36px' }}>
-                We operate on a simple model:{' '}
-                <strong style={{ color:G.blue }}>zero upfront, success-share only.</strong>{' '}
-                Career Assistance Fee of 12% of CTC — collected only after you receive your offer letter. If we don&apos;t place you, you don&apos;t pay.
-              </p>
-              <a href="/contact" className="ab-btn" style={{
-                display:'inline-flex', alignItems:'center', gap:'8px',
-                backgroundImage:`linear-gradient(135deg,${G.blue},${G.indigo})`,
-                color:'#fff', fontWeight:700, fontSize:'14px',
-                padding:'13px 28px', borderRadius:'999px',
-                textDecoration:'none', boxShadow:`0 8px 22px ${G.blue}30`,
-              }}>
-                Talk to Our Team <ArrowRight size={14}/>
-              </a>
-            </div>
 
-            <div className="ab-mission-img" style={{ position:'relative', height:'500px' }}>
-              <div style={{
-                position:'absolute', top:0, left:0,
-                width:'70%', height:'310px',
-                borderRadius:'22px', overflow:'hidden',
-                boxShadow:'0 24px 56px rgba(0,0,0,.12)',
-              }}>
-                <img src="/img/team.png" alt="Placedly Team"
-                  style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
-                <div style={{
-                  position:'absolute', inset:0,
-                  background:`linear-gradient(160deg,${G.blue}22 0%,transparent 60%)`,
-                }}/>
-              </div>
-
-              <div style={{
-                position:'absolute', bottom:0, right:0,
-                width:'58%', height:'250px',
-                borderRadius:'22px', overflow:'hidden',
-                boxShadow:'0 24px 56px rgba(0,0,0,.12)',
-                border:'4px solid #fff',
-              }}>
-                <img src="/img/aboutt us consultancy.png" alt="Consultancy"
-                  style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
-              </div>
-
-              {/* CHANGED: gradient numbers on floating badges → plain colored */}
-              <div className="ab-badge-left" style={{
-                position:'absolute', bottom:'165px', left:'-20px',
-                background:'#fff', borderRadius:'16px',
-                boxShadow:`0 12px 32px rgba(0,0,0,.10)`,
-                padding:'14px 18px',
-                display:'flex', alignItems:'center', gap:'12px',
-                border:`1px solid ${G.blue}20`,
-              }}>
-                <div style={{ width:'42px', height:'42px', borderRadius:'12px', background:`${G.blue}15`, display:'flex', alignItems:'center', justifyContent:'center' }}>
-                  <Trophy size={18} color={G.blue}/>
-                </div>
-                <div>
-                  <div style={{ fontSize:'20px', fontWeight:900, lineHeight:1, color: G.blue }}>300+</div>
-                  <div style={{ fontSize:'11px', color:'#94a3b8', marginTop:'2px' }}>Careers Transformed</div>
-                </div>
-              </div>
-
-              <div className="ab-badge-right" style={{
-                position:'absolute', top:'60px', right:'-20px',
-                background:'#fff', borderRadius:'16px',
-                boxShadow:`0 12px 32px rgba(0,0,0,.10)`,
-                padding:'14px 18px',
-                display:'flex', alignItems:'center', gap:'12px',
-                border:`1px solid ${G.orange}20`,
-              }}>
-                <div style={{ width:'42px', height:'42px', borderRadius:'12px', background:`${G.orange}15`, display:'flex', alignItems:'center', justifyContent:'center' }}>
-                  <Handshake size={18} color={G.orange}/>
-                </div>
-                <div>
-                  <div style={{ fontSize:'20px', fontWeight:900, lineHeight:1, color: G.orange }}>50+</div>
-                  <div style={{ fontSize:'11px', color:'#94a3b8', marginTop:'2px' }}>Hiring Partners</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════ VALUES ════════════════════ */}
-      <section style={{ padding:'96px 0', background:'#f8faff' }}>
-        <div className="container">
-          <div style={{ textAlign:'center', marginBottom:'56px' }}>
-            {/* CHANGED: gradient eyebrow → plain blue */}
-            <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'16px' }}>
-              <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
-              <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color: G.blue }}>What We Stand For</span>
-              <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.orange},${G.blue})` }}/>
-            </div>
-            {/* CHANGED: gradient "Drive Us" → plain orange */}
-            <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px' }}>
-              The Principles That{' '}
-              <span style={{ color: G.orange }}>Drive Us</span>
-            </h2>
-          </div>
-
-          <div className="ab-values-3" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'20px' }}>
-            {values.map((v, i) => (
-              <div key={i} className="ab-val-card" style={{
-                background:'#fff', borderRadius:'20px', padding:'30px',
-                border:'1px solid #eef2ff',
-                boxShadow:'0 2px 12px rgba(0,0,0,.04)',
-                position:'relative', overflow:'hidden',
-              }}>
-                <div className="ab-val-strip" style={{
-                  position:'absolute', top:0, left:0, right:0, height:'3px',
-                  background:`linear-gradient(90deg,${v.color},${G.indigo})`,
-                  borderRadius:'20px 20px 0 0',
-                }}/>
-                <div className="ab-val-icon" style={{
-                  width:'48px', height:'48px', borderRadius:'14px',
-                  background:v.bg,
-                  display:'flex', alignItems:'center', justifyContent:'center',
-                  marginBottom:'18px',
-                  boxShadow:`0 4px 14px ${v.color}20`,
+              <div className="ab-hero-actions" style={{ display:'flex', gap:'12px', flexWrap:'wrap', marginBottom:'40px' }}>
+                <a href="/contact" className="ab-btn" style={{
+                  display:'inline-flex', alignItems:'center', gap:'8px',
+                  backgroundImage:`linear-gradient(135deg,${G.blue},${G.indigo})`,
+                  color:'#fff', fontWeight:700, fontSize:'14px',
+                  padding:'14px 30px', borderRadius:'999px',
+                  textDecoration:'none', boxShadow:`0 8px 24px ${G.blue}35`,
                 }}>
-                  <v.Icon size={22} color={v.color}/>
-                </div>
-                <div style={{ fontSize:'15.5px', fontWeight:800, color:'#0f172a', marginBottom:'10px' }}>{v.title}</div>
-                <div style={{ fontSize:'14px', color:'#64748b', lineHeight:1.7 }}>{v.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════ TIMELINE ════════════════════ */}
-      <section style={{ padding:'96px 0', background:'#fff' }}>
-        <div className="container">
-          <div className="ab-two-col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'88px', alignItems:'start' }}>
-            <div className="ab-sticky-col" style={{ position:'sticky', top:'100px' }}>
-              {/* CHANGED: gradient eyebrow → plain blue */}
-              <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'18px' }}>
-                <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
-                <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color: G.blue }}>Our Journey</span>
-              </div>
-              {/* CHANGED: gradient "300+ Placements" → plain orange */}
-              <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px', marginBottom:'18px' }}>
-                From Startup to{' '}
-                <span style={{ color: G.orange }}>300+ Placements</span>
-              </h2>
-              <p style={{ fontSize:'15.5px', color:'#64748b', lineHeight:1.8, marginBottom:'32px' }}>
-                Every milestone was earned the hard way — one candidate at a time, one employer relationship at a time.
-              </p>
-              <div style={{ background:'#f8faff', borderRadius:'16px', padding:'22px 24px', border:`1px solid ${G.blue}18` }}>
-                <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'14px' }}>
-                  <Sparkles size={16} color={G.blue}/>
-                  <span style={{ fontSize:'13px', fontWeight:700, color:G.blue }}>Growth trajectory</span>
-                </div>
-                {[
-                  { label:'Placements',   val:85 },
-                  { label:'Partners',     val:60 },
-                  { label:'Satisfaction', val:97 },
-                ].map(bar => (
-                  <div key={bar.label} style={{ marginBottom:'10px' }}>
-                    <div style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', color:'#64748b', marginBottom:'4px' }}>
-                      <span>{bar.label}</span><span>{bar.val}%</span>
-                    </div>
-                    <div style={{ height:'6px', borderRadius:'99px', background:'#eef2ff', overflow:'hidden' }}>
-                      <div style={{ height:'100%', width:`${bar.val}%`, borderRadius:'99px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
-                    </div>
-                  </div>
-                ))}
+                  <Rocket size={15}/> Start Your Journey
+                </a>
+                <a href="#our-story" className="ab-btn-secondary" style={{
+                  display:'inline-flex', alignItems:'center', gap:'8px',
+                  background:'#fff', color:'#0b0d20', fontWeight:500, fontSize:'14px',
+                  padding:'14px 30px', borderRadius:'999px',
+                  textDecoration:'none', border:'1.5px solid #e2e8f0',
+                  boxShadow:'0 2px 8px rgba(0,0,0,.05)',
+                }}>
+                  Read Our Story <ArrowRight size={14}/>
+                </a>
               </div>
             </div>
 
-            <div style={{ display:'flex', flexDirection:'column' }}>
-              {timeline.map((item, i) => {
-                const col = DOT_COLORS[i % DOT_COLORS.length];
+            {/* Stats strip — thin pill row, plain black numbers */}
+            <div className="ab-stats-4" style={{ display:'flex', gap:'12px', flexWrap:'wrap', justifyContent:'center' }}>
+              {stats.map((s, i) => {
+                const IconComp = s.Icon ?? Users;
+                const col      = s.color ?? G.blue;
                 return (
-                  <div key={i} className="ab-timeline-item" style={{ display:'flex', gap:'20px', alignItems:'stretch' }}>
-                    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', flexShrink:0 }}>
-                      <div className="ab-tl-dot" style={{
-                        width:'40px', height:'40px', borderRadius:'50%',
-                        background:`linear-gradient(135deg,${col},${G.indigo})`,
-                        display:'flex', alignItems:'center', justifyContent:'center',
-                        fontSize:'13px', fontWeight:800, color:'#fff',
-                        boxShadow:`0 6px 18px ${col}40`, flexShrink:0,
-                        animationDelay:`${i * 0.4}s`,
-                      }}>
-                        {i + 1}
-                      </div>
-                      {i < timeline.length-1 && (
-                        <div style={{ width:'2px', flex:1, background:`linear-gradient(to bottom,${col}60,transparent)`, marginTop:'6px' }}/>
-                      )}
+                  <div key={i} className="ab-stat-cell">
+                    <div className="ab-stat-icon" style={{
+                      background:`${col}15`,
+                    }}>
+                      <IconComp size={15} color={col}/>
                     </div>
-                    <div style={{ paddingBottom: i < timeline.length-1 ? '32px' : 0, paddingTop:'6px' }}>
-                      <div style={{
-                        display:'inline-block', fontSize:'11px', fontWeight:800,
-                        letterSpacing:'0.6px', textTransform:'uppercase',
-                        marginBottom:'4px', padding:'3px 10px', borderRadius:'999px',
-                        background:`${col}15`, color:col,
-                      }}>
-                        {item.year}
-                      </div>
-                      <div style={{ fontSize:'15.5px', fontWeight:800, color:'#0f172a', marginBottom:'5px' }}>{item.title}</div>
-                      <div style={{ fontSize:'14px', color:'#64748b', lineHeight:1.7 }}>{item.desc}</div>
+                    <div className="ab-stat-text">
+                      <div style={{ fontSize:'15px', fontWeight:800, lineHeight:1, color: col }}>{s.num}</div>
+                      <div style={{ fontSize:'10.5px', color:'#475569', fontWeight:500, marginTop:'2px' }}>{s.label}</div>
                     </div>
                   </div>
                 );
               })}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ════════════════════ LEADERSHIP ════════════════════ */}
-      <section style={{ padding:'96px 0', background:'#f8faff' }}>
-        <div className="container">
-          <div style={{ textAlign:'center', marginBottom:'52px' }}>
-            {/* CHANGED: gradient eyebrow → plain blue */}
-            <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'16px' }}>
-              <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
-              <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color: G.blue }}>Leadership</span>
-              <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.orange},${G.blue})` }}/>
-            </div>
-            {/* CHANGED: gradient "Placedly" → plain orange */}
-            <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px' }}>
-              The Person Behind{' '}
-              <span style={{ color: G.orange }}>Placedly</span>
-            </h2>
-          </div>
-
-          <div className="ab-founder-card" style={{
-            background:'#fff', border:'1px solid #eef2ff',
-            borderRadius:'28px', padding:'52px',
-            boxShadow:`0 4px 24px ${G.blue}08`,
-            display:'flex', gap:'52px', alignItems:'flex-start',
-            maxWidth:'900px', margin:'0 auto',
-            position:'relative', overflow:'hidden',
-          }}>
-            <div aria-hidden style={{
-              position:'absolute', top:'-60px', right:'-60px',
-              width:'260px', height:'260px', borderRadius:'50%',
-              background:`radial-gradient(circle,${G.blue}12 0%,transparent 70%)`,
-              pointerEvents:'none',
-            }}/>
-
-            <div style={{
-              width:'190px', height:'230px', borderRadius:'20px',
-              overflow:'hidden', flexShrink:0,
-              boxShadow:`0 16px 40px ${G.blue}20`,
-              border:`3px solid ${G.blue}20`,
-              position:'relative',
-            }}>
-              <img src="/img/at founder part.png"
-                alt={founder.name ?? 'Founder'}
-                style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top' }}/>
-              <div style={{
-                position:'absolute', bottom:0, left:0, right:0, height:'60px',
-                background:`linear-gradient(transparent,${G.blue}30)`,
-              }}/>
-            </div>
-
-            <div style={{ position:'relative', zIndex:1 }}>
-              <div style={{ fontSize:'24px', fontWeight:900, color:'#0b0d20', marginBottom:'4px' }}>
-                {founder.name ?? 'Our Founder'}
-              </div>
-              {/* CHANGED: gradient role → plain blue text */}
-              <div style={{ fontSize:'13.5px', fontWeight:600, marginBottom:'22px', color: G.blue }}>
-                {founder.role ?? 'Founder & CEO, Placedly'}
-              </div>
-              <p style={{ fontSize:'15px', color:'#64748b', lineHeight:1.8, marginBottom:'26px' }}>
-                {founder.bio ?? "With a deep background in talent acquisition and career consulting across Delhi NCR's top MNCs, our founder built Placedly with a frustration-turned-mission: too many talented professionals were being left behind by a system that favoured connections over competence."}
-              </p>
-              <div style={{
-                background:'#f8faff',
-                borderLeft:'4px solid transparent',
-                borderImage:`linear-gradient(180deg,${G.blue},${G.orange}) 1`,
-                padding:'18px 22px',
-                borderRadius:'0 14px 14px 0',
-                fontSize:'14.5px', color:'#374151',
-                fontStyle:'italic', lineHeight:1.75,
-                position:'relative',
-              }}>
-                <span style={{
-                  position:'absolute', top:'-2px', left:'16px',
-                  fontSize:'48px', lineHeight:1, color:G.blue, opacity:.15,
-                  fontFamily:'Georgia,serif',
-                }}>&ldquo;</span>
-                {founder.quote ?? "Your next job shouldn't depend on who you know. It should depend on how well we prepare you."}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════ CTA ════════════════════ */}
-      <section style={{ padding:'96px 0', background:'#fff' }}>
-        <div className="container">
-          <div className="ab-dark-cta" style={{
-            position:'relative', borderRadius:'28px',
-            padding:'80px 72px', textAlign:'center',
-            overflow:'hidden',
-            background:'linear-gradient(135deg,#0b0d20 0%,#1a1040 50%,#0d1836 100%)',
-          }}>
-            <div aria-hidden style={{
-              position:'absolute', top:'-80px', left:'10%',
-              width:'340px', height:'340px', borderRadius:'50%',
-              background:`radial-gradient(circle,${G.blue}35 0%,transparent 70%)`,
-              filter:'blur(60px)', pointerEvents:'none',
-            }}/>
-            <div aria-hidden style={{
-              position:'absolute', bottom:'-60px', right:'8%',
-              width:'300px', height:'300px', borderRadius:'50%',
-              background:`radial-gradient(circle,${G.orange}30 0%,transparent 70%)`,
-              filter:'blur(60px)', pointerEvents:'none',
-            }}/>
-
-            <div style={{ position:'relative', zIndex:1 }}>
-              <div style={{
-                display:'inline-flex', alignItems:'center', gap:'8px',
-                fontSize:'11px', fontWeight:700, letterSpacing:'0.1em',
-                textTransform:'uppercase', color:'rgba(255,255,255,.45)',
-                marginBottom:'20px',
-              }}>
-                <span style={{ width:'20px', height:'2px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
-                Take Action
-                <span style={{ width:'20px', height:'2px', borderRadius:'999px', background:`linear-gradient(90deg,${G.orange},${G.blue})` }}/>
-              </div>
-
-              {/* CHANGED: gradient heading → plain white bold */}
-              <h2 style={{
-                fontSize:'clamp(1.7rem,3.5vw,2.6rem)',
-                fontWeight:900, lineHeight:1.15, letterSpacing:'-0.6px',
-                marginBottom:'14px', color:'#fff',
-              }}>
-                Ready to Write Your Success Story?
-              </h2>
-
-              <p style={{ fontSize:'15.5px', color:'rgba(255,255,255,.55)', maxWidth:'480px', margin:'0 auto 36px', lineHeight:1.75 }}>
-                Join 300+ professionals who trusted Placedly to transform their career. Zero upfront — you only pay after you&apos;re placed.
-              </p>
-
-              <div style={{ display:'flex', gap:'14px', justifyContent:'center', flexWrap:'wrap' }}>
-                <a href="/contact" className="ab-cta-btn" style={{
+        {/* ════════════════════ MISSION ════════════════════ */}
+        <section id="our-story" style={{ padding:'96px 0', background:'#fff' }}>
+          <div className="container">
+            <div className="ab-two-col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'72px', alignItems:'center' }}>
+              <div className="ab-fade-up" style={{ animationDelay:'.1s' }}>
+                <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', fontSize:'11.5px', fontWeight:800, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:'18px', color: G.blue }}>
+                  <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})`, display:'inline-block' }}/>
+                  Our Mission
+                </div>
+                {/* CHANGED: plain black heading, no gradient */}
+                <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px', marginBottom:'22px' }}>
+                  Making Career Growth{' '}
+                  <span style={{ color: G.orange }}>Accessible</span>
+                  {' '}for Everyone
+                </h2>
+                <p style={{ fontSize:'15.5px', color:'#475569', lineHeight:1.8, marginBottom:'16px' }}>
+                  Placedly was founded with one deeply held belief: exceptional careers shouldn&apos;t be a privilege reserved for people with the right connections. Every professional deserves expert guidance, real employer access, and a fair shot at the role they want.
+                </p>
+                <p style={{ fontSize:'15.5px', color:'#0b0d20', lineHeight:1.8, marginBottom:'36px' }}>
+                  We operate on a simple model:{' '}
+                  <strong style={{ color:G.blue }}>zero upfront, success-share only.</strong>{' '}
+                  Career Assistance Fee of 12% of CTC — collected only after you receive your offer letter. If we don&apos;t place you, you don&apos;t pay.
+                </p>
+                <a href="/contact" className="ab-btn" style={{
                   display:'inline-flex', alignItems:'center', gap:'8px',
                   backgroundImage:`linear-gradient(135deg,${G.blue},${G.indigo})`,
                   color:'#fff', fontWeight:700, fontSize:'14px',
-                  padding:'15px 34px', borderRadius:'999px',
-                  textDecoration:'none', boxShadow:`0 8px 28px ${G.blue}50`,
+                  padding:'13px 28px', borderRadius:'999px',
+                  textDecoration:'none', boxShadow:`0 8px 22px ${G.blue}30`,
                 }}>
-                  <Rocket size={15}/> Get Placed Now
+                  Talk to Our Team <ArrowRight size={14}/>
                 </a>
-                <a href="/study-visa" className="ab-cta-btn" style={{
-                  display:'inline-flex', alignItems:'center', gap:'8px',
-                  backgroundImage:`linear-gradient(135deg,${G.orange},${G.rose})`,
-                  color:'#fff', fontWeight:700, fontSize:'14px',
-                  padding:'15px 34px', borderRadius:'999px',
-                  textDecoration:'none', boxShadow:`0 8px 28px ${G.orange}40`,
+              </div>
+
+              <div className="ab-mission-img" style={{ position:'relative', height:'500px' }}>
+                <div style={{
+                  position:'absolute', top:0, left:0,
+                  width:'70%', height:'310px',
+                  borderRadius:'22px', overflow:'hidden',
+                  boxShadow:'0 24px 56px rgba(0,0,0,.12)',
                 }}>
-                  <Plane size={15}/> Study Abroad
-                </a>
+                  <img src="/img/team.png" alt="Placedly Team"
+                    style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
+                  <div style={{
+                    position:'absolute', inset:0,
+                    background:`linear-gradient(160deg,${G.blue}22 0%,transparent 60%)`,
+                  }}/>
+                </div>
+
+                <div style={{
+                  position:'absolute', bottom:0, right:0,
+                  width:'58%', height:'250px',
+                  borderRadius:'22px', overflow:'hidden',
+                  boxShadow:'0 24px 56px rgba(0,0,0,.12)',
+                  border:'4px solid #fff',
+                }}>
+                  <img src="/img/aboutt us consultancy.png" alt="Consultancy"
+                    style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
+                </div>
+
+                <div className="ab-badge-left" style={{
+                  position:'absolute', bottom:'165px', left:'-20px',
+                  background:'#fff', borderRadius:'16px',
+                  boxShadow:`0 12px 32px rgba(0,0,0,.10)`,
+                  padding:'14px 18px',
+                  display:'flex', alignItems:'center', gap:'12px',
+                  border:`1px solid ${G.blue}20`,
+                }}>
+                  <div style={{ width:'42px', height:'42px', borderRadius:'12px', background:`${G.blue}15`, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                    <Trophy size={18} color={G.blue}/>
+                  </div>
+                  <div>
+                    <div style={{ fontSize:'20px', fontWeight:900, lineHeight:1, color: G.blue }}>300+</div>
+                    <div style={{ fontSize:'11px', color:'#475569', marginTop:'2px' }}>Careers Transformed</div>
+                  </div>
+                </div>
+
+                <div className="ab-badge-right" style={{
+                  position:'absolute', top:'60px', right:'-20px',
+                  background:'#fff', borderRadius:'16px',
+                  boxShadow:`0 12px 32px rgba(0,0,0,.10)`,
+                  padding:'14px 18px',
+                  display:'flex', alignItems:'center', gap:'12px',
+                  border:`1px solid ${G.orange}20`,
+                }}>
+                  <div style={{ width:'42px', height:'42px', borderRadius:'12px', background:`${G.orange}15`, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                    <Handshake size={18} color={G.orange}/>
+                  </div>
+                  <div>
+                    <div style={{ fontSize:'20px', fontWeight:900, lineHeight:1, color: G.orange }}>50+</div>
+                    <div style={{ fontSize:'11px', color:'#475569', marginTop:'2px' }}>Hiring Partners</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
+        {/* ════════════════════ VALUES ════════════════════ */}
+        <section style={{ padding:'96px 0', background:'#f8faff' }}>
+          <div className="container">
+            <div style={{ textAlign:'center', marginBottom:'56px' }}>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'16px' }}>
+                <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
+                <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color: G.blue }}>What We Stand For</span>
+                <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.orange},${G.blue})` }}/>
+              </div>
+              {/* CHANGED: plain black heading, no gradient */}
+              <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px' }}>
+                The Principles That{' '}
+                <span style={{ color: G.orange }}>Drive Us</span>
+              </h2>
+            </div>
+
+            <div className="ab-values-3" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'20px' }}>
+              {values.map((v, i) => (
+                <div key={i} className="ab-val-card" style={{
+                  background:'#fff', borderRadius:'20px', padding:'30px',
+                  border:'1px solid #eef2ff',
+                  boxShadow:'0 2px 12px rgba(0,0,0,.04)',
+                  position:'relative', overflow:'hidden',
+                }}>
+                  <div className="ab-val-strip" style={{
+                    position:'absolute', top:0, left:0, right:0, height:'3px',
+                    background:`linear-gradient(90deg,${v.color},${G.indigo})`,
+                    borderRadius:'20px 20px 0 0',
+                  }}/>
+                  <div className="ab-val-icon" style={{
+                    width:'48px', height:'48px', borderRadius:'14px',
+                    background:v.bg,
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    marginBottom:'18px',
+                    boxShadow:`0 4px 14px ${v.color}20`,
+                  }}>
+                    <v.Icon size={22} color={v.color}/>
+                  </div>
+                  <div style={{ fontSize:'15.5px', fontWeight:800, color:'#0b0d20', marginBottom:'10px' }}>{v.title}</div>
+                  <div style={{ fontSize:'14px', color:'#475569', lineHeight:1.7 }}>{v.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════ TIMELINE ════════════════════ */}
+        <section style={{ padding:'96px 0', background:'#fff' }}>
+          <div className="container">
+            <div className="ab-two-col" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'88px', alignItems:'start' }}>
+              <div className="ab-sticky-col" style={{ position:'sticky', top:'100px' }}>
+                <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'18px' }}>
+                  <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
+                  <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color: G.blue }}>Our Journey</span>
+                </div>
+                {/* CHANGED: plain black heading, no gradient */}
+                <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px', marginBottom:'18px' }}>
+                  From Startup to{' '}
+                  <span style={{ color: G.orange }}>300+ Placements</span>
+                </h2>
+                <p style={{ fontSize:'15.5px', color:'#475569', lineHeight:1.8, marginBottom:'32px' }}>
+                  Every milestone was earned the hard way — one candidate at a time, one employer relationship at a time.
+                </p>
+                <div style={{ background:'#f8faff', borderRadius:'16px', padding:'22px 24px', border:`1px solid ${G.blue}18` }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'14px' }}>
+                    <Sparkles size={16} color={G.blue}/>
+                    <span style={{ fontSize:'13px', fontWeight:700, color: G.blue }}>Growth trajectory</span>
+                  </div>
+                  {[
+                    { label:'Placements',   val:85 },
+                    { label:'Partners',     val:60 },
+                    { label:'Satisfaction', val:97 },
+                  ].map(bar => (
+                    <div key={bar.label} style={{ marginBottom:'10px' }}>
+                      <div style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', color:'#475569', marginBottom:'4px' }}>
+                        <span>{bar.label}</span><span>{bar.val}%</span>
+                      </div>
+                      <div style={{ height:'6px', borderRadius:'99px', background:'#eef2ff', overflow:'hidden' }}>
+                        <div style={{ height:'100%', width:`${bar.val}%`, borderRadius:'99px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display:'flex', flexDirection:'column' }}>
+                {timeline.map((item, i) => {
+                  const col = DOT_COLORS[i % DOT_COLORS.length];
+                  return (
+                    <div key={i} className="ab-timeline-item" style={{ display:'flex', gap:'20px', alignItems:'stretch' }}>
+                      <div style={{ display:'flex', flexDirection:'column', alignItems:'center', flexShrink:0 }}>
+                        <div className="ab-tl-dot" style={{
+                          width:'40px', height:'40px', borderRadius:'50%',
+                          background:`linear-gradient(135deg,${col},${G.indigo})`,
+                          display:'flex', alignItems:'center', justifyContent:'center',
+                          fontSize:'13px', fontWeight:800, color:'#fff',
+                          boxShadow:`0 6px 18px ${col}40`, flexShrink:0,
+                          animationDelay:`${i * 0.4}s`,
+                        }}>
+                          {i + 1}
+                        </div>
+                        {i < timeline.length-1 && (
+                          <div style={{ width:'2px', flex:1, background:`linear-gradient(to bottom,${col}60,transparent)`, marginTop:'6px' }}/>
+                        )}
+                      </div>
+                      <div style={{ paddingBottom: i < timeline.length-1 ? '32px' : 0, paddingTop:'6px' }}>
+                        <div style={{
+                          display:'inline-block', fontSize:'11px', fontWeight:800,
+                          letterSpacing:'0.6px', textTransform:'uppercase',
+                          marginBottom:'4px', padding:'3px 10px', borderRadius:'999px',
+                          background:`${col}15`, color:col,
+                        }}>
+                          {item.year}
+                        </div>
+                        <div style={{ fontSize:'15.5px', fontWeight:800, color:'#0b0d20', marginBottom:'5px' }}>{item.title}</div>
+                        <div style={{ fontSize:'14px', color:'#475569', lineHeight:1.7 }}>{item.desc}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════ LEADERSHIP ════════════════════ */}
+        <section style={{ padding:'96px 0', background:'#f8faff' }}>
+          <div className="container">
+            <div style={{ textAlign:'center', marginBottom:'52px' }}>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', marginBottom:'16px' }}>
+                <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
+                <span style={{ fontSize:'11.5px', fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color: G.blue }}>Leadership</span>
+                <span style={{ width:'20px', height:'3px', borderRadius:'999px', background:`linear-gradient(90deg,${G.orange},${G.blue})` }}/>
+              </div>
+              {/* CHANGED: plain black heading, no gradient */}
+              <h2 style={{ fontSize:'clamp(1.9rem,3vw,2.75rem)', fontWeight:900, color:'#0b0d20', lineHeight:1.12, letterSpacing:'-0.8px' }}>
+                The Person Behind{' '}
+                <span style={{ color: G.orange }}>Placedly</span>
+              </h2>
+            </div>
+
+            <div className="ab-founder-card" style={{
+              background:'#fff', border:'1px solid #eef2ff',
+              borderRadius:'28px', padding:'52px',
+              boxShadow:`0 4px 24px ${G.blue}08`,
+              display:'flex', gap:'52px', alignItems:'flex-start',
+              maxWidth:'900px', margin:'0 auto',
+              position:'relative', overflow:'hidden',
+            }}>
+              <div aria-hidden style={{
+                position:'absolute', top:'-60px', right:'-60px',
+                width:'260px', height:'260px', borderRadius:'50%',
+                background:`radial-gradient(circle,${G.blue}12 0%,transparent 70%)`,
+                pointerEvents:'none',
+              }}/>
+
+              <div style={{
+                width:'190px', height:'230px', borderRadius:'20px',
+                overflow:'hidden', flexShrink:0,
+                boxShadow:`0 16px 40px ${G.blue}20`,
+                border:`3px solid ${G.blue}20`,
+                position:'relative',
+              }}>
+                <img src="/img/at founder part.png"
+                  alt={founder.name ?? 'Founder'}
+                  style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top' }}/>
+                <div style={{
+                  position:'absolute', bottom:0, left:0, right:0, height:'60px',
+                  background:`linear-gradient(transparent,${G.blue}30)`,
+                }}/>
+              </div>
+
+              <div style={{ position:'relative', zIndex:1 }}>
+                <div style={{ fontSize:'24px', fontWeight:900, color:'#0b0d20', marginBottom:'4px' }}>
+                  {founder.name ?? 'Our Founder'}
+                </div>
+                <div style={{ fontSize:'13.5px', fontWeight:600, marginBottom:'22px', color: G.blue }}>
+                  {founder.role ?? 'Founder & CEO, Placedly'}
+                </div>
+                <p style={{ fontSize:'15px', color:'#475569', lineHeight:1.8, marginBottom:'26px' }}>
+                  {founder.bio ?? "With a deep background in talent acquisition and career consulting across Delhi NCR's top MNCs, our founder built Placedly with a frustration-turned-mission: too many talented professionals were being left behind by a system that favoured connections over competence."}
+                </p>
+                <div style={{
+                  background:'#f8faff',
+                  borderLeft:`4px solid ${G.blue}`,
+                  padding:'18px 22px',
+                  borderRadius:'0 14px 14px 0',
+                  fontSize:'14.5px', color:'#0b0d20',
+                  fontStyle:'italic', lineHeight:1.75,
+                  position:'relative',
+                }}>
+                  <span style={{
+                    position:'absolute', top:'-2px', left:'16px',
+                    fontSize:'48px', lineHeight:1, color:G.blue, opacity:.15,
+                    fontFamily:'Georgia,serif',
+                  }}>&ldquo;</span>
+                  {founder.quote ?? "Your next job shouldn't depend on who you know. It should depend on how well we prepare you."}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════ CTA ════════════════════ */}
+        <section style={{ padding:'96px 0', background:'#fff' }}>
+          <div className="container">
+            <div className="ab-dark-cta" style={{
+              position:'relative', borderRadius:'28px',
+              padding:'80px 72px', textAlign:'center',
+              overflow:'hidden',
+              background:'linear-gradient(135deg,#0b0d20 0%,#1a1040 50%,#0d1836 100%)',
+            }}>
+              <div aria-hidden style={{
+                position:'absolute', top:'-80px', left:'10%',
+                width:'340px', height:'340px', borderRadius:'50%',
+                background:`radial-gradient(circle,${G.blue}35 0%,transparent 70%)`,
+                filter:'blur(60px)', pointerEvents:'none',
+              }}/>
+              <div aria-hidden style={{
+                position:'absolute', bottom:'-60px', right:'8%',
+                width:'300px', height:'300px', borderRadius:'50%',
+                background:`radial-gradient(circle,${G.orange}30 0%,transparent 70%)`,
+                filter:'blur(60px)', pointerEvents:'none',
+              }}/>
+
+              <div style={{ position:'relative', zIndex:1 }}>
+                <div style={{
+                  display:'inline-flex', alignItems:'center', gap:'8px',
+                  fontSize:'11px', fontWeight:700, letterSpacing:'0.1em',
+                  textTransform:'uppercase', color:'rgba(255,255,255,.55)',
+                  marginBottom:'20px',
+                }}>
+                  <span style={{ width:'20px', height:'2px', borderRadius:'999px', background:`linear-gradient(90deg,${G.blue},${G.orange})` }}/>
+                  Take Action
+                  <span style={{ width:'20px', height:'2px', borderRadius:'999px', background:`linear-gradient(90deg,${G.orange},${G.blue})` }}/>
+                </div>
+
+                {/* CHANGED: plain white heading on dark background, no gradient */}
+                <h2 style={{
+                  fontSize:'clamp(1.7rem,3.5vw,2.6rem)',
+                  fontWeight:900, lineHeight:1.15, letterSpacing:'-0.6px',
+                  marginBottom:'14px', color:'#ffffff',
+                }}>
+                  Ready to Write Your Success Story?
+                </h2>
+
+                <p style={{ fontSize:'15.5px', color:'rgba(255,255,255,.7)', maxWidth:'480px', margin:'0 auto 36px', lineHeight:1.75 }}>
+                  Join 300+ professionals who trusted Placedly to transform their career. Zero upfront — you only pay after you&apos;re placed.
+                </p>
+
+                <div style={{ display:'flex', gap:'14px', justifyContent:'center', flexWrap:'wrap' }}>
+                  <a href="/contact" className="ab-cta-btn" style={{
+                    display:'inline-flex', alignItems:'center', gap:'8px',
+                    backgroundImage:`linear-gradient(135deg,${G.blue},${G.indigo})`,
+                    color:'#fff', fontWeight:700, fontSize:'14px',
+                    padding:'15px 34px', borderRadius:'999px',
+                    textDecoration:'none', boxShadow:`0 8px 28px ${G.blue}50`,
+                  }}>
+                    <Rocket size={15}/> Get Placed Now
+                  </a>
+                  <a href="/study-visa" className="ab-cta-btn" style={{
+                    display:'inline-flex', alignItems:'center', gap:'8px',
+                    backgroundImage:`linear-gradient(135deg,${G.orange},${G.rose})`,
+                    color:'#fff', fontWeight:700, fontSize:'14px',
+                    padding:'15px 34px', borderRadius:'999px',
+                    textDecoration:'none', boxShadow:`0 8px 28px ${G.orange}40`,
+                  }}>
+                    <Plane size={15}/> Study Abroad
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
     </PageLayout>
   );
 }

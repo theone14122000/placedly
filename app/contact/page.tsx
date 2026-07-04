@@ -19,7 +19,9 @@ const G = {
   green:  '#16a34a',
 };
 
-const GRAD = `linear-gradient(270deg, ${G.blue}, ${G.indigo}, ${G.orange}, ${G.rose}, ${G.purple}, ${G.blue})`;
+// CHANGED: GRAD constant removed (no more animated text gradient).
+// Buttons still use GRAD only for solid background gradients (kept inline as needed).
+// const GRAD = `linear-gradient(270deg, ${G.blue}, ${G.indigo}, ${G.orange}, ${G.rose}, ${G.purple}, ${G.blue})`;
 
 /* ── CMS defaults ── */
 const CT_DEFAULTS: Record<string, string> = {
@@ -68,22 +70,8 @@ const LIVE_ACTIVITY = [
   '🎯 Vikram T. landed Sr. Analyst role',
 ];
 
-/* ── Gradient text component ── */
-function GradText({ children }: { children: React.ReactNode }) {
-  return (
-    <span style={{
-      backgroundImage: GRAD,
-      backgroundSize: '300% 300%',
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-      backgroundClip: 'text',
-      animation: 'ct-grad 6s ease infinite',
-      display: 'inline',
-    }}>
-      {children}
-    </span>
-  );
-}
+/* CHANGED: GradText component removed entirely.
+   Previously: animated rainbow text gradient. Now: callers use a plain colored <span>. */
 
 /* ── Section label ── */
 function SectionLabel({ text, center = false, light = false }: { text: string; center?: boolean; light?: boolean }) {
@@ -96,10 +84,8 @@ function SectionLabel({ text, center = false, light = false }: { text: string; c
       width: center ? '100%' : 'auto',
     }}>
       <span style={{ width: '18px', height: '2.5px', borderRadius: '999px', background: `linear-gradient(90deg,${G.blue},${G.orange})` }} />
-      <span style={light ? { color: 'rgba(255,255,255,0.55)' } : {
-        backgroundImage: `linear-gradient(90deg,${G.blue},${G.indigo})`,
-        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-      }}>{text}</span>
+      {/* CHANGED: was gradient text, now plain blue (or light on dark bg) */}
+      <span style={light ? { color: 'rgba(255,255,255,0.55)' } : { color: G.blue }}>{text}</span>
       <span style={{ width: '18px', height: '2.5px', borderRadius: '999px', background: `linear-gradient(90deg,${G.orange},${G.blue})` }} />
     </div>
   );
@@ -371,11 +357,7 @@ export default function ContactPage() {
 
       {/* ═══ GLOBAL STYLES ═══ */}
       <style>{`
-        @keyframes ct-grad {
-          0%   { background-position: 0%   50%; }
-          50%  { background-position: 100% 50%; }
-          100% { background-position: 0%   50%; }
-        }
+        /* CHANGED: removed @keyframes ct-grad (text-gradient animation) */
         @keyframes ct-float-up {
           0%,100% { transform: translateY(0); }
           50%     { transform: translateY(-8px); }
@@ -489,14 +471,14 @@ export default function ContactPage() {
               <SectionLabel text={g('ct:heroTag')} />
             </div>
 
-            {/* Heading */}
+            {/* Heading — CHANGED: gradient <GradText> → plain orange span */}
             <h1
               data-ct-reveal
               data-delay="0.06"
               style={{ fontSize: 'clamp(2.2rem,4.5vw,3.6rem)', fontWeight: 900, lineHeight: 1.08, letterSpacing: '-1.5px', color: '#0b0d20', marginBottom: '20px' }}
             >
               {g('ct:heroTitle')}{' '}
-              <GradText>{g('ct:heroTitleGrad')}</GradText>
+              <span style={{ color: G.orange }}>{g('ct:heroTitleGrad')}</span>
               {' '}{g('ct:heroTitleEnd')}
             </h1>
 
@@ -573,7 +555,7 @@ export default function ContactPage() {
             </div>
           </div>
 
-          {/* Stats strip */}
+          {/* Stats strip — CHANGED: gradient numbers → plain colored bold */}
           <div className="ct-stats-strip" style={{ borderTop: '1px solid #eef2ff' }}>
             {stats.map((s, i) => (
               <div
@@ -590,8 +572,7 @@ export default function ContactPage() {
               >
                 <div style={{
                   fontSize: '1.8rem', fontWeight: 900, lineHeight: 1, marginBottom: '5px',
-                  backgroundImage: `linear-gradient(135deg,${s.color},${G.indigo})`,
-                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                  color: s.color,
                 }}>{s.num}</div>
                 <div style={{ fontSize: '11.5px', color: '#94a3b8', fontWeight: 600 }}>{s.label}</div>
               </div>
@@ -665,12 +646,12 @@ export default function ContactPage() {
               ) : (
                 /* Form */
                 <div style={{ padding: '40px' }}>
-                  {/* Form header */}
+                  {/* Form header — CHANGED: gradient "Your Goals" → plain orange */}
                   <div style={{ marginBottom: '28px' }}>
                     <SectionLabel text="Contact Form" />
                     <h2 style={{ fontSize: 'clamp(1.4rem,2.5vw,1.9rem)', fontWeight: 900, color: '#0b0d20', lineHeight: 1.15, marginBottom: '6px', letterSpacing: '-0.5px' }}>
                       {g('ct:formTitle')}{' '}
-                      <GradText>{g('ct:formTitleGrad')}</GradText>
+                      <span style={{ color: G.orange }}>{g('ct:formTitleGrad')}</span>
                     </h2>
                     <p style={{ fontSize: '13px', color: '#64748b' }}>{g('ct:formSubtitle')}</p>
                   </div>
@@ -850,7 +831,6 @@ export default function ContactPage() {
                   boxShadow: `0 8px 28px ${G.blue}25`,
                 }}
               >
-                {/* Orbs */}
                 <div style={{ position: 'absolute', top: '-40px', right: '-40px', width: '160px', height: '160px', borderRadius: '50%', background: `radial-gradient(circle,${G.blue}35 0%,transparent 70%)`, pointerEvents: 'none' }} />
                 <div style={{ position: 'absolute', bottom: '-30px', left: '-30px', width: '130px', height: '130px', borderRadius: '50%', background: `radial-gradient(circle,${G.orange}30 0%,transparent 70%)`, pointerEvents: 'none' }} />
                 <div style={{ position: 'relative', zIndex: 1 }}>
@@ -936,9 +916,10 @@ export default function ContactPage() {
 
           <div data-ct-reveal style={{ textAlign: 'center', marginBottom: '48px' }}>
             <SectionLabel text="Quick Answers" center />
+            {/* CHANGED: split "Questions" + gradient "Questions" → plain orange "Questions" */}
             <h2 style={{ fontSize: 'clamp(1.6rem,2.8vw,2.3rem)', fontWeight: 900, color: '#0b0d20', lineHeight: 1.12, letterSpacing: '-0.5px' }}>
               {g('ct:faqSectionTitle').split(' ').slice(0, -1).join(' ')}{' '}
-              <GradText>{g('ct:faqSectionTitle').split(' ').slice(-1)[0]}</GradText>
+              <span style={{ color: G.orange }}>{g('ct:faqSectionTitle').split(' ').slice(-1)[0]}</span>
             </h2>
             <p style={{ fontSize: '14px', color: '#64748b', marginTop: '8px', maxWidth: '400px', margin: '8px auto 0' }}>
               Everything you need to know before reaching out.
@@ -967,18 +948,16 @@ export default function ContactPage() {
               background: 'linear-gradient(135deg,#0b0d20 0%,#1a1040 50%,#0d1836 100%)',
             }}
           >
-            {/* Orbs */}
             <div style={{ position: 'absolute', top: '-80px', left: '10%', width: '300px', height: '300px', borderRadius: '50%', background: `radial-gradient(circle,${G.blue}35 0%,transparent 70%)`, filter: 'blur(60px)', pointerEvents: 'none' }} />
             <div style={{ position: 'absolute', bottom: '-60px', right: '8%', width: '260px', height: '260px', borderRadius: '50%', background: `radial-gradient(circle,${G.orange}30 0%,transparent 70%)`, filter: 'blur(60px)', pointerEvents: 'none' }} />
 
             <div style={{ position: 'relative', zIndex: 1 }}>
               <SectionLabel text="Take the First Step" center light />
+              {/* CHANGED: gradient "Your Next Role Is Waiting." → plain white bold */}
               <h2 style={{
                 fontSize: 'clamp(1.7rem,3.5vw,2.6rem)', fontWeight: 900, lineHeight: 1.15,
                 letterSpacing: '-0.6px', marginBottom: '14px',
-                backgroundImage: GRAD, backgroundSize: '300% 300%',
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-                animation: 'ct-grad 6s ease infinite',
+                color: '#fff',
               }}>
                 Your Next Role Is Waiting.
               </h2>
