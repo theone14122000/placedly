@@ -123,6 +123,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             );
           })}
 
+          {/* Amber card — left side (unchanged) */}
           <motion.div
             className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-left"
             animate={{ y: [0, -5, 0] }}
@@ -148,6 +149,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             </p>
           </motion.div>
 
+          {/* Recommended pill — center (unchanged) */}
           <motion.div
             className="placedly-lift-mobile-rec"
             animate={{ y: [0, -4, 0] }}
@@ -160,17 +162,11 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             </span>
           </motion.div>
 
-          {/* Daniel card — moved to RIGHT side, BOTTOM via inline style only */}
+          {/* Daniel card — forced to RIGHT-BOTTOM via new unique class */}
           <motion.div
-            className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-right"
+            className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-right placedly-lift-card--mobile-daniel"
             animate={{ y: [0, 5, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
-            style={{
-              top: 'auto',
-              bottom: '12px',
-              left: 'auto',
-              right: '12px',
-            }}
           >
             <div className="placedly-lift-card-profile">
               <img
@@ -196,9 +192,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
 
       {/* ============================================================
            NUCLEAR OVERRIDE — inline <style> rendered in the DOM.
-           Being a real <style> tag inserted at the end of the body,
-           AND scoped with data-attr selector for max specificity,
-           no external stylesheet rule can win.
+           No external stylesheet rule can win against this.
          ============================================================ */}
       <style
         dangerouslySetInnerHTML={{
@@ -332,8 +326,10 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               word-wrap: break-word !important;
               overflow-wrap: anywhere !important;
               white-space: normal !important;
-              position: relative !important;
-              inset: auto !important;
+              position: absolute !important;
+              top: 50% !important;
+              left: 50% !important;
+              transform: translate(-50%, -50%) !important;
               margin: 0 !important;
               float: none !important;
               clear: none !important;
@@ -346,6 +342,26 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               margin: 0 !important;
               padding: 0 !important;
               color: inherit !important;
+            }
+
+            /* ============================================================
+               DANIEL CARD — force to RIGHT side, BOTTOM
+               Triple-class + !important to beat any global rule on
+               .placedly-lift-card--mobile-right.
+               Tweak the two numbers below to nudge position.
+             ============================================================ */
+            .placedly-hero-mobile-brief .placedly-lift-card--mobile.placedly-lift-card--mobile-right.placedly-lift-card--mobile-daniel,
+            .placedly-hero-mobile-brief .placedly-lift-card--mobile-daniel.placedly-lift-card--mobile-daniel.placedly-lift-card--mobile-daniel {
+              position: absolute !important;
+              top: auto !important;
+              bottom: 12px !important;
+              left: auto !important;
+              right: 12px !important;
+              margin: 0 !important;
+              transform: none !important;
+              float: none !important;
+              clear: none !important;
+              z-index: 5 !important;
             }
           `,
         }}
