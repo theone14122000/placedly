@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import HeroGradientBg from './HeroGradientBg';
+import HeroMobileBrief from './HeroMobileBrief';
 import HeroBgVideo from './HeroBgVideo';
 import HiringPartnersMarquee from './HiringPartnersMarquee';
 
@@ -702,7 +703,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           ))}
         </div>
       </div>
-
+      <HeroMobileBrief cms={cms} />   
       <HiringPartnersMarquee cms={cms} />
     </section>
   );
