@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import HeroGradientBg from './HeroGradientBg';
 import HeroBgVideo from './HeroBgVideo';
+import HiringPartnersMarquee from './HiringPartnersMarquee';
 
 type HeroCms = { [k: string]: string };
 
@@ -20,18 +21,17 @@ const HERO_CARD_AVATARS = {
   right: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face',
 } as const;
 
-/* ★ Match desktop theme tokens */
-const ORANGE         = '#f97316';
-const ORANGE_DARK    = '#ea580c';
-const ORANGE_SOFT    = 'rgba(249, 115, 22, 0.12)';
-const ORANGE_BORDER  = 'rgba(249, 115, 22, 0.30)';
-const ORANGE_GLOW     = 'rgba(249, 115, 22, 0.35)';
+const ORANGE        = '#f97316';
+const ORANGE_DARK   = '#ea580c';
+const ORANGE_SOFT   = 'rgba(249, 115, 22, 0.12)';
+const ORANGE_BORDER = 'rgba(249, 115, 22, 0.30)';
+const ORANGE_GLOW   = 'rgba(249, 115, 22, 0.35)';
 
 const MOBILE_HERO_STATS = [
-  { id: 'companies',  value: '40+',  label: 'Companies' },
+  { id: 'companies',  value: '40+',  label: 'Companies'  },
   { id: 'candidates', value: '1K+',  label: 'Placements' },
-  { id: 'countries',  value: '20+',  label: 'Countries' },
-  { id: 'years',      value: '10+',  label: 'Years Exp' },
+  { id: 'countries',  value: '20+',  label: 'Countries'  },
+  { id: 'years',      value: '10+',  label: 'Years Exp'  },
 ] as const;
 
 const MOBILE_SUBLINE = (
@@ -45,9 +45,7 @@ const MOBILE_SUBLINE = (
   </>
 );
 
-/* ============================================================
-   COMBINED STATS TAB — single row, same style as desktop
-============================================================ */
+/* ── Stats bar ── */
 function MobileHeroStatsBar({ delay = 0 }: { delay?: number }) {
   const [activeId, setActiveId] = useState<(typeof MOBILE_HERO_STATS)[number]['id']>(MOBILE_HERO_STATS[0].id);
   const [paused, setPaused] = useState(false);
@@ -102,16 +100,20 @@ function MobileHeroStatsBar({ delay = 0 }: { delay?: number }) {
   );
 }
 
-export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
-  const admitInterest = 'Early stage AI';
-  const offerName = 'Amber';
-  const recommendName = 'Daniel';
+/* ════════════════════════════════════════════════════════
+   Main component
+════════════════════════════════════════════════════════ */
+export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
+  const admitInterest  = 'Early stage AI';
+  const offerName      = 'Amber';
+  const recommendName  = 'Daniel';
 
   return (
     <div className="placedly-hero-mobile-brief" aria-label="Mobile hero">
       <HeroGradientBg />
       <HeroBgVideo />
 
+      {/* ── Copy ── */}
       <div className="placedly-lift-hero-copy">
         <motion.h1
           className="placedly-liftoff-m-headline"
@@ -139,27 +141,13 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.12 }}
         >
-          <a
-            href="/candidates"
-            className="placedly-hero-cta-pill"
-          >
-            For Candidates
-          </a>
-          <a
-            href="/recruiters"
-            className="placedly-hero-cta-pill"
-          >
-            For Recruiters
-          </a>
-          <a
-            href="/study-abroad"
-            className="placedly-hero-cta-pill"
-          >
-            Study Abroad
-          </a>
+          <a href="/candidates"  className="placedly-hero-cta-pill">For Candidates</a>
+          <a href="/recruiters"  className="placedly-hero-cta-pill">For Recruiters</a>
+          <a href="/study-abroad" className="placedly-hero-cta-pill">Study Abroad</a>
         </motion.div>
       </div>
 
+      {/* ── Scene ── */}
       <motion.div
         className="placedly-lift-hero-stage placedly-lift-hero-stage--liftoff"
         initial={{ opacity: 0, y: 20 }}
@@ -169,8 +157,8 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
         <div className="placedly-lift-mobile-scene" aria-hidden>
           {SCATTER_AVATARS.map((person, i) => {
             const isCenter = 'center' in person && person.center;
-            const rotate = 'rotate' in person ? person.rotate : 0;
-            const isBlur = 'blur' in person && person.blur;
+            const rotate   = 'rotate' in person ? person.rotate : 0;
+            const isBlur   = 'blur'   in person && person.blur;
             return (
               <div
                 key={`${person.src}-${i}`}
@@ -185,17 +173,15 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
                 }}
               >
                 <img
-                  src={person.src}
-                  alt=""
-                  width={person.size}
-                  height={person.size}
-                  loading="lazy"
-                  decoding="async"
+                  src={person.src} alt=""
+                  width={person.size} height={person.size}
+                  loading="lazy" decoding="async"
                 />
               </div>
             );
           })}
 
+          {/* left card */}
           <motion.div
             className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-left"
             animate={{ y: [0, -5, 0] }}
@@ -203,13 +189,9 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
           >
             <div className="placedly-lift-card-profile">
               <img
-                src={HERO_CARD_AVATARS.left}
-                alt=""
+                src={HERO_CARD_AVATARS.left} alt=""
                 className="placedly-lift-avatar placedly-lift-avatar--photo"
-                width={28}
-                height={28}
-                loading="lazy"
-                decoding="async"
+                width={28} height={28} loading="lazy" decoding="async"
               />
               <div className="placedly-lift-card-identity">
                 <p className="placedly-lift-name">{offerName}</p>
@@ -221,6 +203,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             </p>
           </motion.div>
 
+          {/* rec pill */}
           <motion.div
             className="placedly-lift-mobile-rec"
             animate={{ y: [0, -4, 0] }}
@@ -233,6 +216,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             </span>
           </motion.div>
 
+          {/* right card */}
           <motion.div
             className="placedly-lift-card placedly-lift-card--mobile placedly-lift-card--mobile-right placedly-lift-card--mobile-daniel"
             animate={{ y: [0, 5, 0] }}
@@ -240,13 +224,9 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
           >
             <div className="placedly-lift-card-profile">
               <img
-                src={HERO_CARD_AVATARS.right}
-                alt=""
+                src={HERO_CARD_AVATARS.right} alt=""
                 className="placedly-lift-avatar placedly-lift-avatar--photo"
-                width={28}
-                height={28}
-                loading="lazy"
-                decoding="async"
+                width={28} height={28} loading="lazy" decoding="async"
               />
               <div className="placedly-lift-card-identity">
                 <p className="placedly-lift-name">{recommendName}</p>
@@ -260,15 +240,27 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
         </div>
       </motion.div>
 
-      {/* Combined stats tab — single row, matches desktop */}
+      {/* ── Stats bar ── */}
       <MobileHeroStatsBar delay={0.24} />
+
+      {/* ════════════════════════════════════════
+          ★ MARQUEE — added below stats bar
+          with clear breathing room
+      ════════════════════════════════════════ */}
+      <motion.div
+        className="placedly-hero-mobile-marquee-slot"
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-20px' }}
+        transition={{ duration: 0.45, delay: 0.3 }}
+      >
+        <HiringPartnersMarquee cms={cms} />
+      </motion.div>
 
       <style
         dangerouslySetInnerHTML={{
           __html: `
-            /* ═══════════════════════════════════════════════════
-               CTA ROW — orange gradient pills (matches desktop)
-            ═══════════════════════════════════════════════════ */
+            /* ── CTA row ── */
             .placedly-hero-mobile-brief .placedly-hero-cta-row {
               display: flex !important;
               flex-direction: row !important;
@@ -294,12 +286,9 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               display: none !important;
             }
 
-            /* ★ ORANGE BUTTON — same gradient as desktop */
+            /* ── Orange CTA pill ── */
             .placedly-hero-mobile-brief .placedly-hero-cta-pill {
               flex: 0 0 auto !important;
-              flex-grow: 0 !important;
-              flex-shrink: 0 !important;
-              flex-basis: auto !important;
               display: inline-flex !important;
               align-items: center !important;
               justify-content: center !important;
@@ -328,14 +317,13 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               border: 1px solid rgba(255,255,255,0.18) !important;
               cursor: pointer !important;
               background-color: transparent !important;
-              /* ★ SAME orange as desktop */
               background-image: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
-              box-shadow: 0 4px 12px rgba(249, 115, 22, 0.28) !important;
+              box-shadow: 0 4px 12px rgba(249,115,22,0.28) !important;
               transition: transform .25s ease, filter .25s ease, box-shadow .25s ease !important;
             }
             .placedly-hero-mobile-brief .placedly-hero-cta-pill:hover {
               transform: translateY(-1px) !important;
-              box-shadow: 0 6px 18px rgba(249, 115, 22, 0.38) !important;
+              box-shadow: 0 6px 18px rgba(249,115,22,0.38) !important;
               filter: brightness(1.08) !important;
             }
             .placedly-hero-mobile-brief .placedly-hero-cta-pill:active {
@@ -343,9 +331,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               filter: brightness(0.94) !important;
             }
 
-            /* ═══════════════════════════════════════════════════
-               POPUP SCENE
-            ═══════════════════════════════════════════════════ */
+            /* ── Scene ── */
             .placedly-hero-mobile-brief .placedly-lift-hero-stage--liftoff {
               position: relative !important;
               width: 100% !important;
@@ -363,7 +349,6 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               margin: 0 !important;
               padding: 0 !important;
             }
-
             .placedly-hero-mobile-brief .placedly-lift-card--mobile {
               max-width: 240px !important;
               width: max-content !important;
@@ -465,7 +450,6 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               padding: 0 !important;
               color: inherit !important;
             }
-
             .placedly-hero-mobile-brief .placedly-lift-card--mobile.placedly-lift-card--mobile-right.placedly-lift-card--mobile-daniel,
             .placedly-hero-mobile-brief .placedly-lift-card--mobile-daniel.placedly-lift-card--mobile-daniel.placedly-lift-card--mobile-daniel {
               position: absolute !important;
@@ -480,9 +464,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               z-index: 5 !important;
             }
 
-            /* ═══════════════════════════════════════════════════
-               ★ COMBINED STATS TAB (single row) — matches desktop
-            ═══════════════════════════════════════════════════ */
+            /* ── Stats tab ── */
             .placedly-hero-stats-tab {
               position: relative !important;
               display: flex !important;
@@ -497,134 +479,92 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               background: #ffffff !important;
               border: 1.5px solid ${ORANGE_BORDER} !important;
               border-radius: 9999px !important;
-              box-shadow: 0 4px 14px rgba(249, 115, 22, 0.10) !important;
+              box-shadow: 0 4px 14px rgba(249,115,22,0.10) !important;
               overflow: hidden !important;
               isolation: isolate !important;
               z-index: 2 !important;
             }
             .placedly-hero-stats-tab-shine {
               position: absolute !important;
-              top: 0 !important;
-              left: -130% !important;
-              width: 60% !important;
-              height: 100% !important;
-              background: linear-gradient(115deg, transparent, rgba(249, 115, 22, 0.14), transparent) !important;
+              top: 0 !important; left: -130% !important;
+              width: 60% !important; height: 100% !important;
+              background: linear-gradient(115deg, transparent, rgba(249,115,22,0.14), transparent) !important;
               transform: skewX(-20deg) !important;
               transition: left 0.8s ease !important;
-              z-index: 0 !important;
-              pointer-events: none !important;
+              z-index: 0 !important; pointer-events: none !important;
             }
             .placedly-hero-stats-tab:hover .placedly-hero-stats-tab-shine,
             .placedly-hero-stats-tab:active .placedly-hero-stats-tab-shine {
               left: 140% !important;
             }
-
             .placedly-hero-stat-cell {
-              position: relative !important;
-              z-index: 1 !important;
-              display: flex !important;
-              align-items: center !important;
-              justify-content: center !important;
-              gap: 4px !important;
-              flex: 1 1 0 !important;
-              min-width: 0 !important;
-              padding: 5px 8px !important;
-              border-radius: 9999px !important;
+              position: relative !important; z-index: 1 !important;
+              display: flex !important; align-items: center !important;
+              justify-content: center !important; gap: 4px !important;
+              flex: 1 1 0 !important; min-width: 0 !important;
+              padding: 5px 8px !important; border-radius: 9999px !important;
               cursor: default !important;
               transition: background 0.3s ease, transform 0.3s ease !important;
             }
             .placedly-hero-stat-cell:hover,
-            .placedly-hero-stat-cell:active {
-              background: rgba(249, 115, 22, 0.06) !important;
-            }
-            .placedly-hero-stat-cell.is-active {
-              background: rgba(249, 115, 22, 0.12) !important;
-            }
+            .placedly-hero-stat-cell:active { background: rgba(249,115,22,0.06) !important; }
+            .placedly-hero-stat-cell.is-active { background: rgba(249,115,22,0.12) !important; }
             .placedly-hero-stat-cell.is-active .placedly-hero-stat-cell-text strong {
               color: ${ORANGE_DARK} !important;
             }
-
             .placedly-hero-stat-cell-text {
-              display: flex !important;
-              flex-direction: column !important;
-              align-items: center !important;
-              line-height: 1.1 !important;
-              min-width: 0 !important;
-              flex: 1 !important;
-              text-align: center !important;
-              overflow: hidden !important;
+              display: flex !important; flex-direction: column !important;
+              align-items: center !important; line-height: 1.1 !important;
+              min-width: 0 !important; flex: 1 !important;
+              text-align: center !important; overflow: hidden !important;
             }
             .placedly-hero-stat-cell-text strong {
-              font-size: 13px !important;
-              color: ${ORANGE} !important;
-              font-weight: 800 !important;
-              letter-spacing: -0.01em !important;
-              transition: color 0.3s ease !important;
-              line-height: 1.1 !important;
+              font-size: 13px !important; color: ${ORANGE} !important;
+              font-weight: 800 !important; letter-spacing: -0.01em !important;
+              transition: color 0.3s ease !important; line-height: 1.1 !important;
               white-space: nowrap !important;
             }
             .placedly-hero-stat-cell-text span {
-              font-size: 9.5px !important;
-              color: #64748b !important;
-              font-weight: 500 !important;
-              white-space: nowrap !important;
-              overflow: hidden !important;
-              text-overflow: ellipsis !important;
-              max-width: 100% !important;
-              margin-top: 1px !important;
+              font-size: 9.5px !important; color: #64748b !important;
+              font-weight: 500 !important; white-space: nowrap !important;
+              overflow: hidden !important; text-overflow: ellipsis !important;
+              max-width: 100% !important; margin-top: 1px !important;
             }
-
             .placedly-hero-stat-divider {
-              align-self: stretch !important;
-              width: 1px !important;
-              background: linear-gradient(
-                to bottom,
-                transparent,
-                rgba(15, 23, 42, 0.12),
-                transparent
-              ) !important;
-              flex-shrink: 0 !important;
-              margin: 4px 0 !important;
+              align-self: stretch !important; width: 1px !important;
+              background: linear-gradient(to bottom, transparent, rgba(15,23,42,0.12), transparent) !important;
+              flex-shrink: 0 !important; margin: 4px 0 !important;
             }
 
+            /* ════════════════════════════════════════
+               ★ MARQUEE SLOT
+            ════════════════════════════════════════ */
+            .placedly-hero-mobile-marquee-slot {
+              margin-top: 28px !important;
+              width: 100% !important;
+              overflow: hidden !important;
+            }
+
+            /* ── responsive stats ── */
             @media (max-width: 640px) {
               .placedly-hero-stats-tab {
                 margin: 18px 14px 0 14px !important;
                 padding: 4px !important;
-                gap: 0 !important;
-                flex-wrap: nowrap !important;
               }
-              .placedly-hero-stat-cell {
-                padding: 4px 6px !important;
-                flex: 1 1 0 !important;
-                min-width: 0 !important;
-              }
-              .placedly-hero-stat-cell-text strong {
-                font-size: 12px !important;
-                line-height: 1.1 !important;
-              }
-              .placedly-hero-stat-cell-text span {
-                font-size: 8.5px !important;
-                line-height: 1.1 !important;
-              }
-              .placedly-hero-stat-divider {
-                margin: 3px 0 !important;
-              }
+              .placedly-hero-stat-cell { padding: 4px 6px !important; }
+              .placedly-hero-stat-cell-text strong { font-size: 12px !important; }
+              .placedly-hero-stat-cell-text span   { font-size: 8.5px !important; }
+              .placedly-hero-stat-divider { margin: 3px 0 !important; }
+
+              /* marquee a little tighter on small screens */
+              .placedly-hero-mobile-marquee-slot { margin-top: 22px !important; }
             }
             @media (max-width: 380px) {
-              .placedly-hero-stats-tab {
-                margin: 16px 10px 0 10px !important;
-                padding: 3px !important;
-              }
-              .placedly-hero-stat-cell {
-                padding: 3px 4px !important;
-              }
-              .placedly-hero-stat-cell-text strong {
-                font-size: 11px !important;
-              }
-              .placedly-hero-stat-cell-text span {
-                font-size: 8px !important;
-              }
+              .placedly-hero-stats-tab { margin: 16px 10px 0 10px !important; padding: 3px !important; }
+              .placedly-hero-stat-cell { padding: 3px 4px !important; }
+              .placedly-hero-stat-cell-text strong { font-size: 11px !important; }
+              .placedly-hero-stat-cell-text span   { font-size: 8px !important; }
+              .placedly-hero-mobile-marquee-slot   { margin-top: 18px !important; }
             }
           `,
         }}

@@ -97,7 +97,7 @@ export default function Navbar() {
           border-radius: 50% !important;
           border: 1px solid rgba(255, 255, 255, 0.18) !important;
           background: linear-gradient(135deg, ${ORANGE} 0%, ${ORANGE_DARK} 100%) !important;
-          color: #ffffff !important;
+          color: #0c0101 !important;
           cursor: pointer !important;
           flex-shrink: 0 !important;
           box-shadow:
