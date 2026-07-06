@@ -8,6 +8,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 ───────────────────────────────────────────────────────── */
 const GEOM_FONT = `'Inter', 'Manrope', 'Geist', 'Plus Jakarta Sans', system-ui, sans-serif`;
 
+const ORANGE        = '#f97316';
+const ORANGE_DARK   = '#ea580c';
+const ORANGE_SOFT   = 'rgba(249, 115, 22, 0.08)';
+const ORANGE_BORDER = 'rgba(249, 115, 22, 0.18)';
+const ORANGE_BORDER_STRONG = 'rgba(249, 115, 22, 0.28)';
+
 const DEFAULT_FAQS = [
   {
     q: 'What services does Placedly offer?',
@@ -183,7 +189,7 @@ export default function Faq() {
           }
         }
 
-        /* eyebrow */
+        /* ── EYEBROW ─────────────────────────────── */
         .faq-eyebrow {
           display: inline-flex;
           align-items: center;
@@ -192,9 +198,9 @@ export default function Faq() {
           font-weight: 600;
           letter-spacing: 0.14em;
           text-transform: uppercase;
-          color: #2563eb;
-          background: rgba(37, 99, 235, 0.07);
-          border: 1px solid rgba(37, 99, 235, 0.14);
+          color: ${ORANGE};
+          background: ${ORANGE_SOFT};
+          border: 1px solid ${ORANGE_BORDER};
           border-radius: 999px;
           padding: 5px 12px;
           width: fit-content;
@@ -203,11 +209,11 @@ export default function Faq() {
           width: 6px;
           height: 6px;
           border-radius: 50%;
-          background: #2563eb;
+          background: ${ORANGE};
           flex-shrink: 0;
         }
 
-        /* heading */
+        /* ── HEADING ─────────────────────────────── */
         .faq-title {
           font-size: clamp(1.75rem, 3vw, 2.4rem);
           font-weight: 700;
@@ -215,10 +221,9 @@ export default function Faq() {
           line-height: 1.15;
           color: #0f172a;
           margin: 0;
-          /* NO gradient text */
         }
 
-        /* subtext */
+        /* ── SUBTEXT ─────────────────────────────── */
         .faq-sub {
           font-size: 14.5px;
           line-height: 1.65;
@@ -227,7 +232,7 @@ export default function Faq() {
           max-width: 240px;
         }
 
-        /* contact nudge */
+        /* ── CONTACT NUDGE ───────────────────────── */
         .faq-nudge {
           display: inline-flex;
           align-items: center;
@@ -235,11 +240,12 @@ export default function Faq() {
           margin-top: 8px;
           font-size: 13px;
           font-weight: 600;
-          color: #2563eb;
+          color: ${ORANGE};
           text-decoration: none;
           transition: color 0.18s;
         }
-        .faq-nudge:hover { color: #1d4ed8; }
+        .faq-nudge:hover { color: ${ORANGE_DARK}; }
+
         .faq-nudge-arrow {
           display: inline-flex;
           align-items: center;
@@ -247,12 +253,12 @@ export default function Faq() {
           width: 22px;
           height: 22px;
           border-radius: 50%;
-          background: rgba(37,99,235,0.1);
+          background: ${ORANGE_SOFT};
           font-size: 13px;
           transition: background 0.18s, transform 0.18s;
         }
         .faq-nudge:hover .faq-nudge-arrow {
-          background: rgba(37,99,235,0.18);
+          background: ${ORANGE_BORDER};
           transform: translateX(2px);
         }
 
@@ -273,13 +279,13 @@ export default function Faq() {
           box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
         }
         .faq-item:hover {
-          border-color: rgba(37, 99, 235, 0.18);
-          box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
+          border-color: ${ORANGE_BORDER};
+          box-shadow: 0 4px 14px rgba(249, 115, 22, 0.08);
         }
         .faq-item--open {
-          border-color: rgba(37, 99, 235, 0.22);
-          border-left: 3px solid #2563eb;
-          box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+          border-color: ${ORANGE_BORDER_STRONG};
+          border-left: 3px solid ${ORANGE};
+          box-shadow: 0 6px 20px rgba(249, 115, 22, 0.10);
         }
 
         /* ── TRIGGER ─────────────────────────────── */
@@ -296,9 +302,9 @@ export default function Faq() {
           gap: 16px;
           transition: background 0.18s ease;
         }
-        .faq-trigger:hover { background: #f8fafc; }
+        .faq-trigger:hover { background: #fff7ed; }
 
-        /* question text */
+        /* ── QUESTION TEXT ───────────────────────── */
         .faq-q {
           font-size: 15px;
           font-weight: 600;
@@ -308,10 +314,10 @@ export default function Faq() {
           flex: 1;
         }
         .faq-item--open .faq-q {
-          color: #2563eb;
+          color: ${ORANGE_DARK};
         }
 
-        /* toggle icon */
+        /* ── TOGGLE ICON ─────────────────────────── */
         .faq-icon {
           display: flex;
           align-items: center;
@@ -326,11 +332,10 @@ export default function Faq() {
           line-height: 1;
           flex-shrink: 0;
           transition: background 0.2s ease, color 0.2s ease;
-          /* override any button reset */
           font-family: inherit;
         }
         .faq-item--open .faq-icon {
-          background: #2563eb;
+          background: ${ORANGE};
           color: #ffffff;
         }
 
@@ -339,7 +344,7 @@ export default function Faq() {
 
         .faq-answer {
           padding: 0 20px 18px 20px;
-          border-top: 1px solid rgba(15, 23, 42, 0.05);
+          border-top: 1px solid rgba(249, 115, 22, 0.08);
           padding-top: 14px;
         }
 
@@ -354,8 +359,8 @@ export default function Faq() {
 
         /* ── RESPONSIVE ──────────────────────────── */
         @media (max-width: 640px) {
-          .faq-q     { font-size: 14px; }
-          .faq-sub   { max-width: 100%; }
+          .faq-q      { font-size: 14px; }
+          .faq-sub    { max-width: 100%; }
           .faq-trigger { padding: 16px; }
           .faq-answer  { padding: 0 16px 16px; padding-top: 12px; }
         }
