@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import { FadeUp } from './motion';
 
 type Cms = Record<string, string>;
@@ -8,37 +7,21 @@ type Cms = Record<string, string>;
 const DEFAULT_COMPANIES = [
   'EXL Services',
   'Quatrro',
+  'eBiz Solutions',
   'WNS Global',
   'Optum',
   'Cognizant',
   'Wipro',
   'Infosys BPM',
   'Mphasis',
-  'HCLTech',
+  'HCL',
   'Genpact',
   'Access Healthcare',
   'Conifer Health',
 ];
 
-const MARQUEE_DURATION = 42; // seconds
-const REPEATS = 3;
-
-/* Accent palette — each company gets a deterministic color pair */
-const ACCENTS: [string, string][] = [
-  ['#6366f1', '#8b5cf6'],
-  ['#3b82f6', '#06b6d4'],
-  ['#f97316', '#fbbf24'],
-  ['#ec4899', '#f43f5e'],
-  ['#10b981', '#22c55e'],
-  ['#0ea5e9', '#14b8a6'],
-  ['#a855f7', '#d946ef'],
-];
-
-function accentFor(name: string): [string, string] {
-  let hash = 0;
-  for (let i = 0; i < name.length; i += 1) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
-  return ACCENTS[hash % ACCENTS.length];
-}
+const ROW_SPEEDS = [520, 620, 450];
+const ROW_REPEATS = 5;
 
 function rotateList<T>(items: T[], offset: number): T[] {
   if (!items.length) return items;
@@ -46,55 +29,237 @@ function rotateList<T>(items: T[], offset: number): T[] {
   return [...items.slice(n), ...items.slice(0, n)];
 }
 
-function buildSequence(companies: string[]): string[] {
+function buildRowSequence(companies: string[]): string[] {
   const sequence: string[] = [];
-  for (let r = 0; r < REPEATS; r += 1) {
+  for (let r = 0; r < ROW_REPEATS; r += 1) {
     sequence.push(...rotateList(companies, r * 2));
   }
   return sequence;
 }
 
-function parseCompanies(cms: Cms): string[] {
-  const rawList = cms['hp:marqueeCompanies'];
-  if (rawList) {
-    const names = rawList.split(',').map((s) => s.trim()).filter(Boolean);
-    if (names.length) return names;
-  }
-  return DEFAULT_COMPANIES;
-}
+/* ═══════════════════════════════════════════════════════════
+   LOGO COMPONENTS — defined inline, each is a small SVG
+   All have viewBox="0 0 24 24" so they size consistently
+══════════════════════════════════════════════════════════ */
+const VB = '0 0 24 24';
 
-function CompanyPill({ name }: { name: string }) {
-  const [c1, c2] = accentFor(name);
+function LogoExl() {
   return (
-    <span
-      className="placedly-pill"
-      style={{ '--pill-c1': c1, '--pill-c2': c2 } as React.CSSProperties}
-    >
-      <span className="placedly-pill-dot" aria-hidden />
-      <span className="placedly-pill-name">{name}</span>
-    </span>
+    <svg viewBox={VB} aria-hidden>
+      <rect x="2" y="4" width="20" height="16" rx="2" fill="#1A2D5A" opacity="0.08" />
+      <text x="12" y="15.5" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="9" fontWeight="800" fill="#1A2D5A" letterSpacing="0.6">EXL</text>
+    </svg>
   );
 }
 
-function StripRow({
-  sequence,
-  reverse,
-}: {
-  sequence: string[];
-  reverse?: boolean;
-}) {
+function LogoQuatrro() {
   return (
-    <div className={`placedly-strip-track${reverse ? ' placedly-strip-track--reverse' : ''}`}>
-      <div className="placedly-strip-inner">
-        {sequence.map((name, i) => (
-          <CompanyPill key={`a-${name}-${i}`} name={name} />
-        ))}
+    <svg viewBox={VB} aria-hidden>
+      <circle cx="12" cy="12" r="9.5" fill="none" stroke="#E11D48" strokeWidth="1.5" />
+      <text x="12" y="15.5" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="9" fontWeight="800" fill="#E11D48" letterSpacing="0.4">Q</text>
+    </svg>
+  );
+}
+
+function LogoEbiz() {
+  return (
+    <svg viewBox={VB} aria-hidden>
+      <rect x="2" y="4" width="20" height="16" rx="3" fill="#0F766E" />
+      <text x="12" y="15" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="8" fontWeight="800" fill="#FFFFFF" letterSpacing="0.4">eBiz</text>
+    </svg>
+  );
+}
+
+function LogoWns() {
+  return (
+    <svg viewBox={VB} aria-hidden>
+      <rect x="2" y="6" width="20" height="12" rx="2" fill="#8B0000" />
+      <text x="12" y="14.5" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="7" fontWeight="800" fill="#FFFFFF" letterSpacing="0.5">WNS</text>
+    </svg>
+  );
+}
+
+function LogoOptum() {
+  return (
+    <svg viewBox={VB} aria-hidden>
+      <circle cx="12" cy="12" r="10" fill="#00A19A" />
+      <circle cx="12" cy="12" r="3.5" fill="#FFFFFF" />
+    </svg>
+  );
+}
+
+function LogoCognizant() {
+  return (
+    <svg viewBox={VB} aria-hidden>
+      <path fill="#1A3C8B" d="M12 2 L20 8 L20 16 L12 22 L4 16 L4 8 Z" />
+      <path fill="#1A3C8B" d="M9 9 H15 V15 H9 Z" opacity="0.35" />
+    </svg>
+  );
+}
+
+function LogoWipro() {
+  return (
+    <svg viewBox={VB} aria-hidden>
+      <circle cx="12" cy="12" r="10" fill="#341C56" />
+      <path fill="#FFFFFF" d="M8 8 L16 8 L16 10.5 L13 10.5 L13 16 L11 16 L11 10.5 L8 10.5 Z" />
+    </svg>
+  );
+}
+
+function LogoInfosys() {
+  return (
+    <svg viewBox={VB} aria-hidden>
+      <circle cx="12" cy="12" r="10" fill="#007CC0" />
+      <text x="12" y="15" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="6" fontWeight="800" fill="#FFFFFF" letterSpacing="0.3">INFOSYS</text>
+    </svg>
+  );
+}
+
+function LogoMphasis() {
+  return (
+    <svg viewBox={VB} aria-hidden>
+      <rect x="2" y="4" width="20" height="16" rx="2" fill="#9F1B3D" />
+      <text x="12" y="15" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="6.5" fontWeight="800" fill="#FFFFFF" letterSpacing="0.4">MPHASIS</text>
+    </svg>
+  );
+}
+
+function LogoHcl() {
+  return (
+    <svg viewBox={VB} aria-hidden>
+      <path fill="#0D47A1" d="M2 12c2-5 5-8 10-8s8 3 10 8c-2 5-5 8-10 8S4 17 2 12Z" />
+      <text x="12" y="14" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="6.5" fontWeight="800" fill="#FFFFFF" letterSpacing="0.4">HCL</text>
+    </svg>
+  );
+}
+
+function LogoGenpact() {
+  return (
+    <svg viewBox={VB} aria-hidden>
+      <rect x="2" y="2" width="20" height="20" rx="10" fill="#FF6B00" />
+      <text x="12" y="15" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="7" fontWeight="800" fill="#FFFFFF" letterSpacing="0.4">G</text>
+    </svg>
+  );
+}
+
+function LogoAccessHealthcare() {
+  return (
+    <svg viewBox={VB} aria-hidden>
+      <rect x="2" y="4" width="20" height="16" rx="2" fill="#0E5A8A" />
+      <text x="12" y="13" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="4.5" fontWeight="800" fill="#FFFFFF" letterSpacing="0.2">ACCESS</text>
+      <text x="12" y="17" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="4" fontWeight="700" fill="#FFFFFF" letterSpacing="0.2">HEALTHCARE</text>
+    </svg>
+  );
+}
+
+function LogoConifer() {
+  return (
+    <svg viewBox={VB} aria-hidden>
+      <path fill="#2E7D32" d="M12 2 L7.5 11 L10.5 11 L7 17.5 L11.5 17.5 L11.5 22 L12.5 22 L12.5 17.5 L17 17.5 L13.5 11 L16.5 11 Z" />
+    </svg>
+  );
+}
+
+/* ★ Map company names → logo components */
+const LOGO_MAP: Record<string, () => JSX.Element> = {
+  'EXL Services':       () => <LogoExl />,
+  'Quatrro':            () => <LogoQuatrro />,
+  'eBiz Solutions':     () => <LogoEbiz />,
+  'WNS Global':         () => <LogoWns />,
+  'Optum':              () => <LogoOptum />,
+  'Cognizant':          () => <LogoCognizant />,
+  'Wipro':              () => <LogoWipro />,
+  'Infosys BPM':        () => <LogoInfosys />,
+  'Mphasis':            () => <LogoMphasis />,
+  'HCL':                () => <LogoHcl />,
+  'Genpact':            () => <LogoGenpact />,
+  'Access Healthcare':  () => <LogoAccessHealthcare />,
+  'Conifer Health':     () => <LogoConifer />,
+};
+
+/* Fallback for unknown companies */
+function LogoFallback({ name }: { name: string }) {
+  const initials = name
+    .replace(/[.,]/g, '')
+    .split(/\s+/)
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 3)
+    .toUpperCase();
+  return (
+    <svg viewBox={VB} aria-hidden>
+      <rect x="2" y="4" width="20" height="16" rx="3" fill="#475569" />
+      <text
+        x="12" y="15.5"
+        textAnchor="middle"
+        fontFamily="Inter,system-ui,sans-serif"
+        fontSize={initials.length > 2 ? '6' : '8'}
+        fontWeight="800"
+        fill="#FFFFFF"
+        letterSpacing="0.3"
+      >
+        {initials}
+      </text>
+    </svg>
+  );
+}
+
+function renderCompanyLogo(name: string): JSX.Element {
+  const factory = LOGO_MAP[name];
+  if (factory) return factory();
+  return <LogoFallback name={name} />;
+}
+
+function LogoRow({
+  companies,
+  reverse,
+  duration,
+}: {
+  companies: string[];
+  reverse?: boolean;
+  duration: number;
+}) {
+  const sequence = buildRowSequence(companies);
+
+  return (
+    <div className="placedly-partners-row">
+      <div className="placedly-partners-edge placedly-partners-edge--left" aria-hidden />
+      <div
+        className={`placedly-partners-track${reverse ? ' placedly-partners-track--reverse' : ''}`}
+        style={{ animationDuration: `${duration}s` }}
+      >
+        <div className="placedly-partners-inner">
+          {sequence.map((name, i) => (
+            <span
+              key={`a-${name}-${i}`}
+              className="placedly-partners-logo"
+              title={name}
+              aria-label={name}
+            >
+              <span className="placedly-partners-logo-svg" aria-hidden>
+                {renderCompanyLogo(name)}
+              </span>
+              <span className="placedly-partners-logo-name">{name}</span>
+            </span>
+          ))}
+        </div>
+        <div className="placedly-partners-inner" aria-hidden>
+          {sequence.map((name, i) => (
+            <span
+              key={`b-${name}-${i}`}
+              className="placedly-partners-logo"
+              title={name}
+              aria-hidden
+            >
+              <span className="placedly-partners-logo-svg" aria-hidden>
+                {renderCompanyLogo(name)}
+              </span>
+              <span className="placedly-partners-logo-name">{name}</span>
+            </span>
+          ))}
+        </div>
       </div>
-      <div className="placedly-strip-inner" aria-hidden>
-        {sequence.map((name, i) => (
-          <CompanyPill key={`b-${name}-${i}`} name={name} />
-        ))}
-      </div>
+      <div className="placedly-partners-edge placedly-partners-edge--right" aria-hidden />
     </div>
   );
 }
@@ -104,235 +269,34 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
   const sub =
     cms['hp:marqueeSub'] ??
     'Through our placement network — roles sourced via trusted recruitment partners';
+  const rawList = cms['hp:marqueeCompanies'] ?? '';
+  const companies = rawList
+    ? rawList.split(',').map((s) => s.trim()).filter(Boolean)
+    : DEFAULT_COMPANIES;
 
-  const companies = parseCompanies(cms);
-  const seqA = buildSequence(companies);
-  const seqB = buildSequence(rotateList(companies, 5));
+  const rowSets = [
+    companies,
+    rotateList(companies, 4),
+    rotateList(companies, 8),
+  ];
 
   return (
     <section className="placedly-partners-section" aria-label="Hiring partners">
       <FadeUp className="placedly-partners-header">
-        <span className="placedly-partners-eyebrow">
-          <span className="placedly-partners-eyebrow-line" aria-hidden />
-          Trusted placement network
-          <span className="placedly-partners-eyebrow-line" aria-hidden />
-        </span>
         <h2 className="placedly-partners-title">{label}</h2>
         <p className="placedly-partners-sub">{sub}</p>
       </FadeUp>
 
-      <div className="placedly-strip">
-        <div className="placedly-strip-edge placedly-strip-edge--left" aria-hidden />
-        <div className="placedly-strip-rows">
-          <StripRow sequence={seqA} />
-          <StripRow sequence={seqB} reverse />
-        </div>
-        <div className="placedly-strip-edge placedly-strip-edge--right" aria-hidden />
+      <div className="placedly-partners-rows">
+        {rowSets.map((rowCompanies, i) => (
+          <LogoRow
+            key={i}
+            companies={rowCompanies}
+            reverse={i % 2 === 1}
+            duration={ROW_SPEEDS[i] ?? 45}
+          />
+        ))}
       </div>
-
-      <style>{`
-        .placedly-partners-section {
-          padding: 56px 0;
-        }
-
-        .placedly-partners-header {
-          text-align: center;
-          max-width: 660px;
-          margin: 0 auto 30px;
-          padding: 0 20px;
-        }
-        .placedly-partners-eyebrow {
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: #94a3b8;
-          margin-bottom: 12px;
-        }
-        .placedly-partners-eyebrow-line {
-          width: 22px;
-          height: 2px;
-          border-radius: 999px;
-          background: linear-gradient(90deg, #6366f1, #ec4899);
-        }
-        .placedly-partners-title {
-          font-size: clamp(1.15rem, 2.4vw, 1.5rem);
-          font-weight: 800;
-          color: #0f172a;
-          margin-bottom: 8px;
-          letter-spacing: -0.4px;
-        }
-        .placedly-partners-sub {
-          font-size: 13.5px;
-          color: #64748b;
-          line-height: 1.6;
-        }
-
-        /* ── Strip band ── */
-        .placedly-strip {
-          position: relative;
-          overflow: hidden;
-          padding: 4px 0;
-        }
-        .placedly-strip-rows {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-
-        .placedly-strip-edge {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          width: 100px;
-          z-index: 3;
-          pointer-events: none;
-        }
-        .placedly-strip-edge--left {
-          left: 0;
-          background: linear-gradient(90deg, #fafafa 10%, rgba(250,250,250,0));
-        }
-        .placedly-strip-edge--right {
-          right: 0;
-          background: linear-gradient(270deg, #fafafa 10%, rgba(250,250,250,0));
-        }
-
-        .placedly-strip-track {
-          display: flex;
-          width: max-content;
-          animation: placedly-strip-scroll ${MARQUEE_DURATION}s linear infinite;
-        }
-        .placedly-strip-track--reverse {
-          animation-direction: reverse;
-          animation-duration: ${MARQUEE_DURATION + 6}s;
-        }
-        .placedly-strip:hover .placedly-strip-track {
-          animation-play-state: paused;
-        }
-
-        .placedly-strip-inner {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          padding-right: 14px;
-          flex-shrink: 0;
-        }
-
-        /* ── Company pill ── */
-        .placedly-pill {
-          position: relative;
-          display: inline-flex;
-          align-items: center;
-          gap: 9px;
-          white-space: nowrap;
-          padding: 9px 18px 9px 15px;
-          border-radius: 999px;
-          background: #ffffff;
-          border: 1px solid rgba(15, 23, 42, 0.08);
-          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-          transition:
-            transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
-            box-shadow 0.28s ease,
-            border-color 0.28s ease;
-        }
-        .placedly-pill::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          border-radius: 999px;
-          padding: 1px;
-          background: linear-gradient(135deg, var(--pill-c1), var(--pill-c2));
-          -webkit-mask:
-            linear-gradient(#fff 0 0) content-box,
-            linear-gradient(#fff 0 0);
-          -webkit-mask-composite: xor;
-          mask-composite: exclude;
-          opacity: 0;
-          transition: opacity 0.28s ease;
-        }
-        .placedly-pill:hover {
-          transform: translateY(-3px);
-          border-color: transparent;
-          box-shadow:
-            0 10px 24px -6px color-mix(in srgb, var(--pill-c1) 45%, transparent);
-        }
-        .placedly-pill:hover::before {
-          opacity: 1;
-        }
-
-        .placedly-pill-dot {
-          position: relative;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, var(--pill-c1), var(--pill-c2));
-          flex-shrink: 0;
-        }
-        .placedly-pill-dot::after {
-          content: '';
-          position: absolute;
-          inset: -3px;
-          border-radius: 50%;
-          background: var(--pill-c1);
-          opacity: 0.25;
-          animation: placedly-pill-pulse 2.4s ease-in-out infinite;
-        }
-
-        .placedly-pill-name {
-          font-size: 13.5px;
-          font-weight: 600;
-          color: #334155;
-          transition: color 0.28s ease;
-        }
-        .placedly-pill:hover .placedly-pill-name {
-          background-image: linear-gradient(135deg, var(--pill-c1), var(--pill-c2));
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        @keyframes placedly-strip-scroll {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-50%); }
-        }
-        @keyframes placedly-pill-pulse {
-          0%, 100% { transform: scale(1);   opacity: 0.25; }
-          50%      { transform: scale(1.6); opacity: 0;    }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .placedly-strip-track { animation: none; }
-          .placedly-pill-dot::after { animation: none; }
-          .placedly-strip-inner:nth-child(2) { display: none; }
-          .placedly-strip-inner { flex-wrap: wrap; justify-content: center; }
-        }
-
-        @media (max-width: 639px) {
-          .placedly-partners-section {
-            padding: 40px 0;
-          }
-          .placedly-strip-rows {
-            gap: 10px;
-          }
-          .placedly-strip-edge {
-            width: 44px;
-          }
-          .placedly-strip-inner {
-            gap: 10px;
-            padding-right: 10px;
-          }
-          .placedly-pill {
-            padding: 8px 14px 8px 12px;
-            gap: 7px;
-          }
-          .placedly-pill-name {
-            font-size: 12.5px;
-          }
-        }
-      `}</style>
     </section>
   );
 }
