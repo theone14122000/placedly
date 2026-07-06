@@ -388,14 +388,14 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
         .placedly-partners-logo {
           display: inline-flex;
           align-items: center;
-          gap: 10px;
-          padding: 10px 20px 10px 10px;
-          margin: 0 10px;
+          gap: 8px;
+          padding: 6px 14px 6px 6px;
+          margin: 0 8px;
           border-radius: 999px;
           background: rgba(15, 23, 42, 0.03);
           border: 1px solid rgba(15, 23, 42, 0.08);
           white-space: nowrap;
-          height: 48px;
+          height: 40px;
           flex-shrink: 0;
           transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
         }
