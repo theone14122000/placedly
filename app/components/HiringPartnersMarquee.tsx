@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import { FadeUp } from './motion';
 
 type Cms = Record<string, string>;
@@ -67,12 +68,7 @@ function CompanyPill({ name }: { name: string }) {
   return (
     <span
       className="placedly-pill"
-      style={
-        {
-          '--pill-c1': c1,
-          '--pill-c2': c2,
-        } as React.CSSProperties
-      }
+      style={{ '--pill-c1': c1, '--pill-c2': c2 } as React.CSSProperties}
     >
       <span className="placedly-pill-dot" aria-hidden />
       <span className="placedly-pill-name">{name}</span>

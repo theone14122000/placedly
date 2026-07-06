@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import HeroGradientBg from './HeroGradientBg';
@@ -19,6 +20,18 @@ const HERO_CARD_AVATARS = {
   right: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face',
 } as const;
 
+const ORANGE = '#f97316';
+const ORANGE_DARK = '#ea580c';
+const ORANGE_SOFT = 'rgba(249, 115, 22, 0.12)';
+const ORANGE_BORDER = 'rgba(249, 115, 22, 0.30)';
+
+const MOBILE_HERO_STATS = [
+  { id: 'companies',  value: '40+',  label: 'Companies' },
+  { id: 'candidates', value: '1K+',  label: 'Placements' },
+  { id: 'countries',  value: '20+',  label: 'Countries' },
+  { id: 'years',      value: '10+',  label: 'Years Exp' },
+] as const;
+
 const MOBILE_SUBLINE = (
   <>
     <span className="placedly-liftoff-m-sub-line">
@@ -30,6 +43,63 @@ const MOBILE_SUBLINE = (
   </>
 );
 
+/* ============================================================
+   COMBINED STATS TAB — always a single row
+============================================================ */
+function MobileHeroStatsBar({ delay = 0 }: { delay?: number }) {
+  const [activeId, setActiveId] = useState<(typeof MOBILE_HERO_STATS)[number]['id']>(MOBILE_HERO_STATS[0].id);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => {
+      setActiveId((prev) => {
+        const idx = MOBILE_HERO_STATS.findIndex((s) => s.id === prev);
+        return MOBILE_HERO_STATS[(idx + 1) % MOBILE_HERO_STATS.length].id;
+      });
+    }, 2400);
+    return () => clearInterval(id);
+  }, [paused]);
+
+  return (
+    <motion.div
+      className="placedly-hero-stats-tab"
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.5, delay }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+    >
+      <div className="placedly-hero-stats-tab-shine" aria-hidden />
+
+      {MOBILE_HERO_STATS.map((stat, i) => {
+        const isActive = stat.id === activeId;
+        return (
+          <div
+            key={stat.id}
+            className={`placedly-hero-stat-cell${isActive ? ' is-active' : ''}`}
+            onMouseEnter={() => setActiveId(stat.id)}
+            onTouchStart={() => setActiveId(stat.id)}
+          >
+            <span className="placedly-hero-stat-cell-text">
+              <strong>{stat.value}</strong>
+              <span>{stat.label}</span>
+            </span>
+            {i < MOBILE_HERO_STATS.length - 1 && (
+              <span className="placedly-hero-stat-divider" aria-hidden />
+            )}
+          </div>
+        );
+      })}
+    </motion.div>
+  );
+}
+
 export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
   const admitInterest = 'Early stage AI';
   const offerName = 'Amber';
@@ -39,6 +109,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
     <div className="placedly-hero-mobile-brief" aria-label="Mobile hero">
       <HeroGradientBg />
       <HeroBgVideo />
+
       <div className="placedly-lift-hero-copy">
         <motion.h1
           className="placedly-liftoff-m-headline"
@@ -187,10 +258,13 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
         </div>
       </motion.div>
 
+      {/* Combined stats tab — always a single row */}
+      <MobileHeroStatsBar delay={0.24} />
+
       <style
         dangerouslySetInnerHTML={{
           __html: `
-            /* Force CTA row into a single horizontal line */
+            /* CTA row */
             .placedly-hero-mobile-brief .placedly-hero-cta-row {
               display: flex !important;
               flex-direction: row !important;
@@ -210,12 +284,12 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               float: none !important;
               clear: none !important;
               transform: none !important;
+              z-index: 10 !important;
             }
             .placedly-hero-mobile-brief .placedly-hero-cta-row::-webkit-scrollbar {
               display: none !important;
             }
 
-            /* Force every pill to size to its content (no stretch) */
             .placedly-hero-mobile-brief .placedly-hero-cta-pill {
               flex: 0 0 auto !important;
               flex-grow: 0 !important;
@@ -246,20 +320,16 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               text-decoration: none !important;
               text-align: center !important;
               border-radius: 9999px !important;
-              border: 1px solid rgba(255,255,255,0.08) !important;
+              border: 1px solid rgba(255,255,255,0.18) !important;
               cursor: pointer !important;
               background-color: transparent !important;
-              background-image: linear-gradient(135deg, #0a0a0a, #1a1a1a) !important;
-              /* CHANGED: rest shadow softened + inset highlight kept */
-              box-shadow: 0 2px 6px rgba(0,0,0,0.15),
-                          inset 0 1px 0 rgba(255,255,255,0.04) !important;
-              transition: transform .25s ease, box-shadow .25s ease, filter .25s ease !important;
+              background-image: linear-gradient(135deg, #FF6A00 0%, #FF7A1A 100%) !important;
+              box-shadow: none !important;
+              transition: transform .25s ease, filter .25s ease !important;
             }
-            /* CHANGED: hover shadow removed — the "shadow disappear" on hover */
             .placedly-hero-mobile-brief .placedly-hero-cta-pill:hover {
               transform: translateY(-1px) !important;
-              box-shadow: 0 1px 3px rgba(0,0,0,0.12),
-                          inset 0 1px 0 rgba(255,255,255,0.04) !important;
+              box-shadow: none !important;
               filter: brightness(1.08) !important;
             }
             .placedly-hero-mobile-brief .placedly-hero-cta-pill:active {
@@ -272,17 +342,46 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
             .placedly-hero-mobile-brief .placedly-hero-cta-pill--royal,
             .placedly-hero-mobile-brief .placedly-hero-cta-pill--sky {
               background-color: transparent !important;
-              background-image: linear-gradient(135deg, #0a0a0a, #1a1a1a) !important;
+              background-image: linear-gradient(135deg, #FF6A00 0%, #FF7A1A 100%) !important;
+              border: 1px solid rgba(255,255,255,0.18) !important;
+              color: #ffffff !important;
+              box-shadow: none !important;
+            }
+            .placedly-hero-mobile-brief .placedly-hero-cta-pill--deep:hover,
+            .placedly-hero-mobile-brief .placedly-hero-cta-pill--royal:hover,
+            .placedly-hero-mobile-brief .placedly-hero-cta-pill--sky:hover {
+              filter: brightness(1.08) !important;
+              box-shadow: none !important;
             }
 
-            /* CHANGED: popup cards — much less round (12px) for clearer text */
+            /* Popup scene */
+            .placedly-hero-mobile-brief .placedly-lift-hero-stage--liftoff {
+              position: relative !important;
+              width: 100% !important;
+              max-width: 100% !important;
+              box-sizing: border-box !important;
+              margin: 120px 0 0 0 !important;
+              padding: 0 !important;
+              z-index: 1 !important;
+              clear: both !important;
+            }
+            .placedly-lift-mobile-scene {
+              position: relative !important;
+              width: 100% !important;
+              height: 380px !important;
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+
+            /* Popup cards — 70% opacity */
             .placedly-hero-mobile-brief .placedly-lift-card--mobile {
-              max-width: 220px !important;
+              max-width: 240px !important;
               width: max-content !important;
               min-width: 0 !important;
               height: auto !important;
+              min-height: 56px !important;
               box-sizing: border-box !important;
-              padding: 8px 10px !important;
+              padding: 10px 12px !important;
               overflow: hidden !important;
               word-wrap: break-word !important;
               overflow-wrap: anywhere !important;
@@ -292,11 +391,16 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               margin: 0 !important;
               float: none !important;
               clear: none !important;
-              border-radius: 12px !important; /* CHANGED: was 9999px / pill */
+              border-radius: 12px !important;
+              z-index: 3 !important;
+              opacity: 0.7 !important;
+            }
+            .placedly-hero-mobile-brief .placedly-lift-card--mobile:hover {
+              opacity: 0.95 !important;
             }
             .placedly-hero-mobile-brief .placedly-lift-card-line {
-              font-size: 9.5px !important;
-              line-height: 1.25 !important;
+              font-size: 11px !important;
+              line-height: 1.3 !important;
               letter-spacing: -0.005em !important;
               margin: 0 !important;
               padding: 0 !important;
@@ -308,16 +412,38 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               text-align: left !important;
             }
             .placedly-hero-mobile-brief .placedly-lift-card-line strong {
-              font-size: 9.5px !important;
+              font-size: 11px !important;
               font-weight: 700 !important;
-              line-height: 1.25 !important;
+              line-height: 1.3 !important;
               white-space: normal !important;
               color: inherit !important;
+            }
+            .placedly-hero-mobile-brief .placedly-lift-name {
+              font-size: 12px !important;
+              line-height: 1.2 !important;
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+            .placedly-hero-mobile-brief .placedly-lift-role {
+              font-size: 10px !important;
+              line-height: 1.2 !important;
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+            .placedly-hero-mobile-brief .placedly-lift-card-profile {
+              gap: 8px !important;
+              margin: 0 0 6px 0 !important;
+              padding: 0 !important;
+            }
+            .placedly-hero-mobile-brief .placedly-lift-avatar--photo {
+              width: 32px !important;
+              height: 32px !important;
             }
             .placedly-hero-mobile-brief .placedly-lift-mobile-rec {
               max-width: 180px !important;
               width: max-content !important;
               min-width: 0 !important;
+              min-height: 28px !important;
               box-sizing: border-box !important;
               padding: 6px 10px !important;
               overflow: hidden !important;
@@ -331,11 +457,16 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               margin: 0 !important;
               float: none !important;
               clear: none !important;
-              border-radius: 12px !important; /* CHANGED: also less round for consistency */
+              border-radius: 12px !important;
+              z-index: 4 !important;
+              opacity: 0.7 !important;
+            }
+            .placedly-hero-mobile-brief .placedly-lift-mobile-rec:hover {
+              opacity: 0.95 !important;
             }
             .placedly-hero-mobile-brief .placedly-lift-mobile-rec-text strong,
             .placedly-hero-mobile-brief .placedly-lift-mobile-rec-text span {
-              font-size: 9px !important;
+              font-size: 10px !important;
               line-height: 1.2 !important;
               white-space: normal !important;
               margin: 0 !important;
@@ -343,7 +474,6 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               color: inherit !important;
             }
 
-            /* Daniel card — right-bottom anchor (unchanged) */
             .placedly-hero-mobile-brief .placedly-lift-card--mobile.placedly-lift-card--mobile-right.placedly-lift-card--mobile-daniel,
             .placedly-hero-mobile-brief .placedly-lift-card--mobile-daniel.placedly-lift-card--mobile-daniel.placedly-lift-card--mobile-daniel {
               position: absolute !important;
@@ -356,6 +486,151 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               float: none !important;
               clear: none !important;
               z-index: 5 !important;
+            }
+
+            /* COMBINED STATS TAB — single row at all sizes */
+            .placedly-hero-stats-tab {
+              position: relative !important;
+              display: flex !important;
+              align-items: stretch !important;
+              justify-content: center !important;
+              flex-wrap: nowrap !important;
+              gap: 0 !important;
+              margin: 18px 12px 0 12px !important;
+              width: auto !important;
+              max-width: calc(100% - 24px) !important;
+              padding: 5px !important;
+              background: #ffffff !important;
+              border: 1.5px solid ${ORANGE_BORDER} !important;
+              border-radius: 9999px !important;
+              box-shadow: 0 4px 14px rgba(249, 115, 22, 0.08) !important;
+              overflow: hidden !important;
+              isolation: isolate !important;
+              z-index: 2 !important;
+            }
+            .placedly-hero-stats-tab-shine {
+              position: absolute !important;
+              top: 0 !important;
+              left: -130% !important;
+              width: 60% !important;
+              height: 100% !important;
+              background: linear-gradient(115deg, transparent, rgba(249, 115, 22, 0.14), transparent) !important;
+              transform: skewX(-20deg) !important;
+              transition: left 0.8s ease !important;
+              z-index: 0 !important;
+              pointer-events: none !important;
+            }
+            .placedly-hero-stats-tab:hover .placedly-hero-stats-tab-shine,
+            .placedly-hero-stats-tab:active .placedly-hero-stats-tab-shine {
+              left: 140% !important;
+            }
+
+            .placedly-hero-stat-cell {
+              position: relative !important;
+              z-index: 1 !important;
+              display: flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              gap: 4px !important;
+              flex: 1 1 0 !important;
+              min-width: 0 !important;
+              padding: 5px 8px !important;
+              border-radius: 9999px !important;
+              cursor: default !important;
+              transition: background 0.3s ease !important;
+            }
+            .placedly-hero-stat-cell:hover,
+            .placedly-hero-stat-cell:active {
+              background: rgba(249, 115, 22, 0.06) !important;
+            }
+            .placedly-hero-stat-cell.is-active {
+              background: rgba(249, 115, 22, 0.10) !important;
+            }
+            .placedly-hero-stat-cell.is-active .placedly-hero-stat-cell-text strong {
+              color: ${ORANGE_DARK} !important;
+            }
+
+            .placedly-hero-stat-cell-text {
+              display: flex !important;
+              flex-direction: column !important;
+              align-items: center !important;
+              line-height: 1.1 !important;
+              min-width: 0 !important;
+              flex: 1 !important;
+              text-align: center !important;
+              overflow: hidden !important;
+            }
+            .placedly-hero-stat-cell-text strong {
+              font-size: 13px !important;
+              color: ${ORANGE} !important;
+              font-weight: 800 !important;
+              letter-spacing: -0.01em !important;
+              transition: color 0.3s ease !important;
+              line-height: 1.1 !important;
+              white-space: nowrap !important;
+            }
+            .placedly-hero-stat-cell-text span {
+              font-size: 9.5px !important;
+              color: #64748b !important;
+              font-weight: 500 !important;
+              white-space: nowrap !important;
+              overflow: hidden !important;
+              text-overflow: ellipsis !important;
+              max-width: 100% !important;
+              margin-top: 1px !important;
+            }
+
+            .placedly-hero-stat-divider {
+              align-self: stretch !important;
+              width: 1px !important;
+              background: linear-gradient(
+                to bottom,
+                transparent,
+                rgba(15, 23, 42, 0.12),
+                transparent
+              ) !important;
+              flex-shrink: 0 !important;
+              margin: 4px 0 !important;
+            }
+
+            @media (max-width: 640px) {
+              .placedly-hero-stats-tab {
+                margin: 18px 14px 0 14px !important;
+                padding: 4px !important;
+                gap: 0 !important;
+                flex-wrap: nowrap !important;
+              }
+              .placedly-hero-stat-cell {
+                padding: 4px 6px !important;
+                flex: 1 1 0 !important;
+                min-width: 0 !important;
+              }
+              .placedly-hero-stat-cell-text strong {
+                font-size: 12px !important;
+                line-height: 1.1 !important;
+              }
+              .placedly-hero-stat-cell-text span {
+                font-size: 8.5px !important;
+                line-height: 1.1 !important;
+              }
+              .placedly-hero-stat-divider {
+                margin: 3px 0 !important;
+              }
+            }
+            @media (max-width: 380px) {
+              .placedly-hero-stats-tab {
+                margin: 16px 10px 0 10px !important;
+                padding: 3px !important;
+              }
+              .placedly-hero-stat-cell {
+                padding: 3px 4px !important;
+              }
+              .placedly-hero-stat-cell-text strong {
+                font-size: 11px !important;
+              }
+              .placedly-hero-stat-cell-text span {
+                font-size: 8px !important;
+              }
             }
           `,
         }}

@@ -17,7 +17,6 @@ import Link from 'next/link';
 import HeroGradientBg from './HeroGradientBg';
 import HeroMobileBrief from './HeroMobileBrief';
 import HeroBgVideo from './HeroBgVideo';
-import HiringPartnersMarquee from './HiringPartnersMarquee';
 
 type HeroCms = { [k: string]: string };
 
@@ -381,8 +380,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
         /* ============================================================
            STAGE / NETWORK SECTION
-           CHANGED: zero bottom margin/padding so stats bar sits
-           immediately below the floating cards
          ============================================================ */
         .placedly-lift-hero-stage {
           margin-bottom: 0 !important;
@@ -395,8 +392,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
 
         /* ============================================================
            STATS BAR
-           CHANGED: retained 0.6 opacity (60%) but tightened margin
-           to 8px top / 0 bottom — kills the gap entirely
          ============================================================ */
         .placedly-hero-stats-bar {
           display: flex;
@@ -404,12 +399,10 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           align-items: stretch;
           justify-content: center;
           gap: 10px;
-          /* CHANGED: 8px top / 0 bottom — was 16/0 in last pass, now even tighter */
           margin: 8px auto 0 !important;
           max-width: 1000px;
           width: 100%;
           padding: 0 16px;
-          /* KEPT: 0.6 opacity as requested */
           opacity: 0.6 !important;
           transition: opacity 0.25s ease;
         }
@@ -425,8 +418,8 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           background: #ffffff;
           border: 1px solid #e7ebf3;
           border-radius: 999px;
-          padding: 8px 14px 8px 8px;        /* CHANGED: tighter padding (was 10/16/10/10) */
-          box-shadow: 0 2px 10px rgba(15,23,42,0.05);  /* CHANGED: lighter shadow (was 14px blur) */
+          padding: 8px 14px 8px 8px;
+          box-shadow: 0 2px 10px rgba(15,23,42,0.05);
           overflow: hidden;
           isolation: isolate;
           cursor: default;
@@ -448,8 +441,8 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         .placedly-hero-stat-pill-icon {
           position: relative;
           z-index: 1;
-          width: 30px;                    /* CHANGED: smaller (was 32px) */
-          height: 30px;                   /* CHANGED: smaller (was 32px) */
+          width: 30px;
+          height: 30px;
           border-radius: 50%;
           flex-shrink: 0;
           display: flex;
@@ -469,16 +462,16 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           z-index: 1;
           display: flex;
           flex-direction: column;
-          line-height: 1.15;             /* CHANGED: tighter (was 1.2) */
+          line-height: 1.15;
           min-width: 0;
           flex: 1;
         }
         .placedly-hero-stat-pill-text strong {
-          font-size: 14px;                /* CHANGED: tighter (was 14.5px) */
+          font-size: 14px;
           color: #1e3a8a;
         }
         .placedly-hero-stat-pill-text span {
-          font-size: 10px;                /* CHANGED: tighter (was 10.5px) */
+          font-size: 10px;
           color: #64748b;
           white-space: nowrap;
           overflow: hidden;
@@ -692,8 +685,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           ))}
         </div>
       </div>
-      <HeroMobileBrief cms={cms} />   
-      <HiringPartnersMarquee cms={cms} />
+      <HeroMobileBrief cms={cms} />
     </section>
   );
 }

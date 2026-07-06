@@ -25,7 +25,8 @@ type Industry = {
   img: string;
 };
 
-const ACCENT = { from: '#2563eb', mid: '#7c8ff0', to: '#fb923c' };
+/* ★ CHANGED: Orange theme (matches navbar buttons + wordmark) ★ */
+const ACCENT = { from: '#f97316', mid: '#fb923c', to: '#ea580c' };
 
 /* Modern geometric sans-serif stack */
 const GEOM_FONT_STACK = `"Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
@@ -126,9 +127,11 @@ function IndustryCard({
         borderRadius: '24px',
         overflow: 'hidden',
         background: '#fff',
+        /* CHANGED: orange-tint border on hover (was blue) */
         border: `1px solid ${isHovered ? `${ACCENT.from}30` : 'rgba(15,23,42,0.06)'}`,
+        /* CHANGED: orange-tint shadow on hover (was blue) */
         boxShadow: isHovered
-          ? `0 24px 60px rgba(37,99,235,0.14)`
+          ? `0 24px 60px rgba(249, 115, 22, 0.16)`
           : '0 8px 28px rgba(15,23,42,0.06)',
         display: 'flex',
         flexDirection: 'column',
@@ -183,13 +186,13 @@ function IndustryCard({
           }}
         />
 
-        {/* Dark overlay */}
+        {/* Dark overlay — orange-tint instead of blue */}
         <div
           aria-hidden
           style={{
             position: 'absolute',
             inset: 0,
-            background: `linear-gradient(180deg, transparent 20%, rgba(10,14,25,0.65) 100%), linear-gradient(100deg, ${ACCENT.from}44 0%, transparent 60%)`,
+            background: `linear-gradient(180deg, transparent 20%, rgba(10,14,25,0.65) 100%), linear-gradient(100deg, ${ACCENT.from}55 0%, transparent 60%)`,
           }}
         />
 
@@ -203,6 +206,7 @@ function IndustryCard({
           <span
             className="placedly-industries-icon"
             style={{
+              /* CHANGED: orange icon background + orange shadow (was blue) */
               background: ACCENT.from,
               boxShadow: `0 6px 16px ${ACCENT.from}55`,
             }}
@@ -303,6 +307,7 @@ function IndustryCard({
               className="placedly-industries-stat"
               style={{
                 fontSize: isHovered ? '1.35rem' : '1.05rem',
+                /* CHANGED: orange stat text (was blue) */
                 color: ACCENT.from,
                 transition: 'font-size 0.4s ease',
               }}
@@ -326,8 +331,9 @@ function IndustryCard({
                   href={ind.href}
                   className="placedly-industries-cta"
                   style={{
+                    /* CHANGED: orange CTA button (was blue gradient) */
                     background: ACCENT.from,
-                    boxShadow: `0 8px 22px ${ACCENT.from}35`,
+                    boxShadow: `0 8px 22px ${ACCENT.from}40`,
                   }}
                 >
                   {ind.linkText}
@@ -348,20 +354,20 @@ export default function Industries() {
 
   return (
     <section id="domains" className="placedly-industries-section">
-      {/* Ambient blobs */}
+      {/* Ambient blobs — orange tinted */}
       <motion.div
         aria-hidden
         animate={{ x: [0, 30, 0], y: [0, 20, 0] }}
         transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut' }}
         className="placedly-industries-blob placedly-industries-blob--tl"
-        style={{ background: `radial-gradient(circle, ${ACCENT.from}22 0%, transparent 70%)` }}
+        style={{ background: `radial-gradient(circle, ${ACCENT.from}28 0%, transparent 70%)` }}
       />
       <motion.div
         aria-hidden
         animate={{ x: [0, -25, 0], y: [0, -15, 0] }}
         transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
         className="placedly-industries-blob placedly-industries-blob--br"
-        style={{ background: `radial-gradient(circle, ${ACCENT.to}22 0%, transparent 70%)` }}
+        style={{ background: `radial-gradient(circle, ${ACCENT.to}28 0%, transparent 70%)` }}
       />
 
       <div className="placedly-industries-container">
@@ -625,14 +631,15 @@ export default function Industries() {
           margin-top: 10px;
         }
 
+        /* CHANGED: orange-tint company chips (were blue-tint) */
         .placedly-industries-company-chip {
           font-size: 11.5px;
           font-weight: 600;
-          color: #334155;
+          color: #9a3412;
           padding: 4px 10px;
           border-radius: 999px;
-          background: rgba(37, 99, 235, 0.05);
-          border: 1px solid rgba(37, 99, 235, 0.12);
+          background: rgba(249, 115, 22, 0.08);
+          border: 1px solid rgba(249, 115, 22, 0.18);
           white-space: nowrap;
         }
 

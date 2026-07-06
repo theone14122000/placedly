@@ -4,18 +4,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Calculator,
+  ChevronLeft,
+  ChevronRight,
   FileSearch,
   FileText,
   GraduationCap,
   MessageSquare,
   PenLine,
   Rocket,
-  Search,
   Sparkles,
-  Target,
   Upload,
   X,
-  ChevronDown,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -23,6 +22,19 @@ import {
    DESIGN SYSTEM TOKENS
 ───────────────────────────────────────────────────────── */
 const GEOM_FONT = `'Inter','Manrope','Geist','Plus Jakarta Sans',system-ui,sans-serif`;
+
+const ORANGE        = '#f97316';
+const ORANGE_DARK   = '#ea580c';
+const ORANGE_TINT   = 'rgba(249,115,22,0.10)';
+const ORANGE_SOFT   = 'rgba(249,115,22,0.18)';
+const ORANGE_BORDER = 'rgba(249,115,22,0.30)';
+
+const BLACK      = '#0b0d20';
+const TEXT_BODY  = '#1e293b';
+const TEXT_MUTED = '#64748b';
+const BORDER     = '#e5e7eb';
+const SURFACE    = '#ffffff';
+const BG         = '#f8fafc';
 
 type Category = 'career' | 'study';
 type Tool = {
@@ -36,13 +48,12 @@ type Tool = {
   category: Category;
   popular?: boolean;
 };
-type Accent = { from: string; soft: string };
+type Accent = { from: string; soft: string; tint: string };
 
-/* ── Solid accent per category (no gradients) ── */
-const CATEGORY_META: Record<Category | 'all', { label: string } & Accent> = {
-  all:    { label: 'All Tools',       from: '#2563eb', soft: 'rgba(37,99,235,0.07)'  },
-  career: { label: 'Career & Resume', from: '#2563eb', soft: 'rgba(37,99,235,0.07)'  },
-  study:  { label: 'Study Abroad',    from: '#0891b2', soft: 'rgba(8,145,178,0.07)'  },
+const ACCENT: Accent = {
+  from: ORANGE,
+  soft: ORANGE_SOFT,
+  tint: ORANGE_TINT,
 };
 
 const TOOLS: Tool[] = [
@@ -81,7 +92,7 @@ const TOOLS: Tool[] = [
   {
     id: 'career-path', title: 'Career Path Advisor',
     description: 'AI roadmap from your current role to your next milestone.',
-    Icon: Target, placeholder: 'Where you are today and where you want to be…',
+    Icon: Rocket, placeholder: 'Where you are today and where you want to be…',
     cta: 'Build Roadmap',
     sampleResult: 'Suggested path: Analyst → Senior Analyst → Team Lead.',
     category: 'career',
@@ -112,16 +123,15 @@ const TOOLS: Tool[] = [
   },
 ];
 
-const FILTERS: (Category | 'all')[] = ['all', 'career', 'study'];
 const UPLOAD_ENABLED_IDS = ['ats', 'resume'];
 
+/* ── Rotating words — simplified to match the request ── */
 const HEADLINE_WORDS: { text: string; dwell: number }[] = [
-  { text: 'Grow Career.', dwell: 1400 },
-  { text: 'Go Global.',   dwell: 1400 },
-  { text: 'Go Placedly.', dwell: 2200 },
+  { text: 'Go Global.',    dwell: 1600 },
+  { text: 'Go Placedly.',  dwell: 2400 },
+  { text: 'Grow Career.',  dwell: 1600 },
 ];
 
-/* ── helpers ── */
 function useIsMobile(bp = 900) {
   const [v, setV] = useState(false);
   useEffect(() => {
@@ -147,7 +157,6 @@ function useTypewriter(text: string, active: boolean, speed = 10) {
   return out;
 }
 
-/* ── file extraction (unchanged logic) ── */
 function loadScriptOnce(src: string): Promise<void> {
   return new Promise((res, rej) => {
     if (document.querySelector(`script[data-loaded-src="${src}"]`)) { res(); return; }
@@ -187,7 +196,6 @@ async function extractTextFromFile(file: File): Promise<string> {
   throw new Error('Unsupported format. Please upload .pdf, .docx, or .txt.');
 }
 
-/* ── analysis engines (unchanged logic) ── */
 const ACTION_VERBS = ['managed','led','built','created','improved','increased','reduced','achieved','developed','implemented','designed','coordinated','negotiated','resolved','streamlined','automated','delivered','launched','trained','mentored','analyzed','optimized','generated','processed','handled','executed','supervised','drove','spearheaded','collaborated'];
 const DOMAIN_KEYWORDS: Record<string,string[]> = {
   healthcare: ['claims','icd-10','cpt','denial','healthcare','medical billing','prior authorization','hipaa'],
@@ -397,88 +405,52 @@ function computeToolResult(tool: Tool, input: string): string {
   }
 }
 
-/* ── Rotating headline banner ── */
-function RotatingHeadlineBanner() {
+/* ══════════════════════════════════════════════════════
+   ROTATING HEADLINE
+══════════════════════════════════════════════════════ */
+function RotatingHeadline() {
   const [index, setIndex] = useState(0);
   const current = HEADLINE_WORDS[index];
+
   useEffect(() => {
-    const id = window.setTimeout(()=>setIndex(i=>(i+1)%HEADLINE_WORDS.length), current.dwell);
-    return ()=>clearTimeout(id);
+    const id = window.setTimeout(
+      () => setIndex(i => (i + 1) % HEADLINE_WORDS.length),
+      current.dwell,
+    );
+    return () => clearTimeout(id);
   }, [index, current.dwell]);
 
   return (
-    <motion.div
-      initial={{ opacity:0, y:12 }}
-      whileInView={{ opacity:1, y:0 }}
-      viewport={{ once:true, amount:0.4 }}
-      transition={{ duration:0.5 }}
+    <span
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '8px',
-        margin: '0 auto clamp(20px,3.5vw,32px)',
-        maxWidth: '540px',
-        width: '100%',
-        padding: 'clamp(14px,3vw,20px) clamp(16px,4vw,24px)',
-        borderRadius: '16px',
-        background: '#ffffff',
-        border: '1px solid rgba(15,23,42,0.08)',
-        boxShadow: '0 2px 12px rgba(15,23,42,0.06)',
-        textAlign: 'center',
-        fontFamily: GEOM_FONT,
+        position: 'relative',
+        display: 'inline-block',
+        minWidth: 'clamp(160px, 28vw, 320px)',
+        height: '1.15em',
+        verticalAlign: 'middle',
       }}
     >
-      <div style={{
-        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-        gap: '10px', fontSize: 'clamp(1rem,2.4vw,1.45rem)',
-        fontWeight: 700, letterSpacing: '-0.02em', flexWrap: 'wrap', width: '100%',
-      }}>
+      <AnimatePresence mode="wait">
         <motion.span
-          animate={{ rotate:[0,-8,8,0] }}
-          transition={{ duration:2.2, repeat:Infinity, ease:'easeInOut' }}
+          key={current.text}
+          initial={{ y: 12, opacity: 0 }}
+          animate={{ y: 0,  opacity: 1 }}
+          exit={{   y: -12, opacity: 0 }}
+          transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
           style={{
-            display:'inline-flex', width:'26px', height:'26px', borderRadius:'8px',
-            background:'#2563eb', color:'#fff',
-            alignItems:'center', justifyContent:'center', flexShrink:0,
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            whiteSpace: 'nowrap',
+            color: ORANGE,
+            fontWeight: 800,
+            letterSpacing: '-0.03em',
           }}
         >
-          <Rocket size={13} strokeWidth={2.2} />
+          {current.text}
         </motion.span>
-
-        <span style={{
-          position:'relative', display:'inline-block',
-          minWidth:'clamp(120px,22vw,180px)', height:'1.3em', textAlign:'left',
-        }}>
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={current.text}
-              initial={{ y:12, opacity:0 }}
-              animate={{ y:0, opacity:1 }}
-              exit={{ y:-12, opacity:0 }}
-              transition={{ duration:0.32, ease:[0.22,1,0.36,1] }}
-              style={{
-                position:'absolute', left:0, top:0, whiteSpace:'nowrap',
-                /* solid color — no gradient text */
-                color: '#2563eb',
-              }}
-            >
-              {current.text}
-            </motion.span>
-          </AnimatePresence>
-        </span>
-      </div>
-
-      <p style={{
-        fontSize:'clamp(0.78rem,1.1vw,0.9rem)', color:'#64748b',
-        lineHeight:1.55, maxWidth:'440px', margin:0, fontFamily: GEOM_FONT,
-      }}>
-        From CV to Offer. Home to Abroad.{' '}
-        <span style={{ fontWeight:600, color:'#1e293b' }}>
-          Your Career Co-Pilot — One Place, One Partner.
-        </span>
-      </p>
-    </motion.div>
+      </AnimatePresence>
+    </span>
   );
 }
 
@@ -487,34 +459,48 @@ function MobileToolSheet({ onClose, titleId, children }: {
   onClose: () => void; titleId: string; children: React.ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(()=>{ ref.current?.focus(); },[]);
+  useEffect(() => { ref.current?.focus(); }, []);
   return (
     <>
       <motion.div
         key="backdrop"
-        initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
-        transition={{duration:0.22}}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        transition={{ duration: 0.22 }}
         onClick={onClose}
-        style={{ position:'fixed', inset:0, background:'rgba(15,23,42,0.5)', zIndex:60 }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.5)', zIndex: 60 }}
       />
       <motion.div
         key="sheet"
-        ref={ref} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1}
-        initial={{y:'100%'}} animate={{y:0}} exit={{y:'100%'}}
-        transition={{ type:'spring', damping:32, stiffness:300 }}
-        drag="y" dragConstraints={{top:0,bottom:0}} dragElastic={{top:0,bottom:0.5}}
-        onDragEnd={(_e,info)=>{ if(info.offset.y>110||info.velocity.y>700) onClose(); }}
+        ref={ref} role="dialog" aria-modal="true"
+        aria-labelledby={titleId} tabIndex={-1}
+        initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+        transition={{ type: 'spring', damping: 32, stiffness: 300 }}
+        drag="y" dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.5 }}
+        onDragEnd={(_e, info) => {
+          if (info.offset.y > 110 || info.velocity.y > 700) onClose();
+        }}
         style={{
-          position:'fixed', left:0, right:0, bottom:0, zIndex:61,
-          background:'#fff', borderRadius:'20px 20px 0 0',
-          maxHeight:'92vh', display:'flex', flexDirection:'column',
-          boxShadow:'0 -16px 48px rgba(15,23,42,0.18)', outline:'none', touchAction:'none',
+          position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 61,
+          background: '#fff', borderRadius: '20px 20px 0 0',
+          maxHeight: '92vh', display: 'flex', flexDirection: 'column',
+          boxShadow: '0 -16px 48px rgba(15,23,42,0.18)',
+          outline: 'none', touchAction: 'none',
         }}
       >
-        <div aria-hidden style={{ display:'flex', justifyContent:'center', padding:'10px 0 2px', cursor:'grab', flexShrink:0 }}>
-          <span style={{ width:'36px', height:'4px', borderRadius:'999px', background:'rgba(15,23,42,0.15)' }} />
+        <div aria-hidden style={{
+          display: 'flex', justifyContent: 'center',
+          padding: '10px 0 2px', cursor: 'grab', flexShrink: 0,
+        }}>
+          <span style={{
+            width: '36px', height: '4px', borderRadius: '999px',
+            background: 'rgba(15,23,42,0.15)',
+          }} />
         </div>
-        <div style={{ flex:1, minHeight:0, display:'flex', flexDirection:'column', padding:'4px 16px 0', touchAction:'pan-y' }}>
+        <div style={{
+          flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column',
+          padding: '4px 16px 0', touchAction: 'pan-y',
+        }}>
           {children}
         </div>
       </motion.div>
@@ -522,224 +508,215 @@ function MobileToolSheet({ onClose, titleId, children }: {
   );
 }
 
-/* ── Typing dots ── */
 function TypingDots() {
   return (
-    <div style={{ display:'flex', gap:'6px', padding:'6px 0' }}>
-      {[0,1,2].map(i=>(
+    <div style={{ display: 'flex', gap: '6px', padding: '6px 0' }}>
+      {[0, 1, 2].map(i => (
         <motion.span key={i}
-          animate={{ y:[0,-6,0] }}
-          transition={{ duration:0.7, repeat:Infinity, delay:i*0.15 }}
-          style={{ width:'7px', height:'7px', borderRadius:'50%', background:'#94a3b8', display:'inline-block' }}
+          animate={{ y: [0, -6, 0] }}
+          transition={{ duration: 0.7, repeat: Infinity, delay: i * 0.15 }}
+          style={{
+            width: '7px', height: '7px', borderRadius: '50%',
+            background: '#94a3b8', display: 'inline-block',
+          }}
         />
       ))}
     </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════
-   MAIN COMPONENT
-═══════════════════════════════════════════════════════ */
 export default function UtilityToolsSection() {
-  const [category, setCategory] = useState<Category|'all'>('all');
-  const [activeId, setActiveId] = useState<string|null>(null);
-  const [input, setInput] = useState('');
-  const [phase, setPhase] = useState<'idle'|'loading'|'done'>('idle');
+  const [activeId, setActiveId]     = useState<string | null>(null);
+  const [input, setInput]           = useState('');
+  const [phase, setPhase]           = useState<'idle' | 'loading' | 'done'>('idle');
   const [resultText, setResultText] = useState('');
   const [isExtracting, setIsExtracting] = useState(false);
-  const [fileName, setFileName] = useState('');
-  const [fileError, setFileError] = useState('');
+  const [fileName, setFileName]     = useState('');
+  const [fileError, setFileError]   = useState('');
   const isMobile = useIsMobile();
 
-  const active = TOOLS.find(t=>t.id===activeId)??null;
-  const accent: Accent = active ? CATEGORY_META[active.category] : CATEGORY_META[category];
+  const active  = TOOLS.find(t => t.id === activeId) ?? null;
+  const accent: Accent = ACCENT;
+  const filteredTools  = useMemo(() => TOOLS, []);
+  const typedResult    = useTypewriter(resultText, phase === 'done');
 
-  const filteredTools = useMemo(()=>TOOLS.filter(t=>category==='all'||t.category===category),[category]);
-  const typedResult = useTypewriter(resultText, phase==='done');
-
-  const runTool = useCallback(()=>{
+  const runTool = useCallback(() => {
     if (!active) return;
     setPhase('loading');
-    window.setTimeout(()=>{
+    window.setTimeout(() => {
       setResultText(computeToolResult(active, input));
       setPhase('done');
     }, 900);
-  },[active, input]);
+  }, [active, input]);
 
-  const handleFileUpload = useCallback(async(file: File)=>{
+  const handleFileUpload = useCallback(async (file: File) => {
     setFileError(''); setFileName(file.name); setIsExtracting(true);
     try {
       const text = await extractTextFromFile(file);
-      if (!text||text.trim().length<20) throw new Error('Could not extract text. Please paste instead.');
+      if (!text || text.trim().length < 20)
+        throw new Error('Could not extract text. Please paste instead.');
       setInput(text);
-    } catch(err:any) {
-      setFileError(err?.message||'Could not read this file. Please paste your text instead.');
+    } catch (err: any) {
+      setFileError(err?.message || 'Could not read this file. Please paste your text instead.');
     } finally { setIsExtracting(false); }
-  },[]);
+  }, []);
 
   const openTool = (tool: Tool) => {
     setActiveId(tool.id); setInput(''); setPhase('idle');
     setResultText(''); setFileName(''); setFileError('');
   };
-  const closePanel = useCallback(()=>{
+  const closePanel = useCallback(() => {
     setActiveId(null); setPhase('idle'); setInput('');
     setResultText(''); setFileName(''); setFileError('');
-  },[]);
+  }, []);
 
-  useEffect(()=>{
-    document.body.style.overflow = (isMobile&&active)?'hidden':'';
-    return ()=>{ document.body.style.overflow=''; };
-  },[isMobile,active]);
+  useEffect(() => {
+    document.body.style.overflow = (isMobile && active) ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isMobile, active]);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (!active) return;
-    const fn = (e:KeyboardEvent)=>{ if(e.key==='Escape') closePanel(); };
-    window.addEventListener('keydown',fn);
-    return ()=>window.removeEventListener('keydown',fn);
-  },[active,closePanel]);
+    const fn = (e: KeyboardEvent) => { if (e.key === 'Escape') closePanel(); };
+    window.addEventListener('keydown', fn);
+    return () => window.removeEventListener('keydown', fn);
+  }, [active, closePanel]);
 
-  const mobileTitleId = active?`mobile-tool-title-${active.id}`:undefined;
+  const mobileTitleId = active ? `mobile-tool-title-${active.id}` : undefined;
+
+  /* ★ NEW: refs for the tool toggle bar so the arrows can scroll it */
+  const toolsRowRef = useRef<HTMLDivElement>(null);
+  const scrollTools = (dir: -1 | 1) => {
+    const el = toolsRowRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * (el.clientWidth * 0.6), behavior: 'smooth' });
+  };
 
   return (
     <section
       id="utility-tools"
       style={{
-        position:'relative',
-        padding:'clamp(48px,7vw,88px) clamp(16px,4vw,24px)',
-        overflow:'hidden',
-        background:'#f8fafc',
+        position: 'relative',
+        padding: 'clamp(48px,7vw,88px) clamp(16px,4vw,24px)',
+        overflow: 'hidden',
+        background: BG,
         fontFamily: GEOM_FONT,
       }}
     >
-      {/* subtle background blobs — solid, very faint */}
       <div aria-hidden style={{
-        position:'absolute', top:'-10%', right:'-6%', width:'380px', height:'380px',
-        borderRadius:'50%', background:'rgba(37,99,235,0.04)', filter:'blur(80px)',
-        zIndex:0, pointerEvents:'none',
-      }}/>
+        position: 'absolute', top: '-10%', right: '-6%',
+        width: '380px', height: '380px', borderRadius: '50%',
+        background: ORANGE_TINT, filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none',
+      }} />
       <div aria-hidden style={{
-        position:'absolute', bottom:'-12%', left:'-8%', width:'420px', height:'420px',
-        borderRadius:'50%', background:'rgba(8,145,178,0.04)', filter:'blur(90px)',
-        zIndex:0, pointerEvents:'none',
-      }}/>
+        position: 'absolute', bottom: '-12%', left: '-8%',
+        width: '420px', height: '420px', borderRadius: '50%',
+        background: 'rgba(249,115,22,0.06)', filter: 'blur(90px)',
+        zIndex: 0, pointerEvents: 'none',
+      }} />
 
-      <div style={{ position:'relative', zIndex:1, maxWidth:'1200px', margin:'0 auto' }}>
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: '1200px', margin: '0 auto' }}>
 
-        {/* ── Header ── */}
+        {/* ══════════════════════════════════════
+            HEADER — rotating headline at top
+        ══════════════════════════════════════ */}
         <motion.div
-          initial={{opacity:0,y:16}} whileInView={{opacity:1,y:0}}
-          viewport={{once:true,amount:0.3}} transition={{duration:0.5}}
-          style={{ textAlign:'center', marginBottom:'clamp(20px,3vw,32px)' }}
+          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.5 }}
+          style={{ textAlign: 'center', marginBottom: 'clamp(20px,3vw,32px)' }}
         >
-          {/* eyebrow */}
-          <span style={{
-            display:'inline-flex', alignItems:'center', gap:'6px',
-            fontSize:'11px', fontWeight:600, textTransform:'uppercase',
-            letterSpacing:'0.14em', color:'#2563eb',
-            background:'rgba(37,99,235,0.07)',
-            border:'1px solid rgba(37,99,235,0.14)',
-            borderRadius:'999px', padding:'5px 12px',
-            marginBottom:'14px',
-          }}>
-            <Sparkles size={13} strokeWidth={2.25} aria-hidden />
-            Utility Tools
-          </span>
+          <h1 className="main-headline">
+            <RotatingHeadline />
+          </h1>
 
-          {/* heading — solid, no gradient */}
-          <h2 style={{
-            fontSize:'clamp(1.75rem,3.8vw,2.9rem)',
-            fontWeight:700,
-            lineHeight:1.12,
-            letterSpacing:'-0.025em',
-            color:'#0f172a',
-            margin:'0 0 12px',
-          }}>
+          <h2 className="sub-headline">
             AI-Powered Tools Built for Real Career Decisions
           </h2>
 
           <p style={{
-            fontSize:'clamp(0.9rem,1.3vw,1.05rem)',
-            color:'#64748b',
-            maxWidth:'580px',
-            margin:'0 auto',
-            lineHeight:1.65,
+            fontSize: 'clamp(0.875rem,1.3vw,1rem)',
+            color: TEXT_MUTED,
+            maxWidth: '560px',
+            margin: '0 auto',
+            lineHeight: 1.65,
           }}>
-            Interactive assistants for resumes, interviews, salaries, study abroad, and more —
-            designed to feel fast, useful, and advisor-grade.
+            Interactive assistants for resumes, interviews, salaries,
+            study abroad, and more — designed to feel fast, useful, and advisor-grade.
           </p>
         </motion.div>
 
-        {/* ── Rotating banner ── */}
-        <RotatingHeadlineBanner />
-
-        {/* ── Category filter ── */}
-        <div style={{ display:'flex', justifyContent:'center', marginBottom:'clamp(20px,2.8vw,28px)' }}>
-          <div
-            role="tablist" aria-label="Filter tools"
-            style={{
-              display:'inline-flex', gap:'4px', flexWrap:'wrap', justifyContent:'center',
-              background:'#ffffff', padding:'5px', borderRadius:'999px',
-              boxShadow:'0 2px 10px rgba(15,23,42,0.07)',
-              border:'1px solid rgba(15,23,42,0.07)',
-            }}
-          >
-            {FILTERS.map(f=>{
-              const meta = CATEGORY_META[f];
-              const isActive = category===f;
-              return (
-                <button key={f} type="button" role="tab" aria-selected={isActive}
-                  onClick={()=>setCategory(f)}
-                  style={{
-                    position:'relative', padding:'9px 20px', borderRadius:'999px',
-                    border:'none', fontWeight:600, fontSize:'13px', cursor:'pointer',
-                    background: isActive ? '#2563eb' : 'transparent',
-                    color: isActive ? '#ffffff' : '#64748b',
-                    transition:'all 0.2s ease',
-                    whiteSpace:'nowrap',
-                    fontFamily: GEOM_FONT,
-                  }}
-                >
-                  {meta.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ── Tool toggle bar ── */}
+        {/* ══════════════════════════════════════
+            ★ FIX 2: "Utility Tools" label is now in the MIDDLE
+            — above the toggle bar, centered with arrows on each side.
+        ══════════════════════════════════════ */}
         <motion.div
-          initial={{opacity:0,y:10}} animate={{opacity:1,y:0}}
-          transition={{duration:0.4}}
-          style={{ marginBottom:'clamp(16px,2.5vw,24px)' }}
+          initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '12px',
+            marginBottom: '14px',
+          }}
+        >
+          {/* left arrow — mobile only */}
+          <button
+            type="button"
+            aria-label="Scroll tools left"
+            onClick={() => scrollTools(-1)}
+            className="tools-arrow tools-arrow--left"
+          >
+            <ChevronLeft size={18} strokeWidth={2.5} aria-hidden />
+          </button>
+
+          <span className="utility-label">Utility Tools</span>
+
+          {/* right arrow — mobile only */}
+          <button
+            type="button"
+            aria-label="Scroll tools right"
+            onClick={() => scrollTools(1)}
+            className="tools-arrow tools-arrow--right"
+          >
+            <ChevronRight size={18} strokeWidth={2.5} aria-hidden />
+          </button>
+        </motion.div>
+
+        {/* Tool toggle bar — scrollable on mobile, wraps on desktop */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          style={{ marginBottom: 'clamp(16px,2.5vw,24px)' }}
         >
           <div className="tools-toggle-wrap">
             <div
+              ref={toolsRowRef}
               className="tools-toggle-bar"
               style={{
-                background:'#ffffff', borderRadius:'999px', padding:'6px',
-                boxShadow:'0 2px 12px rgba(15,23,42,0.08)',
-                border:'1px solid rgba(15,23,42,0.07)',
-                display:'flex', flexWrap:'wrap', gap:'4px',
-                justifyContent:'center', alignItems:'center',
+                background: '#ffffff', borderRadius: '999px', padding: '6px',
+                boxShadow: '0 2px 12px rgba(249,115,22,0.10)',
+                border: `1.5px solid ${ORANGE_BORDER}`,
+                display: 'flex', flexWrap: 'wrap', gap: '4px',
+                justifyContent: 'center', alignItems: 'center',
               }}
             >
-              {filteredTools.map(tool=>{
-                const meta = CATEGORY_META[tool.category];
-                const isActive = activeId===tool.id;
+              {filteredTools.map(tool => {
+                const isActive = activeId === tool.id;
                 return (
                   <motion.button
                     key={tool.id} type="button"
-                    onClick={()=>openTool(tool)}
-                    whileHover={{scale:1.02}} whileTap={{scale:0.97}}
+                    onClick={() => openTool(tool)}
+                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                     style={{
-                      display:'inline-flex', alignItems:'center', gap:'7px',
-                      padding:'9px 16px', borderRadius:'999px', border:'none',
-                      /* solid fill when active — no gradient */
-                      background: isActive ? '#2563eb' : 'rgba(15,23,42,0.03)',
-                      color: isActive ? '#ffffff' : '#475569',
-                      fontSize:'13px', fontWeight:600, cursor:'pointer',
-                      transition:'all 0.2s ease',
-                      boxShadow: isActive ? '0 4px 14px rgba(37,99,235,0.22)' : 'none',
+                      display: 'inline-flex', alignItems: 'center', gap: '7px',
+                      padding: '9px 16px', borderRadius: '999px', border: 'none',
+                      background: isActive ? ORANGE : 'rgba(15,23,42,0.03)',
+                      color: isActive ? '#ffffff' : TEXT_BODY,
+                      fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      boxShadow: isActive ? '0 4px 14px rgba(249,115,22,0.30)' : 'none',
                       fontFamily: GEOM_FONT,
                     }}
                   >
@@ -748,42 +725,40 @@ export default function UtilityToolsSection() {
                     <span className="tool-title-mobile">{tool.title.split(' ')[0]}</span>
                     {tool.popular && (
                       <span className="tool-hot-badge" style={{
-                        fontSize:'9px', fontWeight:700, letterSpacing:'0.4px',
-                        background: isActive ? 'rgba(255,255,255,0.22)' : 'rgba(37,99,235,0.1)',
-                        color: isActive ? '#fff' : '#2563eb',
-                        borderRadius:'999px', padding:'2px 6px',
+                        fontSize: '9px', fontWeight: 700, letterSpacing: '0.4px',
+                        background: isActive ? 'rgba(255,255,255,0.22)' : ORANGE_TINT,
+                        color: isActive ? '#fff' : ORANGE,
+                        borderRadius: '999px', padding: '2px 6px',
                       }}>HOT</span>
                     )}
                     {isActive && (
-                      <ChevronDown size={13} strokeWidth={2.5} className="tool-chevron" />
+                      <ChevronRight size={13} strokeWidth={2.5} className="tool-chevron" />
                     )}
                   </motion.button>
                 );
               })}
             </div>
-            <span className="tools-toggle-fade tools-toggle-fade--left" aria-hidden />
-            <span className="tools-toggle-fade tools-toggle-fade--right" aria-hidden />
           </div>
         </motion.div>
 
-        {/* ── Desktop panel ── */}
+        {/* Desktop panel */}
         {!isMobile && (
           <AnimatePresence mode="wait">
             {active && (
               <motion.div
                 key={active.id}
-                initial={{opacity:0,y:-8,height:0}}
-                animate={{opacity:1,y:0,height:'auto'}}
-                exit={{opacity:0,y:-8,height:0}}
-                transition={{duration:0.28, ease:[0.22,1,0.36,1]}}
-                style={{overflow:'hidden'}}
+                initial={{ opacity: 0, y: -8, height: 0 }}
+                animate={{ opacity: 1, y: 0,  height: 'auto' }}
+                exit={{   opacity: 0, y: -8,  height: 0 }}
+                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                style={{ overflow: 'hidden' }}
               >
                 <div style={{
-                  maxWidth:'860px', margin:'0 auto',
-                  background:'#ffffff', borderRadius:'20px',
-                  padding:'clamp(22px,3.5vw,32px)',
-                  boxShadow:'0 8px 32px rgba(15,23,42,0.1)',
-                  border:'1px solid rgba(15,23,42,0.07)',
+                  maxWidth: '860px', margin: '0 auto',
+                  background: SURFACE, borderRadius: '20px',
+                  padding: 'clamp(22px,3.5vw,32px)',
+                  boxShadow: '0 8px 32px rgba(15,23,42,0.1)',
+                  border: `1px solid ${ORANGE_BORDER}`,
                 }}>
                   <ToolPanel
                     active={active} accent={accent}
@@ -791,7 +766,8 @@ export default function UtilityToolsSection() {
                     phase={phase} typedResult={typedResult}
                     runTool={runTool} closePanel={closePanel}
                     onFileUpload={handleFileUpload}
-                    isExtracting={isExtracting} fileName={fileName} fileError={fileError}
+                    isExtracting={isExtracting}
+                    fileName={fileName} fileError={fileError}
                     variant="desktop"
                   />
                 </div>
@@ -801,18 +777,23 @@ export default function UtilityToolsSection() {
         )}
       </div>
 
-      {/* ── Mobile sheet ── */}
+      {/* Mobile sheet */}
       {isMobile && (
         <AnimatePresence>
           {active && mobileTitleId && (
-            <MobileToolSheet key="mobile-sheet" onClose={closePanel} titleId={mobileTitleId}>
+            <MobileToolSheet
+              key="mobile-sheet"
+              onClose={closePanel}
+              titleId={mobileTitleId}
+            >
               <ToolPanel
                 active={active} accent={accent}
                 input={input} setInput={setInput}
                 phase={phase} typedResult={typedResult}
                 runTool={runTool} closePanel={closePanel}
                 onFileUpload={handleFileUpload}
-                isExtracting={isExtracting} fileName={fileName} fileError={fileError}
+                isExtracting={isExtracting}
+                fileName={fileName} fileError={fileError}
                 variant="mobile" titleId={mobileTitleId}
               />
             </MobileToolSheet>
@@ -821,26 +802,106 @@ export default function UtilityToolsSection() {
       )}
 
       <style>{`
-        /* ── font & box-sizing ── */
         #utility-tools, #utility-tools * {
           font-family: ${GEOM_FONT};
           font-feature-settings: "ss01","cv11","cv02";
           font-optical-sizing: auto;
           box-sizing: border-box;
         }
+        #utility-tools p,
+        #utility-tools span,
+        #utility-tools label,
+        #utility-tools div { color: ${TEXT_BODY}; }
+        #utility-tools h1,
+        #utility-tools h2,
+        #utility-tools h3  { color: ${BLACK}; }
 
-        /* ── toggle bar responsive ── */
+        .main-headline {
+          margin: 0 0 10px;
+          font-weight: 800;
+          line-height: 1.1;
+          letter-spacing: -0.03em;
+          color: ${BLACK};
+          font-size: clamp(2rem, 8vw, 2.6rem);
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: center;
+          gap: 0 6px;
+        }
+        @media (min-width: 480px) {
+          .main-headline { font-size: clamp(2.4rem, 6vw, 3.2rem); }
+        }
+        @media (min-width: 900px) {
+          .main-headline { font-size: clamp(3rem, 5vw, 4rem); }
+        }
+
+        .sub-headline {
+          font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+          font-weight: 600;
+          line-height: 1.35;
+          letter-spacing: -0.01em;
+          color: ${TEXT_MUTED};
+          margin: 0 0 10px;
+        }
+        @media (min-width: 480px) {
+          .sub-headline { font-size: clamp(1rem, 2vw, 1.25rem); }
+        }
+        @media (min-width: 900px) {
+          .sub-headline { font-size: clamp(1.05rem, 1.5vw, 1.3rem); }
+        }
+
+        .utility-label {
+          display: inline-block;
+          font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.14em;
+          color: ${ORANGE};
+        }
+
+        /* ── ★ NEW: Arrows around "Utility Tools" label ── */
+        .tools-arrow {
+          display: none;             /* hidden on desktop */
+          align-items: center;
+          justify-content: center;
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          background: #ffffff;
+          color: ${ORANGE};
+          border: 1.5px solid ${ORANGE_BORDER};
+          cursor: pointer;
+          flex-shrink: 0;
+          transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+        }
+        .tools-arrow:hover {
+          background: ${ORANGE};
+          color: #ffffff;
+          box-shadow: 0 4px 12px rgba(249, 115, 22, 0.30);
+        }
+        .tools-arrow:active {
+          transform: scale(0.92);
+        }
+        .tools-arrow:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+
         .tools-toggle-wrap { position: relative; }
-
         .tools-toggle-fade {
           display: none;
           position: absolute; top: 0; bottom: 0; width: 24px;
           pointer-events: none; z-index: 2;
         }
 
+        /* ── MOBILE overrides (≤ 900 px) ── */
         @media (max-width: 900px) {
-          .tool-title-desktop { display: none; }
+          .tool-title-desktop { display: none;   }
           .tool-title-mobile  { display: inline; }
+
+          /* ★ show arrows only on mobile */
+          .tools-arrow { display: inline-flex; }
 
           .tools-toggle-bar {
             flex-wrap: nowrap !important;
@@ -848,9 +909,10 @@ export default function UtilityToolsSection() {
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch;
             scroll-snap-type: x proximity;
-            padding: 6px 12px !important;
+            padding: 6px 8px !important;
             gap: 6px !important;
             scrollbar-width: none;
+            margin: 0 38px !important;     /* leave room for arrows */
           }
           .tools-toggle-bar::-webkit-scrollbar { display: none; }
           .tools-toggle-bar > button {
@@ -860,91 +922,78 @@ export default function UtilityToolsSection() {
             min-height: 42px;
           }
           .tool-hot-badge { display: none; }
-          .tool-chevron   { display: none; }
-
-          .tools-toggle-fade { display: block; }
-          .tools-toggle-fade--left  {
-            left: 0;
-            background: linear-gradient(90deg, #f8fafc, rgba(248,250,252,0));
-          }
-          .tools-toggle-fade--right {
-            right: 0;
-            background: linear-gradient(270deg, #f8fafc, rgba(248,250,252,0));
-          }
 
           .tool-textarea     { font-size: 16px !important; }
           .tool-close-btn    { width: 40px !important; height: 40px !important; }
           .tool-upload-label { padding: 11px 14px !important; min-height: 42px; }
         }
 
+        /* ── DESKTOP overrides (> 900 px) ── */
         @media (min-width: 901px) {
           .tool-title-desktop { display: inline; }
           .tool-title-mobile  { display: none;   }
+          .tools-arrow { display: none; }
         }
       `}</style>
     </section>
   );
 }
 
-/* ═══════════════════════════════════════════════════════
-   TOOL PANEL
-═══════════════════════════════════════════════════════ */
 function ToolPanel({
   active, accent, input, setInput, phase, typedResult,
   runTool, closePanel, onFileUpload, isExtracting, fileName, fileError,
-  variant='desktop', titleId,
+  variant = 'desktop', titleId,
 }: {
-  active: Tool|null; accent: Accent;
-  input: string; setInput:(v:string)=>void;
-  phase:'idle'|'loading'|'done'; typedResult:string;
-  runTool:()=>void; closePanel:()=>void;
-  onFileUpload:(f:File)=>void;
-  isExtracting:boolean; fileName:string; fileError:string;
-  variant?:'desktop'|'mobile'; titleId?:string;
+  active: Tool | null; accent: Accent;
+  input: string; setInput: (v: string) => void;
+  phase: 'idle' | 'loading' | 'done'; typedResult: string;
+  runTool: () => void; closePanel: () => void;
+  onFileUpload: (f: File) => void;
+  isExtracting: boolean; fileName: string; fileError: string;
+  variant?: 'desktop' | 'mobile'; titleId?: string;
 }) {
   if (!active) return null;
-  const isMob = variant==='mobile';
+  const isMob = variant === 'mobile';
   const supportsUpload = UPLOAD_ENABLED_IDS.includes(active.id);
 
-  /* ── header ── */
   const header = (
     <div style={{
-      display:'flex', justifyContent:'space-between', alignItems:'flex-start',
-      marginBottom: isMob?'12px':'18px',
-      paddingBottom: isMob?'12px':0,
-      borderBottom: isMob?'1px solid rgba(15,23,42,0.07)':'none',
+      display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+      marginBottom: isMob ? '12px' : '18px',
+      paddingBottom: isMob ? '12px' : 0,
+      borderBottom: isMob ? '1px solid rgba(15,23,42,0.07)' : 'none',
     }}>
-      <div style={{ display:'flex', gap:'12px', alignItems:'center', minWidth:0 }}>
-        {/* icon box — solid color, no gradient */}
+      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', minWidth: 0 }}>
         <span style={{
-          width: isMob?'42px':'48px', height: isMob?'42px':'48px',
-          borderRadius:'14px', display:'flex', alignItems:'center', justifyContent:'center',
-          background: accent.from, color:'#fff', flexShrink:0,
-          boxShadow:`0 4px 14px ${accent.soft}`,
+          width: isMob ? '42px' : '48px', height: isMob ? '42px' : '48px',
+          borderRadius: '14px', display: 'flex', alignItems: 'center',
+          justifyContent: 'center', background: ORANGE, color: '#fff',
+          flexShrink: 0, boxShadow: `0 4px 14px ${ORANGE_SOFT}`,
         }}>
-          <active.Icon size={isMob?20:22} strokeWidth={2} />
+          <active.Icon size={isMob ? 20 : 22} strokeWidth={2} />
         </span>
 
-        <div style={{ minWidth:0 }}>
+        <div style={{ minWidth: 0 }}>
           <p style={{
-            fontSize:'10px', fontWeight:600, textTransform:'uppercase',
-            letterSpacing:'0.12em', color: accent.from, marginBottom:'3px',
+            fontSize: '10px', fontWeight: 600, textTransform: 'uppercase',
+            letterSpacing: '0.12em', color: ORANGE, marginBottom: '3px',
           }}>
             Placedly AI Tool
           </p>
           <h3
             id={titleId}
             style={{
-              fontSize: isMob?'1rem':'clamp(1.05rem,1.8vw,1.3rem)',
-              fontWeight:700, lineHeight:1.3, letterSpacing:'-0.02em',
-              color:'#0f172a', margin:0,
-              /* NO gradient text */
+              fontSize: isMob ? '1rem' : 'clamp(1.05rem,1.8vw,1.3rem)',
+              fontWeight: 700, lineHeight: 1.3, letterSpacing: '-0.02em',
+              color: BLACK, margin: 0,
             }}
           >
             {active.title}
           </h3>
           {!isMob && (
-            <p style={{ fontSize:'13px', color:'#64748b', marginTop:'4px', lineHeight:1.5 }}>
+            <p style={{
+              fontSize: '13px', color: TEXT_MUTED, marginTop: '4px', lineHeight: 1.5,
+            }}>
               {active.description}
             </p>
           )}
@@ -955,104 +1004,110 @@ function ToolPanel({
         type="button" onClick={closePanel} aria-label="Close tool"
         className="tool-close-btn"
         style={{
-          border:'none', background:'rgba(15,23,42,0.05)',
-          width:'34px', height:'34px', borderRadius:'10px',
-          display:'flex', alignItems:'center', justifyContent:'center',
-          cursor:'pointer', color:'#64748b', flexShrink:0,
-          transition:'background 0.18s',
+          border: 'none', background: 'rgba(15,23,42,0.05)',
+          width: '34px', height: '34px', borderRadius: '10px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', color: TEXT_MUTED, flexShrink: 0,
+          transition: 'background 0.18s',
         }}
-        onMouseEnter={e=>{ e.currentTarget.style.background='rgba(15,23,42,0.1)'; }}
-        onMouseLeave={e=>{ e.currentTarget.style.background='rgba(15,23,42,0.05)'; }}
+        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.1)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.05)'; }}
       >
         <X size={16} strokeWidth={2.5} />
       </button>
     </div>
   );
 
-  /* ── upload ── */
   const uploadBlock = supportsUpload && (
-    <div style={{ marginBottom:'12px' }}>
+    <div style={{ marginBottom: '12px' }}>
       <input
         type="file" id={`ru-${active.id}-${variant}`}
-        accept=".pdf,.doc,.docx,.txt" style={{ display:'none' }}
-        onChange={e=>{ const f=e.target.files?.[0]; if(f) onFileUpload(f); e.target.value=''; }}
+        accept=".pdf,.doc,.docx,.txt" style={{ display: 'none' }}
+        onChange={e => {
+          const f = e.target.files?.[0];
+          if (f) onFileUpload(f);
+          e.target.value = '';
+        }}
       />
       <label
         htmlFor={`ru-${active.id}-${variant}`}
         className="tool-upload-label"
         style={{
-          display:'inline-flex', alignItems:'center', gap:'8px',
-          padding:'8px 14px', borderRadius:'999px',
-          border:`1.5px dashed rgba(37,99,235,0.3)`,
-          background: accent.soft, color: accent.from,
-          fontSize:'12.5px', fontWeight:600,
-          cursor: isExtracting?'wait':'pointer',
-          transition:'border-color 0.2s',
+          display: 'inline-flex', alignItems: 'center', gap: '8px',
+          padding: '8px 14px', borderRadius: '999px',
+          border: `1.5px dashed ${ORANGE_BORDER}`,
+          background: ORANGE_TINT, color: ORANGE,
+          fontSize: '12.5px', fontWeight: 600,
+          cursor: isExtracting ? 'wait' : 'pointer',
+          transition: 'border-color 0.2s',
         }}
       >
         <Upload size={14} strokeWidth={2.25} />
-        {isExtracting?'Reading file…':fileName?`Uploaded: ${fileName}`:'Upload Resume (.pdf, .docx, .txt)'}
+        {isExtracting
+          ? 'Reading file…'
+          : fileName
+          ? `Uploaded: ${fileName}`
+          : 'Upload Resume (.pdf, .docx, .txt)'}
       </label>
       {fileError && (
-        <p style={{ fontSize:'12px', color:'#dc2626', marginTop:'6px', lineHeight:1.5 }}>{fileError}</p>
+        <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '6px', lineHeight: 1.5 }}>
+          {fileError}
+        </p>
       )}
     </div>
   );
 
-  /* ── textarea ── */
   const textarea = (
     <textarea
-      rows={isMob?4:5} value={input}
-      onChange={e=>setInput(e.target.value)}
+      rows={isMob ? 4 : 5} value={input}
+      onChange={e => setInput(e.target.value)}
       placeholder={active.placeholder}
       className="tool-textarea"
       style={{
-        width:'100%', resize:'vertical', padding:'14px',
-        borderRadius:'12px',
-        border:`1.5px solid rgba(15,23,42,0.1)`,
-        fontSize:'14px', lineHeight:1.62, color:'#0f172a',
-        outline:'none', marginBottom:'14px',
-        fontFamily: GEOM_FONT,
-        background:'#f8fafc',
-        transition:'border-color 0.2s',
+        width: '100%', resize: 'vertical', padding: '14px',
+        borderRadius: '12px', border: '1.5px solid rgba(15,23,42,0.1)',
+        fontSize: '14px', lineHeight: 1.62, color: BLACK,
+        outline: 'none', marginBottom: '14px',
+        fontFamily: GEOM_FONT, background: BG,
+        transition: 'border-color 0.2s',
       }}
-      onFocus={e=>{ e.currentTarget.style.borderColor=accent.from; }}
-      onBlur={e=>{  e.currentTarget.style.borderColor='rgba(15,23,42,0.1)'; }}
+      onFocus={e  => { e.currentTarget.style.borderColor = ORANGE; }}
+      onBlur={e   => { e.currentTarget.style.borderColor = 'rgba(15,23,42,0.1)'; }}
     />
   );
 
-  /* ── run button — solid, no gradient ── */
   const runButton = (
     <motion.button
-      type="button" onClick={runTool} disabled={phase==='loading'}
-      whileHover={{ y:-2, boxShadow:`0 8px 24px rgba(37,99,235,0.22)` }}
-      whileTap={{ scale:0.98 }}
+      type="button" onClick={runTool} disabled={phase === 'loading'}
+      whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(249,115,22,0.35)' }}
+      whileTap={{ scale: 0.98 }}
       style={{
-        width:'100%', display:'inline-flex', alignItems:'center',
-        justifyContent:'center', gap:'9px',
-        padding:'14px 24px',
-        background: accent.from,      /* solid — no gradient */
-        color:'#fff', border:'none', borderRadius:'12px',
-        fontWeight:700, fontSize:'14.5px',
-        cursor: phase==='loading'?'wait':'pointer',
-        opacity: phase==='loading'?0.82:1,
-        boxShadow:`0 4px 16px rgba(37,99,235,0.2)`,
-        transition:'opacity 0.18s, box-shadow 0.18s',
+        width: '100%', display: 'inline-flex', alignItems: 'center',
+        justifyContent: 'center', gap: '9px', padding: '14px 24px',
+        background: ORANGE, color: '#fff',
+        border: `1px solid ${ORANGE_DARK}`, borderRadius: '12px',
+        fontWeight: 700, fontSize: '14.5px',
+        cursor: phase === 'loading' ? 'wait' : 'pointer',
+        opacity: phase === 'loading' ? 0.82 : 1,
+        boxShadow: '0 4px 16px rgba(249,115,22,0.28)',
+        transition: 'opacity 0.18s, box-shadow 0.18s',
         fontFamily: GEOM_FONT,
       }}
     >
-      {phase==='loading'?(
+      {phase === 'loading' ? (
         <>
           <motion.span aria-hidden
-            animate={{rotate:360}} transition={{duration:0.75,repeat:Infinity,ease:'linear'}}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 0.75, repeat: Infinity, ease: 'linear' }}
             style={{
-              width:'15px',height:'15px',borderRadius:'50%',
-              border:'2px solid rgba(255,255,255,0.3)',borderTopColor:'#fff',display:'inline-block',
+              width: '15px', height: '15px', borderRadius: '50%',
+              border: '2px solid rgba(255,255,255,0.3)',
+              borderTopColor: '#fff', display: 'inline-block',
             }}
           />
           Analyzing…
         </>
-      ):(
+      ) : (
         <>
           <Sparkles size={16} strokeWidth={2.5} aria-hidden />
           {active.cta}
@@ -1061,51 +1116,47 @@ function ToolPanel({
     </motion.button>
   );
 
-  /* ── result block ── */
   const resultBlock = (
     <AnimatePresence>
-      {(phase==='loading'||phase==='done') && (
+      {(phase === 'loading' || phase === 'done') && (
         <motion.div
-          initial={{opacity:0,y:8,height:0}}
-          animate={{opacity:1,y:0,height:'auto'}}
-          exit={{opacity:0,height:0}}
-          transition={{duration:0.26}}
+          initial={{ opacity: 0, y: 8, height: 0 }}
+          animate={{ opacity: 1, y: 0, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.26 }}
           style={{
-            marginTop:'16px', padding:'18px', borderRadius:'14px',
-            background: accent.soft,
-            border:`1px solid rgba(37,99,235,0.12)`,
-            overflow:'hidden',
+            marginTop: '16px', padding: '18px', borderRadius: '14px',
+            background: ORANGE_TINT, border: `1px solid ${ORANGE_BORDER}`,
+            overflow: 'hidden',
           }}
         >
           <p style={{
-            fontSize:'10.5px', fontWeight:700, textTransform:'uppercase',
-            letterSpacing:'0.1em', color: accent.from,
-            marginBottom:'10px', display:'flex', alignItems:'center', gap:'7px',
+            fontSize: '10.5px', fontWeight: 700, textTransform: 'uppercase',
+            letterSpacing: '0.1em', color: ORANGE,
+            marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '7px',
           }}>
             <Sparkles size={13} strokeWidth={2.5} /> AI Insight
           </p>
-          {phase==='loading'
-            ? <TypingDots />
-            : (
-              <p style={{ fontSize:'14px', lineHeight:1.72, color:'#1e293b' }}>
-                {typedResult}
-                <motion.span
-                  animate={{opacity:[1,0]}}
-                  transition={{duration:0.55,repeat:Infinity}}
-                  style={{
-                    display:'inline-block', width:'2px', height:'15px',
-                    background: accent.from, marginLeft:'3px', verticalAlign:'middle',
-                  }}
-                />
-              </p>
-            )
-          }
+          {phase === 'loading' ? (
+            <TypingDots />
+          ) : (
+            <p style={{ fontSize: '14px', lineHeight: 1.72, color: TEXT_BODY }}>
+              {typedResult}
+              <motion.span
+                animate={{ opacity: [1, 0] }}
+                transition={{ duration: 0.55, repeat: Infinity }}
+                style={{
+                  display: 'inline-block', width: '2px', height: '15px',
+                  background: ORANGE, marginLeft: '3px', verticalAlign: 'middle',
+                }}
+              />
+            </p>
+          )}
         </motion.div>
       )}
     </AnimatePresence>
   );
 
-  /* ── desktop layout ── */
   if (!isMob) return (
     <div>
       {header}
@@ -1116,15 +1167,18 @@ function ToolPanel({
     </div>
   );
 
-  /* ── mobile layout ── */
   return (
-    <div style={{ position:'relative', display:'flex', flexDirection:'column', height:'100%', minHeight:0 }}>
-      <div style={{ flexShrink:0 }}>{header}</div>
+    <div style={{
+      position: 'relative', display: 'flex',
+      flexDirection: 'column', height: '100%', minHeight: 0,
+    }}>
+      <div style={{ flexShrink: 0 }}>{header}</div>
       <div style={{
-        flex:1, minHeight:0, overflowY:'auto',
-        WebkitOverflowScrolling:'touch', paddingTop:'12px', paddingBottom:'8px',
+        flex: 1, minHeight: 0, overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        paddingTop: '12px', paddingBottom: '8px',
       }}>
-        <p style={{ fontSize:'13px', color:'#64748b', marginBottom:'12px', lineHeight:1.5 }}>
+        <p style={{ fontSize: '13px', color: TEXT_MUTED, marginBottom: '12px', lineHeight: 1.5 }}>
           {active.description}
         </p>
         {uploadBlock}
@@ -1132,9 +1186,9 @@ function ToolPanel({
         {resultBlock}
       </div>
       <div style={{
-        flexShrink:0, paddingTop:'10px',
-        paddingBottom:'max(12px, env(safe-area-inset-bottom))',
-        borderTop:'1px solid rgba(15,23,42,0.07)', background:'#fff',
+        flexShrink: 0, paddingTop: '10px',
+        paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+        borderTop: '1px solid rgba(15,23,42,0.07)', background: '#fff',
       }}>
         {runButton}
       </div>

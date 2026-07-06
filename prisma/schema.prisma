@@ -3,15 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider  = "mysql"
-  url       = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 // ─── Programmes ───────────────────────────────────────────────────────────────
 
 model Programme {
   id           String                 @id @default(cuid())
-  name         String
+  name         String                 @unique
   description  String?
   cycleDays    Int
   isActive     Boolean                @default(true)

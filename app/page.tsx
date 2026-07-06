@@ -13,6 +13,7 @@ import Faq from './components/Faq';
 import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import PlacedlyFixes from './components/PlacedlyFixes';
+import PlacedlyFloatingCta from './components/FloatingCTA';
 import { getCmsMap } from '@/lib/cms';
 
 export const dynamic = 'force-dynamic';
@@ -88,7 +89,7 @@ export default async function Home() {
   return (
     <>
       <style>{`
-        /* Safeguard: ensure footer is always visible + above any floating CTA */
+        /* Safeguard: footer is always visible + above any floating CTA */
         .page-wrapper > footer.placedly-footer {
           position: relative !important;
           z-index: 1 !important;
@@ -96,25 +97,40 @@ export default async function Home() {
           visibility: visible !important;
           opacity: 1 !important;
         }
+
+        /* Make sure floating CTAs never overlap the footer */
+        .placedly-floating-cta,
+        .cap-floating-cta-wrap {
+          z-index: 80 !important;
+        }
       `}</style>
 
-      <div className="page-wrapper">
-        <Navbar />
+      <Navbar />
+
+      <main className="page-wrapper">
         <Hero cms={cms} />
         <UtilityToolsSection />
         <Services cms={cms} />
-        <OurProcessSection />
-        <CapJourneySection cms={cms} />
         <HowItWorks cms={cms} />
+        <CapJourneySection cms={cms} />
         <Industries />
         <StudyDestinationsMarquee />
         <Testimonials />
         <Faq />
         <Footer cms={cms} />
-        <FloatingWhatsApp cms={cms} />
-        <CapFloatingCta label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'} />
-        <PlacedlyFixes />
-      </div>
+      </main>
+
+      <FloatingWhatsApp cms={cms} />
+      <CapFloatingCta label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'} />
+      <PlacedlyFloatingCta
+        label="Apply for CAP"
+        href="/cap/apply"
+        showAt={0.22}
+        footerSelector="footer.placedly-footer"
+        hideNearFooterPx={140}
+        zIndex={75}
+      />
+      <PlacedlyFixes />
     </>
   );
 }
