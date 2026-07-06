@@ -20,10 +20,12 @@ const HERO_CARD_AVATARS = {
   right: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face',
 } as const;
 
-const ORANGE = '#f97316';
-const ORANGE_DARK = '#ea580c';
-const ORANGE_SOFT = 'rgba(249, 115, 22, 0.12)';
-const ORANGE_BORDER = 'rgba(249, 115, 22, 0.30)';
+/* ★ Match desktop theme tokens */
+const ORANGE         = '#f97316';
+const ORANGE_DARK    = '#ea580c';
+const ORANGE_SOFT    = 'rgba(249, 115, 22, 0.12)';
+const ORANGE_BORDER  = 'rgba(249, 115, 22, 0.30)';
+const ORANGE_GLOW     = 'rgba(249, 115, 22, 0.35)';
 
 const MOBILE_HERO_STATS = [
   { id: 'companies',  value: '40+',  label: 'Companies' },
@@ -44,7 +46,7 @@ const MOBILE_SUBLINE = (
 );
 
 /* ============================================================
-   COMBINED STATS TAB — always a single row
+   COMBINED STATS TAB — single row, same style as desktop
 ============================================================ */
 function MobileHeroStatsBar({ delay = 0 }: { delay?: number }) {
   const [activeId, setActiveId] = useState<(typeof MOBILE_HERO_STATS)[number]['id']>(MOBILE_HERO_STATS[0].id);
@@ -139,19 +141,19 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
         >
           <a
             href="/candidates"
-            className="placedly-hero-cta-pill placedly-hero-cta-pill--deep"
+            className="placedly-hero-cta-pill"
           >
             For Candidates
           </a>
           <a
             href="/recruiters"
-            className="placedly-hero-cta-pill placedly-hero-cta-pill--royal"
+            className="placedly-hero-cta-pill"
           >
             For Recruiters
           </a>
           <a
             href="/study-abroad"
-            className="placedly-hero-cta-pill placedly-hero-cta-pill--sky"
+            className="placedly-hero-cta-pill"
           >
             Study Abroad
           </a>
@@ -258,13 +260,15 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
         </div>
       </motion.div>
 
-      {/* Combined stats tab — always a single row */}
+      {/* Combined stats tab — single row, matches desktop */}
       <MobileHeroStatsBar delay={0.24} />
 
       <style
         dangerouslySetInnerHTML={{
           __html: `
-            /* CTA row */
+            /* ═══════════════════════════════════════════════════
+               CTA ROW — orange gradient pills (matches desktop)
+            ═══════════════════════════════════════════════════ */
             .placedly-hero-mobile-brief .placedly-hero-cta-row {
               display: flex !important;
               flex-direction: row !important;
@@ -290,6 +294,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               display: none !important;
             }
 
+            /* ★ ORANGE BUTTON — same gradient as desktop */
             .placedly-hero-mobile-brief .placedly-hero-cta-pill {
               flex: 0 0 auto !important;
               flex-grow: 0 !important;
@@ -310,10 +315,10 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               inset: auto !important;
               transform: none !important;
               margin: 0 !important;
-              padding: 8px 14px !important;
+              padding: 10px 16px !important;
               font-family: 'Inter','Sora','Manrope',system-ui,sans-serif !important;
               font-weight: 600 !important;
-              font-size: 12px !important;
+              font-size: 12.5px !important;
               line-height: 1 !important;
               letter-spacing: 0.01em !important;
               color: #ffffff !important;
@@ -323,38 +328,24 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               border: 1px solid rgba(255,255,255,0.18) !important;
               cursor: pointer !important;
               background-color: transparent !important;
-              background-image: linear-gradient(135deg, #FF6A00 0%, #FF7A1A 100%) !important;
-              box-shadow: none !important;
-              transition: transform .25s ease, filter .25s ease !important;
+              /* ★ SAME orange as desktop */
+              background-image: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+              box-shadow: 0 4px 12px rgba(249, 115, 22, 0.28) !important;
+              transition: transform .25s ease, filter .25s ease, box-shadow .25s ease !important;
             }
             .placedly-hero-mobile-brief .placedly-hero-cta-pill:hover {
               transform: translateY(-1px) !important;
-              box-shadow: none !important;
+              box-shadow: 0 6px 18px rgba(249, 115, 22, 0.38) !important;
               filter: brightness(1.08) !important;
             }
             .placedly-hero-mobile-brief .placedly-hero-cta-pill:active {
               transform: translateY(0) !important;
               filter: brightness(0.94) !important;
-              box-shadow: none !important;
             }
 
-            .placedly-hero-mobile-brief .placedly-hero-cta-pill--deep,
-            .placedly-hero-mobile-brief .placedly-hero-cta-pill--royal,
-            .placedly-hero-mobile-brief .placedly-hero-cta-pill--sky {
-              background-color: transparent !important;
-              background-image: linear-gradient(135deg, #FF6A00 0%, #FF7A1A 100%) !important;
-              border: 1px solid rgba(255,255,255,0.18) !important;
-              color: #ffffff !important;
-              box-shadow: none !important;
-            }
-            .placedly-hero-mobile-brief .placedly-hero-cta-pill--deep:hover,
-            .placedly-hero-mobile-brief .placedly-hero-cta-pill--royal:hover,
-            .placedly-hero-mobile-brief .placedly-hero-cta-pill--sky:hover {
-              filter: brightness(1.08) !important;
-              box-shadow: none !important;
-            }
-
-            /* Popup scene */
+            /* ═══════════════════════════════════════════════════
+               POPUP SCENE
+            ═══════════════════════════════════════════════════ */
             .placedly-hero-mobile-brief .placedly-lift-hero-stage--liftoff {
               position: relative !important;
               width: 100% !important;
@@ -373,7 +364,6 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               padding: 0 !important;
             }
 
-            /* Popup cards — 70% opacity */
             .placedly-hero-mobile-brief .placedly-lift-card--mobile {
               max-width: 240px !important;
               width: max-content !important;
@@ -394,9 +384,11 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               border-radius: 12px !important;
               z-index: 3 !important;
               opacity: 0.7 !important;
+              transition: opacity 0.2s ease, transform 0.2s ease !important;
             }
             .placedly-hero-mobile-brief .placedly-lift-card--mobile:hover {
               opacity: 0.95 !important;
+              transform: translateY(-1px) !important;
             }
             .placedly-hero-mobile-brief .placedly-lift-card-line {
               font-size: 11px !important;
@@ -488,7 +480,9 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               z-index: 5 !important;
             }
 
-            /* COMBINED STATS TAB — single row at all sizes */
+            /* ═══════════════════════════════════════════════════
+               ★ COMBINED STATS TAB (single row) — matches desktop
+            ═══════════════════════════════════════════════════ */
             .placedly-hero-stats-tab {
               position: relative !important;
               display: flex !important;
@@ -503,7 +497,7 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               background: #ffffff !important;
               border: 1.5px solid ${ORANGE_BORDER} !important;
               border-radius: 9999px !important;
-              box-shadow: 0 4px 14px rgba(249, 115, 22, 0.08) !important;
+              box-shadow: 0 4px 14px rgba(249, 115, 22, 0.10) !important;
               overflow: hidden !important;
               isolation: isolate !important;
               z-index: 2 !important;
@@ -537,14 +531,14 @@ export default function HeroMobileBrief({ cms: _cms = {} }: { cms?: HeroCms }) {
               padding: 5px 8px !important;
               border-radius: 9999px !important;
               cursor: default !important;
-              transition: background 0.3s ease !important;
+              transition: background 0.3s ease, transform 0.3s ease !important;
             }
             .placedly-hero-stat-cell:hover,
             .placedly-hero-stat-cell:active {
               background: rgba(249, 115, 22, 0.06) !important;
             }
             .placedly-hero-stat-cell.is-active {
-              background: rgba(249, 115, 22, 0.10) !important;
+              background: rgba(249, 115, 22, 0.12) !important;
             }
             .placedly-hero-stat-cell.is-active .placedly-hero-stat-cell-text strong {
               color: ${ORANGE_DARK} !important;

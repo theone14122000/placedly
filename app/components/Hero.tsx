@@ -23,51 +23,34 @@ type HeroCms = { [k: string]: string };
 /* Modern geometric sans-serif stack — FORCED with !important */
 const GEOM_FONT_STACK = `"Outfit", "Poppins", "Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
 
+/* ════════════════════════════════════════════════════════════
+   Theme tokens
+════════════════════════════════════════════════════════════ */
+const ORANGE       = '#f97316';
+const ORANGE_DARK  = '#ea580c';
+const ORANGE_SOFT  = 'rgba(249, 115, 22, 0.12)';
+const ORANGE_BORDER= 'rgba(249, 115, 22, 0.30)';
+const BLACK        = '#0b0d20';
+const TEXT_BODY    = '#1e293b';
+const TEXT_MUTED   = '#64748b';
+const BORDER       = '#e5e7eb';
+const SURFACE      = '#ffffff';
+
 /** Static portrait URLs — loose zig-zag spacing like reference hero */
 const SCATTER_AVATARS = [
-  {
-    src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face',
-    top: '0%',
-    left: '0%',
-    size: 46,
-    badge: false,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&crop=face',
-    top: '2%',
-    left: '72%',
-    size: 44,
-    badge: true,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&crop=face',
-    top: '38%',
-    left: '6%',
-    size: 50,
-    badge: true,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop&crop=face',
-    top: '70%',
-    left: '0%',
-    size: 44,
-    badge: false,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&crop=face',
-    top: '66%',
-    left: '74%',
-    size: 48,
-    badge: true,
-  },
+  { src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face', top: '0%',  left: '0%',  size: 46, badge: false },
+  { src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&crop=face', top: '2%',  left: '72%', size: 44, badge: true  },
+  { src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&crop=face', top: '38%', left: '6%',  size: 50, badge: true  },
+  { src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop&crop=face', top: '70%', left: '0%',  size: 44, badge: false },
+  { src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&crop=face', top: '66%', left: '74%', size: 48, badge: true  },
 ] as const;
 
 const HERO_CARD_AVATARS = {
-  left: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=96&h=96&fit=crop&crop=face',
+  left:  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=96&h=96&fit=crop&crop=face',
   right: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face',
 } as const;
 
-/* ─── 3 CTA pills — unified black style, sized like the stats bar pill ─── */
+/* ─── 3 CTA pills — ORANGE gradient, the "Orange Buttons" you asked for ─── */
 const HERO_CTAS = [
   {
     id: 'candidates',
@@ -98,25 +81,26 @@ const HERO_CTAS = [
   },
 ] as const;
 
-/* ─── Stats bar — pill-shaped, sits beneath the video/stage section ─── */
+/* ─── ONE stats bar (the only stats bar, no marquee) ─── */
 const HERO_STATS = [
-  { icon: ShieldCheck, value: '40+', label: 'Companies Trusted Us' },
-  { icon: Users, value: '1K+', label: 'Candidates Placed' },
-  { icon: Globe, value: '20+', label: 'Countries' },
-  { icon: Award, value: '10+', label: 'Years Experience' },
+  { icon: ShieldCheck, value: '40+',  label: 'Companies Trusted Us' },
+  { icon: Users,       value: '1K+',  label: 'Candidates Placed' },
+  { icon: Globe,       value: '20+',  label: 'Countries' },
+  { icon: Award,       value: '10+',  label: 'Years Experience' },
 ] as const;
 
+/* ════════════════════════════════════════════════════════════
+   HeroCtaPill — orange gradient button
+════════════════════════════════════════════════════════════ */
 function HeroCtaPill({
   href,
   label,
   icon: Icon,
-  shade,
   delay = 0,
 }: {
   href: string;
   label: string;
   icon: LucideIcon;
-  shade: 'deep' | 'royal' | 'sky';
   delay?: number;
 }) {
   return (
@@ -128,7 +112,7 @@ function HeroCtaPill({
       whileTap={{ scale: 0.97 }}
       style={{ flex: '0 0 auto' }}
     >
-      <Link href={href} className={`placedly-hero-cta-pill placedly-hero-cta-pill--${shade}`}>
+      <Link href={href} className="placedly-hero-cta-pill">
         <span className="placedly-hero-cta-pill-shine" aria-hidden />
         <span className="placedly-hero-cta-pill-icon">
           <Icon size={11} strokeWidth={2.15} />
@@ -146,6 +130,10 @@ function HeroCtaPill({
   );
 }
 
+/* ════════════════════════════════════════════════════════════
+   HeroStatPill — the single combined stats bar cell
+   (the entire row is rendered together below, this is one cell)
+════════════════════════════════════════════════════════════ */
 function HeroStatPill({
   icon: Icon,
   value,
@@ -178,8 +166,11 @@ function HeroStatPill({
   );
 }
 
+/* ════════════════════════════════════════════════════════════
+   Main hero
+════════════════════════════════════════════════════════════ */
 export default function Hero({ cms = {} }: { cms?: HeroCms }) {
-  const offerRole = cms['hp:heroOfferRole'] ?? 'Senior Claims Analyst';
+  const offerRole      = cms['hp:heroOfferRole']      ?? 'Senior Claims Analyst';
   const admitProgramme = cms['hp:heroAdmitProgramme'] ?? "MSc International Business · Fall '25";
 
   return (
@@ -223,31 +214,26 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           letter-spacing: -0.028em !important;
           font-family: ${GEOM_FONT_STACK} !important;
         }
-
         .placedly-lift-hero-sub {
           font-weight: 400 !important;
           letter-spacing: -0.012em !important;
           font-family: ${GEOM_FONT_STACK} !important;
         }
-
         .placedly-hero-cta-pill {
           font-weight: 600 !important;
           letter-spacing: -0.005em !important;
           font-family: ${GEOM_FONT_STACK} !important;
         }
-
         .placedly-lift-name {
           font-weight: 700 !important;
           letter-spacing: -0.015em !important;
           font-family: ${GEOM_FONT_STACK} !important;
         }
-
         .placedly-lift-role {
           font-weight: 500 !important;
           letter-spacing: -0.003em !important;
           font-family: ${GEOM_FONT_STACK} !important;
         }
-
         .placedly-lift-card-line {
           font-weight: 500 !important;
           letter-spacing: -0.008em !important;
@@ -258,7 +244,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           letter-spacing: -0.01em !important;
           font-family: ${GEOM_FONT_STACK} !important;
         }
-
         .placedly-lift-glass-pill-text strong {
           font-weight: 700 !important;
           letter-spacing: -0.008em !important;
@@ -269,7 +254,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           letter-spacing: -0.003em !important;
           font-family: ${GEOM_FONT_STACK} !important;
         }
-
         .placedly-hero-stat-pill-text strong {
           font-weight: 800 !important;
           letter-spacing: -0.025em !important;
@@ -282,7 +266,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           HERO CTA PILL SYSTEM
+           ★ ORANGE CTA PILL SYSTEM (the orange buttons)
          ============================================================ */
         .placedly-lift-hero-ctas {
           display: flex;
@@ -305,7 +289,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           font-size: 11px;
           text-decoration: none;
           color: #ffffff;
-          border: 1px solid rgba(255,255,255,0.14);
+          border: 1px solid rgba(255,255,255,0.18);
           overflow: hidden;
           isolation: isolate;
           cursor: pointer;
@@ -313,18 +297,18 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           transition: box-shadow 0.28s cubic-bezier(0.22,1,0.36,1), filter 0.28s ease;
         }
 
-        .placedly-hero-cta-pill--deep,
-        .placedly-hero-cta-pill--royal,
-        .placedly-hero-cta-pill--sky {
-          background-image: linear-gradient(135deg, #0a0a0a, #1a1a1a);
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255,255,255,0.08);
+        /* ★ All three pills use the same orange gradient */
+        .placedly-hero-cta-pill {
+          background-image: linear-gradient(135deg, #f97316, #ea580c) !important;
+          box-shadow:
+            0 6px 16px rgba(249, 115, 22, 0.38),
+            inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
         }
-        .placedly-hero-cta-pill--deep:hover,
-        .placedly-hero-cta-pill--royal:hover,
-        .placedly-hero-cta-pill--sky:hover {
-          box-shadow: 0 10px 22px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255,255,255,0.12);
+        .placedly-hero-cta-pill:hover {
+          box-shadow:
+            0 10px 22px rgba(249, 115, 22, 0.48),
+            inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
         }
-
         .placedly-hero-cta-pill:active { filter: brightness(0.94); }
 
         .placedly-hero-cta-pill-shine {
@@ -348,7 +332,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           width: 20px;
           height: 20px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.14);
+          background: rgba(255,255,255,0.18);
           flex-shrink: 0;
         }
 
@@ -368,14 +352,20 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           width: 14px;
           height: 14px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.14);
+          background: rgba(255,255,255,0.18);
           margin-left: auto;
           flex-shrink: 0;
         }
 
         @media (max-width: 640px) {
-          .placedly-lift-hero-ctas { flex-direction: column; max-width: 360px; }
-          .placedly-hero-cta-pill { width: 100% !important; justify-content: center; }
+          .placedly-lift-hero-ctas {
+            flex-direction: column;
+            max-width: 360px;
+          }
+          .placedly-hero-cta-pill {
+            width: 100% !important;
+            justify-content: center;
+          }
         }
 
         /* ============================================================
@@ -391,7 +381,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           STATS BAR
+           ★ ONE STATS BAR (single combined row)
          ============================================================ */
         .placedly-hero-stats-bar {
           display: flex;
@@ -490,7 +480,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           THINNER POP-UP CARDS
+           POPUP CARDS
          ============================================================ */
         .placedly-lift-hero .placedly-lift-card {
           padding: 10px 14px !important;
@@ -550,7 +540,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
                 href={cta.href}
                 label={cms[cta.cmsKey] ?? cta.fallback}
                 icon={cta.icon}
-                shade={cta.shade}
                 delay={0.16 + i * 0.07}
               />
             ))}
@@ -673,6 +662,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           </div>
         </motion.div>
 
+        {/* ★ ONE stats bar — no marquee below */}
         <div className="placedly-hero-stats-bar">
           {HERO_STATS.map((stat, i) => (
             <HeroStatPill
