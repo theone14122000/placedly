@@ -25,17 +25,17 @@ type HeroCms = { [k: string]: string };
 const GEOM_FONT_STACK = `"Outfit", "Poppins", "Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
 
 /* ════════════════════════════════════════════════════════════
-   Theme tokens
+   Theme tokens — match mobile for consistency
 ════════════════════════════════════════════════════════════ */
-const ORANGE       = '#f97316';
-const ORANGE_DARK  = '#ea580c';
-const ORANGE_SOFT  = 'rgba(249, 115, 22, 0.12)';
-const ORANGE_BORDER= 'rgba(249, 115, 22, 0.30)';
-const BLACK        = '#0b0d20';
-const TEXT_BODY    = '#1e293b';
-const TEXT_MUTED   = '#64748b';
-const BORDER       = '#e5e7eb';
-const SURFACE      = '#ffffff';
+const ORANGE        = '#f97316';
+const ORANGE_DARK   = '#ea580c';
+const ORANGE_SOFT   = 'rgba(249, 115, 22, 0.12)';
+const ORANGE_BORDER = 'rgba(249, 115, 22, 0.30)';
+const BLACK         = '#0b0d20';
+const TEXT_BODY     = '#1e293b';
+const TEXT_MUTED    = '#64748b';
+const BORDER        = '#e5e7eb';
+const SURFACE       = '#ffffff';
 
 /** Static portrait URLs — loose zig-zag spacing like reference hero */
 const SCATTER_AVATARS = [
@@ -60,7 +60,6 @@ const HERO_CTAS = [
     href: '/contact',
     cmsKey: 'hp:heroPrimaryCtaText',
     fallback: 'For Candidates',
-    shade: 'deep',
   },
   {
     id: 'recruiters',
@@ -69,7 +68,6 @@ const HERO_CTAS = [
     href: '/recruiters',
     cmsKey: 'hp:heroRecruiterCtaText',
     fallback: 'For Recruiters',
-    shade: 'royal',
   },
   {
     id: 'study',
@@ -78,7 +76,6 @@ const HERO_CTAS = [
     href: '/study-visa',
     cmsKey: 'hp:heroSecondaryCtaText',
     fallback: 'Study Abroad',
-    shade: 'sky',
   },
 ] as const;
 
@@ -133,6 +130,7 @@ function HeroCtaPill({
 
 /* ════════════════════════════════════════════════════════════
    HeroStatPill — single combined stats bar cell
+   Uses ORANGE theme (matches mobile)
 ════════════════════════════════════════════════════════════ */
 function HeroStatPill({
   icon: Icon,
@@ -152,7 +150,7 @@ function HeroStatPill({
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.4, delay }}
-      whileHover={{ y: -3, boxShadow: '0 10px 24px rgba(37,99,235,0.16)' }}
+      whileHover={{ y: -3 }}
     >
       <span className="placedly-hero-stat-pill-shine" aria-hidden />
       <span className="placedly-hero-stat-pill-icon">
@@ -266,7 +264,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           ORANGE CTA PILL SYSTEM
+           ORANGE CTA PILL SYSTEM (same as mobile)
          ============================================================ */
         .placedly-lift-hero-ctas {
           display: flex;
@@ -378,70 +376,91 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           ONE STATS BAR
+           ★ ONE STATS BAR — matches mobile (orange theme)
          ============================================================ */
         .placedly-hero-stats-bar {
           display: flex;
           flex-wrap: wrap;
           align-items: stretch;
           justify-content: center;
-          gap: 10px;
-          margin: 8px auto 0 !important;
-          max-width: 1000px;
-          width: 100%;
-          padding: 0 16px;
-          opacity: 0.6 !important;
-          transition: opacity 0.25s ease;
+          gap: 0;
+          margin: 32px auto 0 !important;
+          max-width: 720px;
+          width: max-content;
+          max-width: calc(100% - 32px);
+          padding: 5px;
+          background: #ffffff;
+          border: 1.5px solid ${ORANGE_BORDER};
+          border-radius: 9999px;
+          box-shadow: 0 4px 14px rgba(249, 115, 22, 0.10);
+          overflow: hidden;
+          isolation: isolate;
         }
-        .placedly-hero-stats-bar:hover { opacity: 1 !important; }
+
+        .placedly-hero-stats-tab-shine {
+          position: absolute;
+          top: 0; left: -130%;
+          width: 60%; height: 100%;
+          background: linear-gradient(115deg, transparent, rgba(249, 115, 22, 0.14), transparent);
+          transform: skewX(-20deg);
+          transition: left 0.8s ease;
+          z-index: 0;
+          pointer-events: none;
+        }
+        .placedly-hero-stats-bar:hover .placedly-hero-stats-tab-shine {
+          left: 140% !important;
+        }
 
         .placedly-hero-stat-pill {
           position: relative;
+          z-index: 1;
           display: flex;
           align-items: center;
-          gap: 10px;
-          flex: 1 1 200px;
+          gap: 8px;
+          flex: 1 1 0;
           min-width: 0;
-          background: #ffffff;
-          border: 1px solid #e7ebf3;
-          border-radius: 999px;
-          padding: 8px 14px 8px 8px;
-          box-shadow: 0 2px 10px rgba(15,23,42,0.05);
-          overflow: hidden;
-          isolation: isolate;
+          padding: 6px 16px;
+          border-radius: 9999px;
           cursor: default;
-          transition: box-shadow 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
+          transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .placedly-hero-stat-pill:hover {
+          background: rgba(249, 115, 22, 0.06) !important;
         }
 
         .placedly-hero-stat-pill-shine {
           position: absolute;
           top: 0; left: -130%;
           width: 60%; height: 100%;
-          background: linear-gradient(115deg, transparent, rgba(37,99,235,0.1), transparent);
+          background: linear-gradient(115deg, transparent, rgba(249, 115, 22, 0.14), transparent);
           transform: skewX(-20deg);
-          transition: left 0.65s ease;
+          transition: left 0.8s ease;
           z-index: 0;
           pointer-events: none;
         }
-        .placedly-hero-stat-pill:hover .placedly-hero-stat-pill-shine { left: 140%; }
+        .placedly-hero-stat-pill:hover .placedly-hero-stat-pill-shine {
+          left: 140% !important;
+        }
 
+        /* ★ orange icon circle (was blue) */
         .placedly-hero-stat-pill-icon {
           position: relative;
           z-index: 1;
-          width: 30px;
-          height: 30px;
+          width: 26px;
+          height: 26px;
           border-radius: 50%;
           flex-shrink: 0;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #eff6ff, #dbeafe);
-          border: 1.5px solid #bfdbfe;
-          color: #1e40af;
+          background: linear-gradient(135deg, rgba(249,115,22,0.10), rgba(249,115,22,0.04));
+          border: 1.5px solid ${ORANGE_BORDER};
+          color: ${ORANGE};
           transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
         }
         .placedly-hero-stat-pill:hover .placedly-hero-stat-pill-icon {
-          transform: scale(1.12) rotate(-6deg);
+          transform: scale(1.08);
         }
 
         .placedly-hero-stat-pill-text {
@@ -453,32 +472,64 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           min-width: 0;
           flex: 1;
         }
+
+        /* ★ orange value text (was dark blue) */
         .placedly-hero-stat-pill-text strong {
-          font-size: 14px;
-          color: #1e3a8a;
+          font-size: 13.5px;
+          color: ${ORANGE};
+          font-weight: 800;
+          letter-spacing: -0.01em;
         }
         .placedly-hero-stat-pill-text span {
-          font-size: 10px;
+          font-size: 10.5px;
           color: #64748b;
+          font-weight: 500;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
         }
 
         @media (min-width: 900px) {
-          .placedly-hero-stats-bar { flex-wrap: nowrap; }
-          .placedly-hero-stat-pill { flex: 1 1 0; }
+          .placedly-hero-stats-bar {
+            flex-wrap: nowrap;
+            max-width: 760px;
+          }
+          .placedly-hero-stat-pill {
+            padding: 6px 20px;
+          }
         }
         @media (max-width: 720px) {
-          .placedly-hero-stat-pill { flex: 1 1 calc(50% - 5px); }
+          .placedly-hero-stats-bar {
+            border-radius: 18px;
+            padding: 8px;
+          }
+          .placedly-hero-stat-pill {
+            flex: 1 1 calc(50% - 4px);
+            padding: 6px 10px;
+          }
         }
         @media (max-width: 420px) {
-          .placedly-hero-stat-pill { flex: 1 1 100%; }
+          .placedly-hero-stat-pill {
+            flex: 1 1 100%;
+            justify-content: center;
+          }
         }
 
         /* ============================================================
-           POPUP CARDS
+           ★ POPUP CARDS — 70% opacity (matches mobile)
          ============================================================ */
+        .placedly-lift-card--left,
+        .placedly-lift-card--right {
+          opacity: 0.7 !important;
+          transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+        }
+        .placedly-lift-card--left:hover,
+        .placedly-lift-card--right:hover {
+          opacity: 0.95 !important;
+          transform: translateY(-2px) !important;
+          box-shadow: 0 8px 24px rgba(15, 23, 42, 0.10) !important;
+        }
+
         .placedly-lift-hero .placedly-lift-card {
           padding: 10px 14px !important;
         }
@@ -659,7 +710,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           </div>
         </motion.div>
 
-        {/* ★ ONE stats bar — no marquee below */}
+        {/* ★ ONE stats bar — matches mobile orange theme */}
         <div className="placedly-hero-stats-bar">
           {HERO_STATS.map((stat, i) => (
             <HeroStatPill
@@ -671,10 +722,13 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
             />
           ))}
         </div>
+      </div>
 
-        {/* ★ NEW: Hiring partners marquee with logos */}
+      {/* ★ Hiring partners marquee — with proper top spacing */}
+      <div className="placedly-hero-marquee-slot">
         <HiringPartnersMarquee cms={cms} />
       </div>
+
       <HeroMobileBrief cms={cms} />
     </section>
   );
