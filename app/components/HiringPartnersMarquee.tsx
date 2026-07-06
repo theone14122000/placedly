@@ -295,18 +295,152 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
         ))}
       </div>
 
-      {/* ★ MOBILE-ONLY OVERRIDES — preserves all desktop styles */}
       <style>{`
+        /* ═══════════════════════════════════════════════
+           BASE / DESKTOP STYLES
+        ═══════════════════════════════════════════════ */
+        .placedly-partners-section {
+          position: relative;
+          padding: 72px 0;
+          overflow: hidden;
+          background: #ffffff;
+        }
+
+        .placedly-partners-header {
+          text-align: center;
+          max-width: 680px;
+          margin: 0 auto 48px;
+          padding: 0 24px;
+        }
+
+        .placedly-partners-title {
+          font-size: 30px;
+          line-height: 1.3;
+          font-weight: 700;
+          letter-spacing: -0.02em;
+          color: #0f172a;
+          margin: 0 0 10px 0;
+        }
+
+        .placedly-partners-sub {
+          font-size: 16px;
+          line-height: 1.6;
+          font-weight: 400;
+          color: #64748b;
+          margin: 0;
+        }
+
+        .placedly-partners-rows {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+
+        .placedly-partners-row {
+          position: relative;
+          overflow: hidden;
+          height: 68px;
+        }
+
+        .placedly-partners-edge {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 140px;
+          z-index: 3;
+          pointer-events: none;
+        }
+        .placedly-partners-edge--left {
+          left: 0;
+          background: linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0) 100%);
+        }
+        .placedly-partners-edge--right {
+          right: 0;
+          background: linear-gradient(270deg, #ffffff 0%, rgba(255,255,255,0) 100%);
+        }
+
+        .placedly-partners-track {
+          display: flex;
+          width: max-content;
+          animation-name: placedly-marquee-scroll;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+          will-change: transform;
+        }
+        .placedly-partners-track--reverse {
+          animation-direction: reverse;
+        }
+        .placedly-partners-row:hover .placedly-partners-track {
+          animation-play-state: paused;
+        }
+
+        @keyframes placedly-marquee-scroll {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+
+        .placedly-partners-inner {
+          display: flex;
+          align-items: center;
+          flex-shrink: 0;
+        }
+
+        .placedly-partners-logo {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 20px 10px 10px;
+          margin: 0 10px;
+          border-radius: 999px;
+          background: rgba(15, 23, 42, 0.03);
+          border: 1px solid rgba(15, 23, 42, 0.08);
+          white-space: nowrap;
+          height: 48px;
+          flex-shrink: 0;
+          transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+        }
+        .placedly-partners-logo:hover {
+          background: rgba(249, 115, 22, 0.08);
+          border-color: rgba(249, 115, 22, 0.25);
+          transform: translateY(-2px);
+        }
+
+        .placedly-partners-logo-svg {
+          width: 32px;
+          height: 32px;
+          flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          overflow: hidden;
+          background: #ffffff;
+        }
+        .placedly-partners-logo-svg svg {
+          width: 32px;
+          height: 32px;
+          display: block;
+        }
+
+        .placedly-partners-logo-name {
+          font-size: 14px;
+          font-weight: 600;
+          color: #334155;
+          letter-spacing: -0.01em;
+          line-height: 1;
+        }
+
+        /* ═══════════════════════════════════════════════
+           MOBILE OVERRIDES
+        ═══════════════════════════════════════════════ */
         @media (max-width: 768px) {
 
-          /* ── Section spacing ── */
           .placedly-partners-section {
             padding: 28px 0 24px !important;
             margin-top: 0 !important;
             overflow: hidden !important;
           }
 
-          /* ── Header — smaller, tighter ── */
           .placedly-partners-header {
             padding: 0 16px !important;
             margin-bottom: 16px !important;
@@ -335,7 +469,6 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
             margin-right: auto !important;
           }
 
-          /* ── Rows — compact spacing ── */
           .placedly-partners-rows {
             display: flex !important;
             flex-direction: column !important;
@@ -348,15 +481,10 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
             height: 36px !important;
           }
 
-          /* ── Edge fades — softer, shorter ── */
           .placedly-partners-edge {
-            position: absolute !important;
-            top: 0 !important;
-            bottom: 0 !important;
             width: 32px !important;
-            z-index: 3 !important;
-            pointer-events: none !important;
           }
+
           .placedly-partners-edge--left {
             left: 0 !important;
             background: linear-gradient(90deg,
@@ -370,32 +498,12 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
               rgba(255,255,255,0) 100%) !important;
           }
 
-          /* ── Track animation ── */
-          .placedly-partners-track {
-            display: flex !important;
-            width: max-content !important;
-            animation: placedly-marquee-scroll linear infinite !important;
-          }
-          .placedly-partners-track--reverse {
-            animation-direction: reverse !important;
-          }
-
-          @keyframes placedly-marquee-scroll {
-            0%   { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-          }
-
           .placedly-partners-inner {
-            display: flex !important;
-            align-items: center !important;
             gap: 0 !important;
             flex-shrink: 0 !important;
           }
 
-          /* ── Logo chips — small, clean pills ── */
           .placedly-partners-logo {
-            display: inline-flex !important;
-            align-items: center !important;
             gap: 5px !important;
             padding: 4px 10px 4px 4px !important;
             margin: 0 4px !important;
@@ -405,18 +513,11 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
             white-space: nowrap !important;
             flex-shrink: 0 !important;
             height: 28px !important;
-            transition: background 0.2s ease !important;
           }
 
           .placedly-partners-logo-svg {
             width: 20px !important;
             height: 20px !important;
-            flex-shrink: 0 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            border-radius: 50% !important;
-            overflow: hidden !important;
           }
           .placedly-partners-logo-svg svg {
             width: 20px !important;
@@ -431,7 +532,6 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
             line-height: 1 !important;
           }
 
-          /* ── Only show 2 rows on very small screens ── */
           .placedly-partners-row:nth-child(3) {
             display: none !important;
           }

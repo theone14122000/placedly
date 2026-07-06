@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { FadeUp } from './motion';
-import { CAP_JOURNEY_SECTION_ID } from './CapFloatingCta';
 
 type Cms = Record<string, string>;
 
@@ -74,12 +73,11 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   const [fillProgress, setFillProgress] = useState(0);
   const [markerTops, setMarkerTops] = useState<number[]>([]);
 
-  const cardsColRef = useRef<HTMLDivElement>(null);
+  const cardsColRef  = useRef<HTMLDivElement>(null);
   const cardsTrackRef = useRef<HTMLDivElement>(null);
 
   const kicker = cms['hp:capJourneyKicker'] ?? 'Career Assistance Programme';
-  const title =
-    cms['hp:capJourneyTitle'] ?? 'Your CAP Journey — From Resume to Offer';
+  const title  = cms['hp:capJourneyTitle']  ?? 'Your CAP Journey — From Resume to Offer';
   const subtitle =
     cms['hp:capJourneySubtitle'] ??
     'Scroll through each stage of the programme. Every step is advisor-led, transparent, and built to get you placed — not just applied.';
@@ -87,30 +85,25 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   const updateMarkerPositions = useCallback(() => {
     const track = cardsTrackRef.current;
     if (!track) return;
-
     const cards = track.querySelectorAll<HTMLElement>('[data-cap-step]');
     const trackHeight = track.offsetHeight;
     if (!trackHeight || !cards.length) return;
-
     const tops = Array.from(cards).map((card) => {
       const center = card.offsetTop + card.offsetHeight / 2;
       return (center / trackHeight) * 100;
     });
-
     setMarkerTops(tops);
   }, []);
 
   const updateScrollProgress = useCallback(() => {
     const col = cardsColRef.current;
     if (!col) return;
-
     const rect = col.getBoundingClientRect();
     const scrollable = col.offsetHeight - window.innerHeight + STICKY_TOP;
     if (scrollable <= 0) {
       setFillProgress(rect.top <= STICKY_TOP ? 1 : 0);
       return;
     }
-
     const scrolled = -rect.top + STICKY_TOP;
     setFillProgress(Math.min(1, Math.max(0, scrolled / scrollable)));
   }, []);
@@ -118,7 +111,6 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   useEffect(() => {
     const cards = document.querySelectorAll<HTMLElement>('[data-cap-step]');
     if (!cards.length) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -129,16 +121,12 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
       },
       { threshold: 0.52, rootMargin: '-42% 0px -42% 0px' },
     );
-
     cards.forEach((card) => observer.observe(card));
     return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
-    const onScroll = () => {
-      updateScrollProgress();
-    };
-
+    const onScroll = () => updateScrollProgress();
     const onResize = () => {
       updateMarkerPositions();
       updateScrollProgress();
@@ -165,7 +153,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
   return (
     <section
       className="placedly-cap-journey"
-      id={CAP_JOURNEY_SECTION_ID}
+      id="cap-journey"
       aria-labelledby="cap-journey-title"
     >
       <div className="placedly-cap-journey-bg" aria-hidden />
@@ -180,10 +168,9 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
         </FadeUp>
 
         <div className="placedly-cap-journey-scroll-layout">
-          <div
-            className="placedly-cap-journey-rail-col"
-            aria-hidden
-          >
+
+          {/* ── Rail ── */}
+          <div className="placedly-cap-journey-rail-col" aria-hidden>
             <div className="placedly-cap-journey-rail">
               <div className="placedly-cap-journey-rail-track">
                 <div
@@ -195,9 +182,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
               <div className="placedly-cap-journey-rail-markers">
                 {DEFAULT_STEPS.map((step, index) => {
                   const top = markerTops[index] ?? (index / (DEFAULT_STEPS.length - 1)) * 100;
-                  const isLit =
-                    fillProgress >= top / 100 - 0.02 || activeStep >= index;
-
+                  const isLit = fillProgress >= top / 100 - 0.02 || activeStep >= index;
                   return (
                     <span
                       key={step.id}
@@ -210,6 +195,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
             </div>
           </div>
 
+          {/* ── Cards ── */}
           <div ref={cardsColRef} className="placedly-cap-journey-cards-col">
             <div ref={cardsTrackRef} className="placedly-cap-journey-track">
               {DEFAULT_STEPS.map((step, index) => (
@@ -248,6 +234,7 @@ export default function CapJourneySection({ cms = {} }: { cms?: Cms }) {
               ))}
             </div>
           </div>
+
         </div>
       </div>
     </section>
