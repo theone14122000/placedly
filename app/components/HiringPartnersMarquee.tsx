@@ -38,8 +38,7 @@ function buildRowSequence(companies: string[]): string[] {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   LOGO COMPONENTS — defined inline, each is a small SVG
-   All have viewBox="0 0 24 24" so they size consistently
+   LOGO COMPONENTS
 ══════════════════════════════════════════════════════════ */
 const VB = '0 0 24 24';
 
@@ -160,7 +159,6 @@ function LogoConifer() {
   );
 }
 
-/* ★ Map company names → logo components */
 const LOGO_MAP: Record<string, () => JSX.Element> = {
   'EXL Services':       () => <LogoExl />,
   'Quatrro':            () => <LogoQuatrro />,
@@ -177,7 +175,6 @@ const LOGO_MAP: Record<string, () => JSX.Element> = {
   'Conifer Health':     () => <LogoConifer />,
 };
 
-/* Fallback for unknown companies */
 function LogoFallback({ name }: { name: string }) {
   const initials = name
     .replace(/[.,]/g, '')
@@ -297,6 +294,179 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
           />
         ))}
       </div>
+
+      {/* ★ MOBILE-ONLY OVERRIDES — preserves all desktop styles */}
+      <style>{`
+        @media (max-width: 768px) {
+
+          /* ── Section spacing ── */
+          .placedly-partners-section {
+            padding: 28px 0 24px !important;
+            margin-top: 0 !important;
+            overflow: hidden !important;
+          }
+
+          /* ── Header — smaller, tighter ── */
+          .placedly-partners-header {
+            padding: 0 16px !important;
+            margin-bottom: 16px !important;
+            text-align: center !important;
+          }
+
+          .placedly-partners-title {
+            font-size: 16px !important;
+            line-height: 1.3 !important;
+            font-weight: 700 !important;
+            letter-spacing: -0.02em !important;
+            color: #0f172a !important;
+            margin: 0 0 6px 0 !important;
+            padding: 0 !important;
+          }
+
+          .placedly-partners-sub {
+            font-size: 11.5px !important;
+            line-height: 1.5 !important;
+            font-weight: 400 !important;
+            color: #64748b !important;
+            margin: 0 !important;
+            padding: 0 8px !important;
+            max-width: 320px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+          }
+
+          /* ── Rows — compact spacing ── */
+          .placedly-partners-rows {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+          }
+
+          .placedly-partners-row {
+            position: relative !important;
+            overflow: hidden !important;
+            height: 36px !important;
+          }
+
+          /* ── Edge fades — softer, shorter ── */
+          .placedly-partners-edge {
+            position: absolute !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            width: 32px !important;
+            z-index: 3 !important;
+            pointer-events: none !important;
+          }
+          .placedly-partners-edge--left {
+            left: 0 !important;
+            background: linear-gradient(90deg,
+              rgba(255,255,255,1) 0%,
+              rgba(255,255,255,0) 100%) !important;
+          }
+          .placedly-partners-edge--right {
+            right: 0 !important;
+            background: linear-gradient(270deg,
+              rgba(255,255,255,1) 0%,
+              rgba(255,255,255,0) 100%) !important;
+          }
+
+          /* ── Track animation ── */
+          .placedly-partners-track {
+            display: flex !important;
+            width: max-content !important;
+            animation: placedly-marquee-scroll linear infinite !important;
+          }
+          .placedly-partners-track--reverse {
+            animation-direction: reverse !important;
+          }
+
+          @keyframes placedly-marquee-scroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+
+          .placedly-partners-inner {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0 !important;
+            flex-shrink: 0 !important;
+          }
+
+          /* ── Logo chips — small, clean pills ── */
+          .placedly-partners-logo {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 5px !important;
+            padding: 4px 10px 4px 4px !important;
+            margin: 0 4px !important;
+            border-radius: 999px !important;
+            background: rgba(249, 115, 22, 0.06) !important;
+            border: 1px solid rgba(249, 115, 22, 0.15) !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+            height: 28px !important;
+            transition: background 0.2s ease !important;
+          }
+
+          .placedly-partners-logo-svg {
+            width: 20px !important;
+            height: 20px !important;
+            flex-shrink: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+          }
+          .placedly-partners-logo-svg svg {
+            width: 20px !important;
+            height: 20px !important;
+          }
+
+          .placedly-partners-logo-name {
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            color: #334155 !important;
+            letter-spacing: -0.005em !important;
+            line-height: 1 !important;
+          }
+
+          /* ── Only show 2 rows on very small screens ── */
+          .placedly-partners-row:nth-child(3) {
+            display: none !important;
+          }
+        }
+
+        /* ── Even smaller screens ── */
+        @media (max-width: 380px) {
+          .placedly-partners-title {
+            font-size: 14px !important;
+          }
+          .placedly-partners-sub {
+            font-size: 10.5px !important;
+            padding: 0 4px !important;
+          }
+          .placedly-partners-logo {
+            padding: 3px 8px 3px 3px !important;
+            margin: 0 3px !important;
+            height: 26px !important;
+          }
+          .placedly-partners-logo-svg,
+          .placedly-partners-logo-svg svg {
+            width: 18px !important;
+            height: 18px !important;
+          }
+          .placedly-partners-logo-name {
+            font-size: 10px !important;
+          }
+          .placedly-partners-row {
+            height: 32px !important;
+          }
+          .placedly-partners-edge {
+            width: 24px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
