@@ -121,7 +121,7 @@ export default async function Home() {
       </main>
 
       <FloatingWhatsApp cms={cms} />
-      <CapFloatingCta label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'} />
+      
       <PlacedlyFloatingCta
         label="Apply for CAP"
         href="/cap/apply"

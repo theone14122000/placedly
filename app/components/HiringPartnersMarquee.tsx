@@ -333,13 +333,13 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
         .placedly-partners-rows {
           display: flex;
           flex-direction: column;
-          gap: 24px;
+          gap: 20px;
         }
 
         .placedly-partners-row {
           position: relative;
           overflow: hidden;
-          height: 68px;
+          height: 52px;
         }
 
         .placedly-partners-edge {
@@ -388,14 +388,14 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
         .placedly-partners-logo {
           display: inline-flex;
           align-items: center;
-          gap: 8px;
-          padding: 6px 14px 6px 6px;
-          margin: 0 8px;
+          gap: 6px;
+          padding: 4px 10px 4px 4px;
+          margin: 0 5px;
           border-radius: 999px;
           background: rgba(15, 23, 42, 0.03);
           border: 1px solid rgba(15, 23, 42, 0.08);
           white-space: nowrap;
-          height: 40px;
+          height: 32px;
           flex-shrink: 0;
           transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
         }
@@ -406,8 +406,8 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
         }
 
         .placedly-partners-logo-svg {
-          width: 32px;
-          height: 32px;
+          width: 24px;
+          height: 24px;
           flex-shrink: 0;
           display: flex;
           align-items: center;
@@ -417,13 +417,13 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
           background: #ffffff;
         }
         .placedly-partners-logo-svg svg {
-          width: 32px;
-          height: 32px;
+          width: 24px;
+          height: 24px;
           display: block;
         }
 
         .placedly-partners-logo-name {
-          font-size: 14px;
+          font-size: 13px;
           font-weight: 600;
           color: #334155;
           letter-spacing: -0.01em;
