@@ -545,6 +545,23 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               overflow: hidden !important;
             }
 
+            /* ════════════════════════════════════════
+               ★ KILL DUPLICATE TOP MARQUEE
+               Only allow the marquee inside our mobile
+               slot to render — hides any other instance
+               of the partners marquee elsewhere on the
+               page (e.g. a desktop hero rendering it
+               above this component at mobile widths).
+            ════════════════════════════════════════ */
+            @media (max-width: 1024px) {
+              body .placedly-partners-section {
+                display: none !important;
+              }
+              body .placedly-hero-mobile-marquee-slot .placedly-partners-section {
+                display: block !important;
+              }
+            }
+
             /* ── responsive stats ── */
             @media (max-width: 640px) {
               .placedly-hero-stats-tab {
