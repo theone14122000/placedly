@@ -17,7 +17,6 @@ import Link from 'next/link';
 import HeroGradientBg from './HeroGradientBg';
 import HeroMobileBrief from './HeroMobileBrief';
 import HeroBgVideo from './HeroBgVideo';
-import HiringPartnersMarquee from './HiringPartnersMarquee';
 
 type HeroCms = { [k: string]: string };
 
@@ -25,7 +24,7 @@ type HeroCms = { [k: string]: string };
 const GEOM_FONT_STACK = `"Outfit", "Poppins", "Inter", "Manrope", "Geist", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
 
 /* ════════════════════════════════════════════════════════════
-   Theme tokens — match mobile for consistency
+   Theme tokens
 ════════════════════════════════════════════════════════════ */
 const ORANGE        = '#f97316';
 const ORANGE_DARK   = '#ea580c';
@@ -165,7 +164,7 @@ function HeroStatPill({
 }
 
 /* ════════════════════════════════════════════════════════════
-   Main hero
+   Main hero — desktop only, no marquee
 ════════════════════════════════════════════════════════════ */
 export default function Hero({ cms = {} }: { cms?: HeroCms }) {
   const offerRole      = cms['hp:heroOfferRole']      ?? 'Senior Claims Analyst';
@@ -264,7 +263,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           ORANGE CTA PILL SYSTEM (same as mobile)
+           ORANGE CTA PILL SYSTEM
          ============================================================ */
         .placedly-lift-hero-ctas {
           display: flex;
@@ -376,7 +375,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           ★ ONE STATS BAR — matches mobile (orange theme)
+           ONE STATS BAR — orange theme, matches mobile
          ============================================================ */
         .placedly-hero-stats-bar {
           display: flex;
@@ -397,7 +396,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           isolation: isolate;
         }
 
-        .placedly-hero-stats-tab-shine {
+        .placedly-hero-stats-bar-shine {
           position: absolute;
           top: 0; left: -130%;
           width: 60%; height: 100%;
@@ -407,7 +406,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           z-index: 0;
           pointer-events: none;
         }
-        .placedly-hero-stats-bar:hover .placedly-hero-stats-tab-shine {
+        .placedly-hero-stats-bar:hover .placedly-hero-stats-bar-shine {
           left: 140% !important;
         }
 
@@ -443,7 +442,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           left: 140% !important;
         }
 
-        /* ★ orange icon circle (was blue) */
         .placedly-hero-stat-pill-icon {
           position: relative;
           z-index: 1;
@@ -472,8 +470,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           min-width: 0;
           flex: 1;
         }
-
-        /* ★ orange value text (was dark blue) */
         .placedly-hero-stat-pill-text strong {
           font-size: 13.5px;
           color: ${ORANGE};
@@ -516,7 +512,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ============================================================
-           ★ POPUP CARDS — 70% opacity (matches mobile)
+           POPUP CARDS — 70% opacity (matches mobile)
          ============================================================ */
         .placedly-lift-card--left,
         .placedly-lift-card--right {
@@ -722,11 +718,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
             />
           ))}
         </div>
-      </div>
-
-      {/* ★ Hiring partners marquee — with proper top spacing */}
-      <div className="placedly-hero-marquee-slot">
-        <HiringPartnersMarquee cms={cms} />
+        {/* ★ NO MARQUEE — hero ends here */}
       </div>
 
       <HeroMobileBrief cms={cms} />
