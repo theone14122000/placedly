@@ -111,13 +111,6 @@ export default function FloatingCTA({
 
   return (
     <>
-      {/* Full-width baseline the button sits on top of, like a dock line */}
-      <div
-        className="placedly-floating-cta-line"
-        style={{ zIndex: zIndex - 1, opacity: shouldShow ? 1 : 0 }}
-        aria-hidden
-      />
-
       <AnimatePresence>
         {shouldShow && (
           <motion.div
@@ -131,8 +124,10 @@ export default function FloatingCTA({
             animate="animate"
             exit="exit"
           >
-            {/* White notch that wraps the button, open at the bottom where it meets the line */}
-            <span className="placedly-floating-cta-notch" aria-hidden />
+            {/* Thin white ring hugging the button — open along the bottom
+                so it reads as a single stroke arcing from bottom-left
+                to bottom-right, over the top of the button. */}
+            <span className="placedly-floating-cta-ring" aria-hidden />
 
             <motion.a
               href={href}
@@ -153,26 +148,6 @@ export default function FloatingCTA({
       </AnimatePresence>
 
       <style>{`
-        /* ── Full-width bottom baseline the button rests on ── */
-        .placedly-floating-cta-line {
-          position: fixed !important;
-          left: 0 !important;
-          right: 0 !important;
-          bottom: 44px !important;
-          height: 1px !important;
-          width: 100% !important;
-          background: linear-gradient(
-            90deg,
-            transparent 0%,
-            rgba(15, 23, 42, 0.10) 15%,
-            rgba(15, 23, 42, 0.14) 50%,
-            rgba(15, 23, 42, 0.10) 85%,
-            transparent 100%
-          ) !important;
-          pointer-events: none !important;
-          transition: opacity 0.4s ease !important;
-        }
-
         .placedly-floating-cta {
           position: fixed !important;
           left: 50% !important;
@@ -183,20 +158,17 @@ export default function FloatingCTA({
           pointer-events: auto !important;
         }
 
-        /* ── White outline wrapping the button: left edge → top → right edge,
-             open along the bottom so it reads as one continuous line with
-             .placedly-floating-cta-line ── */
-        .placedly-floating-cta-notch {
+        /* ── Thin ring around the button, open at the bottom ── */
+        .placedly-floating-cta-ring {
           position: absolute !important;
-          top: -8px !important;
-          left: -8px !important;
-          right: -8px !important;
-          bottom: 0 !important;
-          border: 2px solid #ffffff !important;
+          top: -6px !important;
+          left: -6px !important;
+          right: -6px !important;
+          bottom: -1px !important;
+          border: 1.5px solid rgba(15, 23, 42, 0.14) !important;
           border-bottom: none !important;
           border-radius: 9999px 9999px 0 0 !important;
-          background: #ffffff !important;
-          box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.06) !important;
+          background: transparent !important;
           z-index: 0 !important;
           pointer-events: none !important;
         }
@@ -292,16 +264,13 @@ export default function FloatingCTA({
         }
 
         @media (max-width: 640px) {
-          .placedly-floating-cta-line {
-            bottom: 38px !important;
-          }
           .placedly-floating-cta {
             bottom: 18px !important;
           }
-          .placedly-floating-cta-notch {
-            top: -6px !important;
-            left: -6px !important;
-            right: -6px !important;
+          .placedly-floating-cta-ring {
+            top: -5px !important;
+            left: -5px !important;
+            right: -5px !important;
           }
           .placedly-floating-cta-btn {
             min-height: 46px !important;
@@ -319,8 +288,7 @@ export default function FloatingCTA({
           .placedly-floating-cta,
           .placedly-floating-cta-btn,
           .placedly-floating-cta-arrow,
-          .placedly-floating-cta-shine,
-          .placedly-floating-cta-line {
+          .placedly-floating-cta-shine {
             transition: opacity 0.2s ease !important;
             animation: none !important;
           }
