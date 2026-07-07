@@ -121,43 +121,8 @@ export default function FloatingCTA({
             animate="animate"
             exit="exit"
           >
-            {/* Full-width outline: hugs the button on top + sides,
-                then runs along the page bottom edge from right
-                to left (open on the bottom). */}
-            <svg
-              className="placedly-floating-cta-outline"
-              viewBox="0 0 1000 200"
-              preserveAspectRatio="none"
-              aria-hidden
-            >
-              <defs>
-                <linearGradient id="ctaStroke" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="rgba(255,255,255,0.95)" />
-                  <stop offset="60%" stopColor="rgba(255,255,255,0.85)" />
-                  <stop offset="100%" stopColor="rgba(255,255,255,0.55)" />
-                </linearGradient>
-              </defs>
-              {/* The path: starts at bottom-right of viewport,
-                  goes up the right side, arcs over the top of
-                  the button (centered), down the left side, and
-                  ends at bottom-left. The bottom is left open. */}
-              <path
-                d="M 1000 200
-                   L 1000 110
-                   Q 1000 40, 920 40
-                   L 580 40
-                   Q 500 40, 500 40
-                   Q 420 40, 420 40
-                   L 80 40
-                   Q 0 40, 0 110
-                   L 0 200"
-                fill="none"
-                stroke="url(#ctaStroke)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            {/* Thin ring hugging the button, open along the bottom */}
+            <span className="placedly-floating-cta-ring" aria-hidden />
 
             <motion.a
               href={href}
@@ -178,48 +143,41 @@ export default function FloatingCTA({
       </AnimatePresence>
 
       <style>{`
+        /* Fixed to the actual bottom of the viewport, centered horizontally */
         .placedly-floating-cta {
           position: fixed !important;
-          left: 0 !important;
-          right: 0 !important;
-          bottom: 0 !important;
-          width: 100vw !important;
-          height: 200px !important;
-          transform: none !important;
+          left: 50% !important;
+          bottom: 22px !important;
+          transform: translate3d(-50%, 0, 0) !important;
           z-index: ${zIndex} !important;
           will-change: transform, opacity !important;
-          pointer-events: none !important;
-        }
-
-        /* Full-viewport outline drawn as an SVG that hugs
-           the button (top) and runs down to the page bottom
-           on both sides. Bottom edge is intentionally open. */
-        .placedly-floating-cta-outline {
-          position: absolute !important;
-          inset: 0 !important;
-          width: 100% !important;
-          height: 100% !important;
-          display: block !important;
-          pointer-events: none !important;
-          z-index: 0 !important;
-        }
-
-        /* Re-enable pointer events only on the button */
-        .placedly-floating-cta-btn {
           pointer-events: auto !important;
         }
 
-        .placedly-floating-cta-btn {
+        /* Thin ring around the button, open at the bottom so it
+           reads as a single stroke arcing bottom-right → top → bottom-left */
+        .placedly-floating-cta-ring {
           position: absolute !important;
-          left: 50% !important;
-          top: 18px !important;
-          transform: translateX(-50%) !important;
+          top: -6px !important;
+          left: -6px !important;
+          right: -6px !important;
+          bottom: -1px !important;
+          border: 1.5px solid rgba(255, 255, 255, 0.55) !important;
+          border-bottom: none !important;
+          border-radius: 9999px 9999px 0 0 !important;
+          background: transparent !important;
+          z-index: 0 !important;
+          pointer-events: none !important;
+        }
+
+        .placedly-floating-cta-btn {
+          position: relative !important;
           display: inline-flex !important;
           align-items: center !important;
           gap: 12px !important;
           padding: 12px 18px 12px 24px !important;
           min-height: 52px !important;
-          border: 1px solid rgba(255, 255, 255, 0.35) !important;
+          border: 1px solid rgba(255, 255, 255, 0.18) !important;
           border-radius: 9999px !important;
           background: linear-gradient(135deg, ${ORANGE} 0%, ${ORANGE_DARK} 100%) !important;
           box-shadow:
@@ -237,7 +195,7 @@ export default function FloatingCTA({
           cursor: pointer !important;
           isolation: isolate !important;
           overflow: hidden !important;
-          z-index: 2 !important;
+          z-index: 1 !important;
           transition:
             box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
             filter 0.35s ease,
@@ -251,7 +209,7 @@ export default function FloatingCTA({
           filter: brightness(1.05) !important;
         }
         .placedly-floating-cta-btn:active {
-          transform: translateX(-50%) translateY(0) !important;
+          transform: translateY(0) !important;
           filter: brightness(0.96) !important;
         }
         .placedly-floating-cta-btn:focus-visible {
@@ -304,10 +262,14 @@ export default function FloatingCTA({
 
         @media (max-width: 640px) {
           .placedly-floating-cta {
-            height: 180px !important;
+            bottom: 18px !important;
+          }
+          .placedly-floating-cta-ring {
+            top: -5px !important;
+            left: -5px !important;
+            right: -5px !important;
           }
           .placedly-floating-cta-btn {
-            top: 14px !important;
             min-height: 46px !important;
             padding: 10px 14px 10px 18px !important;
             font-size: 13.5px !important;
