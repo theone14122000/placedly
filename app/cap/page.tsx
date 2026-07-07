@@ -166,28 +166,37 @@ export default async function CapPage() {
           text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px;
         }
 
-        /* ── Buttons ── */
+        /* ── Buttons — now fully rounded (pill shape) ── */
         .btn-primary {
           display: inline-flex; align-items: center; gap: 6px;
           background: ${ORANGE}; color: #fff !important;
           font-weight: 700; font-size: 14px;
-          padding: 13px 28px; border-radius: 8px;
+          padding: 13px 28px; border-radius: 999px;
           text-decoration: none !important;
           border: 2px solid ${ORANGE};
-          transition: background 0.18s, border-color 0.18s;
+          transition: background 0.18s, border-color 0.18s, transform 0.18s, box-shadow 0.18s;
         }
-        .btn-primary:hover { background: ${ORANGE_DARK}; border-color: ${ORANGE_DARK}; }
+        .btn-primary:hover {
+          background: ${ORANGE_DARK}; border-color: ${ORANGE_DARK};
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(249,115,22,0.28);
+        }
+        .btn-primary:active { transform: translateY(0); }
 
         .btn-ghost {
           display: inline-flex; align-items: center; gap: 6px;
           background: #fff; color: ${BLACK} !important;
           font-weight: 600; font-size: 14px;
-          padding: 13px 28px; border-radius: 8px;
+          padding: 13px 28px; border-radius: 999px;
           text-decoration: none !important;
           border: 2px solid ${BORDER};
-          transition: border-color 0.18s, color 0.18s;
+          transition: border-color 0.18s, color 0.18s, transform 0.18s;
         }
-        .btn-ghost:hover { border-color: ${ORANGE}; color: ${ORANGE} !important; }
+        .btn-ghost:hover {
+          border-color: ${ORANGE}; color: ${ORANGE} !important;
+          transform: translateY(-2px);
+        }
+        .btn-ghost:active { transform: translateY(0); }
 
         /* ── Section common ── */
         .cap-section { padding: 80px 0; }
@@ -396,12 +405,17 @@ export default async function CapPage() {
           display: inline-flex; align-items: center; gap: 6px;
           background: #fff; color: ${ORANGE} !important;
           font-weight: 700; font-size: 14px;
-          padding: 13px 28px; border-radius: 8px;
+          padding: 13px 28px; border-radius: 999px;
           text-decoration: none !important;
           border: 2px solid ${ORANGE};
-          transition: background 0.18s;
+          transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
         }
-        .btn-orange-outline:hover { background: ${ORANGE_LIGHT}; }
+        .btn-orange-outline:hover {
+          background: ${ORANGE_LIGHT};
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(249,115,22,0.18);
+        }
+        .btn-orange-outline:active { transform: translateY(0); }
 
         /* ── Responsive ── */
         @media (max-width: 1024px) {
