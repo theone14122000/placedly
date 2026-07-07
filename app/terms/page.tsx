@@ -56,43 +56,213 @@ const sections = [
 export default function TermsPage() {
   return (
     <PageLayout>
-      <section style={{ background: '#ffffff', padding: 'calc(56px + 68px) 0 64px' }}>
-        <div className="container" style={{ maxWidth: '760px' }}>
-          <nav style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#94a3b8', marginBottom: '32px' }}>
-            <a href="/" style={{ color: '#94a3b8', textDecoration: 'none' }}>Home</a>
-            <span>›</span>
-            <span style={{ color: '#374151' }}>Terms of Service</span>
+      <section className="tos-section">
+        <div className="tos-container">
+
+          <nav className="tos-breadcrumb" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <span aria-hidden>›</span>
+            <span className="is-current">Terms of Service</span>
           </nav>
 
-          <div style={{ marginBottom: '48px' }}>
-            <h1 style={{ fontSize: 'clamp(2rem,4vw,3rem)', fontWeight: 900, color: '#0b0d20', lineHeight: 1.1, letterSpacing: '-0.8px', marginBottom: '16px' }}>
-              Terms of Service
-            </h1>
-            <p style={{ fontSize: '14px', color: '#94a3b8' }}>Last updated: January 2025</p>
-            <div style={{ marginTop: '20px', padding: '16px 20px', background: '#eff6ff', borderRadius: '12px', borderLeft: '3px solid #2145fb' }}>
-              <p style={{ fontSize: '14px', color: '#1e40af', lineHeight: 1.65, margin: 0 }}>
+          <div className="tos-header">
+            <h1 className="tos-title">Terms of Service</h1>
+            <p className="tos-updated">Last updated: January 2025</p>
+            <div className="tos-notice">
+              <p>
                 Please read these terms carefully before using Placedly. They outline your rights, our obligations, and the success-share model that underpins our service.
               </p>
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '36px' }}>
+          <div className="tos-sections">
             {sections.map(s => (
-              <div key={s.title}>
-                <h2 style={{ fontSize: '17px', fontWeight: 800, color: '#0b0d20', marginBottom: '10px' }}>{s.title}</h2>
-                <p style={{ fontSize: '15px', color: '#475569', lineHeight: 1.75 }}>{s.body}</p>
+              <div key={s.title} className="tos-block">
+                <h2>{s.title}</h2>
+                <p>{s.body}</p>
               </div>
             ))}
           </div>
 
-          <div style={{ marginTop: '56px', padding: '28px 32px', background: '#f8faff', borderRadius: '16px', border: '1px solid #eef0f6', textAlign: 'center' }}>
-            <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '16px' }}>Questions about our terms?</p>
-            <a href="/contact" style={{ display: 'inline-flex', alignItems: 'center', background: '#2145fb', color: '#fff', fontWeight: 600, fontSize: '14px', fontFamily: 'Poppins,sans-serif', padding: '12px 28px', borderRadius: '999px', textDecoration: 'none' }}>
-              Contact Us →
+          <div className="tos-cta">
+            <p>Questions about our terms?</p>
+            <a href="/contact" className="tos-cta-btn">
+              Contact Us
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+              </svg>
             </a>
           </div>
         </div>
       </section>
+
+      <style>{`
+        /* ═══════════════════════════════════════
+           BASE / RESET
+        ═══════════════════════════════════════ */
+        .tos-section,
+        .tos-section * {
+          font-family: "Inter","Manrope","Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif !important;
+          box-sizing: border-box;
+        }
+        .tos-section {
+          background: #ffffff;
+          padding: 96px 0 56px;
+        }
+        .tos-container {
+          max-width: 760px;
+          margin: 0 auto;
+          padding: 0 16px;
+        }
+
+        /* ═══════════════════════════════════════
+           BREADCRUMB
+        ═══════════════════════════════════════ */
+        .tos-breadcrumb {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 12.5px;
+          font-weight: 500;
+          color: #737373;
+          margin-bottom: 24px;
+          flex-wrap: wrap;
+        }
+        .tos-breadcrumb a {
+          color: #737373;
+          text-decoration: none;
+          transition: color 0.2s ease;
+        }
+        .tos-breadcrumb a:hover {
+          color: #f97316;
+        }
+        .tos-breadcrumb .is-current {
+          color: #000000;
+          font-weight: 700;
+        }
+
+        /* ═══════════════════════════════════════
+           HEADER
+        ═══════════════════════════════════════ */
+        .tos-header {
+          margin-bottom: 36px;
+        }
+        .tos-title {
+          font-size: 30px;
+          font-weight: 900;
+          color: #000000;
+          line-height: 1.15;
+          letter-spacing: -0.02em;
+          margin: 0 0 12px;
+        }
+        .tos-updated {
+          font-size: 13px;
+          font-weight: 500;
+          color: #737373;
+          margin: 0;
+        }
+        .tos-notice {
+          margin-top: 18px;
+          padding: 14px 16px;
+          background: rgba(249,115,22,0.06);
+          border-radius: 12px;
+          border-left: 3px solid #f97316;
+        }
+        .tos-notice p {
+          font-size: 13.5px;
+          color: #000000;
+          line-height: 1.65;
+          margin: 0;
+          font-weight: 500;
+        }
+
+        /* ═══════════════════════════════════════
+           SECTIONS
+        ═══════════════════════════════════════ */
+        .tos-sections {
+          display: flex;
+          flex-direction: column;
+          gap: 28px;
+        }
+        .tos-block h2 {
+          font-size: 15.5px;
+          font-weight: 800;
+          color: #000000;
+          margin: 0 0 8px;
+          letter-spacing: -0.01em;
+        }
+        .tos-block p {
+          font-size: 14px;
+          color: #404040;
+          line-height: 1.7;
+          margin: 0;
+          font-weight: 400;
+        }
+
+        /* ═══════════════════════════════════════
+           CTA
+        ═══════════════════════════════════════ */
+        .tos-cta {
+          margin-top: 48px;
+          padding: 24px 20px;
+          background: rgba(249,115,22,0.05);
+          border-radius: 16px;
+          border: 1px solid rgba(249,115,22,0.20);
+          text-align: center;
+        }
+        .tos-cta p {
+          font-size: 13.5px;
+          font-weight: 600;
+          color: #000000;
+          margin: 0 0 14px;
+        }
+        .tos-cta-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+          color: #ffffff;
+          font-weight: 700;
+          font-size: 13.5px;
+          padding: 11px 24px;
+          border-radius: 999px;
+          text-decoration: none;
+          box-shadow: 0 4px 14px rgba(249,115,22,0.28);
+          transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+        .tos-cta-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(249,115,22,0.38);
+          filter: brightness(1.05);
+        }
+        .tos-cta-btn:active {
+          transform: translateY(0);
+          filter: brightness(0.95);
+        }
+
+        /* ═══════════════════════════════════════
+           RESPONSIVE — mobile-first, scale UP
+        ═══════════════════════════════════════ */
+        @media (min-width: 480px) {
+          .tos-title { font-size: 34px; }
+        }
+
+        @media (min-width: 640px) {
+          .tos-section { padding: 104px 0 64px; }
+          .tos-container { padding: 0 24px; }
+          .tos-title { font-size: clamp(2rem, 4vw, 3rem); }
+          .tos-notice p { font-size: 14px; }
+          .tos-block h2 { font-size: 17px; }
+          .tos-block p { font-size: 15px; }
+          .tos-sections { gap: 36px; }
+          .tos-cta { padding: 28px 32px; }
+          .tos-cta p { font-size: 14px; }
+        }
+
+        @media (min-width: 960px) {
+          .tos-header { margin-bottom: 48px; }
+        }
+      `}</style>
     </PageLayout>
   );
 }
