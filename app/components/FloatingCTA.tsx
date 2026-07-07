@@ -131,6 +131,9 @@ export default function FloatingCTA({
             animate="animate"
             exit="exit"
           >
+            {/* White notch that wraps the button, open at the bottom where it meets the line */}
+            <span className="placedly-floating-cta-notch" aria-hidden />
+
             <motion.a
               href={href}
               className="placedly-floating-cta-btn"
@@ -180,6 +183,24 @@ export default function FloatingCTA({
           pointer-events: auto !important;
         }
 
+        /* ── White outline wrapping the button: left edge → top → right edge,
+             open along the bottom so it reads as one continuous line with
+             .placedly-floating-cta-line ── */
+        .placedly-floating-cta-notch {
+          position: absolute !important;
+          top: -8px !important;
+          left: -8px !important;
+          right: -8px !important;
+          bottom: 0 !important;
+          border: 2px solid #ffffff !important;
+          border-bottom: none !important;
+          border-radius: 9999px 9999px 0 0 !important;
+          background: #ffffff !important;
+          box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.06) !important;
+          z-index: 0 !important;
+          pointer-events: none !important;
+        }
+
         .placedly-floating-cta-btn {
           position: relative !important;
           display: inline-flex !important;
@@ -205,6 +226,7 @@ export default function FloatingCTA({
           cursor: pointer !important;
           isolation: isolate !important;
           overflow: hidden !important;
+          z-index: 1 !important;
           transition:
             box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
             filter 0.35s ease,
@@ -275,6 +297,11 @@ export default function FloatingCTA({
           }
           .placedly-floating-cta {
             bottom: 18px !important;
+          }
+          .placedly-floating-cta-notch {
+            top: -6px !important;
+            left: -6px !important;
+            right: -6px !important;
           }
           .placedly-floating-cta-btn {
             min-height: 46px !important;
