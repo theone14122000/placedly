@@ -111,6 +111,13 @@ export default function FloatingCTA({
 
   return (
     <>
+      {/* Full-width baseline the button sits on top of, like a dock line */}
+      <div
+        className="placedly-floating-cta-line"
+        style={{ zIndex: zIndex - 1, opacity: shouldShow ? 1 : 0 }}
+        aria-hidden
+      />
+
       <AnimatePresence>
         {shouldShow && (
           <motion.div
@@ -143,22 +150,32 @@ export default function FloatingCTA({
       </AnimatePresence>
 
       <style>{`
+        /* ── Full-width bottom baseline the button rests on ── */
+        .placedly-floating-cta-line {
+          position: fixed !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 44px !important;
+          height: 1px !important;
+          width: 100% !important;
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(15, 23, 42, 0.10) 15%,
+            rgba(15, 23, 42, 0.14) 50%,
+            rgba(15, 23, 42, 0.10) 85%,
+            transparent 100%
+          ) !important;
+          pointer-events: none !important;
+          transition: opacity 0.4s ease !important;
+        }
+
         .placedly-floating-cta {
           position: fixed !important;
           left: 50% !important;
           bottom: 22px !important;
           transform: translate3d(-50%, 0, 0) !important;
           z-index: ${zIndex} !important;
-          padding: 10px 14px !important;
-          background: rgba(255, 255, 255, 0.72) !important;
-          -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-                  backdrop-filter: blur(16px) saturate(180%) !important;
-          border: 1px solid rgba(255, 255, 255, 0.55) !important;
-          border-radius: 9999px !important;
-          box-shadow:
-            0 10px 30px rgba(15, 23, 42, 0.10),
-            0 4px 12px rgba(15, 23, 42, 0.06),
-            inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
           will-change: transform, opacity !important;
           pointer-events: auto !important;
         }
@@ -253,9 +270,11 @@ export default function FloatingCTA({
         }
 
         @media (max-width: 640px) {
+          .placedly-floating-cta-line {
+            bottom: 38px !important;
+          }
           .placedly-floating-cta {
             bottom: 18px !important;
-            padding: 8px 10px !important;
           }
           .placedly-floating-cta-btn {
             min-height: 46px !important;
@@ -273,7 +292,8 @@ export default function FloatingCTA({
           .placedly-floating-cta,
           .placedly-floating-cta-btn,
           .placedly-floating-cta-arrow,
-          .placedly-floating-cta-shine {
+          .placedly-floating-cta-shine,
+          .placedly-floating-cta-line {
             transition: opacity 0.2s ease !important;
             animation: none !important;
           }
