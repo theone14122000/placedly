@@ -124,7 +124,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           {/* Contact + socials */}
           <div className="pf-contact-block">
             <div className="pf-contact-inline">
-              
+              <a
                 href={`https://wa.me/${wa}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -148,7 +148,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
             </div>
             <div className="pf-socials">
               {socials.map(({ href, label, Icon }) => (
-                
+                <a
                   key={label}
                   href={href}
                   target="_blank"
