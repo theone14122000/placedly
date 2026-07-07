@@ -11,14 +11,15 @@ import {
 
 /* ═══════════════════════ Brand tokens ═══════════════════════ */
 const ORANGE        = '#f97316';
+const ORANGE_DARK   = '#ea580c';
 const ORANGE_LIGHT  = '#fff7ed';
 const ORANGE_BORDER = '#fed7aa';
-const TEXT_BLACK    = '#111827';
-const TEXT_GRAY     = '#4b5563';
-const TEXT_MUTED    = '#6b7280';
+const TEXT_BLACK    = '#000000';
+const TEXT_GRAY     = '#404040';
+const TEXT_MUTED    = '#737373';
 
-/* Plain Sans-Serif stack — FORCED on every element */
-const FONT_STACK = `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`;
+/* Consistent sans-serif stack — matches theme across the site */
+const FONT_STACK = `"Inter","Manrope","Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif`;
 
 const STEP_COLORS = [ORANGE, ORANGE, ORANGE];
 const STEP_META = [
@@ -75,7 +76,7 @@ function Section({ n, title, children }: { n: string; title: string; children: R
         <span style={{
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
           width: 24, height: 24, borderRadius: '50%',
-          background: ORANGE,
+          background: `linear-gradient(135deg, ${ORANGE} 0%, ${ORANGE_DARK} 100%)`,
           color: '#fff', fontSize: 11, fontWeight: 900, flexShrink: 0,
         }}>{n}</span>
         <span dangerouslySetInnerHTML={{ __html: title }} />
@@ -540,7 +541,7 @@ export default function CAPApplyClient() {
         @keyframes capa-ring-pulse { 0%{transform:scale(1); opacity:.5} 100%{transform:scale(1.8); opacity:0} }
         @keyframes capa-confetti-fall { 0%{transform:translateY(-20px) rotate(0deg); opacity:0} 10%{opacity:1} 100%{transform:translateY(420px) rotate(360deg); opacity:0} }
 
-        /* Plain Sans-Serif — FORCED on every element */
+        /* Consistent sans-serif theme — FORCED on every element */
         .capa-page, .capa-page *,
         .capa-success-wrap, .capa-success-wrap *,
         .capa-modal, .capa-modal *,
@@ -581,21 +582,21 @@ export default function CAPApplyClient() {
         .capa-header { margin-bottom:28px; text-align:center; }
         .capa-badge { display:inline-flex; align-items:center; gap:8px; margin-bottom:14px; background:${ORANGE_LIGHT}; border:1px solid ${ORANGE_BORDER}; border-radius:999px; padding:6px 16px; }
         .capa-badge-dot { width:8px; height:8px; border-radius:50%; background:${ORANGE}; animation:capa-ring-pulse 1.6s ease-out infinite; box-shadow:0 0 0 0 ${ORANGE}; }
-        .capa-badge span:last-child { font-size:12px; font-weight:700; color:${ORANGE}; text-transform:uppercase; letter-spacing:0.6px; }
-        .capa-h1 { font-size:26px; font-weight:900; color:${TEXT_BLACK}; line-height:1.25; letter-spacing:-0.5px; margin-bottom:10px; }
+        .capa-badge span:last-child { font-size:12px; font-weight:700; color:${ORANGE_DARK}; text-transform:uppercase; letter-spacing:0.6px; }
+        .capa-h1 { font-size:26px; font-weight:900; color:${TEXT_BLACK}; line-height:1.25; letter-spacing:-0.02em; margin-bottom:10px; }
         .capa-lead { font-size:15px; color:${TEXT_GRAY}; line-height:1.7; max-width:480px; margin:0 auto; }
 
         .capa-referral { display:flex; align-items:center; gap:12px; padding:13px 16px; background:${ORANGE_LIGHT}; border:1px solid ${ORANGE_BORDER}; border-radius:12px; margin-bottom:20px; animation:capa-pop-in .5s cubic-bezier(.22,1,.36,1); }
-        .capa-referral-avatar { width:38px; height:38px; border-radius:50%; background:${ORANGE}; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:15px; font-weight:900; color:#fff; }
+        .capa-referral-avatar { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg, ${ORANGE} 0%, ${ORANGE_DARK} 100%); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:15px; font-weight:900; color:#fff; }
         .capa-referral-name { font-size:13px; font-weight:700; color:${TEXT_BLACK}; }
-        .capa-referral-sub { font-size:12px; color:${ORANGE}; }
+        .capa-referral-sub { font-size:12px; color:${ORANGE_DARK}; }
 
         .capa-steps { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:26px; padding:0 4px; }
         .capa-step-item { display:flex; flex-direction:column; align-items:center; flex:1; position:relative; }
         .capa-step-node { display:flex; align-items:center; width:100%; }
         .capa-step-circle { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#fff; border:2px solid ${ORANGE_BORDER}; color:${TEXT_MUTED}; flex-shrink:0; transition:all .3s ease; margin:0 auto; }
         .capa-step-circle.is-active { border-color:var(--sc); color:var(--sc); box-shadow:0 0 0 5px color-mix(in srgb, var(--sc) 15%, transparent); transform:scale(1.08); }
-        .capa-step-circle.is-done { background:var(--sc); border-color:var(--sc); color:#fff; }
+        .capa-step-circle.is-done { background:linear-gradient(135deg, ${ORANGE} 0%, ${ORANGE_DARK} 100%); border-color:${ORANGE_DARK}; color:#fff; }
         .capa-step-line { flex:1; height:2px; background:${ORANGE_BORDER}; margin:0 6px; border-radius:2px; overflow:hidden; position:relative; top:-18px; }
         .capa-step-line-fill { height:100%; transition:width .5s cubic-bezier(.22,1,.36,1); }
         .capa-step-label { font-size:11px; font-weight:600; color:${TEXT_MUTED}; margin-top:8px; text-align:center; transition:color .3s ease; }
@@ -606,7 +607,7 @@ export default function CAPApplyClient() {
         .capa-step-panel { animation:capa-step-in .4s cubic-bezier(.22,1,.36,1); display:flex; flex-direction:column; gap:20px; }
         .capa-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 
-        .capa-error { display:flex; gap:10px; padding:12px 16px; background:${ORANGE_LIGHT}; border:1px solid ${ORANGE_BORDER}; border-radius:12px; font-size:13px; color:${ORANGE}; margin-bottom:20px; line-height:1.6; }
+        .capa-error { display:flex; gap:10px; padding:12px 16px; background:${ORANGE_LIGHT}; border:1px solid ${ORANGE_BORDER}; border-radius:12px; font-size:13px; color:${ORANGE_DARK}; margin-bottom:20px; line-height:1.6; }
 
         .capa-review { background:${ORANGE_LIGHT}; border:1px solid ${ORANGE_BORDER}; border-radius:14px; padding:18px 20px; margin-bottom:4px; }
         .capa-review-title { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:800; color:${TEXT_BLACK}; margin-bottom:14px; }
@@ -617,12 +618,13 @@ export default function CAPApplyClient() {
 
         .capa-nav-row { display:flex; align-items:center; justify-content:space-between; margin-top:26px; }
 
-        .capa-btn { display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:14px; padding:13px 26px; border-radius:999px; text-decoration:none; border:none; cursor:pointer; transition:transform .2s ease, box-shadow .2s ease; font-family:inherit; }
+        .capa-btn { display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:14px; padding:13px 26px; border-radius:999px; text-decoration:none; border:none; cursor:pointer; transition:transform .2s ease, box-shadow .2s ease, filter .2s ease; font-family:inherit; }
         .capa-btn:hover { transform:translateY(-2px); }
-        /* button background is now SOLID ORANGE */
-        .capa-btn-primary { background:${ORANGE}; color:#fff; box-shadow:0 8px 22px rgba(249,115,22,0.28); }
-        .capa-btn-primary:hover { box-shadow:0 14px 32px rgba(249,115,22,0.38); }
-        .capa-btn-ghost { background:#fff; color:${ORANGE}; border:1.5px solid ${ORANGE_BORDER}; box-shadow:none; }
+        /* button background — orange gradient, matches site theme */
+        .capa-btn-primary { background:linear-gradient(135deg, ${ORANGE} 0%, ${ORANGE_DARK} 100%); color:#fff; box-shadow:0 8px 22px rgba(249,115,22,0.28); }
+        .capa-btn-primary:hover { box-shadow:0 14px 32px rgba(249,115,22,0.38); filter:brightness(1.03); }
+        .capa-btn-primary:active { transform:translateY(0); filter:brightness(0.96); }
+        .capa-btn-ghost { background:#fff; color:${ORANGE_DARK}; border:1.5px solid ${ORANGE_BORDER}; box-shadow:none; }
         .capa-btn-ghost:hover { background:${ORANGE_LIGHT}; }
         .capa-arrow { display:inline-flex; animation:capa-arrow-bounce 1.3s ease-in-out infinite; }
 
@@ -640,14 +642,14 @@ export default function CAPApplyClient() {
         .capa-success-body { font-size:15px; color:${TEXT_GRAY}; line-height:1.75; margin-bottom:28px; }
 
         /* ── Modal ── */
-        .capa-modal-backdrop { position:fixed; inset:0; background:rgba(17,24,39,0.72); z-index:999; display:flex; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(4px); animation:capa-backdrop-in .25s ease; }
+        .capa-modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.72); z-index:999; display:flex; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(4px); animation:capa-backdrop-in .25s ease; }
         .capa-modal { background:#fff; border-radius:20px; width:100%; max-width:560px; max-height:92vh; display:flex; flex-direction:column; box-shadow:0 32px 80px rgba(0,0,0,0.32); overflow:hidden; animation:capa-modal-in .35s cubic-bezier(.22,1,.36,1); }
         .capa-modal-header { padding:22px 28px 16px; border-bottom:1px solid ${ORANGE_BORDER}; flex-shrink:0; }
         .capa-modal-icon { width:34px; height:34px; border-radius:9px; background:${ORANGE_LIGHT}; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
         .capa-modal-warning { display:flex; align-items:center; gap:6px; padding:7px 12px; background:${ORANGE_LIGHT}; border:1px solid ${ORANGE_BORDER}; border-radius:8px; margin-bottom:12px; }
-        .capa-modal-warning span { font-size:12px; color:${ORANGE}; font-weight:600; }
+        .capa-modal-warning span { font-size:12px; color:${ORANGE_DARK}; font-weight:600; }
         .capa-modal-progress-track { height:4px; background:${ORANGE_LIGHT}; border-radius:99px; overflow:hidden; }
-        .capa-modal-progress-fill { height:100%; background:${ORANGE}; transition:width .15s linear; border-radius:99px; }
+        .capa-modal-progress-fill { height:100%; background:linear-gradient(90deg, ${ORANGE} 0%, ${ORANGE_DARK} 100%); transition:width .15s linear; border-radius:99px; }
 
         .capa-modal-body { overflow-y:auto; flex:1; padding:24px 28px; font-size:13px; color:${TEXT_GRAY}; line-height:1.85; }
         .capa-modal-notice { margin-top:20px; padding:14px 16px; background:${ORANGE_LIGHT}; border:1px solid ${ORANGE_BORDER}; border-radius:10px; font-size:12px; color:${TEXT_GRAY}; line-height:1.7; }
@@ -659,7 +661,7 @@ export default function CAPApplyClient() {
         .capa-checkbox-row { display:flex; align-items:flex-start; gap:10px; cursor:pointer; margin-bottom:14px; transition:opacity .3s ease; }
         .capa-checkbox-row.is-disabled { opacity:.4; cursor:not-allowed; pointer-events:none; }
         .capa-checkbox { position:relative; width:18px; height:18px; flex-shrink:0; margin-top:2px; border-radius:5px; border:1.5px solid ${ORANGE_BORDER}; display:flex; align-items:center; justify-content:center; transition:all .2s ease; }
-        .capa-checkbox.is-checked { background:${ORANGE}; border-color:${ORANGE}; }
+        .capa-checkbox.is-checked { background:linear-gradient(135deg, ${ORANGE} 0%, ${ORANGE_DARK} 100%); border-color:${ORANGE_DARK}; }
         .capa-checkbox input { position:absolute; inset:0; opacity:0; cursor:pointer; margin:0; }
         .capa-checkbox-icon { color:#fff; opacity:0; transform:scale(.5); transition:all .2s ease; position:absolute; }
         .capa-checkbox.is-checked .capa-checkbox-icon { opacity:1; transform:scale(1); }
