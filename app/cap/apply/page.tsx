@@ -4,12 +4,18 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle2, ChevronDown } from 'lucide-react';
 
+const ORANGE = '#f97316';
+const ORANGE_DARK = '#ea580c';
+const ORANGE_LIGHT = '#fff7ed';
+const ORANGE_BORDER = '#fed7aa';
+const INK = '#0b0d20';
+
 const inputStyle: React.CSSProperties = {
   display: 'block', width: '100%', padding: '11px 14px',
   border: '1.5px solid #e2e8f0', borderRadius: '10px',
   fontSize: '14px', fontFamily: "'Poppins',sans-serif",
-  color: '#0b0d20', background: '#f8faff', outline: 'none',
-  boxSizing: 'border-box' as const, transition: 'border-color 0.15s, box-shadow 0.15s',
+  color: '#0b0d20', background: '#fafafa', outline: 'none',
+  boxSizing: 'border-box' as const, transition: 'border-color 0.15s, box-shadow 0.15s, background 0.15s',
 };
 
 const labelStyle: React.CSSProperties = {
@@ -21,7 +27,7 @@ function Section({ n, title, children }: { n: string; title: string; children: R
   return (
     <div style={{ marginBottom: 22 }}>
       <div style={{ fontSize: 13, fontWeight: 800, color: '#0b0d20', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: '50%', background: '#eff6ff', color: '#2145fb', fontSize: 11, fontWeight: 900, flexShrink: 0 }}>{n}</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: '50%', background: ORANGE_LIGHT, color: ORANGE, fontSize: 11, fontWeight: 900, flexShrink: 0, border: `1px solid ${ORANGE_BORDER}` }}>{n}</span>
         <span dangerouslySetInnerHTML={{ __html: title }} />
       </div>
       <div style={{ paddingLeft: 30 }}>{children}</div>
@@ -59,9 +65,9 @@ function CAPApplyForm() {
 
   const fi = (n: string): React.CSSProperties => ({
     ...inputStyle,
-    borderColor: focused === n ? '#2145fb' : '#e2e8f0',
-    background: focused === n ? '#fff' : '#f8faff',
-    boxShadow: focused === n ? '0 0 0 3px rgba(33,69,251,0.10)' : 'none',
+    borderColor: focused === n ? ORANGE : '#e2e8f0',
+    background: focused === n ? '#fff' : '#fafafa',
+    boxShadow: focused === n ? '0 0 0 3px rgba(249,115,22,0.12)' : 'none',
   });
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
@@ -93,14 +99,16 @@ function CAPApplyForm() {
   };
 
   if (done) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8faff', fontFamily: "'Poppins',sans-serif", padding: '24px' }}>
-      <div style={{ maxWidth: '480px', textAlign: 'center' }}>
-        <CheckCircle2 size={56} color="#16a34a" style={{ marginBottom: '16px' }} />
-        <h1 style={{ fontSize: '24px', fontWeight: 900, color: '#0b0d20', marginBottom: '10px' }}>Application submitted!</h1>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fafafa', fontFamily: "'Poppins',sans-serif", padding: '24px' }}>
+      <div style={{ maxWidth: '480px', textAlign: 'center' }} className="cap-fade">
+        <div style={{ width: 72, height: 72, borderRadius: '50%', background: ORANGE_LIGHT, border: `1px solid ${ORANGE_BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
+          <CheckCircle2 size={34} color={ORANGE} />
+        </div>
+        <h1 style={{ fontSize: '24px', fontWeight: 900, color: INK, marginBottom: '10px' }}>Application submitted!</h1>
         <p style={{ fontSize: '15px', color: '#64748b', lineHeight: 1.7, marginBottom: '28px' }}>
           We&apos;ve received your application. Our team will review it and send your login credentials to <strong>{form.email}</strong> once approved — usually within 1–2 business days.
         </p>
-        <Link href="/" style={{ padding: '12px 28px', background: '#2145fb', color: '#fff', borderRadius: '10px', fontWeight: 700, fontSize: '14px', textDecoration: 'none' }}>
+        <Link href="/" className="cap-btn-primary">
           Back to Home
         </Link>
       </div>
@@ -109,18 +117,18 @@ function CAPApplyForm() {
 
   return (
     <>
-    <div style={{ minHeight: '100vh', background: '#f8faff', fontFamily: "'Poppins',sans-serif", padding: '40px 24px' }}>
+    <div className="cap-page" style={{ minHeight: '100vh', background: '#fafafa', fontFamily: "'Poppins',sans-serif", padding: '40px 24px' }}>
       <div style={{ maxWidth: '640px', margin: '0 auto' }}>
         {/* Header */}
-        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+        <div style={{ marginBottom: '32px', textAlign: 'center' }} className="cap-fade">
           <Link href="/" style={{ display: 'inline-block', marginBottom: '24px' }}>
             <img src="/logo.png" alt="Placedly" style={{ height: '44px' }} />
           </Link>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '12px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '999px', padding: '5px 14px' }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2145fb' }} />
-            <span style={{ fontSize: '12px', fontWeight: 700, color: '#2145fb', textTransform: 'uppercase', letterSpacing: '0.5px' }}>CAP Application</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '12px', background: ORANGE_LIGHT, border: `1px solid ${ORANGE_BORDER}`, borderRadius: '999px', padding: '5px 14px' }}>
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: ORANGE }} />
+            <span style={{ fontSize: '12px', fontWeight: 700, color: ORANGE_DARK, textTransform: 'uppercase', letterSpacing: '0.5px' }}>CAP Application</span>
           </div>
-          <h1 style={{ fontSize: '28px', fontWeight: 900, color: '#0b0d20', lineHeight: 1.2, marginBottom: '10px' }}>
+          <h1 style={{ fontSize: '28px', fontWeight: 900, color: INK, lineHeight: 1.2, marginBottom: '10px' }}>
             Join the Career Assistance Programme
           </h1>
           <p style={{ fontSize: '15px', color: '#64748b', lineHeight: 1.7 }}>
@@ -130,19 +138,19 @@ function CAPApplyForm() {
 
         {/* Referral banner */}
         {referrerName && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '10px', marginBottom: '20px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '15px', fontWeight: 900, color: '#fff' }}>
+          <div className="cap-fade" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: ORANGE_LIGHT, border: `1px solid ${ORANGE_BORDER}`, borderRadius: '10px', marginBottom: '20px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: ORANGE, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '15px', fontWeight: 900, color: '#fff' }}>
               {referrerName[0]}
             </div>
             <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#4c1d95' }}>Referred by {referrerName}</div>
-              <div style={{ fontSize: '12px', color: '#7c3aed' }}>You&apos;ve been personally referred by a Placedly partner.</div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: INK }}>Referred by {referrerName}</div>
+              <div style={{ fontSize: '12px', color: ORANGE_DARK }}>You&apos;ve been personally referred by a Placedly partner.</div>
             </div>
           </div>
         )}
 
         {/* Form card */}
-        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '36px', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+        <div className="cap-card cap-fade" style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '36px', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
           {error && (
             <div style={{ padding: '12px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', fontSize: '13px', color: '#dc2626', marginBottom: '20px', lineHeight: 1.6 }}>
               {error}
@@ -215,12 +223,8 @@ function CAPApplyForm() {
                 style={{ ...fi('message'), resize: 'vertical' as const }} {...fp('message')} />
             </div>
 
-            <button type="submit" disabled={loading} style={{
-              display: 'block', width: '100%', padding: '14px', textAlign: 'center',
-              background: loading ? '#93a5fd' : '#2145fb', color: '#fff',
-              fontWeight: 700, fontSize: '15px', fontFamily: "'Poppins',sans-serif",
-              border: 'none', borderRadius: '10px', cursor: loading ? 'not-allowed' : 'pointer',
-              boxShadow: '0 4px 18px rgba(33,69,251,0.25)',
+            <button type="submit" disabled={loading} className="cap-submit-btn" style={{
+              background: loading ? ORANGE_LIGHT ? '#fdba74' : ORANGE : ORANGE,
             }}>
               {loading ? 'Submitting…' : 'Submit Application →'}
             </button>
@@ -229,7 +233,7 @@ function CAPApplyForm() {
 
         <p style={{ fontSize: '12px', color: '#94a3b8', textAlign: 'center', marginTop: '20px', lineHeight: 1.6 }}>
           Already approved?{' '}
-          <Link href="/login" style={{ color: '#2145fb', fontWeight: 600 }}>Sign in here →</Link>
+          <Link href="/login" className="cap-link">Sign in here →</Link>
         </p>
       </div>
     </div>
@@ -237,16 +241,16 @@ function CAPApplyForm() {
     {/* ── T&C Modal ── */}
     {showTc && (
       <div style={{ position: 'fixed', inset: 0, background: 'rgba(11,13,32,0.72)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', fontFamily: "'Poppins',sans-serif", backdropFilter: 'blur(4px)' }}>
-        <div style={{ background: '#fff', borderRadius: 20, width: '100%', maxWidth: 560, maxHeight: '92vh', display: 'flex', flexDirection: 'column', boxShadow: '0 32px 80px rgba(0,0,0,0.32)', overflow: 'hidden' }}>
+        <div className="cap-fade" style={{ background: '#fff', borderRadius: 20, width: '100%', maxWidth: 560, maxHeight: '92vh', display: 'flex', flexDirection: 'column', boxShadow: '0 32px 80px rgba(0,0,0,0.32)', overflow: 'hidden' }}>
 
           {/* Sticky header */}
           <div style={{ padding: '22px 28px 18px', borderBottom: '1px solid #e2e8f0', flexShrink: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2145fb" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: ORANGE_LIGHT, border: `1px solid ${ORANGE_BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={ORANGE_DARK} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
               </div>
               <div>
-                <div style={{ fontSize: 16, fontWeight: 900, color: '#0b0d20', lineHeight: 1.2 }}>Career Assistance Programme</div>
+                <div style={{ fontSize: 16, fontWeight: 900, color: INK, lineHeight: 1.2 }}>Career Assistance Programme</div>
                 <div style={{ fontSize: 12, color: '#64748b' }}>Service Agreement &amp; Terms of Enrolment</div>
               </div>
             </div>
@@ -266,7 +270,7 @@ function CAPApplyForm() {
             }}
             style={{ overflowY: 'auto', flex: 1, padding: '24px 28px', fontSize: 13, color: '#374151', lineHeight: 1.85 }}
           >
-            <p style={{ fontSize: 14, fontWeight: 700, color: '#0b0d20', marginBottom: 4 }}>Last updated: May 2025</p>
+            <p style={{ fontSize: 14, fontWeight: 700, color: INK, marginBottom: 4 }}>Last updated: May 2025</p>
             <p style={{ marginBottom: 20, color: '#64748b' }}>This Service Agreement ("Agreement") is entered into between <strong>Placedly</strong> ("Company", "We", "Us") and the individual submitting this application ("Candidate", "You"). By submitting the CAP application you acknowledge that you have read, understood, and agree to be bound by the following terms.</p>
 
             <Section n="1" title="Programme Overview">
@@ -334,7 +338,7 @@ function CAPApplyForm() {
               Placedly reserves the right to update these terms at any time. Material changes will be notified via email or in-portal notification at least 7 days before taking effect. Continued participation in the programme after notification constitutes acceptance of the revised terms.
             </Section>
 
-            <div style={{ marginTop: 20, padding: '14px 16px', background: '#f8faff', border: '1px solid #e2e8f0', borderRadius: 10, fontSize: 12, color: '#64748b', lineHeight: 1.7 }}>
+            <div style={{ marginTop: 20, padding: '14px 16px', background: '#fafafa', border: '1px solid #e2e8f0', borderRadius: 10, fontSize: 12, color: '#64748b', lineHeight: 1.7 }}>
               By accepting below, you confirm that you are at least 18 years of age, have the legal capacity to enter into this Agreement, and that the information provided in your application is true and accurate to the best of your knowledge.
             </div>
           </div>
@@ -352,18 +356,24 @@ function CAPApplyForm() {
           <div style={{ padding: '16px 28px 20px', borderTop: '1px solid #e2e8f0', flexShrink: 0, background: '#fff' }}>
             <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: hasScrolled ? 'pointer' : 'not-allowed', marginBottom: 14, opacity: hasScrolled ? 1 : 0.4, transition: 'opacity 0.3s' }}>
               <input type="checkbox" checked={tcChecked} disabled={!hasScrolled} onChange={e => setTcChecked(e.target.checked)}
-                style={{ marginTop: 3, width: 16, height: 16, accentColor: '#2145fb', flexShrink: 0, cursor: hasScrolled ? 'pointer' : 'not-allowed' }} />
+                style={{ marginTop: 3, width: 16, height: 16, accentColor: ORANGE, flexShrink: 0, cursor: hasScrolled ? 'pointer' : 'not-allowed' }} />
               <span style={{ fontSize: 13, color: '#374151', lineHeight: 1.6 }}>
                 I have read the complete Placedly Career Assistance Programme Service Agreement and agree to be bound by all its terms and conditions.
               </span>
             </label>
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={() => { setShowTc(false); setTcChecked(false); setHasScrolled(false); }}
-                style={{ flex: 1, padding: '11px', background: '#f1f5f9', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', color: '#374151', fontFamily: "'Poppins',sans-serif" }}>
+                className="cap-btn-secondary">
                 Go Back
               </button>
               <button onClick={handleAgreeAndSubmit} disabled={!tcChecked || !hasScrolled || loading}
-                style={{ flex: 2, padding: '11px', background: (tcChecked && hasScrolled) ? '#2145fb' : '#e2e8f0', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: (tcChecked && hasScrolled) ? 'pointer' : 'not-allowed', color: (tcChecked && hasScrolled) ? '#fff' : '#94a3b8', fontFamily: "'Poppins',sans-serif", transition: 'all 0.25s', boxShadow: (tcChecked && hasScrolled) ? '0 4px 16px rgba(33,69,251,0.25)' : 'none' }}>
+                className="cap-btn-agree"
+                style={{
+                  background: (tcChecked && hasScrolled) ? ORANGE : '#e2e8f0',
+                  color: (tcChecked && hasScrolled) ? '#fff' : '#94a3b8',
+                  cursor: (tcChecked && hasScrolled) ? 'pointer' : 'not-allowed',
+                  boxShadow: (tcChecked && hasScrolled) ? '0 4px 16px rgba(249,115,22,0.28)' : 'none',
+                }}>
                 {loading ? 'Submitting…' : 'I Agree & Submit Application →'}
               </button>
             </div>
@@ -371,6 +381,128 @@ function CAPApplyForm() {
         </div>
       </div>
     )}
+
+    <style>{`
+      .cap-page * {
+        box-sizing: border-box;
+      }
+
+      .cap-fade {
+        animation: cap-fade-up 0.6s ease both;
+      }
+      @keyframes cap-fade-up {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .cap-card {
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+      }
+      .cap-card:hover {
+        box-shadow: 0 8px 32px rgba(249,115,22,0.10);
+      }
+
+      .cap-link {
+        color: ${ORANGE_DARK};
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+      .cap-link:hover {
+        color: ${ORANGE};
+      }
+
+      .cap-submit-btn {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        text-align: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 15px;
+        font-family: 'Poppins', sans-serif;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0 4px 18px rgba(249,115,22,0.28);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      }
+      .cap-submit-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(249,115,22,0.38);
+        filter: brightness(1.04);
+      }
+      .cap-submit-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.75;
+      }
+
+      .cap-btn-primary {
+        display: inline-block;
+        padding: 12px 28px;
+        background: ${ORANGE};
+        color: #fff;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 14px;
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        box-shadow: 0 4px 16px rgba(249,115,22,0.28);
+      }
+      .cap-btn-primary:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.05);
+      }
+
+      .cap-btn-secondary {
+        flex: 1;
+        padding: 11px;
+        background: #f1f5f9;
+        border: none;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        color: #374151;
+        font-family: 'Poppins', sans-serif;
+        transition: background 0.2s ease;
+      }
+      .cap-btn-secondary:hover {
+        background: #e2e8f0;
+      }
+
+      .cap-btn-agree {
+        flex: 2;
+        padding: 11px;
+        border: none;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        font-family: 'Poppins', sans-serif;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      }
+      .cap-btn-agree:hover:not(:disabled) {
+        transform: translateY(-1px);
+        filter: brightness(1.04);
+      }
+
+      input:focus, select:focus, textarea:focus {
+        outline: none;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .cap-fade,
+        .cap-card,
+        .cap-submit-btn,
+        .cap-btn-primary,
+        .cap-btn-secondary,
+        .cap-btn-agree,
+        .cap-link {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    `}</style>
     </>
   );
 }
