@@ -121,7 +121,8 @@ export default function FloatingCTA({
             animate="animate"
             exit="exit"
           >
-            {/* Thin ring hugging the button, open along the bottom */}
+            {/* Thin ring hugging the button on top, stretching wide
+                on both sides down to the bottom — open along the bottom */}
             <span className="placedly-floating-cta-ring" aria-hidden />
 
             <motion.a
@@ -154,13 +155,15 @@ export default function FloatingCTA({
           pointer-events: auto !important;
         }
 
-        /* Thin ring around the button, open at the bottom so it
-           reads as a single stroke arcing bottom-right → top → bottom-left */
+        /* Thin ring around the button that stretches wide on both
+           sides, open at the bottom so it reads as a single stroke
+           arcing from far bottom-right, up over the button, and
+           back down to far bottom-left */
         .placedly-floating-cta-ring {
           position: absolute !important;
           top: -6px !important;
-          left: -6px !important;
-          right: -6px !important;
+          left: -160px !important;
+          right: -160px !important;
           bottom: -1px !important;
           border: 1.5px solid rgba(255, 255, 255, 0.55) !important;
           border-bottom: none !important;
@@ -265,9 +268,8 @@ export default function FloatingCTA({
             bottom: 18px !important;
           }
           .placedly-floating-cta-ring {
-            top: -5px !important;
-            left: -5px !important;
-            right: -5px !important;
+            left: -60px !important;
+            right: -60px !important;
           }
           .placedly-floating-cta-btn {
             min-height: 46px !important;
