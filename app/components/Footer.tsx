@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowUpRight, ArrowUp, Mail, MessageCircle, MapPin } from 'lucide-react';
+import { ArrowUpRight, ArrowUp, Mail, MessageCircle, MapPin, Phone } from 'lucide-react';
 
 const IgIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -29,9 +29,9 @@ const FbIcon = () => (
 );
 
 /* ── Design tokens ── */
-const ORANGE      = '#f97316';
-const ORANGE_DARK = '#ea580c';
-const GEOM_FONT   = `"Outfit","Poppins","Inter","Manrope","Geist","Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif`;
+const ORANGE       = '#f97316';
+const ORANGE_DARK  = '#c2410c';
+const GEOM_FONT    = `"Outfit","Poppins","Inter","Manrope","Geist","Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif`;
 
 type Cms = Record<string, string>;
 
@@ -42,6 +42,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
   const linkedin  = cms['hp:footerLinkedin']  ?? 'https://linkedin.com/';
   const facebook  = cms['hp:footerFacebook']  ?? 'https://www.facebook.com/';
   const email     = cms['hp:footerEmail']     ?? 'hello@placedly.in';
+  const phone     = cms['hp:footerPhone']     ?? cms['hp:phoneNumber'] ?? '+91 98765 43210';
   const wa        = cms['hp:footerWa']        ?? cms['hp:waNumber'] ?? '919876543210';
   const copyright = cms['hp:footerCopyright'] ?? '© 2026 Placedly · Delhi NCR · All rights reserved';
 
@@ -52,45 +53,42 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
     { href: facebook,  label: 'Facebook',  Icon: FbIcon },
   ];
 
-  const LINK_GROUPS = [
-    {
-      label: 'Company',
-      links: [
-        { href: '/about-us', label: 'About Us' },
-        { href: '/careers',  label: 'Careers' },
-        { href: '/blog',     label: 'Blog' },
-        { href: '/contact',  label: 'Contact' },
-      ],
-    },
-    {
-      label: 'Services',
-      links: [
-        { href: '/cap',            label: 'CAP' },
-        { href: '/study-visa',     label: 'Study Abroad' },
-        { href: '/recruiters',     label: 'For Recruiters' },
-        { href: '/candidates',     label: 'For Candidates' },
-        { href: '/vacancies',      label: 'Vacancies' },
-      ],
-    },
-    {
-      label: 'Legal',
-      links: [
-        { href: '/privacy-policy', label: 'Privacy Policy' },
-        { href: '/terms',          label: 'Terms of Service' },
-        { href: '/refund-policy',  label: 'Refund Policy' },
-      ],
-    },
+  const NAV_LINKS = [
+    { href: '/',            label: 'Home'          },
+    { href: '/about-us',    label: 'About Us'      },
+    { href: '/cap',         label: 'CAP'           },
+    { href: '/study-visa',  label: 'Study Abroad'  },
+    { href: '/services',    label: 'Services'      },
+    { href: '/contact',     label: 'Contact'       },
+  ];
+
+  const RESOURCE_LINKS = [
+    { href: '/blog',            label: 'Blog'            },
+    { href: '/faq',             label: 'FAQs'            },
+    { href: '/success-stories', label: 'Success Stories' },
+    { href: '/careers',         label: 'We\'re Hiring'   },
+  ];
+
+  const LEGAL_LINKS = [
+    { href: '/privacy-policy',   label: 'Privacy Policy'   },
+    { href: '/terms',            label: 'Terms of Service' },
+    { href: '/refund-policy',    label: 'Refund Policy'    },
   ];
 
   return (
     <footer className="placedly-footer">
 
+      {/* single soft decorative blob to keep theme feel */}
+      <span aria-hidden className="pf-blob" />
+
       <div className="placedly-footer-wrap">
 
         {/* ══════════════════════════════════════
-            TOP ROW — brand + socials
+            TOP ROW — brand / nav / contact+social
         ══════════════════════════════════════ */}
         <div className="pf-top">
+
+          {/* Brand */}
           <div className="pf-brand-block">
             <Link href="/" className="pf-brand">
               <span className="pf-brand-mark">P</span>
@@ -99,60 +97,68 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
             <p className="pf-tagline">{tagline}</p>
           </div>
 
-          <div className="pf-socials">
-            {socials.map(({ href, label, Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className="pf-social"
-              >
-                <Icon />
-              </a>
-            ))}
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════
-            LINK GROUPS — thin, wraps inline
-        ══════════════════════════════════════ */}
-        <div className="pf-linkgroups">
-          {LINK_GROUPS.map((group) => (
-            <div key={group.label} className="pf-linkgroup">
-              <span className="pf-linkgroup-label">{group.label}</span>
-              <div className="pf-linkgroup-links">
-                {group.links.map(({ href, label }) => (
-                  <Link key={label} href={href} className="pf-link">
-                    {label}
-                  </Link>
-                ))}
-              </div>
+          {/* Nav */}
+          <nav className="pf-nav" aria-label="Footer navigation">
+            <span className="pf-nav-heading">Explore</span>
+            <div className="pf-nav-links">
+              {NAV_LINKS.map(({ href, label }) => (
+                <Link key={label} href={href} className="pf-link">
+                  {label}
+                </Link>
+              ))}
             </div>
-          ))}
+          </nav>
 
-          {/* Contact chips folded into the same row */}
-          <div className="pf-linkgroup">
-            <span className="pf-linkgroup-label">Get in touch</span>
-            <div className="pf-linkgroup-links">
-              <a
+          {/* Resources */}
+          <nav className="pf-nav" aria-label="Resource links">
+            <span className="pf-nav-heading">Resources</span>
+            <div className="pf-nav-links">
+              {RESOURCE_LINKS.map(({ href, label }) => (
+                <Link key={label} href={href} className="pf-link">
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </nav>
+
+          {/* Contact + socials */}
+          <div className="pf-contact-block">
+            <div className="pf-contact-inline">
+              
                 href={`https://wa.me/${wa}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="pf-link pf-link--icon"
+                className="pf-contact-chip"
               >
                 <MessageCircle size={12} strokeWidth={2} />
                 WhatsApp
               </a>
-              <a href={`mailto:${email}`} className="pf-link pf-link--icon">
+              <a href={`mailto:${email}`} className="pf-contact-chip">
                 <Mail size={12} strokeWidth={2} />
-                Email
+                {email}
               </a>
-              <span className="pf-link pf-link--icon pf-link--static">
+              <a href={`tel:${phone.replace(/\s+/g, '')}`} className="pf-contact-chip">
+                <Phone size={12} strokeWidth={2} />
+                {phone}
+              </a>
+              <span className="pf-contact-chip pf-contact-chip--static">
                 <MapPin size={12} strokeWidth={2} />
                 Delhi NCR
               </span>
+            </div>
+            <div className="pf-socials">
+              {socials.map(({ href, label, Icon }) => (
+                
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="pf-social"
+                >
+                  <Icon />
+                </a>
+              ))}
             </div>
           </div>
         </div>
@@ -162,6 +168,14 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
         ══════════════════════════════════════ */}
         <div className="pf-bottom">
           <p className="pf-copyright">{copyright}</p>
+          <nav className="pf-legal" aria-label="Legal links">
+            {LEGAL_LINKS.map(({ href, label }, i) => (
+              <span key={label} className="pf-legal-item">
+                <Link href={href} className="pf-legal-link">{label}</Link>
+                {i < LEGAL_LINKS.length - 1 && <span className="pf-legal-dot">·</span>}
+              </span>
+            ))}
+          </nav>
           <div className="pf-bottom-right">
             <Link href="/contact" className="pf-mini-cta">
               Get Started
@@ -192,13 +206,30 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
         .placedly-footer {
           position: relative;
           overflow: hidden;
-          background: linear-gradient(180deg, #111113 0%, #0a0a0b 100%) !important;
-          color: #ffffff !important;
-          border-top: 1px solid rgba(255,255,255,0.06) !important;
+          background: linear-gradient(
+            160deg,
+            #fff7ed 0%,
+            #ffedd5 45%,
+            #fed7aa 100%
+          ) !important;
+          color: #1c1917 !important;
+          border-top: 1px solid #fde3c7 !important;
           display: block !important;
           visibility: visible !important;
           opacity: 1 !important;
           width: 100% !important;
+        }
+
+        /* ── Single soft blob (kept for theme texture) ── */
+        .pf-blob {
+          position: absolute;
+          top: -20%; right: -10%;
+          width: 400px; height: 400px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%);
+          filter: blur(70px);
+          pointer-events: none;
+          z-index: 0;
         }
 
         /* ── Wrap ── */
@@ -217,14 +248,14 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           display: flex;
           align-items: flex-start;
           justify-content: space-between;
-          gap: 24px;
+          gap: 28px;
           padding-bottom: 20px;
           flex-wrap: wrap;
         }
 
         /* ── Brand ── */
         .pf-brand-block {
-          flex: 1 1 240px;
+          flex: 1 1 220px;
           min-width: 200px;
         }
         .pf-brand {
@@ -232,42 +263,118 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           align-items: center;
           gap: 8px;
           text-decoration: none !important;
-          color: #ffffff !important;
-          margin-bottom: 6px;
+          color: #1c1917 !important;
+          margin-bottom: 8px;
         }
         .pf-brand-mark {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 26px; height: 26px;
-          border-radius: 7px;
-          background: rgba(249,115,22,0.14);
-          border: 1px solid rgba(249,115,22,0.30);
-          color: ${ORANGE};
-          font-size: 13px;
+          width: 28px; height: 28px;
+          border-radius: 8px;
+          background: ${ORANGE};
+          border: 1px solid ${ORANGE};
+          color: #ffffff;
+          font-size: 14px;
           font-weight: 900;
           letter-spacing: -0.02em !important;
-          transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+          transition: transform 0.2s ease, filter 0.2s ease;
         }
         .pf-brand:hover .pf-brand-mark {
-          background: rgba(249,115,22,0.24);
-          border-color: rgba(249,115,22,0.5);
-          transform: rotate(-4deg) scale(1.08);
+          filter: brightness(1.08);
+          transform: rotate(-4deg) scale(1.06);
         }
         .pf-brand-text {
-          font-size: 15.5px;
+          font-size: 16px;
           font-weight: 800;
           letter-spacing: -0.025em !important;
+          color: #1c1917;
         }
         .pf-tagline {
           font-size: 12px;
           line-height: 1.55;
-          color: rgba(255,255,255,0.42);
+          color: #78716c;
           margin: 0;
-          max-width: 280px;
+          max-width: 240px;
         }
 
-        /* ── Socials ── */
+        /* ── Nav columns ── */
+        .pf-nav {
+          flex: 0 1 160px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          padding-top: 2px;
+          min-width: 130px;
+        }
+        .pf-nav-heading {
+          font-size: 10.5px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.06em !important;
+          color: #b45309;
+        }
+        .pf-nav-links {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .pf-link {
+          font-size: 13px;
+          font-weight: 600;
+          color: #57534e !important;
+          text-decoration: none !important;
+          transition: color 0.2s ease, transform 0.2s ease;
+          white-space: nowrap;
+          width: fit-content;
+        }
+        .pf-link:hover {
+          color: ${ORANGE_DARK} !important;
+          transform: translateX(2px);
+        }
+
+        /* ── Contact + socials ── */
+        .pf-contact-block {
+          flex: 1 1 260px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 10px;
+          min-width: 220px;
+        }
+        .pf-contact-inline {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+          gap: 6px;
+        }
+        .pf-contact-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          font-size: 11px;
+          font-weight: 600;
+          color: #78716c !important;
+          text-decoration: none !important;
+          background: #ffffff;
+          border: 1px solid #fde3c7;
+          padding: 5px 9px;
+          border-radius: 999px;
+          white-space: nowrap;
+          transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .pf-contact-chip:hover {
+          background: #fff7ed;
+          border-color: ${ORANGE};
+          color: ${ORANGE_DARK} !important;
+        }
+        .pf-contact-chip--static { cursor: default; }
+        .pf-contact-chip--static:hover {
+          background: #ffffff;
+          border-color: #fde3c7;
+          color: #78716c !important;
+        }
+
         .pf-socials {
           display: flex;
           align-items: center;
@@ -279,79 +386,18 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          background: rgba(255,255,255,0.05) !important;
-          border: 1px solid rgba(255,255,255,0.10) !important;
-          color: rgba(255,255,255,0.55) !important;
+          background: #ffffff !important;
+          border: 1px solid #fde3c7 !important;
+          color: #a8a29e !important;
           text-decoration: none !important;
           transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
         }
         .pf-social:hover {
-          background: rgba(249,115,22,0.12) !important;
-          border-color: rgba(249,115,22,0.35) !important;
-          color: ${ORANGE} !important;
-          transform: translateY(-2px);
-        }
-
-        /* ════════════════════════════════════════
-           LINK GROUPS — thin, wraps horizontally
-        ════════════════════════════════════════ */
-        .pf-linkgroups {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 18px 40px;
-          padding: 18px 0 20px;
-          border-top: 1px solid rgba(255,255,255,0.06);
-        }
-        .pf-linkgroup {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-          min-width: 140px;
-          flex: 1 1 auto;
-        }
-        .pf-linkgroup-label {
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.32);
-        }
-        .pf-linkgroup-links {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px 14px;
-        }
-        .pf-link {
-          position: relative;
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          font-size: 12.5px;
-          font-weight: 500;
-          color: rgba(255,255,255,0.68) !important;
-          text-decoration: none !important;
-          white-space: nowrap;
-          transition: color 0.2s ease;
-        }
-        .pf-link::after {
-          content: '';
-          position: absolute;
-          left: 0; bottom: -2px;
-          width: 0;
-          height: 1px;
-          background: ${ORANGE};
-          transition: width 0.25s ease;
-        }
-        .pf-link:hover {
+          background: ${ORANGE} !important;
+          border-color: ${ORANGE} !important;
           color: #ffffff !important;
+          transform: translateY(-2px) rotate(-4deg);
         }
-        .pf-link:hover::after {
-          width: 100%;
-        }
-        .pf-link--icon svg { color: rgba(255,255,255,0.4); transition: color 0.2s ease; }
-        .pf-link--icon:hover svg { color: ${ORANGE}; }
-        .pf-link--static { cursor: default; }
-        .pf-link--static::after { display: none; }
 
         /* ════════════════════════════════════════
            BOTTOM BAR
@@ -362,13 +408,37 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           justify-content: space-between;
           gap: 14px;
           padding: 14px 0;
-          border-top: 1px solid rgba(255,255,255,0.06);
+          border-top: 1px solid #fde3c7;
           flex-wrap: wrap;
         }
         .pf-copyright {
           font-size: 11px !important;
-          color: rgba(255,255,255,0.32) !important;
+          color: #a8a29e !important;
           margin: 0;
+        }
+        .pf-legal {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .pf-legal-item {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .pf-legal-link {
+          font-size: 11px;
+          font-weight: 600;
+          color: #78716c !important;
+          text-decoration: none !important;
+          transition: color 0.2s ease;
+        }
+        .pf-legal-link:hover {
+          color: ${ORANGE_DARK} !important;
+        }
+        .pf-legal-dot {
+          font-size: 11px;
+          color: #d6d3d1;
         }
         .pf-bottom-right {
           display: flex;
@@ -380,38 +450,36 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           align-items: center;
           gap: 5px;
           padding: 7px 14px;
-          background: rgba(249,115,22,0.12) !important;
-          border: 1px solid rgba(249,115,22,0.35) !important;
-          color: ${ORANGE} !important;
+          background: ${ORANGE} !important;
+          color: #ffffff !important;
           border-radius: 999px;
           font-size: 11.5px;
-          font-weight: 700;
+          font-weight: 800;
           text-decoration: none !important;
           letter-spacing: -0.01em !important;
           white-space: nowrap;
-          transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+          transition: transform 0.2s ease, filter 0.2s ease;
         }
         .pf-mini-cta:hover {
-          background: ${ORANGE} !important;
-          color: #ffffff !important;
           transform: translateY(-2px);
+          filter: brightness(1.06);
         }
         .pf-scroll-top {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 28px; height: 28px;
+          width: 30px; height: 30px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.05) !important;
-          border: 1px solid rgba(255,255,255,0.10) !important;
-          color: rgba(255,255,255,0.55) !important;
+          background: #ffffff !important;
+          border: 1px solid #fde3c7 !important;
+          color: #a8a29e !important;
           text-decoration: none !important;
           transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
         }
         .pf-scroll-top:hover {
-          background: rgba(249,115,22,0.12) !important;
-          border-color: rgba(249,115,22,0.35) !important;
-          color: ${ORANGE} !important;
+          background: ${ORANGE} !important;
+          border-color: ${ORANGE} !important;
+          color: #ffffff !important;
           transform: translateY(-3px);
         }
 
@@ -422,20 +490,33 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           .placedly-footer-wrap { padding-top: 22px; }
           .pf-top {
             flex-direction: column;
-            gap: 14px;
+            gap: 18px;
             padding-bottom: 16px;
           }
-          .pf-socials { align-self: flex-start; }
-          .pf-linkgroups {
-            flex-direction: column;
-            gap: 16px;
-            padding: 16px 0 18px;
+          .pf-brand-block,
+          .pf-nav,
+          .pf-contact-block {
+            flex: 1 1 auto;
+            width: 100%;
           }
-          .pf-linkgroup { min-width: 0; }
+          .pf-nav-links {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+          }
+          .pf-contact-block {
+            align-items: flex-start;
+          }
+          .pf-contact-inline {
+            justify-content: flex-start;
+          }
           .pf-bottom {
             flex-direction: column;
             align-items: flex-start;
             gap: 10px;
+          }
+          .pf-legal {
+            flex-wrap: wrap;
           }
           .pf-bottom-right {
             width: 100%;
@@ -443,8 +524,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           }
         }
         @media (max-width: 420px) {
-          .pf-linkgroup-links { gap: 6px 12px; }
-          .pf-link { font-size: 12px; }
+          .pf-contact-chip { font-size: 10.5px; padding: 4px 8px; }
         }
       `}</style>
     </footer>
