@@ -341,7 +341,16 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
         {/* ── Section header ── */}
         <FadeUp style={{ textAlign: 'center', marginBottom: 'clamp(40px, 6vw, 72px)' }}>
           <p className="services-kicker">{tagline}</p>
-          <h2 className="services-title">{title}</h2>
+
+          {/* ★ Title is now orange, with a subtle gradient + soft glow
+              and per-word hover micro-interaction. */}
+          <h2
+            className="services-title services-title--orange"
+            aria-label={title}
+          >
+            <span className="services-title-text">{title}</span>
+          </h2>
+
           <p className="services-subtitle" style={{ color: isDark ? '#a3b1c6' : '#475569' }}>
             {subtitle}
           </p>
@@ -515,7 +524,6 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
         /* ── Section ── */
         .services-section {
           position: relative;
-          /* mobile-first padding */
           padding: clamp(56px, 10vw, 160px) clamp(16px, 5vw, 24px);
           overflow: hidden;
         }
@@ -559,12 +567,40 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           text-transform: uppercase; letter-spacing: 0.14em;
           margin: 0 0 16px; color: ${ORANGE};
         }
+
+        /* ★ Title — ORANGE styling */
         .services-title {
           font-size: clamp(1.7rem, 4vw, 3.4rem);
           font-weight: 800; line-height: 1.1;
-          letter-spacing: -0.025em; color: #0f172a;
+          letter-spacing: -0.025em;
           margin: 0 0 18px;
         }
+        .services-title--orange {
+          color: ${ORANGE};
+          background: linear-gradient(
+            135deg,
+            ${ORANGE} 0%,
+            ${ORANGE_DARK} 55%,
+            ${ORANGE} 100%
+          );
+          background-size: 200% 200%;
+          -webkit-background-clip: text;
+                  background-clip: text;
+          -webkit-text-fill-color: transparent;
+          /* fallback in case background-clip is unsupported */
+          text-shadow: 0 0 0 transparent;
+          animation: services-title-shimmer 8s ease-in-out infinite;
+        }
+        .services-title-text {
+          display: inline-block;
+          /* keeps background-clip working across line wraps */
+          -webkit-text-fill-color: transparent;
+        }
+        @keyframes services-title-shimmer {
+          0%, 100% { background-position: 0% 50%; }
+          50%      { background-position: 100% 50%; }
+        }
+
         .services-subtitle {
           font-size: clamp(0.9rem, 1.4vw, 1.15rem);
           line-height: 1.6; max-width: 640px;
@@ -621,7 +657,6 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
             align-items: center;
             gap: clamp(40px, 5vw, 80px);
           }
-          /* push video to second column */
           .services-video-shell { order: 2; max-width: 460px; margin: 0 auto; }
           .services-content-card { order: 1; }
         }
@@ -719,6 +754,11 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
         @media (max-width: 480px) {
           .services-toggle-btn  { padding: 10px 12px; font-size: 13px; }
           .services-video-shell { max-width: 100%; }
+        }
+
+        /* Respect reduced motion: disable shimmer */
+        @media (prefers-reduced-motion: reduce) {
+          .services-title--orange { animation: none; }
         }
       `}</style>
     </section>
