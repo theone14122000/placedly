@@ -1,12 +1,18 @@
 import ServiceDetailPage from '../components/ServiceDetailPage';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Resume Optimization Services India | Placedly',
+  description: "Placedly's resume optimization service creates ATS-friendly, recruiter-approved resumes tailored for BPO, IT, KPO, and MNC roles, helping you get shortlisted faster.",
+};
 
 export default function Page() {
   return (
     <ServiceDetailPage config={{
       breadcrumb: 'Resume Optimization',
       tag: 'Career Services',
-      title: 'Resume Optimization That Gets You Noticed',
-      subtitle: 'We rewrite your resume with achievement-led content, ATS-safe formatting, and keyword targeting so recruiters — and algorithms — see your best self first.',
+      title: 'Resume Optimization Services – Resumes That Get You Shortlisted',
+      subtitle: "Placedly's resume optimization service creates ATS-friendly, recruiter-approved resumes tailored for BPO, IT, KPO, and MNC roles, helping you get shortlisted faster.",
       stats: [
         { value: '2.3x', label: 'More Callbacks' },
         { value: '48 Hrs', label: 'Turnaround' },
@@ -17,28 +23,31 @@ export default function Page() {
       ctaSecondaryLabel: 'See CAP Program',
       ctaSecondaryHref: '/cap',
       overviewHeading: 'Why Your Resume Needs a Rewrite',
-      overviewBody: 'Most resumes fail before a human ever reads them — filtered out by Applicant Tracking Systems, buried under generic bullet points, or missing the exact keywords a recruiter searched for. Our resume optimization service rebuilds your resume from the ground up: structured for ATS parsing, written in outcome-driven language, and tailored to the roles you\'re actually targeting.',
+      overviewBody: "Recruiters spend an average of a few seconds scanning a resume before deciding whether to move forward or move on. In that narrow window, formatting, keywords, and clarity matter more than most candidates realise. A resume that lists responsibilities instead of achievements, uses inconsistent formatting, or misses industry-relevant keywords can get filtered out — even when the candidate is genuinely qualified. Placedly's resume optimization service takes a data-driven approach to fixing this. Instead of simply 'polishing' your existing resume, our team rebuilds it around what recruiters and applicant tracking systems are actually looking for — the right keywords for your target industry, a structure that highlights measurable achievements over generic duties, and formatting that renders cleanly whether it's read by a human or scanned by software. Whether you're a fresher building your first resume, an experienced professional repositioning for a senior role, or someone switching industries entirely, the resume is customised to your specific goals rather than forced into a one-size-fits-all template. A generic resume template downloaded from the internet doesn't account for how recruiters in BPO, KPO, IT, or MNC sectors actually screen candidates. Placedly's team works across these sectors daily, which means the resumes we build reflect real, current hiring patterns — not outdated advice. The goal isn't just a resume that looks good; it's a resume that consistently gets you shortlisted.",
       featuresHeading: "What's Included",
       features: [
-        { title: 'Keyword-Optimized Content', desc: 'We map your resume against real job descriptions in your target role so it passes ATS keyword scans.' },
-        { title: 'Achievement-Led Bullet Points', desc: 'Generic duties rewritten into quantified, impact-driven statements recruiters actually remember.' },
-        { title: 'ATS-Friendly Formatting', desc: 'Clean, parseable layout tested against major ATS platforms — no tables, columns, or graphics that break parsing.' },
-        { title: 'Industry-Specific Templates', desc: 'Formatting and tone calibrated to your sector — tech, finance, BPO, healthcare, and more.' },
+        { title: 'Complete Resume Rebuild', desc: 'Complete resume rebuild with industry-specific keyword optimization.' },
+        { title: 'Achievement-Focused Bullets', desc: 'Achievement-focused bullet points instead of generic job descriptions.' },
+        { title: 'ATS-Compatible Formatting', desc: 'ATS-compatible formatting that passes automated screening systems.' },
+        { title: 'Targeted Versions', desc: 'Separate resume versions for different target roles, where needed.' },
+        { title: 'Cover Letter Support', desc: 'Cover letter support to complement your resume where required.' },
+        { title: 'Unlimited Revisions', desc: 'Unlimited revisions until the resume is fully aligned with your goals.' },
       ],
       processHeading: 'How It Works',
       process: [
-        { title: 'Profile Review', desc: 'Send us your current resume and target roles — we audit gaps and opportunities.' },
-        { title: 'Draft Rewrite', desc: 'Our writers rebuild your resume with optimized structure and content.' },
-        { title: 'Feedback Round', desc: 'You review the draft and request edits — unlimited revisions within scope.' },
-        { title: 'Final Delivery', desc: 'Receive your polished, ATS-ready resume in PDF and editable formats.' },
+        { title: '1. Share Details', desc: 'Share your current resume, work history, and target roles.' },
+        { title: '2. Gap Analysis', desc: 'Our team analyses gaps in keywords, structure, and achievements.' },
+        { title: '3. Draft Review', desc: 'A rebuilt resume draft is shared for your review.' },
+        { title: '4. Revisions', desc: 'Revisions are made based on your feedback and target job descriptions.' },
+        { title: '5. Final Delivery', desc: 'You receive a final, ATS-optimized resume ready to use across applications.' },
       ],
       faqs: [
-        { q: 'How long does the process take?', a: 'Most resumes are delivered within 48 hours of receiving your details and target job descriptions.' },
-        { q: 'Is this included in CAP?', a: 'Yes — resume optimization is a core part of our Career Assistance Program at no extra cost.' },
-        { q: 'Can you rewrite for a career change?', a: 'Absolutely. We specialize in translating transferable skills for candidates pivoting industries or roles.' },
+        { q: 'Do you write resumes from scratch for freshers with no experience?', a: 'Yes. For freshers, we build resumes around academic projects, internships, certifications, and transferable skills to create a strong first impression.' },
+        { q: 'Will this resume work with online application systems?', a: 'Yes, all resumes are built to be ATS-compatible so they parse correctly in applicant tracking systems used by most companies.' },
+        { q: 'How many revisions are included?', a: 'We work with you through multiple revisions until the resume accurately reflects your profile and is ready for submission.' },
       ],
       finalHeading: 'Ready for a Resume That Works?',
-      finalSub: 'Join 1,200+ candidates who\'ve upgraded their resume with Placedly.',
+      finalSub: "Get your resume rebuilt by Placedly and start turning applications into interviews.",
       finalCtaLabel: 'Start Now',
       finalCtaHref: '/contact',
     }} />
