@@ -1,12 +1,18 @@
 import ServiceDetailPage from '../components/ServiceDetailPage';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Mock Interview Practice Sessions India | Placedly',
+  description: "Placedly's mock interview sessions simulate real HR, technical, and behavioural rounds for BPO, IT, and MNC roles, helping candidates build genuine interview confidence.",
+};
 
 export default function Page() {
   return (
     <ServiceDetailPage config={{
       breadcrumb: 'Mock Interviews',
       tag: 'Career Services',
-      title: 'Mock Interviews With Real Feedback',
-      subtitle: 'Practice with industry professionals in realistic interview simulations — then get direct, actionable feedback to sharpen your answers.',
+      title: 'Mock Interviews – Practice Real Scenarios Before It Counts',
+      subtitle: "Placedly's mock interview sessions simulate real HR, technical, and behavioural rounds for BPO, IT, and MNC roles, helping candidates build genuine interview confidence.",
       stats: [
         { value: '4.8/5', label: 'Avg. Candidate Rating' },
         { value: '60 Min', label: 'Per Session' },
@@ -17,28 +23,31 @@ export default function Page() {
       ctaSecondaryLabel: 'See CAP Program',
       ctaSecondaryHref: '/cap',
       overviewHeading: 'Practice Like It\'s the Real Thing',
-      overviewBody: 'Confidence comes from repetition. Our mock interviews simulate real hiring conversations — behavioral, technical, and situational — conducted by advisors with actual hiring experience in your target industry, so the feedback you get is grounded in what real interviewers look for.',
+      overviewBody: "There's a meaningful difference between knowing how to answer interview questions in theory and being able to do it confidently under real pressure, in front of an actual interviewer, with a job on the line. Most candidates only get that real pressure-tested experience during the interview that actually matters — which means there's no room for mistakes or nerves to settle. Placedly's mock interview sessions close that gap by simulating real hiring rounds — HR, technical, and behavioural — in a format that closely mirrors what candidates will actually face. This isn't a casual run-through of generic questions; it's a structured simulation with real feedback on your answers, communication style, body language, and overall presentation. By the time candidates walk into their actual interview, they've already faced tough, realistic questions, received honest feedback, and had the chance to correct weak spots — so the real interview feels familiar rather than intimidating. Reading interview tips online doesn't prepare you for the actual experience of being asked a tough question live and having to respond in real time. Placedly's mock interviews give you that real rehearsal, with feedback from people who understand what recruiters across BPO, KPO, IT, and MNC sectors are actually evaluating — so the practice translates directly into performance when it counts.",
       featuresHeading: "What's Included",
       features: [
-        { title: 'Role-Specific Simulation', desc: 'Interviews tailored to your exact job title, seniority, and industry.' },
-        { title: 'Recorded Session', desc: 'Review your own body language, tone, and pacing after the call.' },
-        { title: 'Structured Feedback Report', desc: 'A written breakdown of strengths and specific areas to improve.' },
-        { title: 'Follow-Up Session', desc: 'One free follow-up mock interview to apply the feedback.' },
+        { title: 'Role-Specific Mocks', desc: 'Role-specific mock interviews for BPO, KPO, LPO, IT, and MNC positions.' },
+        { title: 'Comprehensive Rounds', desc: 'Separate rounds covering HR, technical, and behavioural interview formats.' },
+        { title: 'Detailed Feedback', desc: 'Detailed feedback on answer structure, clarity, and confidence.' },
+        { title: 'Communication Guidance', desc: 'Guidance on body language, tone, and communication style.' },
+        { title: 'Scenario Practice', desc: 'Practice with situational and scenario-based questions specific to your target role.' },
+        { title: 'Repeat Sessions', desc: 'Repeat sessions available to build consistency before the real interview.' },
       ],
       processHeading: 'How It Works',
       process: [
-        { title: 'Share Job Details', desc: 'Tell us the role and company type you\'re preparing for.' },
-        { title: 'Schedule Session', desc: 'Pick a slot that works for you — sessions run 7 days a week.' },
-        { title: 'Live Mock Interview', desc: 'A 45-60 minute simulated interview with a real advisor.' },
-        { title: 'Get Feedback', desc: 'Receive your recording and written feedback within 24 hours.' },
+        { title: '1. Share Details', desc: 'Share your target role and interview stage (HR, technical, or final round).' },
+        { title: '2. Schedule Session', desc: 'A mock interview session is scheduled matching that specific format.' },
+        { title: '3. Simulated Interview', desc: 'You go through a realistic, simulated interview experience.' },
+        { title: '4. Detailed Feedback', desc: 'Detailed feedback is provided immediately after the session.' },
+        { title: '5. Additional Sessions', desc: 'Additional sessions can be scheduled to address specific weak areas.' },
       ],
       faqs: [
-        { q: 'Who conducts the interviews?', a: 'Advisors with real hiring and recruitment experience in your target industry.' },
-        { q: 'Can I request a specific interview type?', a: 'Yes — behavioral, technical, case-based, or panel-style formats are all available.' },
-        { q: 'How many sessions can I book?', a: 'CAP candidates get unlimited mock interviews throughout their placement journey.' },
+        { q: 'How many mock interview sessions do I need?', a: "This depends on your comfort level and the role's competitiveness — some candidates benefit from a single session, others prefer multiple rounds before the real interview." },
+        { q: 'Are mock interviews specific to my industry?', a: 'Yes, sessions are tailored to your target role, whether that\'s a voice process in BPO, a technical IT interview, or a managerial MNC round.' },
+        { q: 'Do I get feedback in writing?', a: 'Yes, you receive structured feedback covering strengths and specific areas to improve after each session.' },
       ],
       finalHeading: 'Walk In Ready, Not Nervous',
-      finalSub: 'Book your first mock interview and get feedback within a day.',
+      finalSub: 'Book a mock interview session with Placedly and walk into your real interview already prepared.',
       finalCtaLabel: 'Book Now',
       finalCtaHref: '/contact',
     }} />
