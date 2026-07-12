@@ -381,8 +381,8 @@ export default async function CapPage() {
 
         /* ── FAQs ── */
         .cap-faq-grid {
-          display: grid; grid-template-columns: 1fr; gap: 16px;
-          max-width: 760px; margin: 0 auto;
+          display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
+          max-width: 960px; margin: 0 auto;
         }
         .cap-faq-item {
           background: #fff; border: 1.5px solid ${BORDER};
@@ -443,6 +443,7 @@ export default async function CapPage() {
         @media (max-width: 768px) {
           .cap-two-col { grid-template-columns: 1fr; gap: 32px; }
           .cap-domains-grid { grid-template-columns: 1fr; }
+          .cap-faq-grid { grid-template-columns: 1fr; }
           .cap-stats-strip { flex-wrap: wrap; }
           .cap-stat-item { border-right: none; border-bottom: 1px solid ${BORDER}; }
           .cap-stat-item:last-child { border-bottom: none; }
