@@ -1,12 +1,18 @@
 import ServiceDetailPage from '../components/ServiceDetailPage';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'IT Hiring & Recruitment Services India | Placedly',
+  description: "Placedly's IT hiring services connect developers, engineers, and IT professionals with the right companies across India, from early-stage startups to large MNCs.",
+};
 
 export default function Page() {
   return (
     <ServiceDetailPage config={{
       breadcrumb: 'IT Hiring',
       tag: 'Placement Services',
-      title: 'IT Hiring for Developers & Tech Talent',
-      subtitle: 'From software developers to DevOps engineers — placement into IT roles matched to your tech stack and experience level.',
+      title: 'IT Hiring – Connecting Technical Talent with the Right Companies',
+      subtitle: "Placedly's IT hiring services connect developers, engineers, and IT professionals with the right companies across India, from early-stage startups to large MNCs.",
       stats: [
         { value: '20+', label: 'Tech Hiring Partners' },
         { value: '₹9L-₹35L', label: 'CTC Range Placed' },
@@ -16,29 +22,32 @@ export default function Page() {
       ctaPrimaryHref: '/vacancies?sector=it',
       ctaSecondaryLabel: 'Talk to an Advisor',
       ctaSecondaryHref: '/contact',
-      overviewHeading: 'Tech Hiring That Understands Tech',
-      overviewBody: 'Generic recruiters often can\'t tell a good match from a buzzword-matched resume. Our IT hiring vertical works with tech-literate advisors who understand stacks, seniority signals, and what hiring managers in engineering, QA, DevOps, and data actually look for — resulting in more relevant matches and faster placements.',
+      overviewHeading: 'Tech Hiring That Goes Beyond Keywords',
+      overviewBody: "Technical hiring comes with its own set of challenges — evaluating real skill versus resume keywords, understanding niche technology stacks, and matching candidates not just to a job title but to the actual working environment and team they'll thrive in. Placedly's IT hiring service bridges the gap between technical talent and growing companies by focusing on genuine skill and project-fit matching, not just keyword overlap. Whether the requirement is software development, QA, infrastructure, or emerging technology roles, we work to understand both what the company actually needs and what the candidate has genuinely built and worked on. We support candidates across the spectrum — from those targeting early-stage startups looking for versatile builders, to those aiming for structured, process-driven roles at larger MNCs — helping match expectations on both sides for a placement that lasts. A resume full of technology keywords doesn't always reflect real hands-on skill, and companies increasingly need recruitment partners who can tell the difference. Placedly's approach to IT hiring goes beyond surface-level matching, helping companies find candidates who can actually deliver, and helping candidates find roles where their real skills are valued.",
       featuresHeading: "What's Included",
       features: [
-        { title: 'Stack-Specific Matching', desc: 'Roles matched to your exact tech stack — frontend, backend, mobile, cloud, and more.' },
-        { title: 'Technical Interview Prep', desc: 'Mock technical rounds including DSA, system design, and stack-specific questions.' },
-        { title: 'Portfolio & GitHub Review', desc: 'Feedback on your portfolio, GitHub profile, and project presentation.' },
-        { title: 'Startup & Enterprise Access', desc: 'Roles across early-stage startups and large enterprise tech teams.' },
+        { title: 'Comprehensive Role Coverage', desc: 'Recruitment across development, QA, infrastructure, and emerging tech roles.' },
+        { title: 'Skill & Project-Fit Matching', desc: 'Matching based on actual technical skills, tools, and project experience.' },
+        { title: 'Diverse Company Access', desc: 'Access to opportunities at startups, mid-size companies, and MNCs.' },
+        { title: 'Technical Screening', desc: 'Technical screening support to validate candidate skill claims.' },
+        { title: 'Interview Guidance', desc: 'Guidance through technical interview rounds and assessments.' },
+        { title: 'Tech Compensation Support', desc: 'Support with offer discussions specific to tech compensation structures.' },
       ],
       processHeading: 'How It Works',
       process: [
-        { title: 'Tech Profile Review', desc: 'We assess your stack, experience level, and career goals.' },
-        { title: 'Role Matching', desc: 'Matched to open roles across our tech partner network.' },
-        { title: 'Technical Prep', desc: 'Mock technical interviews tailored to the specific role.' },
-        { title: 'Offer Support', desc: 'Negotiation and offer support through to joining.' },
+        { title: '1. Requirement Analysis', desc: 'Understanding the technical requirement and team context.' },
+        { title: '2. Sourcing & Screening', desc: 'Sourcing and initial technical screening of candidates.' },
+        { title: '3. Interview Coordination', desc: 'Coordinating technical interviews and assessments.' },
+        { title: '4. Offer Alignment', desc: 'Supporting offer discussions and compensation alignment.' },
+        { title: '5. Onboarding Support', desc: 'Follow-up support through the onboarding process.' },
       ],
       faqs: [
-        { q: 'What tech stacks do you place for?', a: 'Frontend, backend, full-stack, mobile, DevOps, data engineering, and QA automation roles.' },
-        { q: 'Do you support remote roles?', a: 'Yes, many of our partner companies offer remote and hybrid tech roles.' },
-        { q: 'Is technical interview prep included?', a: 'Yes — technical mock interviews are included as part of the placement process.' },
+        { q: 'What kind of IT roles do you place?', a: 'We cover a range of roles including development, QA, infrastructure, and emerging technology positions, matched to specific company needs.' },
+        { q: 'Do you place candidates at startups as well as large companies?', a: 'Yes, our network spans early-stage startups, mid-size companies, and large MNCs.' },
+        { q: 'How do you assess technical skill?', a: "We use structured screening and coordinate technical interview rounds to validate candidates' real, hands-on skills." },
       ],
-      finalHeading: 'Build Your Tech Career With Us',
-      finalSub: 'Browse open developer and tech roles today.',
+      finalHeading: 'Looking for Your Next Tech Role?',
+      finalSub: "Looking for your next tech role or hiring for one? Connect with Placedly's IT hiring team.",
       finalCtaLabel: 'View IT Roles',
       finalCtaHref: '/vacancies?sector=it',
     }} />
