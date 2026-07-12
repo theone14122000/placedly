@@ -1,12 +1,18 @@
 import ServiceDetailPage from '../components/ServiceDetailPage';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Job Referral Services India | Placedly',
+  description: "Placedly's job referral service connects candidates directly with verified openings across BPO, KPO, LPO, IT, and MNC sectors through its recruiter network.",
+};
 
 export default function Page() {
   return (
     <ServiceDetailPage config={{
       breadcrumb: 'Job Referrals',
       tag: 'Career Services',
-      title: 'Job Referrals From Our Employer Network',
-      subtitle: 'Skip the black hole of online applications — get directly referred into open roles through our network of hiring partners.',
+      title: 'Job Referrals – Skip the Queue with Direct Access to Verified Openings',
+      subtitle: "Placedly's job referral service connects candidates directly with verified openings across BPO, KPO, LPO, IT, and MNC sectors through its recruiter network.",
       stats: [
         { value: '40+', label: 'Partner Companies' },
         { value: '3x', label: 'Higher Response Rate' },
@@ -17,28 +23,31 @@ export default function Page() {
       ctaSecondaryLabel: 'See CAP Program',
       ctaSecondaryHref: '/cap',
       overviewHeading: 'Referrals Open Doors Applications Can\'t',
-      overviewBody: 'A referral moves your application to the top of the pile — often bypassing the initial resume screening entirely. Through our network of 40+ hiring partners across tech, BPO, finance, and healthcare, we connect qualified candidates directly to hiring managers.',
+      overviewBody: "Applying through job portals often means competing with hundreds of other candidates for the same posting, with no real way to stand out or know whether your application was even reviewed. Referrals work differently — they put your profile directly in front of the people making hiring decisions, which typically means faster responses and a stronger first impression. Placedly's job referral service uses its extensive recruiter and employer network to connect candidates directly with verified openings across BPO, KPO, LPO, IT, and non-IT sectors, pan-India. Rather than submitting into a black hole, your profile is actively presented to employers who are hiring for roles that genuinely match your background. This service isn't just about the introduction — Placedly stays involved through the process, supporting you from the initial referral through to interview scheduling and, ultimately, the offer. A referral carries more weight than a cold application because it comes with an implicit vouch — the employer knows the candidate has already been screened for fit. Placedly's recruiter relationships across BPO, KPO, LPO, IT, and MNC sectors mean candidates get access to openings and hiring managers that aren't always visible through public job portals.",
       featuresHeading: "What's Included",
       features: [
-        { title: 'Employer Network Access', desc: 'Direct introduction to hiring contacts across our partner companies.' },
-        { title: 'Profile Matching', desc: 'We match your skills and experience to currently open roles.' },
-        { title: 'Warm Introduction', desc: 'Your profile is personally shared with the hiring team, not submitted cold.' },
-        { title: 'Status Tracking', desc: 'Get updates on your referral status throughout the process.' },
+        { title: 'Direct Referrals', desc: "Direct referrals to verified, active openings through Placedly's employer network." },
+        { title: 'Faster Scheduling', desc: 'Faster interview scheduling compared to standard portal applications.' },
+        { title: 'Pan-India Access', desc: 'Access to roles across BPO, KPO, LPO, IT, and non-IT sectors pan-India.' },
+        { title: 'Profile Matching', desc: 'Profile matching based on your actual skills and experience, not mass submissions.' },
+        { title: 'Continued Support', desc: 'Continued support through interview scheduling and follow-ups.' },
+        { title: 'Offer Guidance', desc: 'Guidance through the offer stage until the role is finalised.' },
       ],
       processHeading: 'How It Works',
       process: [
-        { title: 'Profile Assessment', desc: 'We review your resume and career goals for fit.' },
-        { title: 'Role Matching', desc: 'Your profile is matched against current openings in our network.' },
-        { title: 'Warm Referral', desc: 'We introduce you directly to the hiring manager or recruiter.' },
-        { title: 'Interview Support', desc: 'You get interview prep support once the referral converts to a call.' },
+        { title: '1. Profile Review', desc: 'Profile review to understand your skills, experience, and target roles.' },
+        { title: '2. Role Matching', desc: "Matching against active, verified openings in Placedly's network." },
+        { title: '3. Direct Referral', desc: 'Direct referral submitted to the relevant employer or hiring manager.' },
+        { title: '4. Interview Scheduling', desc: 'Interview scheduling support once the employer responds.' },
+        { title: '5. Finalisation', desc: 'Ongoing support through to offer and finalisation.' },
       ],
       faqs: [
-        { q: 'Do I need to pay for referrals?', a: 'Referrals are part of CAP — our success-share model means you only pay after you\'re placed.' },
-        { q: 'What industries are covered?', a: 'Tech, BPO/KPO, finance, healthcare, operations, and more — see our live vacancies for current openings.' },
-        { q: 'How fast can I get referred?', a: 'Most qualified candidates are referred to at least one matching role within 5-7 business days.' },
+        { q: 'Is there a guarantee of a job through referrals?', a: 'Referrals significantly improve your chances of being seen and interviewed, but final hiring decisions rest with the employer based on interview performance and fit.' },
+        { q: 'What industries do referrals cover?', a: 'Referrals span BPO, KPO, LPO, IT, and non-IT sectors, covering a wide range of roles and experience levels pan-India.' },
+        { q: 'How is this different from just applying on a job portal?', a: 'Referrals put your profile directly in front of hiring decision-makers, rather than into a general applicant pool, typically resulting in faster and more meaningful responses.' },
       ],
       finalHeading: 'Get In Front of Real Hiring Managers',
-      finalSub: 'Browse live roles or let us match you directly.',
+      finalSub: "Get referred to your next opportunity through Placedly's recruiter network — apply for job referrals today.",
       finalCtaLabel: 'View Open Roles',
       finalCtaHref: '/vacancies',
     }} />
