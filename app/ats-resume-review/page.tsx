@@ -1,49 +1,54 @@
 import ServiceDetailPage from '../components/ServiceDetailPage';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'ATS Resume Review & Scan Services | Placedly',
+  description: "Placedly's ATS resume review checks your resume against real applicant tracking system parameters, identifying formatting and keyword issues causing rejections.",
+};
 
 export default function Page() {
   return (
     <ServiceDetailPage config={{
-      breadcrumb: 'Career Assistance Program (CAP)',
+      breadcrumb: 'ATS Resume Review',
       tag: 'Career Services',
-      title: 'Career Assistance Program (CAP) India',
-      subtitle: "Placedly's Career Assistance Program (CAP) offers end-to-end career guidance — resume building, LinkedIn optimization, mock interviews, and job referrals for freshers and professionals across India.",
+      title: 'ATS Resume Review – Find Out Why Your Resume Isn\'t Getting Through',
+      subtitle: "Placedly's ATS resume review checks your resume against real applicant tracking system parameters, identifying formatting and keyword issues causing rejections.",
       stats: [
-        { value: '5+', label: 'Sectors Covered' },
-        { value: '1-on-1', label: 'Dedicated Advisor' },
-        { value: '12%', label: 'Success Fee Only' },
+        { value: '75%+', label: 'Filtered Out by ATS' },
+        { value: '100%', label: 'Compatibility Check' },
+        { value: 'Line-by-Line', label: 'Actionable Feedback' },
       ],
-      ctaPrimaryLabel: 'Enrol in CAP',
+      ctaPrimaryLabel: 'Scan My Resume',
       ctaPrimaryHref: '/tools#ats-resume',
       ctaSecondaryLabel: 'Talk to an Advisor',
       ctaSecondaryHref: '/contact',
-      overviewHeading: 'Complete Career Support in India',
-      overviewBody: "Finding the right job in today's competitive market takes more than just applying to openings and hoping for the best. It requires a clear strategy, the right positioning, and consistent guidance at every stage — from figuring out which roles fit your skill set to actually walking into the interview room with confidence. That's exactly the gap Placedly's Career Assistance Program (CAP) is built to close. CAP is a structured, end-to-end career support system designed for freshers, experienced professionals, and career switchers across BPO, KPO, LPO, IT, and MNC sectors, pan-India. Instead of leaving candidates to figure things out on their own — juggling resume templates, random YouTube interview tips, and unresponsive job portals — Placedly assigns each candidate a dedicated advisor who understands their background, target roles, and career goals, and builds a personalised roadmap around them. The program brings together every service a job seeker actually needs under one roof: resume optimization, LinkedIn profile enhancement, ATS resume review, mock interviews, structured interview preparation, and direct job referrals. Rather than piecing together advice from multiple sources, candidates get a single, coordinated support system that moves them from 'where do I start' to 'I got the offer.' Most career support services stop at giving you a template or a checklist. CAP is different because it is relationship-driven — your advisor stays with you through the entire process, adjusts the plan as your search evolves, and connects you to real opportunities rather than just generic advice. With coverage across BPO, KPO, LPO, IT, and MNC sectors, Placedly understands the specific hiring patterns, expectations, and interview formats of each industry, which means the guidance you get is practical and relevant, not generic.",
+      overviewHeading: 'Is Your Resume Reaching a Human?',
+      overviewBody: "A large share of resumes never reach a human recruiter at all — they're filtered out by applicant tracking system (ATS) software before anyone sees them. This happens for reasons candidates often don't realise: unsupported formatting, missing keywords, tables or graphics that don't parse correctly, or a structure that confuses the software's parsing logic. Placedly's ATS resume review service is a diagnostic check specifically for this problem. We run your resume through the same lens applicant tracking systems use, identifying exactly where it's likely to fail — whether that's a formatting issue, a keyword gap against your target job descriptions, or a structural problem that's quietly costing you interviews. This isn't a generic proofread. It's a targeted analysis focused on one outcome: making sure your resume actually reaches a recruiter's desk instead of getting filtered out at the first automated step. Most candidates assume a rejection means they weren't qualified — when often the real issue is that the resume never made it past the software. Placedly's ATS review gives you clarity on this specific, fixable problem, so you're not repeating the same mistakes across dozens of applications without knowing why they're not converting into interviews.",
       featuresHeading: "What's Included",
       features: [
-        { title: '1-on-1 Onboarding', desc: 'One-on-one onboarding to understand your background, strengths, and target roles.' },
-        { title: 'Personalised Career Roadmap', desc: 'A personalised career roadmap with clear milestones and timelines.' },
-        { title: 'Resume & LinkedIn Optimization', desc: 'Resume building and LinkedIn optimization aligned to your target industry.' },
-        { title: 'Interview Preparation', desc: 'Structured mock interviews and interview preparation coaching.' },
-        { title: 'Direct Job Referrals', desc: "Direct referrals to verified openings through Placedly's employer network." },
-        { title: 'Continued Advisor Support', desc: 'Continued advisor support until you receive and accept an offer.' },
+        { title: 'ATS Compatibility Check', desc: 'Full ATS compatibility check across formatting, fonts, and file structure.' },
+        { title: 'Keyword Gap Analysis', desc: 'Keyword gap analysis against real job descriptions in your target field.' },
+        { title: 'Structural Issue ID', desc: 'Identification of structural issues like tables, columns, or graphics that break parsing.' },
+        { title: 'Actionable Feedback', desc: 'Line-by-line, actionable feedback on what to fix and why.' },
+        { title: 'Before-and-After Comparison', desc: 'Before-and-after comparison so you can see the impact of each fix.' },
+        { title: 'Submission Guidance', desc: 'Guidance on file format and naming conventions for submissions.' },
       ],
       processHeading: 'How It Works',
       process: [
-        { title: '1. Initial Consultation', desc: 'Initial consultation to assess your profile, goals, and target roles.' },
-        { title: '2. Roadmap Creation', desc: 'Roadmap creation covering resume, LinkedIn, interview prep, and referral strategy.' },
-        { title: '3. Execution Phase', desc: 'Resume and profile rebuild, mock interview rounds, and coaching sessions.' },
-        { title: '4. Job Matching & Referrals', desc: "Active job matching and referrals through Placedly's recruiter network." },
-        { title: '5. Offer & Onboarding', desc: "Offer negotiation support and onboarding guidance once you're selected." },
+        { title: '1. Submit Resume', desc: 'Submit your current resume and target job descriptions or industry.' },
+        { title: '2. Detailed Analysis', desc: 'We run a detailed ATS compatibility and keyword gap analysis.' },
+        { title: '3. Receive Report', desc: 'You receive a report highlighting specific issues and fixes.' },
+        { title: '4. Implement Changes', desc: 'Optional follow-up support to implement the recommended changes.' },
+        { title: '5. Final Check', desc: 'Final check to confirm the resume is now ATS-ready.' },
       ],
       faqs: [
-        { q: 'Who is CAP for?', a: 'CAP is designed for freshers entering the job market, experienced professionals looking to switch roles or industries, and career switchers who need structured guidance to reposition themselves.' },
-        { q: 'How long does the program take?', a: 'Timelines vary by candidate profile and target role, but most candidates complete the full CAP journey — from onboarding to offer — within a few weeks of consistent engagement.' },
-        { q: 'Is CAP only for IT roles?', a: 'No. CAP covers BPO, KPO, LPO, IT, and MNC roles, so candidates from a wide range of backgrounds and industries can benefit from the program.' },
-        { q: 'Is there a fee for CAP?', a: "CAP runs on a success-based model — a nominal service fee (12%) applies only once you accept a job offer through the program. There's no upfront cost, and full details are shared during your initial consultation." },
+        { q: 'Is this different from resume optimization?', a: 'Yes. ATS review is a focused diagnostic on compatibility and keyword gaps, while resume optimization is a full rebuild. Many candidates use ATS review first to understand the issues, then move to full optimization.' },
+        { q: 'Can I fix the issues myself after the review?', a: "Yes, the report is detailed enough for you to make the changes yourself, though we're also available to help implement them." },
+        { q: 'Does this work for any industry?', a: 'Yes, we tailor the keyword analysis to your specific target industry, whether that\'s BPO, KPO, IT, or MNC roles.' },
       ],
-      finalHeading: 'Ready to Get Started?',
-      finalSub: "Enrol in Placedly's Career Assistance Program today and get a dedicated advisor guiding every step of your job search. CAP is a success-based program — our fee applies only once you accept an offer, so there's nothing to pay upfront.",
-      finalCtaLabel: 'Enrol in CAP',
+      finalHeading: 'Get Your Resume ATS-Reviewed',
+      finalSub: "Get your resume ATS-reviewed by Placedly before you send out your next application.",
+      finalCtaLabel: 'Scan My Resume',
       finalCtaHref: '/tools#ats-resume',
     }} />
   );

@@ -10,8 +10,8 @@ import {
 import { getCmsMap, parseCmsJson } from '@/lib/cms';
 
 export const metadata: Metadata = {
-  title: 'Career Assistance Programme (CAP) — Placedly',
-  description: 'Placedly CAP: The flagship career growth programme for BPO, Healthcare Claims, Insurance & Finance professionals.',
+  title: 'Career Assistance Program (CAP) India | Placedly',
+  description: "Placedly's Career Assistance Program (CAP) offers end-to-end career guidance — resume building, LinkedIn optimization, mock interviews, and job referrals for freshers and professionals across India.",
 };
 
 const ORANGE = '#f97316';
@@ -27,13 +27,12 @@ const BG_SOFT = '#fafafa';
 const FONT = `"Inter","Outfit","Poppins",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif`;
 
 const benefits = [
-  'ATS-Optimized Resume + LinkedIn Rebuild',
-  '3 Mock Interview Sessions (HR + Technical + Negotiation)',
-  'Personalized Career Roadmap & Strategy',
-  'Direct Employer Connect — 10–15 Target Companies',
-  'Offer Negotiation Script & Salary Support',
-  '30-Day Post-Joining Support',
-  '48-Hour WhatsApp Support Throughout',
+  'One-on-one onboarding to understand your background, strengths, and target roles',
+  'A personalised career roadmap with clear milestones and timelines',
+  'Resume building and LinkedIn optimization aligned to your target industry',
+  'Structured mock interviews and interview preparation coaching',
+  "Direct referrals to verified openings through Placedly's employer network",
+  'Continued advisor support until you receive and accept an offer',
 ];
 
 const domains = [
@@ -46,13 +45,11 @@ const domains = [
 ];
 
 const steps = [
-  { num: 1, Icon: Phone,         title: 'Free Discovery Call',            badge: 'Free',                desc: "15-minute call. We understand your experience, goals and situation. Honest assessment — we'll tell you if we can help.",                                                tags: ['15–20 min', 'Zero Cost'] },
-  { num: 2, Icon: Search,        title: 'Deep Profile Assessment',        badge: 'Foundation',          desc: '45–60 minute session. Full career story, strengths, gaps, target companies. Your personalized roadmap is built here.',                                               tags: ['45–60 min', 'Roadmap Delivered'] },
-  { num: 3, Icon: FileSignature, title: 'Service Agreement Sign',         badge: 'Transparent',         desc: 'Digital service agreement signed. Scope, Success Share %, and terms — everything in writing before we start.',                                                       tags: ['Digital Agreement', 'Fully Transparent'] },
-  { num: 4, Icon: FileText,      title: 'Resume & LinkedIn Rebuild',      badge: 'Core',                desc: 'ATS-friendly resume, achievement-based bullets, domain keywords. LinkedIn updated too. Ready in 1–2 days. 2 revisions included.',                                   tags: ['1–2 Days', 'ATS Optimized', '2 Revisions'] },
-  { num: 5, Icon: Mic2,          title: 'Interview Mastery — 3 Sessions', badge: 'Biggest Edge',        desc: 'Session 1: HR Round. Session 2: Technical/Domain. Session 3: Full Mock + Salary Negotiation Script.',                                                               tags: ['~3 hrs total', 'Mock Interview', 'Negotiation Script'] },
-  { num: 6, Icon: Handshake,     title: 'Direct Employer Connect',        badge: 'Our Work',            desc: 'Your profile goes directly to hiring managers at 10–15 target companies — with a warm intro from us. We follow up, schedule, and track everything.',                 tags: ['7–21 Days Active', '10–15 Companies'] },
-  { num: 7, Icon: PartyPopper,   title: 'Career Grows — Success Share!',  badge: 'Partnership Complete', desc: 'New role confirmed. Better CTC. Real growth. Now we collect our Success Share — because we grew together.',                                                         tags: ['12% Success Share', '7 Day Window', 'GST Receipt'] },
+  { num: 1, Icon: Phone,         title: 'Initial Consultation',      badge: 'Step 1', desc: 'Initial consultation to assess your profile, goals, and target roles.', tags: ['Profile Assessment', 'Goal Setting'] },
+  { num: 2, Icon: Search,        title: 'Roadmap Creation',          badge: 'Step 2', desc: 'Roadmap creation covering resume, LinkedIn, interview prep, and referral strategy.', tags: ['Strategy', 'Milestones'] },
+  { num: 3, Icon: FileText,      title: 'Execution Phase',           badge: 'Step 3', desc: 'Execution phase — resume and profile rebuild, mock interview rounds, and coaching sessions.', tags: ['Rebuild', 'Mock Interviews'] },
+  { num: 4, Icon: Handshake,     title: 'Job Matching & Referrals',  badge: 'Step 4', desc: "Active job matching and referrals through Placedly's recruiter network.", tags: ['Direct Referrals', 'Recruiter Network'] },
+  { num: 5, Icon: PartyPopper,   title: 'Offer & Onboarding',        badge: 'Step 5', desc: "Offer negotiation support and onboarding guidance once you're selected.", tags: ['Negotiation', 'Onboarding'] },
 ];
 
 type CapCmsData = {
@@ -66,15 +63,15 @@ export default async function CapPage() {
   const cmsMap = await getCmsMap('cap:');
   const capCms = parseCmsJson<CapCmsData>(cmsMap, 'cap:data', {});
 
-  const heroTag      = capCms.hero?.tag      ?? 'Career Assistance Programme';
-  const heroTitle    = capCms.hero?.title    ?? 'Not Just a Job. A Career Transformation.';
-  const heroSubtitle = capCms.hero?.subtitle ?? "The CAP is Placedly's flagship programme for working professionals in BPO, Healthcare Claims, Insurance & Finance who want to grow — fast.";
+  const heroTag      = capCms.hero?.tag      ?? 'Career Assistance Program (CAP)';
+  const heroTitle    = capCms.hero?.title    ?? 'Complete Career Support in India';
+  const heroSubtitle = capCms.hero?.subtitle ?? "Placedly's Career Assistance Program (CAP) offers end-to-end career guidance — resume building, LinkedIn optimization, mock interviews, and job referrals for freshers and professionals across India.";
 
   const defaultStats = [
-    { num: '300+',  label: 'Professionals Placed' },
-    { num: '60%+',  label: 'Avg. Career Growth'   },
-    { num: '9 Days', label: 'Fastest Placement'   },
-    { num: '₹0',    label: 'Upfront Cost'         },
+    { num: '5+',  label: 'Sectors Covered'   },
+    { num: '1:1', label: 'Dedicated Advisor' },
+    { num: '12%', label: 'Success Fee Only'  },
+    { num: '₹0',  label: 'Upfront Cost'       },
   ];
   const heroStats = capCms.stats?.length
     ? capCms.stats.map(s => ({ num: s.value ?? '', label: s.label ?? '' }))
@@ -382,6 +379,28 @@ export default async function CapPage() {
           border: 1.5px solid ${BORDER}; border-radius: 999px; padding: 3px 10px;
         }
 
+        /* ── FAQs ── */
+        .cap-faq-grid {
+          display: grid; grid-template-columns: 1fr; gap: 16px;
+          max-width: 760px; margin: 0 auto;
+        }
+        .cap-faq-item {
+          background: #fff; border: 1.5px solid ${BORDER};
+          border-radius: 14px; padding: 22px 24px;
+          transition: border-color 0.18s;
+        }
+        .cap-faq-item:hover { border-color: ${ORANGE_BORDER}; }
+        .cap-faq-q {
+          font-size: 15px; font-weight: 800; color: ${BLACK};
+          margin-bottom: 8px; display: flex; align-items: center; gap: 10px;
+        }
+        .cap-faq-a {
+          font-size: 14px; color: ${GRAY}; line-height: 1.65;
+        }
+        .cap-faq-dot {
+          width: 8px; height: 8px; border-radius: 50%; background: ${ORANGE}; flex-shrink: 0;
+        }
+
         /* ── Final CTA ── */
         .cap-cta-box {
           background: ${ORANGE_LIGHT};
@@ -462,8 +481,23 @@ export default async function CapPage() {
           </div>
         </section>
 
-        {/* ── What You Get + Success Share ── */}
+        {/* ── Overview / Context ── */}
         <section className="cap-section">
+          <div className="cap-container" style={{ maxWidth: '860px' }}>
+            <div className="cap-eyebrow"><div className="cap-eyebrow-bar" />Why CAP</div>
+            <h2 className="cap-section-title">More Than Just Applying to Openings</h2>
+            <p className="cap-section-body" style={{ marginBottom: '0' }}>
+              Finding the right job in today's competitive market takes more than just applying to openings and hoping for the best. It requires a clear strategy, the right positioning, and consistent guidance at every stage — from figuring out which roles fit your skill set to actually walking into the interview room with confidence. That's exactly the gap Placedly's Career Assistance Program (CAP) is built to close.
+              <br /><br />
+              CAP is a structured, end-to-end career support system designed for freshers, experienced professionals, and career switchers across BPO, KPO, LPO, IT, and MNC sectors, pan-India. Instead of leaving candidates to figure things out on their own — juggling resume templates, random YouTube interview tips, and unresponsive job portals — Placedly assigns each candidate a dedicated advisor who understands their background, target roles, and career goals, and builds a personalised roadmap around them.
+              <br /><br />
+              The program brings together every service a job seeker actually needs under one roof: resume optimization, LinkedIn profile enhancement, ATS resume review, mock interviews, structured interview preparation, and direct job referrals. Rather than piecing together advice from multiple sources, candidates get a single, coordinated support system that moves them from 'where do I start' to 'I got the offer.'
+            </p>
+          </div>
+        </section>
+
+        {/* ── What You Get + Success Share ── */}
+        <section className="cap-section-alt">
           <div className="cap-container">
             <div className="cap-two-col">
               <div>
@@ -487,6 +521,15 @@ export default async function CapPage() {
 
               <div className="cap-share-card">
                 <div className="cap-share-card-header">
+                  <TrendingUp size={20} color={ORANGE} />
+                  <span className="cap-share-card-title">Why Choose Placedly</span>
+                </div>
+                <div style={{ padding: '20px 24px' }}>
+                  <p className="cap-section-body" style={{ marginBottom: '0', fontSize: '14px' }}>
+                    Most career support services stop at giving you a template or a checklist. CAP is different because it is relationship-driven — your advisor stays with you through the entire process, adjusts the plan as your search evolves, and connects you to real opportunities rather than just generic advice. With coverage across BPO, KPO, LPO, IT, and MNC sectors, Placedly understands the specific hiring patterns, expectations, and interview formats of each industry, which means the guidance you get is practical and relevant, not generic.
+                  </p>
+                </div>
+                <div className="cap-share-card-header" style={{ borderBottom: 'none', borderTop: '1.5px solid #fed7aa' }}>
                   <TrendingUp size={20} color={ORANGE} />
                   <span className="cap-share-card-title">Our Success Share Model</span>
                 </div>
@@ -521,7 +564,7 @@ export default async function CapPage() {
         </section>
 
         {/* ── Who We Help ── */}
-        <section className="cap-section-alt">
+        <section className="cap-section">
           <div className="cap-container">
             <div style={{ textAlign: 'center', marginBottom: '44px' }}>
               <div className="cap-eyebrow" style={{ justifyContent: 'center' }}>
@@ -545,13 +588,13 @@ export default async function CapPage() {
         </section>
 
         {/* ── The Journey ── */}
-        <section className="cap-section" id="how-it-works">
+        <section className="cap-section-alt" id="how-it-works">
           <div className="cap-container">
             <div style={{ textAlign: 'center', marginBottom: '52px' }}>
               <div className="cap-eyebrow" style={{ justifyContent: 'center' }}>
-                <div className="cap-eyebrow-bar" />The Journey
+                <div className="cap-eyebrow-bar" />How It Works
               </div>
-              <h2 className="cap-section-title">Your 7-Step <em>Career Growth Path</em></h2>
+              <h2 className="cap-section-title">Your Step-by-Step <em>Career Growth Path</em></h2>
             </div>
             <div className="cap-steps-wrap">
               {mergedSteps.map((step, i) => (
@@ -583,15 +626,45 @@ export default async function CapPage() {
           </div>
         </section>
 
-        {/* ── Final CTA ── */}
+        {/* ── FAQs ── */}
         <section className="cap-section">
+          <div className="cap-container">
+            <div style={{ textAlign: 'center', marginBottom: '44px' }}>
+              <div className="cap-eyebrow" style={{ justifyContent: 'center' }}>
+                <div className="cap-eyebrow-bar" />FAQs
+              </div>
+              <h2 className="cap-section-title">Frequently Asked <em>Questions</em></h2>
+            </div>
+            <div className="cap-faq-grid">
+              <div className="cap-faq-item">
+                <div className="cap-faq-q"><span className="cap-faq-dot" />Who is CAP for?</div>
+                <div className="cap-faq-a">CAP is designed for freshers entering the job market, experienced professionals looking to switch roles or industries, and career switchers who need structured guidance to reposition themselves.</div>
+              </div>
+              <div className="cap-faq-item">
+                <div className="cap-faq-q"><span className="cap-faq-dot" />How long does the program take?</div>
+                <div className="cap-faq-a">Timelines vary by candidate profile and target role, but most candidates complete the full CAP journey — from onboarding to offer — within a few weeks of consistent engagement.</div>
+              </div>
+              <div className="cap-faq-item">
+                <div className="cap-faq-q"><span className="cap-faq-dot" />Is CAP only for IT roles?</div>
+                <div className="cap-faq-a">No. CAP covers BPO, KPO, LPO, IT, and MNC roles, so candidates from a wide range of backgrounds and industries can benefit from the program.</div>
+              </div>
+              <div className="cap-faq-item">
+                <div className="cap-faq-q"><span className="cap-faq-dot" />Is there a fee for CAP?</div>
+                <div className="cap-faq-a">CAP runs on a success-based model — a nominal service fee (12%) applies only once you accept a job offer through the program. There's no upfront cost, and full details are shared during your initial consultation.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Final CTA ── */}
+        <section className="cap-section-alt">
           <div className="cap-container">
             <div className="cap-cta-box">
               <h2 className="cap-cta-title">
-                Ready to <em>Transform Your Career?</em>
+                Ready to <em>Get Started?</em>
               </h2>
               <p className="cap-cta-sub">
-                Zero upfront. You only pay after your career grows. Start with a free 15-minute discovery call.
+                Enrol in Placedly's Career Assistance Program today and get a dedicated advisor guiding every step of your job search. CAP is a success-based program — our fee applies only once you accept an offer, so there's nothing to pay upfront.
               </p>
               <div className="cap-cta-btns">
                 <a href="/cap/apply" className="btn-primary">Apply to CAP Now</a>
