@@ -261,30 +261,33 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
         dangerouslySetInnerHTML={{
           __html: `
             /* ════════════════════════════════════════
-               ★ FIX: Center + properly size bg video
-               (HeroBgVideo can render below the visible
-               viewport on mobile due to height/vh quirks —
-               this re-centers & scales it without touching
-               the component itself)
+               ★ FIX: Background video — confined to a
+               fixed band near the top of the hero
+               (NOT stretched to the full scroll height
+               of the section, which is what pushed it
+               out of view). Content stays layered above
+               it via z-index, exactly like the original
+               design intent.
             ════════════════════════════════════════ */
             .placedly-hero-mobile-brief {
               position: relative !important;
               overflow: hidden !important;
             }
 
-            /* Wrapper HeroBgVideo renders (covers common patterns) */
+            /* Wrapper HeroBgVideo renders */
             .placedly-hero-mobile-brief > div:has(video),
             .placedly-hero-mobile-brief [class*="HeroBgVideo"],
             .placedly-hero-mobile-brief [class*="hero-bg-video"],
             .placedly-hero-mobile-brief [class*="BgVideo"] {
               position: absolute !important;
-              inset: 0 !important;
               top: 0 !important;
               left: 0 !important;
               right: 0 !important;
-              bottom: 0 !important;
+              bottom: auto !important;
               width: 100% !important;
-              height: 100% !important;
+              height: 640px !important;
+              max-height: 72vh !important;
+              min-height: 420px !important;
               display: flex !important;
               align-items: center !important;
               justify-content: center !important;
@@ -292,10 +295,11 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               z-index: 0 !important;
               margin: 0 !important;
               padding: 0 !important;
+              inset: auto !important;
               transform: none !important;
             }
 
-            /* The actual <video> tag — center it and enlarge moderately */
+            /* The actual <video> tag — cover + center within that band */
             .placedly-hero-mobile-brief video {
               position: absolute !important;
               top: 50% !important;
@@ -307,7 +311,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               max-width: none !important;
               object-fit: cover !important;
               object-position: center center !important;
-              transform: translate(-50%, -50%) scale(1.18) !important;
+              transform: translate(-50%, -50%) scale(1.06) !important;
               transform-origin: center center !important;
               z-index: 0 !important;
               margin: 0 !important;
@@ -317,14 +321,26 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
             }
 
             @media (max-width: 640px) {
+              .placedly-hero-mobile-brief [class*="HeroBgVideo"],
+              .placedly-hero-mobile-brief [class*="BgVideo"] {
+                height: 560px !important;
+                max-height: 68vh !important;
+                min-height: 380px !important;
+              }
               .placedly-hero-mobile-brief video {
-                transform: translate(-50%, -50%) scale(1.22) !important;
+                transform: translate(-50%, -50%) scale(1.1) !important;
               }
             }
 
             @media (max-width: 380px) {
+              .placedly-hero-mobile-brief [class*="HeroBgVideo"],
+              .placedly-hero-mobile-brief [class*="BgVideo"] {
+                height: 500px !important;
+                max-height: 64vh !important;
+                min-height: 340px !important;
+              }
               .placedly-hero-mobile-brief video {
-                transform: translate(-50%, -50%) scale(1.28) !important;
+                transform: translate(-50%, -50%) scale(1.14) !important;
               }
             }
 
@@ -621,11 +637,6 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
 
             /* ════════════════════════════════════════
                ★ KILL DUPLICATE TOP MARQUEE
-               Only allow the marquee inside our mobile
-               slot to render — hides any other instance
-               of the partners marquee elsewhere on the
-               page (e.g. a desktop hero rendering it
-               above this component at mobile widths).
             ════════════════════════════════════════ */
             @media (max-width: 1024px) {
               body .placedly-partners-section {
@@ -647,7 +658,6 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               .placedly-hero-stat-cell-text span   { font-size: 8.5px !important; }
               .placedly-hero-stat-divider { margin: 3px 0 !important; }
 
-              /* marquee a little tighter on small screens */
               .placedly-hero-mobile-marquee-slot { margin-top: 22px !important; }
             }
             @media (max-width: 380px) {
