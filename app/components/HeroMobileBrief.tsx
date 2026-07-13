@@ -260,14 +260,10 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
       <style
         dangerouslySetInnerHTML={{
           __html: `
-            /* ════════════════════════════════════════
-               ★ Enlarge bg video slightly
-               (scoped to hero container only — doesn't
-               touch layout, position, or any other
-               element on the page)
-            ════════════════════════════════════════ */
-            .placedly-hero-mobile-brief video {
-              transform: scale(1.12) !important;
+            /* ── Enlarge background video & gradient ── */
+            .placedly-hero-mobile-brief > *:nth-child(1),
+            .placedly-hero-mobile-brief > *:nth-child(2) {
+              transform: scale(1.15) !important;
               transform-origin: center center !important;
             }
 
