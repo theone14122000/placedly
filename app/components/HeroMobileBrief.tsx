@@ -260,6 +260,80 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
       <style
         dangerouslySetInnerHTML={{
           __html: `
+            /* ════════════════════════════════════════
+               ★ FIX: Center + properly size bg video
+               (HeroBgVideo can render below the visible
+               viewport on mobile due to height/vh quirks —
+               this re-centers & scales it without touching
+               the component itself)
+            ════════════════════════════════════════ */
+            .placedly-hero-mobile-brief {
+              position: relative !important;
+              overflow: hidden !important;
+            }
+
+            /* Wrapper HeroBgVideo renders (covers common patterns) */
+            .placedly-hero-mobile-brief > div:has(video),
+            .placedly-hero-mobile-brief [class*="HeroBgVideo"],
+            .placedly-hero-mobile-brief [class*="hero-bg-video"],
+            .placedly-hero-mobile-brief [class*="BgVideo"] {
+              position: absolute !important;
+              inset: 0 !important;
+              top: 0 !important;
+              left: 0 !important;
+              right: 0 !important;
+              bottom: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+              display: flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              overflow: hidden !important;
+              z-index: 0 !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              transform: none !important;
+            }
+
+            /* The actual <video> tag — center it and enlarge moderately */
+            .placedly-hero-mobile-brief video {
+              position: absolute !important;
+              top: 50% !important;
+              left: 50% !important;
+              width: 100% !important;
+              height: 100% !important;
+              min-width: 100% !important;
+              min-height: 100% !important;
+              max-width: none !important;
+              object-fit: cover !important;
+              object-position: center center !important;
+              transform: translate(-50%, -50%) scale(1.18) !important;
+              transform-origin: center center !important;
+              z-index: 0 !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              inset: auto !important;
+              pointer-events: none !important;
+            }
+
+            @media (max-width: 640px) {
+              .placedly-hero-mobile-brief video {
+                transform: translate(-50%, -50%) scale(1.22) !important;
+              }
+            }
+
+            @media (max-width: 380px) {
+              .placedly-hero-mobile-brief video {
+                transform: translate(-50%, -50%) scale(1.28) !important;
+              }
+            }
+
+            /* Make sure content stays above the video layer */
+            .placedly-hero-mobile-brief > *:not(video):not([class*="BgVideo"]):not([class*="HeroBgVideo"]) {
+              position: relative !important;
+              z-index: 1 !important;
+            }
+
             /* ── CTA row ── */
             .placedly-hero-mobile-brief .placedly-hero-cta-row {
               display: flex !important;
