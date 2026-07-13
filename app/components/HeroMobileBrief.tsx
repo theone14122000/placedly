@@ -111,7 +111,19 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
   return (
     <div className="placedly-hero-mobile-brief" aria-label="Mobile hero">
       <HeroGradientBg />
-      <HeroBgVideo />
+
+      {/* ════════════════════════════════════════
+          ★ Video is wrapped in OUR OWN controlled
+          layer so we don't depend on guessing
+          HeroBgVideo's internal classnames. This
+          wrapper is forced out of normal document
+          flow (position:absolute) so it can never
+          push the copy/CTA/scene down below it —
+          it sits purely as a background layer.
+      ════════════════════════════════════════ */}
+      <div className="placedly-hero-video-layer" aria-hidden>
+        <HeroBgVideo />
+      </div>
 
       {/* ── Copy ── */}
       <div className="placedly-lift-hero-copy">
@@ -261,24 +273,27 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
         dangerouslySetInnerHTML={{
           __html: `
             /* ════════════════════════════════════════
-               ★ FIX: Background video — confined to a
-               fixed band near the top of the hero
-               (NOT stretched to the full scroll height
-               of the section, which is what pushed it
-               out of view). Content stays layered above
-               it via z-index, exactly like the original
-               design intent.
+               ★ FIX: Video background layer
+               Wrapping HeroBgVideo in our own div
+               (.placedly-hero-video-layer) means we
+               control positioning directly instead of
+               guessing HeroBgVideo's internal classnames
+               (which are likely hashed CSS-module names
+               that our old attribute selectors couldn't
+               match — that's why the video kept its
+               normal-flow height and pushed content
+               down). This wrapper is absolutely
+               positioned and taken OUT of flow, so
+               content above/after it in the DOM renders
+               visually ON TOP of it, exactly like a
+               proper hero background.
             ════════════════════════════════════════ */
             .placedly-hero-mobile-brief {
               position: relative !important;
               overflow: hidden !important;
             }
 
-            /* Wrapper HeroBgVideo renders */
-            .placedly-hero-mobile-brief > div:has(video),
-            .placedly-hero-mobile-brief [class*="HeroBgVideo"],
-            .placedly-hero-mobile-brief [class*="hero-bg-video"],
-            .placedly-hero-mobile-brief [class*="BgVideo"] {
+            .placedly-hero-video-layer {
               position: absolute !important;
               top: 0 !important;
               left: 0 !important;
@@ -288,19 +303,32 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               height: 640px !important;
               max-height: 72vh !important;
               min-height: 420px !important;
-              display: flex !important;
-              align-items: center !important;
-              justify-content: center !important;
               overflow: hidden !important;
               z-index: 0 !important;
               margin: 0 !important;
               padding: 0 !important;
-              inset: auto !important;
+              pointer-events: none !important;
+              display: block !important;
+            }
+
+            /* Force whatever HeroBgVideo renders inside to fully fill our layer */
+            .placedly-hero-video-layer > * {
+              position: absolute !important;
+              inset: 0 !important;
+              top: 0 !important;
+              left: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+              max-width: none !important;
+              max-height: none !important;
+              margin: 0 !important;
+              padding: 0 !important;
               transform: none !important;
             }
 
-            /* The actual <video> tag — cover + center within that band */
-            .placedly-hero-mobile-brief video {
+            /* The actual video/img element — center + cover + moderate scale */
+            .placedly-hero-video-layer video,
+            .placedly-hero-video-layer img {
               position: absolute !important;
               top: 50% !important;
               left: 50% !important;
@@ -313,39 +341,37 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               object-position: center center !important;
               transform: translate(-50%, -50%) scale(1.06) !important;
               transform-origin: center center !important;
-              z-index: 0 !important;
               margin: 0 !important;
               padding: 0 !important;
               inset: auto !important;
-              pointer-events: none !important;
             }
 
             @media (max-width: 640px) {
-              .placedly-hero-mobile-brief [class*="HeroBgVideo"],
-              .placedly-hero-mobile-brief [class*="BgVideo"] {
+              .placedly-hero-video-layer {
                 height: 560px !important;
                 max-height: 68vh !important;
                 min-height: 380px !important;
               }
-              .placedly-hero-mobile-brief video {
+              .placedly-hero-video-layer video,
+              .placedly-hero-video-layer img {
                 transform: translate(-50%, -50%) scale(1.1) !important;
               }
             }
 
             @media (max-width: 380px) {
-              .placedly-hero-mobile-brief [class*="HeroBgVideo"],
-              .placedly-hero-mobile-brief [class*="BgVideo"] {
+              .placedly-hero-video-layer {
                 height: 500px !important;
                 max-height: 64vh !important;
                 min-height: 340px !important;
               }
-              .placedly-hero-mobile-brief video {
+              .placedly-hero-video-layer video,
+              .placedly-hero-video-layer img {
                 transform: translate(-50%, -50%) scale(1.14) !important;
               }
             }
 
-            /* Make sure content stays above the video layer */
-            .placedly-hero-mobile-brief > *:not(video):not([class*="BgVideo"]):not([class*="HeroBgVideo"]) {
+            /* Everything else in the hero renders ABOVE the video layer */
+            .placedly-hero-mobile-brief > *:not(.placedly-hero-video-layer) {
               position: relative !important;
               z-index: 1 !important;
             }
