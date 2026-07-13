@@ -111,19 +111,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
   return (
     <div className="placedly-hero-mobile-brief" aria-label="Mobile hero">
       <HeroGradientBg />
-
-      {/* ════════════════════════════════════════
-          ★ Video is wrapped in OUR OWN controlled
-          layer so we don't depend on guessing
-          HeroBgVideo's internal classnames. This
-          wrapper is forced out of normal document
-          flow (position:absolute) so it can never
-          push the copy/CTA/scene down below it —
-          it sits purely as a background layer.
-      ════════════════════════════════════════ */}
-      <div className="placedly-hero-video-layer" aria-hidden>
-        <HeroBgVideo />
-      </div>
+      <HeroBgVideo />
 
       {/* ── Copy ── */}
       <div className="placedly-lift-hero-copy">
@@ -273,107 +261,14 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
         dangerouslySetInnerHTML={{
           __html: `
             /* ════════════════════════════════════════
-               ★ FIX: Video background layer
-               Wrapping HeroBgVideo in our own div
-               (.placedly-hero-video-layer) means we
-               control positioning directly instead of
-               guessing HeroBgVideo's internal classnames
-               (which are likely hashed CSS-module names
-               that our old attribute selectors couldn't
-               match — that's why the video kept its
-               normal-flow height and pushed content
-               down). This wrapper is absolutely
-               positioned and taken OUT of flow, so
-               content above/after it in the DOM renders
-               visually ON TOP of it, exactly like a
-               proper hero background.
+               ★ Enlarge bg video slightly
+               (scoped to hero container only — doesn't
+               touch layout, position, or any other
+               element on the page)
             ════════════════════════════════════════ */
-            .placedly-hero-mobile-brief {
-              position: relative !important;
-              overflow: hidden !important;
-            }
-
-            .placedly-hero-video-layer {
-              position: absolute !important;
-              top: 0 !important;
-              left: 0 !important;
-              right: 0 !important;
-              bottom: auto !important;
-              width: 100% !important;
-              height: 640px !important;
-              max-height: 72vh !important;
-              min-height: 420px !important;
-              overflow: hidden !important;
-              z-index: 0 !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              pointer-events: none !important;
-              display: block !important;
-            }
-
-            /* Force whatever HeroBgVideo renders inside to fully fill our layer */
-            .placedly-hero-video-layer > * {
-              position: absolute !important;
-              inset: 0 !important;
-              top: 0 !important;
-              left: 0 !important;
-              width: 100% !important;
-              height: 100% !important;
-              max-width: none !important;
-              max-height: none !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              transform: none !important;
-            }
-
-            /* The actual video/img element — center + cover + moderate scale */
-            .placedly-hero-video-layer video,
-            .placedly-hero-video-layer img {
-              position: absolute !important;
-              top: 50% !important;
-              left: 50% !important;
-              width: 100% !important;
-              height: 100% !important;
-              min-width: 100% !important;
-              min-height: 100% !important;
-              max-width: none !important;
-              object-fit: cover !important;
-              object-position: center center !important;
-              transform: translate(-50%, -50%) scale(1.06) !important;
+            .placedly-hero-mobile-brief video {
+              transform: scale(1.12) !important;
               transform-origin: center center !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              inset: auto !important;
-            }
-
-            @media (max-width: 640px) {
-              .placedly-hero-video-layer {
-                height: 560px !important;
-                max-height: 68vh !important;
-                min-height: 380px !important;
-              }
-              .placedly-hero-video-layer video,
-              .placedly-hero-video-layer img {
-                transform: translate(-50%, -50%) scale(1.1) !important;
-              }
-            }
-
-            @media (max-width: 380px) {
-              .placedly-hero-video-layer {
-                height: 500px !important;
-                max-height: 64vh !important;
-                min-height: 340px !important;
-              }
-              .placedly-hero-video-layer video,
-              .placedly-hero-video-layer img {
-                transform: translate(-50%, -50%) scale(1.14) !important;
-              }
-            }
-
-            /* Everything else in the hero renders ABOVE the video layer */
-            .placedly-hero-mobile-brief > *:not(.placedly-hero-video-layer) {
-              position: relative !important;
-              z-index: 1 !important;
             }
 
             /* ── CTA row ── */
@@ -663,6 +558,11 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
 
             /* ════════════════════════════════════════
                ★ KILL DUPLICATE TOP MARQUEE
+               Only allow the marquee inside our mobile
+               slot to render — hides any other instance
+               of the partners marquee elsewhere on the
+               page (e.g. a desktop hero rendering it
+               above this component at mobile widths).
             ════════════════════════════════════════ */
             @media (max-width: 1024px) {
               body .placedly-partners-section {
@@ -684,6 +584,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               .placedly-hero-stat-cell-text span   { font-size: 8.5px !important; }
               .placedly-hero-stat-divider { margin: 3px 0 !important; }
 
+              /* marquee a little tighter on small screens */
               .placedly-hero-mobile-marquee-slot { margin-top: 22px !important; }
             }
             @media (max-width: 380px) {
