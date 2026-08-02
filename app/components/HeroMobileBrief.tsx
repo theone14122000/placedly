@@ -349,36 +349,42 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ── Popup cards: contain text inside the rounded card
-           instead of letting it overflow past the edges ── */
+           instead of letting it overflow past the edges.
+           Sized up + set to 70% opacity per latest feedback. ── */
         .placedly-lift-hero .placedly-lift-card--mobile {
           box-sizing: border-box !important;
           overflow: hidden !important;
-          max-width: 138px !important;
-          padding: 8px 10px !important;
+          max-width: 172px !important;
+          padding: 10px 13px !important;
+          opacity: 0.7 !important;
         }
         .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-card-profile {
-          gap: 6px !important;
-          margin-bottom: 4px !important;
+          gap: 7px !important;
+          margin-bottom: 5px !important;
+        }
+        .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-avatar--photo {
+          width: 32px !important;
+          height: 32px !important;
         }
         .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-name {
-          font-size: 11px !important;
-          line-height: 1.2 !important;
+          font-size: 13px !important;
+          line-height: 1.25 !important;
           white-space: nowrap !important;
           overflow: hidden !important;
           text-overflow: ellipsis !important;
-          max-width: 92px !important;
+          max-width: 118px !important;
         }
         .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-role {
-          font-size: 9px !important;
-          line-height: 1.2 !important;
+          font-size: 10.5px !important;
+          line-height: 1.25 !important;
           white-space: nowrap !important;
           overflow: hidden !important;
           text-overflow: ellipsis !important;
-          max-width: 92px !important;
+          max-width: 118px !important;
         }
         .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-card-line {
-          font-size: 9.5px !important;
-          line-height: 1.35 !important;
+          font-size: 11px !important;
+          line-height: 1.4 !important;
           white-space: normal !important;
           word-break: break-word !important;
           overflow-wrap: break-word !important;
@@ -414,16 +420,21 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           white-space: nowrap;
         }
         .placedly-liftoff-m-stats {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 8px;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          gap: 6px;
         }
         .placedly-liftoff-m-stat-card {
+          flex: 1 1 0;
+          min-width: 0;
           display: flex;
+          flex-direction: column;
           align-items: center;
-          gap: 8px;
-          padding: 10px 12px;
-          border-radius: 14px;
+          text-align: center;
+          gap: 5px;
+          padding: 8px 4px;
+          border-radius: 12px;
           background: #ffffff;
           border: 1.5px solid rgba(249,115,22,0.30);
           box-shadow: 0 3px 12px rgba(249,115,22,0.08);
@@ -432,8 +443,8 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 26px;
-          height: 26px;
+          width: 22px;
+          height: 22px;
           border-radius: 50%;
           flex-shrink: 0;
           background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(249,115,22,0.06));
@@ -443,24 +454,28 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
         .placedly-liftoff-m-stat-text {
           display: flex;
           flex-direction: column;
+          align-items: center;
           gap: 0px;
           min-width: 0;
+          width: 100%;
         }
         .placedly-liftoff-m-stat-value {
-          font-size: 13px !important;
+          font-size: 12px !important;
           font-weight: 800 !important;
           letter-spacing: -0.02em !important;
           color: #f97316 !important;
           line-height: 1.15;
         }
         .placedly-liftoff-m-stat-label {
-          font-size: 9.5px !important;
+          font-size: 7.5px !important;
           font-weight: 500 !important;
           color: #64748b !important;
-          white-space: nowrap;
+          line-height: 1.2;
           overflow: hidden;
           text-overflow: ellipsis;
-          display: block;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
       `}</style>
     </div>
