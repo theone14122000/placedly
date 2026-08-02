@@ -37,176 +37,6 @@ function buildRowSequence(companies: string[]): string[] {
   return sequence;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   LOGO COMPONENTS
-══════════════════════════════════════════════════════════ */
-const VB = '0 0 24 24';
-
-function LogoExl() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <rect x="2" y="4" width="20" height="16" rx="2" fill="#1A2D5A" opacity="0.08" />
-      <text x="12" y="15.5" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="9" fontWeight="800" fill="#1A2D5A" letterSpacing="0.6">EXL</text>
-    </svg>
-  );
-}
-
-function LogoQuatrro() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <circle cx="12" cy="12" r="9.5" fill="none" stroke="#E11D48" strokeWidth="1.5" />
-      <text x="12" y="15.5" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="9" fontWeight="800" fill="#E11D48" letterSpacing="0.4">Q</text>
-    </svg>
-  );
-}
-
-function LogoEbiz() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <rect x="2" y="4" width="20" height="16" rx="3" fill="#0F766E" />
-      <text x="12" y="15" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="8" fontWeight="800" fill="#FFFFFF" letterSpacing="0.4">eBiz</text>
-    </svg>
-  );
-}
-
-function LogoWns() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <rect x="2" y="6" width="20" height="12" rx="2" fill="#8B0000" />
-      <text x="12" y="14.5" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="7" fontWeight="800" fill="#FFFFFF" letterSpacing="0.5">WNS</text>
-    </svg>
-  );
-}
-
-function LogoOptum() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <circle cx="12" cy="12" r="10" fill="#00A19A" />
-      <circle cx="12" cy="12" r="3.5" fill="#FFFFFF" />
-    </svg>
-  );
-}
-
-function LogoCognizant() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <path fill="#1A3C8B" d="M12 2 L20 8 L20 16 L12 22 L4 16 L4 8 Z" />
-      <path fill="#1A3C8B" d="M9 9 H15 V15 H9 Z" opacity="0.35" />
-    </svg>
-  );
-}
-
-function LogoWipro() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <circle cx="12" cy="12" r="10" fill="#341C56" />
-      <path fill="#FFFFFF" d="M8 8 L16 8 L16 10.5 L13 10.5 L13 16 L11 16 L11 10.5 L8 10.5 Z" />
-    </svg>
-  );
-}
-
-function LogoInfosys() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <circle cx="12" cy="12" r="10" fill="#007CC0" />
-      <text x="12" y="15" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="6" fontWeight="800" fill="#FFFFFF" letterSpacing="0.3">INFOSYS</text>
-    </svg>
-  );
-}
-
-function LogoMphasis() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <rect x="2" y="4" width="20" height="16" rx="2" fill="#9F1B3D" />
-      <text x="12" y="15" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="6.5" fontWeight="800" fill="#FFFFFF" letterSpacing="0.4">MPHASIS</text>
-    </svg>
-  );
-}
-
-function LogoHcl() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <path fill="#0D47A1" d="M2 12c2-5 5-8 10-8s8 3 10 8c-2 5-5 8-10 8S4 17 2 12Z" />
-      <text x="12" y="14" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="6.5" fontWeight="800" fill="#FFFFFF" letterSpacing="0.4">HCL</text>
-    </svg>
-  );
-}
-
-function LogoGenpact() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <rect x="2" y="2" width="20" height="20" rx="10" fill="#FF6B00" />
-      <text x="12" y="15" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="7" fontWeight="800" fill="#FFFFFF" letterSpacing="0.4">G</text>
-    </svg>
-  );
-}
-
-function LogoAccessHealthcare() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <rect x="2" y="4" width="20" height="16" rx="2" fill="#0E5A8A" />
-      <text x="12" y="13" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="4.5" fontWeight="800" fill="#FFFFFF" letterSpacing="0.2">ACCESS</text>
-      <text x="12" y="17" textAnchor="middle" fontFamily="Inter,system-ui,sans-serif" fontSize="4" fontWeight="700" fill="#FFFFFF" letterSpacing="0.2">HEALTHCARE</text>
-    </svg>
-  );
-}
-
-function LogoConifer() {
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <path fill="#2E7D32" d="M12 2 L7.5 11 L10.5 11 L7 17.5 L11.5 17.5 L11.5 22 L12.5 22 L12.5 17.5 L17 17.5 L13.5 11 L16.5 11 Z" />
-    </svg>
-  );
-}
-
-const LOGO_MAP: Record<string, () => JSX.Element> = {
-  'EXL Services':       () => <LogoExl />,
-  'Quatrro':            () => <LogoQuatrro />,
-  'eBiz Solutions':     () => <LogoEbiz />,
-  'WNS Global':         () => <LogoWns />,
-  'Optum':              () => <LogoOptum />,
-  'Cognizant':          () => <LogoCognizant />,
-  'Wipro':              () => <LogoWipro />,
-  'Infosys BPM':        () => <LogoInfosys />,
-  'Mphasis':            () => <LogoMphasis />,
-  'HCL':                () => <LogoHcl />,
-  'Genpact':            () => <LogoGenpact />,
-  'Access Healthcare':  () => <LogoAccessHealthcare />,
-  'Conifer Health':     () => <LogoConifer />,
-};
-
-function LogoFallback({ name }: { name: string }) {
-  const initials = name
-    .replace(/[.,]/g, '')
-    .split(/\s+/)
-    .map((w) => w[0])
-    .join('')
-    .slice(0, 3)
-    .toUpperCase();
-  return (
-    <svg viewBox={VB} aria-hidden>
-      <rect x="2" y="4" width="20" height="16" rx="3" fill="#475569" />
-      <text
-        x="12" y="15.5"
-        textAnchor="middle"
-        fontFamily="Inter,system-ui,sans-serif"
-        fontSize={initials.length > 2 ? '6' : '8'}
-        fontWeight="800"
-        fill="#FFFFFF"
-        letterSpacing="0.3"
-      >
-        {initials}
-      </text>
-    </svg>
-  );
-}
-
-function renderCompanyLogo(name: string): JSX.Element {
-  const factory = LOGO_MAP[name];
-  if (factory) return factory();
-  return <LogoFallback name={name} />;
-}
-
 function LogoRow({
   companies,
   reverse,
@@ -233,9 +63,6 @@ function LogoRow({
               title={name}
               aria-label={name}
             >
-              <span className="placedly-partners-logo-svg" aria-hidden>
-                {renderCompanyLogo(name)}
-              </span>
               <span className="placedly-partners-logo-name">{name}</span>
             </span>
           ))}
@@ -248,9 +75,6 @@ function LogoRow({
               title={name}
               aria-hidden
             >
-              <span className="placedly-partners-logo-svg" aria-hidden>
-                {renderCompanyLogo(name)}
-              </span>
               <span className="placedly-partners-logo-name">{name}</span>
             </span>
           ))}
@@ -402,24 +226,6 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
           transform: translateY(-1px);
         }
 
-        .placedly-partners-logo-svg {
-          width: 26px;
-          height: 26px;
-          flex-shrink: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          overflow: hidden;
-          background: #ffffff;
-          box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.06);
-        }
-        .placedly-partners-logo-svg svg {
-          width: 26px;
-          height: 26px;
-          display: block;
-        }
-
         .placedly-partners-logo-name {
           font-size: 19px;
           font-weight: 700;
@@ -479,21 +285,10 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
             height: 28px !important;
           }
 
+          /* Edge fade masks removed on mobile — they were showing
+             up as visible seams/borders on the left and right */
           .placedly-partners-edge {
-            width: 32px !important;
-          }
-
-          .placedly-partners-edge--left {
-            left: 0 !important;
-            background: linear-gradient(90deg,
-              rgba(255,255,255,1) 0%,
-              rgba(255,255,255,0) 100%) !important;
-          }
-          .placedly-partners-edge--right {
-            right: 0 !important;
-            background: linear-gradient(270deg,
-              rgba(255,255,255,1) 0%,
-              rgba(255,255,255,0) 100%) !important;
+            display: none !important;
           }
 
           .placedly-partners-inner {
@@ -509,16 +304,6 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
             border: none !important;
             white-space: nowrap !important;
             flex-shrink: 0 !important;
-          }
-
-          .placedly-partners-logo-svg {
-            width: 18px !important;
-            height: 18px !important;
-            box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.06) !important;
-          }
-          .placedly-partners-logo-svg svg {
-            width: 18px !important;
-            height: 18px !important;
           }
 
           .placedly-partners-logo-name {
@@ -547,19 +332,11 @@ export default function HiringPartnersMarquee({ cms = {} }: { cms?: Cms }) {
             gap: 5px !important;
             margin: 0 11px !important;
           }
-          .placedly-partners-logo-svg,
-          .placedly-partners-logo-svg svg {
-            width: 16px !important;
-            height: 16px !important;
-          }
           .placedly-partners-logo-name {
             font-size: 12px !important;
           }
           .placedly-partners-row {
             height: 24px !important;
-          }
-          .placedly-partners-edge {
-            width: 24px !important;
           }
         }
       `}</style>

@@ -175,8 +175,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
       />
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Geist:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
         /* ── Font ── */
         .placedly-lift-hero,
         .placedly-lift-hero *,
@@ -650,13 +648,22 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
       </div>
 
       {/* ════════════════════════════════════════
+          Mobile hero — rendered first in DOM so it
+          shows directly below the navbar on small
+          screens. The desktop block above is hidden
+          via CSS at mobile widths, so it takes no
+          space; the marquee below used to visually
+          land above this on mobile — now fixed by
+          placing this before the marquee slot.
+      ════════════════════════════════════════ */}
+      <HeroMobileBrief cms={cms} />
+
+      {/* ════════════════════════════════════════
           ★ MARQUEE — clear gap above, full width
       ════════════════════════════════════════ */}
       <div className="placedly-hero-marquee-slot">
         <HiringPartnersMarquee cms={cms} />
       </div>
-
-      <HeroMobileBrief cms={cms} />
     </section>
   );
 }

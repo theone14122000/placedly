@@ -302,17 +302,87 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
 
       <style>{`
         /* Mobile-only tightening for the CTA row so it doesn't
-           fight the headline/subline rhythm on small screens */
-        .placedly-liftoff-m-ctas {
+           fight the headline/subline rhythm on small screens.
+           Compound selector (two classes) beats the global
+           ".placedly-lift-hero-ctas { flex-direction: column }"
+           rule from Hero.tsx regardless of DOM order. */
+        .placedly-liftoff-m-ctas.placedly-lift-hero-ctas {
           margin-top: 16px;
+          flex-direction: row !important;
+          flex-wrap: nowrap;
+          justify-content: center;
+          gap: 6px;
+          max-width: 360px;
+          width: 100%;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .placedly-liftoff-m-ctas.placedly-lift-hero-ctas .placedly-hero-cta-pill {
+          width: auto !important;
+          flex: 1 1 0;
+          min-width: 0;
+          padding: 7px 9px 7px 7px !important;
+          font-size: 9.5px;
           justify-content: center;
         }
-        @media (max-width: 640px) {
-          .placedly-liftoff-m-ctas {
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
+        .placedly-liftoff-m-ctas .placedly-hero-cta-pill-icon {
+          width: 16px;
+          height: 16px;
+        }
+        .placedly-liftoff-m-ctas .placedly-hero-cta-pill-label {
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .placedly-liftoff-m-ctas .placedly-hero-cta-pill-arrow {
+          width: 12px;
+          height: 12px;
+        }
+        @media (max-width: 360px) {
+          .placedly-liftoff-m-ctas.placedly-lift-hero-ctas .placedly-hero-cta-pill {
+            padding: 6px 6px 6px 6px !important;
+            font-size: 8.5px;
           }
+          .placedly-liftoff-m-ctas .placedly-hero-cta-pill-icon {
+            width: 14px;
+            height: 14px;
+          }
+        }
+
+        /* ── Popup cards: contain text inside the rounded card
+           instead of letting it overflow past the edges ── */
+        .placedly-lift-hero .placedly-lift-card--mobile {
+          box-sizing: border-box !important;
+          overflow: hidden !important;
+          max-width: 138px !important;
+          padding: 8px 10px !important;
+        }
+        .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-card-profile {
+          gap: 6px !important;
+          margin-bottom: 4px !important;
+        }
+        .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-name {
+          font-size: 11px !important;
+          line-height: 1.2 !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          max-width: 92px !important;
+        }
+        .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-role {
+          font-size: 9px !important;
+          line-height: 1.2 !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          max-width: 92px !important;
+        }
+        .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-card-line {
+          font-size: 9.5px !important;
+          line-height: 1.35 !important;
+          white-space: normal !important;
+          word-break: break-word !important;
+          overflow-wrap: break-word !important;
+          margin: 0 !important;
         }
 
         /* ── Compact stats grid ── */
