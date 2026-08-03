@@ -3,6 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
 import { verifyPassword } from '@/lib/password';
 import { rateLimit } from '@/lib/rateLimit';
+import { AUTH_SECRET } from '@/lib/auth-secret';
 
 /**
  * Resolve auth URL at runtime.
@@ -33,7 +34,7 @@ if (!process.env.AUTH_TRUST_HOST) {
 }
 
 export const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: AUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: 'credentials',

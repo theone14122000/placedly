@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { AUTH_SECRET } from '@/lib/auth-secret';
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  const secureCookie =
-    process.env.NEXTAUTH_URL?.startsWith('https://') ?? (process.env.VERCEL_URL ? true : false);
-
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET, secureCookie });
+  // Derive the cookie name from the actual request protocol instead of env
+  // vars: on Vercel (https) NextAuth sets `__Secure-next-auth.session-token`,
+  // in local dev (http) it sets `next-auth.session-token`.
+  const token = await getToken({ req, secret: AUTH_SECRET, secureCookie: req.nextUrl.protocol === 'https:' });
 
   if (
     pathname === '/login' ||
