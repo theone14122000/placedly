@@ -1268,4 +1268,4 @@ function ParallelSection({ cms }: { cms: Cms }) {
       `}</style>
     </section>
   );
-}
+} 
