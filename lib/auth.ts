@@ -4,7 +4,15 @@ import { prisma } from '@/lib/prisma';
 import { verifyPassword } from '@/lib/password';
 import { rateLimit } from '@/lib/rateLimit';
 
-/** Resolve auth URL at runtime on Vercel (never bake localhost into production builds). */
+/**
+ * Resolve auth URL at runtime.
+ * - Never bake localhost into production builds.
+ * - On Vercel the deployment URL is available via VERCEL_URL.
+ * - On any other host (Railway, Render, Fly, custom domain) we trust the
+ *   request Host header via AUTH_TRUST_HOST so redirects/cookies always
+ *   point at the domain the visitor is actually using — even when the
+ *   committed .env.local still contains http://localhost:3000.
+ */
 if (!process.env.NEXTAUTH_URL) {
   if (process.env.VERCEL_URL) {
     process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
@@ -13,8 +21,14 @@ if (!process.env.NEXTAUTH_URL) {
   }
 }
 
-/** Vercel proxy: allow host header when NEXTAUTH_URL is inferred at runtime */
-if (process.env.VERCEL && !process.env.AUTH_TRUST_HOST) {
+// Only pin NEXTAUTH_URL to localhost in local development. In production we
+// let the host header decide so login works on the real domain.
+if (process.env.NODE_ENV === 'production' && !process.env.VERCEL_URL) {
+  delete process.env.NEXTAUTH_URL;
+}
+
+/** Trust the request host header on every platform (Vercel, Railway, custom domains). */
+if (!process.env.AUTH_TRUST_HOST) {
   process.env.AUTH_TRUST_HOST = 'true';
 }
 
