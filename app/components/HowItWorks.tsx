@@ -344,6 +344,12 @@ function TabButton({
   tab: TabDef; active: boolean; tickKey: number;
   onSelect: (id: string) => void;
 }) {
+  /* Resolved once, then applied directly (inline) to both the icon and
+     the label text below. Inline styles always win the CSS cascade,
+     so the label can never end up invisible again regardless of any
+     other stylesheet rule (e.g. global resets) fighting for `color`. */
+  const tabColor = active ? ORANGE : TEXT_MUTED;
+
   return (
     <button
       type="button"
@@ -352,13 +358,21 @@ function TabButton({
       onClick={() => onSelect(tab.id)}
       className={`placedly-hiw-tab${active ? ' is-active' : ''}`}
       style={{
-        color: active ? ORANGE : TEXT_MUTED,
+        color: tabColor,
         boxShadow: active ? `0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px ${ORANGE}40` : 'none',
         borderColor: active ? ORANGE : BORDER,
       }}
     >
-      <tab.Icon size={13} strokeWidth={2.2} aria-hidden className="placedly-hiw-tab-icon" />
-      <span className="placedly-hiw-tab-label">{tab.label}</span>
+      <tab.Icon
+        size={13}
+        strokeWidth={2.2}
+        aria-hidden
+        className="placedly-hiw-tab-icon"
+        color={tabColor}
+      />
+      <span className="placedly-hiw-tab-label" style={{ color: tabColor }}>
+        {tab.label}
+      </span>
       {active && (
         <motion.span
           key={`${tab.id}-${tickKey}`}
@@ -974,14 +988,11 @@ function ParallelSection({ cms }: { cms: Cms }) {
         .placedly-hiw-tab.is-active {
           background: ${SURFACE};
           border-color: ${ORANGE};
-          color: ${ORANGE};
         }
-        .placedly-hiw-tab-icon { flex-shrink: 0; transition: color 0.3s; color: ${TEXT_MUTED}; }
-        .placedly-hiw-tab.is-active .placedly-hiw-tab-icon { color: ${ORANGE}; }
+        .placedly-hiw-tab-icon { flex-shrink: 0; transition: color 0.3s; }
         .placedly-hiw-tab-label {
           line-height: 1.15;
           transition: color 0.3s;
-          color: inherit;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -1257,4 +1268,4 @@ function ParallelSection({ cms }: { cms: Cms }) {
       `}</style>
     </section>
   );
-} 
+}
