@@ -985,6 +985,8 @@ function ParallelSection({ cms }: { cms: Cms }) {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          min-width: 0;
+          flex: 1 1 auto;
         }
         .placedly-hiw-tab-progress {
           position: absolute;

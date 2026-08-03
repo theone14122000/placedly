@@ -187,6 +187,8 @@ function dotStyle(color: string): React.CSSProperties {
 
 /* ═══════════════════════════════════════
    ScrollingStrip — shared by both sections
+   (fade-mask edges removed per request —
+   no left/right border/seam on the strip)
 ═══════════════════════════════════════ */
 function ScrollingStrip({
   items,
@@ -205,27 +207,6 @@ function ScrollingStrip({
         padding: '10px 0',
       }}
     >
-      {/* fade edges */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 2,
-          pointerEvents: 'none',
-          background: isDark
-            ? `linear-gradient(90deg,
-                rgba(6,9,18,1) 0%,
-                transparent 10%,
-                transparent 90%,
-                rgba(6,9,18,1) 100%)`
-            : `linear-gradient(90deg,
-                rgba(255,255,255,1) 0%,
-                transparent 10%,
-                transparent 90%,
-                rgba(255,255,255,1) 100%)`,
-        }}
-      />
       <motion.div
         animate={{ x: ['0%', '-50%'] }}
         transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
