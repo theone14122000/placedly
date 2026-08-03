@@ -5,15 +5,13 @@ import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import {
   Eye, EyeOff, Mail, Lock, ArrowRight,
-  CheckCircle2, Users, Link2, GraduationCap,
-  Sparkles,
+  CheckCircle2, Sparkles,
 } from 'lucide-react';
 
 /* ── Design tokens ── */
 const ORANGE        = '#f97316';
 const ORANGE_DARK   = '#ea580c';
 const ORANGE_SOFT   = 'rgba(249,115,22,0.08)';
-const ORANGE_MED    = 'rgba(249,115,22,0.14)';
 const ORANGE_BORDER = 'rgba(249,115,22,0.22)';
 const ORANGE_RING   = 'rgba(249,115,22,0.15)';
 const BLACK         = '#0b0d20';
@@ -24,85 +22,28 @@ const SURFACE       = '#ffffff';
 const BG_ALT        = '#f9fafb';
 const FONT          = `'Inter','Manrope','Geist','Plus Jakarta Sans',system-ui,sans-serif`;
 
-/* ── CMS defaults ── */
-const LOGIN_DEFAULTS: Record<string, string> = {
-  'login:stat1Num': '300+', 'login:stat1Label': 'Placed',
-  'login:stat2Num': '60%+', 'login:stat2Label': 'Avg Growth',
-  'login:stat3Num': '₹0',   'login:stat3Label': 'Upfront',
-  'login:adminHint': 'Admin & ops staff can log in on any tab.',
-  'login:candidateLabel':   'Candidate',
-  'login:candidateTagline': 'Welcome back to your career journey.',
-  'login:candidateSub':     'Access granted only to approved CAP participants. Log in with the credentials sent to your email.',
-  'login:candidatePerk1':   'Track your CAP programme progress in real time',
-  'login:candidatePerk2':   'Access interview schedules & advisor feedback',
-  'login:candidatePerk3':   'View and download your rebuilt resume',
-  'login:candidatePerk4':   'Browse live job opportunities matched to your profile',
-  'login:candidateNote':    'Credentials are sent by email after your CAP application is approved by our team.',
-  'login:candidateCtaText': 'Apply for CAP →',
-  'login:candidateCtaHref': '/cap/apply',
-  'login:candidateCtaPre':  'Not enrolled yet?',
-  'login:candidateErrMsg':  'Invalid email or password. If you applied for CAP, your account may still be pending approval.',
-  'login:partnerLabel':     'Partner',
-  'login:partnerTagline':   'Track your referrals and grow your earnings.',
-  'login:partnerSub':       'Partner portal access for registered Placedly freelancers. Log in with your partner credentials.',
-  'login:partnerPerk1':     'View all candidates referred via your link',
-  'login:partnerPerk2':     'Track commission status and payout history',
-  'login:partnerPerk3':     'Access training materials and SOP guides',
-  'login:partnerPerk4':     'Copy your referral link and share instantly',
-  'login:partnerNote':      'Partner accounts are created by the Placedly team. Contact us to become a partner.',
-  'login:partnerErrMsg':    'Invalid email or password. Contact the Placedly team if you need access.',
-  'login:recruiterLabel':   'Recruiter',
-  'login:recruiterTagline': 'Manage your pipeline from screening to offer.',
-  'login:recruiterSub':     'ATS portal for Placedly recruiters. Access your candidate pipeline, notes, and stage management.',
-  'login:recruiterPerk1':   'Full ATS — screen, shortlist, and move candidates',
-  'login:recruiterPerk2':   'Add call notes, interview feedback, and stage updates',
-  'login:recruiterPerk3':   'Search and filter by role, stage, and status',
-  'login:recruiterPerk4':   'Export candidate data to CSV',
-  'login:recruiterNote':    'Recruiter accounts are set up by the Placedly operations team.',
-  'login:recruiterErrMsg':  'Invalid email or password. Contact the Placedly team if you need access.',
-};
-
-/* ── Portal config — ALL orange ── */
-const PORTAL_KEYS = ['candidate', 'partner', 'recruiter'] as const;
-type PortalKey = typeof PORTAL_KEYS[number];
-
-const PORTAL_META: Record<PortalKey, {
-  Icon: typeof GraduationCap;
-  legacyKey: string;
-}> = {
-  candidate: { Icon: GraduationCap, legacyKey: 'candidate' },
-  partner:   { Icon: Link2,         legacyKey: 'freelancer' },
-  recruiter: { Icon: Users,         legacyKey: 'recruiter'  },
-};
+const PERKS = [
+  'Single secure login for every portal',
+  'Directed automatically to your dashboard',
+  'Access your pipeline, progress & referrals',
+];
 
 type LoginState = 'idle' | 'loading';
 
 export default function LoginPage() {
-  const [portal, setPortal]           = useState<PortalKey>('candidate');
   const [focused, setFocused]         = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm]               = useState({ email: '', password: '' });
   const [state, setState]             = useState<LoginState>('idle');
   const [error, setError]             = useState('');
-  const [cms, setCms]                 = useState(LOGIN_DEFAULTS);
-
-  useEffect(() => {
-    fetch('/api/admin/content?prefix=login:')
-      .then(r => r.json())
-      .then((saved: Record<string, string>) => setCms({ ...LOGIN_DEFAULTS, ...saved }))
-      .catch(() => {});
-  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('error')) {
-      setError(g(`login:${portal}ErrMsg`));
+      setError('Invalid email or password. Please check your credentials and try again.');
       setState('idle');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [portal, cms]);
-
-  const g = (k: string) => cms[k] ?? LOGIN_DEFAULTS[k] ?? '';
+  }, []);
 
   /* input style — orange focus */
   const fi = (n: string): React.CSSProperties => ({
@@ -122,30 +63,16 @@ export default function LoginPage() {
     transition: 'border-color .18s, box-shadow .18s, background .18s',
   });
 
-  const switchPortal = (key: PortalKey) => {
-    setPortal(key);
-    setError('');
-    setState('idle');
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setState('loading');
     setError('');
-    sessionStorage.setItem('placedly_login_portal', portal);
     await signIn('credentials', {
       email:       form.email,
       password:    form.password,
       callbackUrl: '/auth/redirect',
     });
   };
-
-  const stats   = [1, 2, 3].map(i => ({ n: g(`login:stat${i}Num`), l: g(`login:stat${i}Label`) }));
-  const perks   = [1, 2, 3, 4].map(i => g(`login:${portal}Perk${i}`)).filter(Boolean);
-  const tagline = g(`login:${portal}Tagline`);
-  const lastWord  = tagline.split(' ').pop() ?? '';
-  const restWords = tagline.split(' ').slice(0, -1).join(' ');
-  const hasCta  = portal === 'candidate';
 
   return (
     <div className="al-root">
@@ -176,10 +103,6 @@ export default function LoginPage() {
         }
         @keyframes al-spin {
           to { transform: rotate(360deg); }
-        }
-        @keyframes al-shimmer {
-          0%  { background-position:-400px 0; }
-          100%{ background-position: 400px 0; }
         }
 
         /* ── Layout ── */
@@ -285,38 +208,6 @@ export default function LoginPage() {
           line-height: 1.5;
         }
 
-        /* stats strip on left */
-        .al-stats {
-          display: grid;
-          grid-template-columns: repeat(3,1fr);
-          border-top: 1px solid rgba(255,255,255,0.07);
-          padding-top: 24px;
-          gap: 12px;
-          margin-top: auto;
-          animation: al-fade-in 0.6s 0.3s ease both;
-        }
-        .al-stat {
-          text-align: center;
-          cursor: default;
-          transition: transform .2s ease;
-        }
-        .al-stat:hover { transform: translateY(-2px); }
-        .al-stat-num {
-          font-size: 18px;
-          font-weight: 900;
-          color: #fff;
-          line-height: 1;
-          transition: color .2s ease;
-        }
-        .al-stat:hover .al-stat-num { color: ${ORANGE}; }
-        .al-stat-label {
-          font-size: 10px;
-          color: rgba(255,255,255,0.35);
-          margin-top: 3px;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-        }
-
         /* ── Right panel ── */
         .al-right {
           flex: 1;
@@ -332,46 +223,6 @@ export default function LoginPage() {
           animation: al-fade-up 0.55s 0.1s ease both;
         }
 
-        /* Portal toggle */
-        .al-toggle {
-          display: flex;
-          background: ${BG_ALT};
-          border: 1px solid ${BORDER};
-          border-radius: 12px;
-          padding: 4px;
-          margin-bottom: 28px;
-          gap: 2px;
-        }
-        .al-toggle-btn {
-          flex: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-          padding: 9px 10px;
-          border-radius: 9px;
-          border: none;
-          cursor: pointer;
-          font-family: ${FONT};
-          font-size: 12px;
-          font-weight: 500;
-          background: transparent;
-          color: ${MUTED};
-          transition: background .2s ease, color .2s ease,
-                      box-shadow .2s ease, transform .2s ease;
-        }
-        .al-toggle-btn:hover:not(.is-active) {
-          background: rgba(249,115,22,0.06);
-          color: ${ORANGE};
-        }
-        .al-toggle-btn.is-active {
-          background: ${SURFACE};
-          color: ${ORANGE};
-          font-weight: 700;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-          transform: none;
-        }
-
         /* Form heading */
         .al-form-title {
           font-size: 26px;
@@ -385,13 +236,6 @@ export default function LoginPage() {
           color: ${MUTED};
           margin: 0 0 24px;
         }
-        .al-form-sub a {
-          color: ${ORANGE};
-          font-weight: 600;
-          text-decoration: none;
-          transition: color .18s;
-        }
-        .al-form-sub a:hover { color: ${ORANGE_DARK}; }
 
         /* Error box */
         .al-error {
@@ -473,14 +317,6 @@ export default function LoginPage() {
           line-height: 1.7;
         }
 
-        /* Admin hint */
-        .al-hint {
-          margin-top: 16px;
-          text-align: center;
-          font-size: 11px;
-          color: #cbd5e1;
-        }
-
         /* Password toggle button */
         .al-pw-toggle {
           position: absolute;
@@ -496,13 +332,6 @@ export default function LoginPage() {
           transition: color .18s;
         }
         .al-pw-toggle:hover { color: ${ORANGE}; }
-
-        /* Divider line */
-        .al-divider {
-          height: 1px;
-          background: linear-gradient(90deg, transparent, ${ORANGE_BORDER}, transparent);
-          margin: 24px 0;
-        }
 
         /* ── Mobile logo ── */
         .al-mobile-logo { display: none; margin-bottom: 28px; }
@@ -543,22 +372,24 @@ export default function LoginPage() {
           <div className="al-portal-label">
             <span className="al-portal-label-bar" />
             <span className="al-portal-label-text">
-              {g(`login:${portal}Label`)} Portal
+              Member Sign In
             </span>
           </div>
 
           {/* Heading */}
           <h1 className="al-heading">
-            {restWords}{' '}
-            <span className="al-heading-accent">{lastWord}</span>
+            Welcome back to{' '}
+            <span className="al-heading-accent">Placedly</span>
           </h1>
 
           {/* Sub */}
-          <p className="al-sub">{g(`login:${portal}Sub`)}</p>
+          <p className="al-sub">
+            Log in once with your credentials and we will take you straight to your dashboard.
+          </p>
 
           {/* Perks */}
           <div className="al-perks">
-            {perks.map((perk, i) => (
+            {PERKS.map((perk, i) => (
               <div key={perk} className="al-perk" style={{ animationDelay: `${0.18 + i * 0.06}s` }}>
                 <CheckCircle2
                   size={15}
@@ -570,16 +401,6 @@ export default function LoginPage() {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Stats */}
-        <div className="al-stats" style={{ position: 'relative', zIndex: 1 }}>
-          {stats.map(s => (
-            <div key={s.n} className="al-stat">
-              <div className="al-stat-num">{s.n}</div>
-              <div className="al-stat-label">{s.l}</div>
-            </div>
-          ))}
         </div>
       </div>
 
@@ -594,39 +415,11 @@ export default function LoginPage() {
             <img src="/logo.png" alt="Placedly" style={{ height: '44px', width: 'auto' }} />
           </Link>
 
-          {/* Portal toggle */}
-          <div className="al-toggle" role="tablist" aria-label="Portal selector">
-            {PORTAL_KEYS.map(key => {
-              const m      = PORTAL_META[key];
-              const active = key === portal;
-              return (
-                <button
-                  key={key}
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => switchPortal(key)}
-                  className={`al-toggle-btn${active ? ' is-active' : ''}`}
-                >
-                  <m.Icon size={13} />
-                  {g(`login:${key}Label`)}
-                </button>
-              );
-            })}
-          </div>
-
           {/* Heading */}
           <div style={{ marginBottom: '24px' }}>
             <h2 className="al-form-title">Sign in</h2>
             <p className="al-form-sub">
-              {hasCta
-                ? <>
-                    {g('login:candidateCtaPre')}{' '}
-                    <Link href={g('login:candidateCtaHref')}>
-                      {g('login:candidateCtaText')}
-                    </Link>
-                  </>
-                : `Enter your credentials to access the ${g(`login:${portal}Label`).toLowerCase()} portal.`
-              }
+              Enter your email and password to access your portal.
             </p>
           </div>
 
@@ -702,8 +495,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="al-divider" />
-
           {/* Note */}
           <div className="al-note">
             <div style={{
@@ -715,11 +506,8 @@ export default function LoginPage() {
                 Access Info
               </span>
             </div>
-            {g(`login:${portal}Note`)}
+            After signing in you will be redirected automatically to the correct dashboard for your role.
           </div>
-
-          {/* Admin hint */}
-          <p className="al-hint">{g('login:adminHint')}</p>
 
         </div>
       </div>
