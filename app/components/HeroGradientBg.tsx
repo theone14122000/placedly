@@ -1,5 +1,5 @@
 /** Liftoff-style hero gradient — full asset, no CSS crop (1400×513) */
-export const HERO_LIFTOFF_GRADIENT_SRC = '/images/hero-liftoff-bg.png';
+export const HERO_LIFTOFF_GRADIENT_SRC = '/images/hero-liftoff-bg.avif';
 
 export default function HeroGradientBg() {
   return (
