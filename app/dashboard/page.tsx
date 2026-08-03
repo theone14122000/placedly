@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { CheckCircle2, Clock, Briefcase, BookOpen, TrendingUp, ChevronRight, ArrowRight } from 'lucide-react';
+import { CheckCircle2, Clock, Briefcase, BookOpen, TrendingUp, ChevronRight, ArrowRight, CalendarDays, MessageSquare, FileDown } from 'lucide-react';
 import Link from 'next/link';
 
 const JOURNEY_LABELS = [
@@ -19,6 +19,9 @@ const BGS    = ['#eff6ff', '#fff7ed', '#f0fdf4', '#fef2f2', '#faf5ff', '#ecfeff'
 
 type Profile = {
   name: string; capStep: number; programme: string; status: string;
+  interviewSchedule: string | null;
+  advisorFeedback: string | null;
+  resumeUrl: string | null;
 };
 
 type CourseRow = {
@@ -129,6 +132,57 @@ export default function DashboardHome() {
           </div>
         ))}
       </div>
+
+      {/* Advisor updates */}
+      {(profile?.interviewSchedule || profile?.advisorFeedback || profile?.resumeUrl) && (
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,.04)', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <MessageSquare size={16} color="#2145fb" />
+            </div>
+            <div>
+              <div style={{ fontSize: '15px', fontWeight: 800, color: '#0b0d20' }}>Updates from your Advisor</div>
+              <div style={{ fontSize: '12px', color: '#94a3b8' }}>Latest notes, feedback and files shared with you</div>
+            </div>
+          </div>
+          <div style={{ display: 'grid', gap: '14px', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
+            {profile.interviewSchedule && (
+              <div style={{ border: '1px solid #f1f5f9', background: '#fafcff', borderRadius: '12px', padding: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 700, color: '#2145fb', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '8px' }}>
+                  <CalendarDays size={13} /> Interview Schedule
+                </div>
+                <div style={{ fontSize: '13px', color: '#374151', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{profile.interviewSchedule}</div>
+              </div>
+            )}
+            {profile.advisorFeedback && (
+              <div style={{ border: '1px solid #f1f5f9', background: '#fafcff', borderRadius: '12px', padding: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 700, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '8px' }}>
+                  <MessageSquare size={13} /> Advisor Feedback
+                </div>
+                <div style={{ fontSize: '13px', color: '#374151', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{profile.advisorFeedback}</div>
+              </div>
+            )}
+            {profile.resumeUrl && (
+              <div style={{ border: '1px solid #f1f5f9', background: '#fafcff', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '8px' }}>
+                  <FileDown size={13} /> Your Resume
+                </div>
+                <div style={{ fontSize: '13px', color: '#374151', lineHeight: 1.6, marginBottom: '12px' }}>
+                  Your advisor has shared an updated resume. Download it to use for applications.
+                </div>
+                <a
+                  href={profile.resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', alignSelf: 'flex-start', padding: '8px 16px', background: '#16a34a', color: '#fff', borderRadius: '8px', fontSize: '12px', fontWeight: 700, textDecoration: 'none', fontFamily: "'Poppins',sans-serif" }}
+                >
+                  <FileDown size={13} /> Download
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Two-col */}
       <div className="dash-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '20px' }}>

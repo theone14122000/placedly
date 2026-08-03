@@ -1,11 +1,14 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Users, Search, CheckCircle2, XCircle, Clock, Mail, Phone, RefreshCw } from 'lucide-react';
+import { Users, Search, CheckCircle2, XCircle, Clock, Mail, Phone, RefreshCw, Pencil, X } from 'lucide-react';
 
 type Candidate = {
   id: string; name: string; email: string; phone: string;
   status: 'ACTIVE' | 'EXPIRED' | 'SUSPENDED';
   approvedAt: string; validUntil: string; lastLoginAt: string | null;
+  interviewSchedule: string | null;
+  advisorFeedback: string | null;
+  resumeUrl: string | null;
   application: { programme: { name: string; cycleDays: number } };
 };
 
@@ -23,6 +26,9 @@ export default function AdminUsersPage() {
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'ACTIVE' | 'EXPIRED' | 'SUSPENDED'>('ALL');
   const [loading, setLoading] = useState(true);
   const [actionId, setActionId] = useState<string | null>(null);
+  const [editFor, setEditFor] = useState<Candidate | null>(null);
+  const [editForm, setEditForm] = useState({ interviewSchedule: '', advisorFeedback: '', resumeUrl: '' });
+  const [editBusy, setEditBusy] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -42,6 +48,28 @@ export default function AdminUsersPage() {
     });
     await load();
     setActionId(null);
+  };
+
+  const openEdit = (c: Candidate) => {
+    setEditFor(c);
+    setEditForm({
+      interviewSchedule: c.interviewSchedule ?? '',
+      advisorFeedback: c.advisorFeedback ?? '',
+      resumeUrl: c.resumeUrl ?? '',
+    });
+  };
+
+  const saveDetails = async () => {
+    if (!editFor) return;
+    setEditBusy(true);
+    await fetch('/api/admin/users', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: editFor.id, ...editForm }),
+    });
+    setEditBusy(false);
+    setEditFor(null);
+    load();
   };
 
   const filtered = candidates.filter(c => {
@@ -159,6 +187,9 @@ export default function AdminUsersPage() {
                             Suspend
                           </button>
                         )}
+                        <button onClick={() => openEdit(c)} style={{ padding: '5px 10px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600, color: '#2145fb', fontFamily: "'Poppins',sans-serif", display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <Pencil size={11} /> Details
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -168,6 +199,62 @@ export default function AdminUsersPage() {
           </table>
         )}
       </div>
+
+      {/* Edit details modal */}
+      {editFor && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+          <div style={{ background: '#fff', borderRadius: '16px', width: '100%', maxWidth: 520, maxHeight: '90vh', overflowY: 'auto', padding: 'clamp(20px,5vw,28px)', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <div>
+                <div style={{ fontSize: '17px', fontWeight: 800, color: '#0b0d20' }}>Edit Candidate Details</div>
+                <div style={{ fontSize: '12px', color: '#64748b', marginTop: 2 }}>{editFor.name} · {editFor.email}</div>
+              </div>
+              <button onClick={() => setEditFor(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4 }}><X size={18} /></button>
+            </div>
+
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase' as const, letterSpacing: '0.5px', marginBottom: 5 }}>Interview Schedule</label>
+              <textarea
+                value={editForm.interviewSchedule}
+                onChange={e => setEditForm(f => ({ ...f, interviewSchedule: e.target.value }))}
+                rows={3}
+                placeholder="e.g. Interview scheduled for Mon 10 Aug, 4 PM — Google Meet link sent."
+                style={{ display: 'block', width: '100%', padding: '10px 12px', border: '1.5px solid #e2e8f0', borderRadius: '9px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', outline: 'none', boxSizing: 'border-box' as const, resize: 'vertical' as const }}
+              />
+            </div>
+
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase' as const, letterSpacing: '0.5px', marginBottom: 5 }}>Advisor Feedback</label>
+              <textarea
+                value={editForm.advisorFeedback}
+                onChange={e => setEditForm(f => ({ ...f, advisorFeedback: e.target.value }))}
+                rows={3}
+                placeholder="Latest feedback from the candidate's advisor…"
+                style={{ display: 'block', width: '100%', padding: '10px 12px', border: '1.5px solid #e2e8f0', borderRadius: '9px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', outline: 'none', boxSizing: 'border-box' as const, resize: 'vertical' as const }}
+              />
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase' as const, letterSpacing: '0.5px', marginBottom: 5 }}>Rebuilt Resume URL</label>
+              <input
+                value={editForm.resumeUrl}
+                onChange={e => setEditForm(f => ({ ...f, resumeUrl: e.target.value }))}
+                placeholder="Paste link or upload via Media Library"
+                style={{ display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '9px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', outline: 'none', boxSizing: 'border-box' as const }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={saveDetails} disabled={editBusy} style={{ padding: '9px 20px', background: editBusy ? '#93a5fd' : '#2145fb', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 700, cursor: editBusy ? 'not-allowed' : 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+                {editBusy ? 'Saving…' : 'Save Details'}
+              </button>
+              <button onClick={() => setEditFor(null)} style={{ padding: '9px 16px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '9px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

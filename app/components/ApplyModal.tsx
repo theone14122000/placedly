@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 interface Job {
-  id: number;
+  id: string | number;
   role: string;
   company: string;
   logo: string;
@@ -61,10 +61,13 @@ export default function ApplyModal({ job, onClose }: Props) {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     firstName: '', lastName: '',
+    email: '', phone: '',
     experience: '', noticePeriod: '',
     education: '', location: '',
     currentCtc: '', expectedCtc: '',
@@ -98,9 +101,35 @@ export default function ApplyModal({ job, onClose }: Props) {
     setStep('tnc');
   };
 
-  const handleConfirm = () => {
-    if (!agreed) return;
-    setStep('done');
+  const handleConfirm = async () => {
+    if (!agreed || submitting) return;
+    setSubmitting(true);
+    setError('');
+
+    const formData = new FormData();
+    formData.append('vacancyId', String(job.id));
+    formData.append('name', `${form.firstName} ${form.lastName}`.trim());
+    formData.append('email', form.email);
+    formData.append('phone', form.phone);
+    formData.append('experience', form.experience);
+    formData.append('noticePeriod', form.noticePeriod);
+    formData.append('education', form.education);
+    formData.append('currentCtc', form.currentCtc);
+    formData.append('expectedCtc', form.expectedCtc);
+    formData.append('skills', form.skills);
+    formData.append('usShift', form.usShift === 'yes' ? 'Yes' : 'No');
+    if (resumeFile) formData.append('resume', resumeFile);
+
+    try {
+      const res = await fetch('/api/vacancies/apply', { method: 'POST', body: formData });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
+      setStep('done');
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -161,8 +190,23 @@ export default function ApplyModal({ job, onClose }: Props) {
                 </div>
               </div>
 
-              {/* Exp + Notice */}
+              {/* Contact row */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                <div style={fieldS}>
+                  <label style={labelS}>Email Address *</label>
+                  <input style={fi('em')} required type="email" placeholder="you@email.com" value={form.email}
+                    onFocus={() => setFocusedField('em')} onBlur={() => setFocusedField('')}
+                    onChange={e => setForm({ ...form, email: e.target.value })} />
+                </div>
+                <div style={fieldS}>
+                  <label style={labelS}>Phone Number *</label>
+                  <input style={fi('ph')} required placeholder="+91 98765 43210" value={form.phone}
+                    onFocus={() => setFocusedField('ph')} onBlur={() => setFocusedField('')}
+                    onChange={e => setForm({ ...form, phone: e.target.value })} />
+                </div>
+              </div>
+
+              {/* Exp + Notice */}              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                 <div style={fieldS}>
                   <label style={labelS}>Total Experience *</label>
                   <input style={fi('exp')} required placeholder="e.g. 3 years 6 months" value={form.experience}
@@ -358,33 +402,39 @@ export default function ApplyModal({ job, onClose }: Props) {
             <div style={{ display: 'flex', gap: '10px' }}>
               <button
                 onClick={() => setStep('form')}
+                disabled={submitting}
                 style={{
                   flex: 1, padding: '13px',
                   border: '1.5px solid #e2e8f0', borderRadius: '10px',
                   background: '#f8faff', color: '#374151',
                   fontWeight: 600, fontSize: '14px',
-                  fontFamily: "'Poppins', sans-serif", cursor: 'pointer',
+                  fontFamily: "'Poppins', sans-serif", cursor: submitting ? 'not-allowed' : 'pointer',
                 }}
               >
                 ← Back
               </button>
               <button
                 onClick={handleConfirm}
-                disabled={!agreed}
+                disabled={!agreed || submitting}
                 style={{
                   flex: 2, padding: '13px',
-                  background: agreed ? 'linear-gradient(135deg,#f97316,#ea580c)' : '#e2e8f0',
-                  color: agreed ? '#ffffff' : '#94a3b8',
+                  background: (agreed && !submitting) ? 'linear-gradient(135deg,#f97316,#ea580c)' : '#e2e8f0',
+                  color: (agreed && !submitting) ? '#ffffff' : '#94a3b8',
                   fontWeight: 700, fontSize: '15px',
                   fontFamily: "'Poppins', sans-serif",
                   border: 'none', borderRadius: '10px',
-                  cursor: agreed ? 'pointer' : 'not-allowed',
+                  cursor: (agreed && !submitting) ? 'pointer' : 'not-allowed',
                   boxShadow: agreed ? '0 4px 18px rgba(249,115,22,0.30)' : 'none',
                 }}
               >
-                🚀 Submit Application
+                {submitting ? 'Submitting…' : '🚀 Submit Application'}
               </button>
             </div>
+            {error && (
+              <div style={{ marginTop: '14px', padding: '12px 14px', borderRadius: '10px', background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', fontSize: '13px', fontWeight: 500 }}>
+                {error}
+              </div>
+            )}
           </div>
         )}
 

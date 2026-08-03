@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Users, Search, CheckCircle2, XCircle, Clock, Mail, Phone, RefreshCw } from 'lucide-react';
+import { Users, Search, CheckCircle2, XCircle, Clock, Mail, Phone, RefreshCw, FileText, X } from 'lucide-react';
 
 type Candidate = {
   id: string; name: string; email: string; phone: string;
@@ -9,6 +9,8 @@ type Candidate = {
   approvedAt: string; validUntil: string; lastLoginAt: string | null;
   application: { programme: { name: string; cycleDays: number } };
 };
+
+type CandidateNote = { id: string; content: string; authorName: string; createdAt: string };
 
 const STATUS_STYLE: Record<string, { color: string; bg: string; label: string }> = {
   ACTIVE:    { color: '#16a34a', bg: '#f0fdf4', label: 'Active' },
@@ -22,6 +24,34 @@ export default function MgmtUsersPage() {
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'ACTIVE' | 'EXPIRED' | 'SUSPENDED'>('ALL');
   const [loading, setLoading]       = useState(true);
   const [actionId, setActionId]     = useState<string | null>(null);
+  const [notesFor, setNotesFor]     = useState<Candidate | null>(null);
+  const [notes, setNotes]           = useState<CandidateNote[]>([]);
+  const [noteText, setNoteText]     = useState('');
+  const [notesBusy, setNotesBusy]   = useState(false);
+
+  const openNotes = async (c: Candidate) => {
+    setNotesFor(c);
+    setNotes([]);
+    setNoteText('');
+    const data = await fetch(`/api/admin/candidate-notes?candidateId=${c.id}`).then(r => r.json()).catch(() => []);
+    setNotes(Array.isArray(data) ? data : []);
+  };
+
+  const addNote = async () => {
+    if (!notesFor || !noteText.trim()) return;
+    setNotesBusy(true);
+    const r = await fetch('/api/admin/candidate-notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ candidateId: notesFor.id, content: noteText }),
+    });
+    if (r.ok) {
+      setNoteText('');
+      const data = await fetch(`/api/admin/candidate-notes?candidateId=${notesFor.id}`).then(r => r.json()).catch(() => []);
+      setNotes(Array.isArray(data) ? data : []);
+    }
+    setNotesBusy(false);
+  };
 
   const load = async () => {
     setLoading(true);
@@ -172,6 +202,9 @@ export default function MgmtUsersPage() {
                             Suspend
                           </button>
                         )}
+                        <button onClick={() => openNotes(c)} style={{ padding: '5px 10px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600, color: '#2145fb', fontFamily: "'Poppins',sans-serif", display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <FileText size={11} /> Notes
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -181,6 +214,50 @@ export default function MgmtUsersPage() {
           </table>
         )}
       </div>
+
+      {/* Notes modal */}
+      {notesFor && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+          <div style={{ background: '#fff', borderRadius: '16px', width: '100%', maxWidth: 480, maxHeight: '86vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 60px rgba(0,0,0,0.2)', overflow: 'hidden' }}>
+            <div style={{ padding: '18px 22px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+              <div>
+                <div style={{ fontSize: '15px', fontWeight: 800, color: '#0b0d20' }}>Candidate Notes</div>
+                <div style={{ fontSize: '12px', color: '#64748b', marginTop: 2 }}>{notesFor.name} · {notesFor.email}</div>
+              </div>
+              <button onClick={() => setNotesFor(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4 }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <div style={{ flex: 1, overflowY: 'auto', padding: '18px 22px' }}>
+              {notes.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '30px', color: '#94a3b8', fontSize: '13px' }}>No notes yet.</div>
+              ) : notes.map(n => (
+                <div key={n.id} style={{ padding: '12px 14px', background: '#f8faff', border: '1px solid #eef0f6', borderRadius: '10px', marginBottom: 10 }}>
+                  <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: 4 }}>
+                    {n.authorName} · {new Date(n.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#374151', lineHeight: 1.6 }}>{n.content}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ padding: '16px 22px', borderTop: '1px solid #e2e8f0', flexShrink: 0 }}>
+              <textarea
+                value={noteText}
+                onChange={e => setNoteText(e.target.value)}
+                placeholder="Add a note about this candidate…"
+                rows={2}
+                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", resize: 'vertical' as const, outline: 'none', boxSizing: 'border-box' as const, color: '#0b0d20' }}
+              />
+              <button onClick={addNote} disabled={notesBusy || !noteText.trim()}
+                style={{ marginTop: 10, padding: '9px 22px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 700, cursor: notesBusy || !noteText.trim() ? 'not-allowed' : 'pointer', fontFamily: "'Poppins',sans-serif", opacity: notesBusy ? 0.6 : 1 }}>
+                Add Note
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

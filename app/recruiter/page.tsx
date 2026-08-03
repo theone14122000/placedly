@@ -9,22 +9,23 @@ import {
 type Note = { id: string; content: string; type: string; authorName: string; createdAt: string };
 type App  = {
   id: string; name: string; email: string; phone: string; role: string;
+  experience: string | null;
   currentStage: string; currentStatus: string; resumeUrl: string | null;
   recruiter: { name: string } | null; notes: Note[]; createdAt: string;
 };
 
-const STAGES = ['SCREENING', 'TECHNICAL', 'MANAGER', 'OFFER'];
+const STAGES = ['SCREENING', 'INTERVIEW', 'OFFER', 'PLACED'];
 const STAGE_LABELS: Record<string, string> = {
   SCREENING: 'Stage 1 — Screening',
-  TECHNICAL: 'Stage 2 — Technical Round',
-  MANAGER:   'Stage 3 — Manager Round',
-  OFFER:     'Stage 4 — CTC / Offer',
+  INTERVIEW: 'Stage 2 — Interview',
+  OFFER:     'Stage 3 — Offer',
+  PLACED:    'Stage 4 — Placed',
 };
 const STAGE_ACTIONS: Record<string, string[]> = {
   SCREENING: ['PENDING', 'SELECTED', 'REJECTED'],
-  TECHNICAL: ['PENDING', 'SELECTED', 'HOLD', 'REJECTED'],
-  MANAGER:   ['PENDING', 'SELECTED', 'HOLD', 'REJECTED'],
-  OFFER:     ['OFFER_DISCUSSED', 'OFFER_ACCEPTED', 'DECLINED', 'DROPPED', 'JOINED'],
+  INTERVIEW: ['PENDING', 'SELECTED', 'HOLD', 'REJECTED'],
+  OFFER:     ['OFFER_DISCUSSED', 'OFFER_ACCEPTED', 'DECLINED', 'DROPPED'],
+  PLACED:    ['PLACED', 'JOINED'],
 };
 const STATUS_COLOR: Record<string, { bg: string; color: string }> = {
   PENDING:         { bg: '#fef9c3', color: '#854d0e' },
@@ -35,7 +36,8 @@ const STATUS_COLOR: Record<string, { bg: string; color: string }> = {
   OFFER_ACCEPTED:  { bg: '#d1fae5', color: '#065f46' },
   DECLINED:        { bg: '#fee2e2', color: '#991b1b' },
   DROPPED:         { bg: '#f1f5f9', color: '#475569' },
-  JOINED:          { bg: '#ecfdf5', color: '#065f46' },
+  PLACED:          { bg: '#ecfdf5', color: '#065f46' },
+  JOINED:          { bg: '#d1fae5', color: '#065f46' },
 };
 
 const pill = (s: string) => {
@@ -107,7 +109,10 @@ function CandidateRow({ app, selected, onClick }: { app: App; selected: boolean;
         <div style={{ fontSize: 14, fontWeight: 700, color: '#0b0d20' }}>{app.name}</div>
         <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: '999px', background: app.role === 'AP' ? '#dbeafe' : '#fef3c7', color: app.role === 'AP' ? '#1e40af' : '#92400e', flexShrink: 0 }}>{app.role}</span>
       </div>
-      <div style={{ fontSize: 12, color: '#64748b', marginBottom: 5 }}>{app.phone}</div>
+      <div style={{ fontSize: 12, color: '#64748b', marginBottom: 5 }}>
+        {app.phone}
+        {app.experience ? ` · ${app.experience} exp` : ''}
+      </div>
       <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' as const }}>
         <span style={{ fontSize: 10, color: '#94a3b8' }}>{app.currentStage}</span>
         {pill(app.currentStatus)}
@@ -130,7 +135,7 @@ export default function RecruiterATS() {
   const [showAdd, setShowAdd]     = useState(false);
   const [showResume, setShowResume] = useState(false);
   const [busy, setBusy]           = useState(false);
-  const [addForm, setAddForm]     = useState({ name: '', email: '', phone: '', role: 'AP', resumeUrl: '' });
+  const [addForm, setAddForm]     = useState({ name: '', email: '', phone: '', role: 'AP', experience: '', resumeUrl: '' });
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeUploading, setResumeUploading] = useState(false);
   const noteRef = useRef<HTMLTextAreaElement>(null);
@@ -203,7 +208,7 @@ export default function RecruiterATS() {
       body: JSON.stringify({ ...addForm, resumeUrl }),
     });
     setShowAdd(false);
-    setAddForm({ name: '', email: '', phone: '', role: 'AP', resumeUrl: '' });
+    setAddForm({ name: '', email: '', phone: '', role: 'AP', experience: '', resumeUrl: '' });
     setResumeFile(null);
     fetchApps();
     setBusy(false);
@@ -333,7 +338,8 @@ export default function RecruiterATS() {
                   </button>
                   <div style={{ fontSize: 'clamp(15px, 2.5vw, 18px)', fontWeight: 800, color: '#0b0d20' }}>{selected.name}</div>
                   <div style={{ fontSize: 13, color: '#64748b', marginTop: 2 }}>
-                    {selected.email} ·{' '}
+                    {selected.email}
+                    {selected.experience ? <> · {selected.experience} exp</> : ''} ·{' '}
                     <a href={`tel:${selected.phone}`} style={{ color: '#2145fb', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                       <Phone size={12} /> {selected.phone}
                     </a>
@@ -468,6 +474,7 @@ export default function RecruiterATS() {
               { label: 'Full Name *', key: 'name',  type: 'text',  ph: 'Rahul Sharma' },
               { label: 'Email *',     key: 'email', type: 'email', ph: 'rahul@email.com' },
               { label: 'Phone *',     key: 'phone', type: 'tel',   ph: '+91 98765 43210' },
+              { label: 'Experience',  key: 'experience', type: 'text', ph: 'e.g. 3-5 years' },
             ].map(f => (
               <div key={f.key} style={{ marginBottom: 14 }}>
                 <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#374151', textTransform: 'uppercase' as const, letterSpacing: '0.5px', marginBottom: 5 }}>{f.label}</label>

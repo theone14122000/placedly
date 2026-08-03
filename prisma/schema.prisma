@@ -58,10 +58,14 @@ model Candidate {
   experience     String?
   currentRole    String?
   targetRole     String?
-  capStep        Int                  @default(1)
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
-  courseProgress CourseProgress[]
+  capStep            Int               @default(1)
+  interviewSchedule  String?           @db.Text // schedule text shared by advisors
+  advisorFeedback    String?           @db.Text // latest feedback from candidate's advisor
+  resumeUrl          String?           @db.Text // rebuilt/resume file uploaded by admin
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  courseProgress     CourseProgress[]
+  notes              CandidateNote[]
 }
 
 // ─── Staff Accounts ───────────────────────────────────────────────────────────
@@ -95,6 +99,7 @@ model JobApplication {
   name          String
   email         String
   phone         String
+  experience    String?           // e.g. '0-2', '3-5', '5+ years'
   role          String            // 'AP' | 'R2R'
   resumeUrl     String?
   currentStage  String            @default("SCREENING")
@@ -125,6 +130,16 @@ model StageHistory {
   status        String
   changedBy     String
   createdAt     DateTime       @default(now())
+}
+
+// Admin/ops notes attached to an approved candidate (visible in mgmt portal)
+model CandidateNote {
+  id          String    @id @default(cuid())
+  candidateId String
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  content     String    @db.Text
+  authorName  String
+  createdAt   DateTime  @default(now())
 }
 
 // ─── Freelancer / Partner ─────────────────────────────────────────────────────
@@ -184,19 +199,42 @@ model Notification {
 // ─── Content & Courses ────────────────────────────────────────────────────────
 
 model Vacancy {
-  id          String   @id @default(cuid())
+  id          String               @id @default(cuid())
   title       String
   company     String
   location    String
   type        String
   experience  String
   salary      String?
-  category    String   @default("General")
-  tags        String   @default("")
-  description String   @db.Text @default("")
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  category    String               @default("General")
+  tags        String               @default("")
+  description String               @db.Text @default("")
+  isActive    Boolean              @default(true)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  applications VacancyApplication[]
+}
+
+// Candidate application submitted against a posted vacancy
+model VacancyApplication {
+  id           String    @id @default(cuid())
+  vacancyId    String
+  vacancy      Vacancy   @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+  candidateId  String?
+  name         String
+  email        String
+  phone        String?
+  experience   String?
+  noticePeriod String?
+  education    String?
+  currentCtc   String?
+  expectedCtc  String?
+  skills       String?
+  usShift      String?
+  resumeUrl    String?   @db.Text
+  status       String    @default("NEW") // NEW | REVIEWING | SHORTLISTED | REJECTED | PLACED
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 model Course {

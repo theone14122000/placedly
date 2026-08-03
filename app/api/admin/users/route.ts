@@ -20,14 +20,13 @@ export async function GET() {
     orderBy: { createdAt: 'desc' },
   });
 
-  return NextResponse.json(candidates);
-}
+  return NextResponse.json(candidates);}
 
 export async function PATCH(req: NextRequest) {
   const adminSession = await adminCheck();
   if (!adminSession) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { id, status, capStep } = await req.json();
+  const { id, status, capStep, interviewSchedule, advisorFeedback, resumeUrl } = await req.json();
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
 
   const data: Record<string, any> = {};
@@ -44,6 +43,10 @@ export async function PATCH(req: NextRequest) {
     data.capStep = step;
   }
 
+  if (typeof interviewSchedule === 'string') data.interviewSchedule = interviewSchedule.trim() || null;
+  if (typeof advisorFeedback === 'string') data.advisorFeedback = advisorFeedback.trim() || null;
+  if (typeof resumeUrl === 'string') data.resumeUrl = resumeUrl.trim() || null;
+
   if (Object.keys(data).length === 0) return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });
 
   const candidate = await prisma.candidate.update({ where: { id }, data });
@@ -51,6 +54,9 @@ export async function PATCH(req: NextRequest) {
   const actor = adminSession.user?.email ?? 'admin';
   if (data.status) await auditLog(actor, `SET_CANDIDATE_${data.status}`, id, `Candidate ${candidate.email} → ${data.status}`);
   if (data.capStep) await auditLog(actor, 'UPDATE_CAP_STEP', id, `Candidate ${candidate.email} capStep → ${data.capStep}`);
+  if (data.interviewSchedule !== undefined || data.advisorFeedback !== undefined || data.resumeUrl !== undefined) {
+    await auditLog(actor, 'UPDATE_CANDIDATE_DETAILS', id, `Candidate ${candidate.email} details updated`);
+  }
 
   return NextResponse.json(candidate);
 }

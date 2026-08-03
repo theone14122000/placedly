@@ -19,9 +19,10 @@ export async function GET(req: NextRequest) {
   });
 
   // Build CSV
-  const headers = ['Name', 'Email', 'Phone', 'Role', 'Stage', 'Status', 'Recruiter', 'Last Note', 'Applied On'];
+  const headers = ['Name', 'Email', 'Phone', 'Experience', 'Role', 'Stage', 'Status', 'Recruiter', 'Last Note', 'Applied On'];
   const rows = apps.map(a => [
-    a.name, a.email, a.phone, a.role,
+    a.name, a.email, a.phone, a.experience ?? '',
+    a.role,
     a.currentStage, a.currentStatus,
     a.recruiter?.name ?? '',
     a.notes[0]?.content?.replace(/,/g, ';') ?? '',

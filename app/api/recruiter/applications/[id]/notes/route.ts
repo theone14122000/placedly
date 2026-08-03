@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma';
 async function check() {
   const s = await getServerSession(authOptions);
   const role = (s?.user as any)?.role;
-  if (!s || (role !== 'recruiter' && role !== 'master_admin')) return null;
+  if (!s || (role !== 'recruiter' && role !== 'master_admin' && role !== 'admin')) return null;
   return s;
 }
 

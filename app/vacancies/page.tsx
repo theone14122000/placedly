@@ -143,7 +143,7 @@ export default function VacanciesPage() {
         </div>
       </section>
 
-      {applyJob && <ApplyModal job={applyJob as any} onClose={() => setApplyJob(null)} />}
+      {applyJob && <ApplyModal job={{ id: applyJob.id, role: applyJob.title, company: applyJob.company, logo: '💼', location: applyJob.location, type: applyJob.type } as any} onClose={() => setApplyJob(null)} />}
 
       <style>{`
         /* ═══════════════════════════════════════

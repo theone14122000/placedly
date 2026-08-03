@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import {
   LayoutDashboard, Briefcase, BookOpen, Home, Globe, Rocket,
   Users, Image, Info, Layers, LogOut, BarChart2, MessageSquare, Shield, UserCog,
-  Phone, KeyRound,
+  Phone, KeyRound, ClipboardList, Inbox,
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
@@ -13,7 +13,9 @@ const NAV = [
   { label: 'Overview',      href: '/admin',             Icon: LayoutDashboard },
   { label: 'Analytics',     href: '/admin/analytics',   Icon: BarChart2 },
   { label: 'Users',         href: '/admin/users',       Icon: Users },
+  { label: 'ATS Recruiters',href: '/admin/ats',         Icon: ClipboardList },
   { label: 'Vacancies',     href: '/admin/vacancies',   Icon: Briefcase },
+  { label: 'Applications',  href: '/admin/vacancy-applications', Icon: Inbox },
   { label: 'Courses',       href: '/admin/courses',     Icon: BookOpen },
   { label: 'FAQ & Reviews', href: '/admin/faq',         Icon: MessageSquare },
   { label: 'Homepage',      href: '/admin/homepage',    Icon: Home },

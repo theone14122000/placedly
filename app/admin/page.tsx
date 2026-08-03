@@ -6,6 +6,8 @@ type Stats = { totalApplications: number; pendingApplications: number; activeCan
 
 const SECTIONS = [
   { label: '📋 Applications', desc: 'Review, approve & renew CAP candidates', href: '/admin/applications', color: '#2145fb' },
+  { label: 'ATS Recruiters',   desc: 'Assign applications to recruiters',      href: '/admin/ats',          color: '#0ea5e9' },
+  { label: 'Vacancy Applications', desc: 'Review candidate applications',      href: '/admin/vacancy-applications', color: '#f97316' },
   { label: 'Homepage',        desc: 'Edit hero, stats, testimonials',          href: '/admin/homepage',     color: '#6366f1' },
   { label: 'Vacancies',       desc: 'Add, edit, delete job listings',          href: '/admin/vacancies',    color: '#f97316' },
   { label: 'Courses',         desc: 'Manage dashboard learning hub',           href: '/admin/courses',      color: '#16a34a' },

@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma';
 async function check() {
   const s = await getServerSession(authOptions);
   const role = (s?.user as any)?.role;
-  if (!s || (role !== 'recruiter' && role !== 'master_admin')) return null;
+  if (!s || (role !== 'recruiter' && role !== 'master_admin' && role !== 'admin')) return null;
   return s;
 }
 
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
   if (!s) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
-  const { name, email, phone, role } = body;
+  const { name, email, phone, role, experience } = body;
   if (!name || !email || !phone || !role) {
     return NextResponse.json({ error: 'name, email, phone, role required' }, { status: 400 });
   }
@@ -63,6 +63,7 @@ export async function POST(req: NextRequest) {
   const app = await prisma.jobApplication.create({
     data: {
       name, email, phone, role,
+      experience:  body.experience ?? null,
       resumeUrl:   body.resumeUrl ?? null,
       recruiterId: userRole === 'recruiter' ? userId : (body.recruiterId ?? null),
     },

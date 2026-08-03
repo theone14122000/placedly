@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Copy, Check, Users, IndianRupee, TrendingUp, Clock } from 'lucide-react';
 
 type Stats = { totalReferrals: number; approved: number; pendingCommission: number; paidCommission: number };
-type Referral = { id: string; application: { name: string; email: string; status: string; createdAt: string; programme: { name: string } } };
+type Referral = { id: string; placementStatus: string; application: { name: string; email: string; status: string; createdAt: string; programme: { name: string } } };
 
 export default function FreelancerDashboard() {
   const [data, setData]     = useState<{ referralCode: string; referralLink: string; stats: Stats; referrals: Referral[] } | null>(null);
@@ -22,11 +22,13 @@ export default function FreelancerDashboard() {
 
   if (!data) return <div style={{ padding: '40px', color: '#64748b', fontSize: '14px' }}>Loading…</div>;
 
-  const statusBadge = (s: string) => {
+  const statusBadge = (r: Referral) => {
+    const s = r.placementStatus;
     const map: Record<string, { bg: string; color: string }> = {
-      PENDING:  { bg: '#fef9c3', color: '#854d0e' },
-      APPROVED: { bg: '#dcfce7', color: '#166534' },
-      REJECTED: { bg: '#fee2e2', color: '#991b1b' },
+      'Applied':        { bg: '#fef9c3', color: '#854d0e' },
+      'In Progress':    { bg: '#dbeafe', color: '#1e40af' },
+      'Placed':         { bg: '#dcfce7', color: '#166534' },
+      'Not Selected':   { bg: '#fee2e2', color: '#991b1b' },
     };
     const c = map[s] ?? { bg: '#f1f5f9', color: '#475569' };
     return <span style={{ padding: '2px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 700, background: c.bg, color: c.color }}>{s}</span>;
@@ -95,7 +97,7 @@ export default function FreelancerDashboard() {
                     <td style={{ padding: '12px 16px', fontSize: '14px', fontWeight: 600, color: '#0b0d20', whiteSpace: 'nowrap' }}>{r.application.name}</td>
                     <td style={{ padding: '12px 16px', fontSize: '13px', color: '#64748b' }}>{r.application.email}</td>
                     <td style={{ padding: '12px 16px', fontSize: '13px', color: '#64748b' }}>{r.application.programme.name}</td>
-                    <td style={{ padding: '12px 16px' }}>{statusBadge(r.application.status)}</td>
+                    <td style={{ padding: '12px 16px' }}>{statusBadge(r)}</td>
                     <td style={{ padding: '12px 16px', fontSize: '13px', color: '#94a3b8', whiteSpace: 'nowrap' }}>{new Date(r.application.createdAt).toLocaleDateString('en-IN')}</td>
                   </tr>
                 ))}

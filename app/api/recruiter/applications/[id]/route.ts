@@ -6,15 +6,15 @@ import { prisma } from '@/lib/prisma';
 async function check() {
   const s = await getServerSession(authOptions);
   const role = (s?.user as any)?.role;
-  if (!s || (role !== 'recruiter' && role !== 'master_admin')) return null;
+  if (!s || (role !== 'recruiter' && role !== 'master_admin' && role !== 'admin')) return null;
   return s;
 }
 
 const STAGE_STATUSES: Record<string, string[]> = {
   SCREENING:  ['PENDING', 'SELECTED', 'REJECTED'],
-  TECHNICAL:  ['PENDING', 'SELECTED', 'HOLD', 'REJECTED'],
-  MANAGER:    ['PENDING', 'SELECTED', 'HOLD', 'REJECTED'],
-  OFFER:      ['OFFER_DISCUSSED', 'OFFER_ACCEPTED', 'DECLINED', 'DROPPED', 'JOINED'],
+  INTERVIEW:  ['PENDING', 'SELECTED', 'HOLD', 'REJECTED'],
+  OFFER:      ['OFFER_DISCUSSED', 'OFFER_ACCEPTED', 'DECLINED', 'DROPPED'],
+  PLACED:     ['PLACED', 'JOINED'],
 };
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -40,11 +40,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const { id } = await params;
   const body = await req.json();
-  const { stage, status, recruiterId, resumeUrl } = body;
+  const { stage, status, recruiterId, resumeUrl, experience } = body;
   const authorName = (s.user as any)?.name ?? 'Recruiter';
 
   const updateData: any = {};
   if (resumeUrl !== undefined) updateData.resumeUrl = resumeUrl;
+  if (experience !== undefined) updateData.experience = experience;
   if (recruiterId !== undefined) updateData.recruiterId = recruiterId;
 
   if (stage || status) {

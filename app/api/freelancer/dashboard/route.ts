@@ -17,7 +17,7 @@ export async function GET() {
       referrals: {
         include: {
           application: {
-            select: { name: true, email: true, status: true, createdAt: true, programme: { select: { name: true } } },
+            select: { name: true, email: true, status: true, createdAt: true, programme: { select: { name: true } }, candidate: { select: { capStep: true, status: true } } },
           },
         },
         orderBy: { createdAt: 'desc' },
@@ -33,11 +33,26 @@ export async function GET() {
   const pendingCommission = freelancer.commissions.filter(c => c.status === 'PENDING').reduce((s, c) => s + c.amount, 0);
   const paidCommission   = freelancer.commissions.filter(c => c.status === 'PAID').reduce((s, c) => s + c.amount, 0);
 
+  const referrals = freelancer.referrals.map(r => {
+    const app = r.application;
+    let placementStatus: string;
+    if (app.status === 'REJECTED') {
+      placementStatus = 'Not Selected';
+    } else if (app.status === 'APPROVED' && (app.candidate?.capStep ?? 1) >= 7) {
+      placementStatus = 'Placed';
+    } else if (app.status === 'APPROVED') {
+      placementStatus = 'In Progress';
+    } else {
+      placementStatus = 'Applied';
+    }
+    return { ...r, placementStatus };
+  });
+
   return NextResponse.json({
     referralCode: freelancer.referralCode,
     referralLink: `${process.env.NEXTAUTH_URL}/cap/apply?ref=${freelancer.referralCode}`,
     stats: { totalReferrals, approved, pendingCommission, paidCommission },
-    referrals: freelancer.referrals,
+    referrals,
     commissions: freelancer.commissions,
   });
 }

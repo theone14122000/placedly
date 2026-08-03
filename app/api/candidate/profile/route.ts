@@ -37,6 +37,9 @@ export async function GET() {
     programme: candidate.application.programme.name,
     applicationStatus: candidate.application.status,
     capStep: (candidate as any).capStep ?? 1,
+    interviewSchedule: candidate.interviewSchedule,
+    advisorFeedback: candidate.advisorFeedback,
+    resumeUrl: candidate.resumeUrl,
   });
 }
 
