@@ -74,7 +74,7 @@ const DEFAULTS: Record<string, string> = {
   'hp:service2CtaLabel': 'Explore Study Abroad',
 
   /* Hiring Partners Marquee */
-  'hp:marqueeLabel':     'Our cap candiate have landed roles at',
+  'hp:marqueeLabel':     'Our CAP Candidates Have Landed Roles At:',
   'hp:marqueeSub':       'Through our placement network — roles sourced via trusted recruitment partners',
   'hp:marqueeCompanies': 'EXL Services,Quatrro,eBiz Solutions,WNS Global,Optum,Cognizant,Wipro,Infosys BPM,Mphasis,HCL,Genpact,Access Healthcare,Conifer Health',
 
@@ -99,7 +99,6 @@ const DEFAULTS: Record<string, string> = {
   /* How It Works */
   'hp:hiwTagline':       'How It Works',
   'hp:hiwTitle':         'How Placedly Works — Simple, Transparent, Proven',
-  'hp:hiwSubtitle':      'Placedly connects ambitious professionals to careers and global education. Built for candidates who want clarity, warm guidance, and results — not generic agency noise.',
   'hp:hiw1Title':        'Understand You First',
   'hp:hiw1Details':      'A free 45-minute session where we actually listen. We understand your current role, your target outcome, your domain expertise, and what you truly want — not just what looks good on paper. No templates. No generic advice.',
   'hp:hiw1Highlight':    'Zero charge for this session, ever.',
@@ -315,7 +314,6 @@ export default function AdminHomepage() {
             <div />
           </div>
           <Inp label="Section title" k="hp:hiwTitle" data={data} set={set} />
-          <Inp label="Section subtitle (below title)" k="hp:hiwSubtitle" data={data} set={set} textarea />
           {[1,2,3,4,5].map(i => (
             <div key={i} style={{ background: '#f8faff', borderRadius: 12, padding: 14, border: '1px solid #e2e8f0' }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#2145fb', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Step {i} — 0{i}</div>
