@@ -145,8 +145,8 @@ function HeroStatCard({
 
 export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
   const admitInterest = 'Early stage AI';
-  const offerName = 'Amber';
-  const recommendName = 'Daniel';
+  const offerName = 'Priya';
+  const recommendName = 'Arjun';
 
   return (
     <div className="placedly-hero-mobile-brief" aria-label="Mobile hero">
