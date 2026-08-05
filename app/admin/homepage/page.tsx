@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Save, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { Save, RefreshCw, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import ImageUpload from '../components/ImageUpload';
 
 /* ─── helpers ──────────────────────────────────────────────────────── */
@@ -181,6 +181,9 @@ export default function AdminHomepage() {
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           {status && <span style={{ fontSize: '12px', color: status.includes('fail') ? '#dc2626' : '#16a34a', fontWeight: 600 }}>{status}</span>}
+          <a href="/" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#0b0d20', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 600, textDecoration: 'none', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+            <ExternalLink size={13} /> View Home Page
+          </a>
           <button onClick={() => setData(DEFAULTS)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '9px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <RefreshCw size={13} /> Defaults
           </button>

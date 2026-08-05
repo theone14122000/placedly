@@ -292,8 +292,8 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
             <HeroStatCard
               key={stat.label}
               icon={stat.icon}
-              value={stat.value}
-              label={stat.label}
+              value={cms[`hp:stat${i + 1}Num`] ?? stat.value}
+              label={cms[`hp:stat${i + 1}Label`] ?? stat.label}
               delay={0.1 + i * 0.06}
             />
           ))}

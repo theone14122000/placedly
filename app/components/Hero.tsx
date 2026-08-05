@@ -52,7 +52,7 @@ const HERO_CTAS = [
     icon: Briefcase,
     label: 'For Candidates',
     href: '/contact',
-    cmsKey: 'hp:heroPrimaryCtaText',
+    cmsKey: 'hp:heroCtaText',
     fallback: 'For Candidates',
   },
   {
@@ -535,13 +535,18 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
                   loading="lazy" decoding="async"
                 />
                 <div className="placedly-lift-card-identity">
-                  <p className="placedly-lift-name">{cms['hp:heroOfferName'] ?? 'Priya'}</p>
+                  <p className="placedly-lift-name">{cms['hp:heroOfferCompany'] ?? cms['hp:heroOfferName'] ?? 'Priya'}</p>
                   <p className="placedly-lift-role">CAP · India careers</p>
                 </div>
               </div>
               <p className="placedly-lift-card-line">
                 Targeting <strong>{offerRole}</strong>
               </p>
+              {cms['hp:heroOfferCtc'] && cms['hp:heroOfferJoining'] && (
+                <p className="placedly-lift-card-line">
+                  {cms['hp:heroOfferCtc']} · Joining {cms['hp:heroOfferJoining']}
+                </p>
+              )}
             </motion.div>
 
             {/* scatter */}
@@ -608,7 +613,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
                   loading="lazy" decoding="async"
                 />
                 <div className="placedly-lift-card-identity">
-                  <p className="placedly-lift-name">{cms['hp:heroAdmitName'] ?? 'Arjun'}</p>
+                  <p className="placedly-lift-name">{cms['hp:heroAdmitUniversity'] ?? cms['hp:heroAdmitName'] ?? 'Arjun'}</p>
                   <p className="placedly-lift-role">Study abroad track</p>
                 </div>
               </div>
@@ -637,8 +642,8 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
               <HeroStatCard
                 key={stat.label}
                 icon={stat.icon}
-                value={stat.value}
-                label={stat.label}
+                value={cms[`hp:stat${i + 1}Num`] ?? stat.value}
+                label={cms[`hp:stat${i + 1}Label`] ?? stat.label}
                 delay={i * 0.08}
                 isLast={i === HERO_STATS.length - 1}
               />

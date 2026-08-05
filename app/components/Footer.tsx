@@ -36,7 +36,7 @@ const GEOM_FONT    = `"Outfit","Poppins","Inter","Manrope","Geist","Plus Jakarta
 type Cms = Record<string, string>;
 
 export default function Footer({ cms = {} }: { cms?: Cms }) {
-  const tagline   = cms['hp:footerTagline']   ?? 'Career growth & global education, designed around your outcome.';
+  const tagline   = cms['hp:footerDesc'] ?? cms['hp:footerTagline'] ?? 'Career growth & global education, designed around your outcome.';
   const instagram = cms['hp:footerInstagram'] ?? 'https://www.instagram.com/';
   const twitter   = cms['hp:footerTwitter']   ?? 'https://twitter.com/';
   const linkedin  = cms['hp:footerLinkedin']  ?? 'https://linkedin.com/';

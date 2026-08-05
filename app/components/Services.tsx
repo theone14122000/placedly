@@ -250,7 +250,24 @@ function ScrollingStrip({
 ═══════════════════════════════════════ */
 export default function Services({ cms = {} }: { cms?: Cms }) {
   const [active, setActive] = useState(0);
-  const current = VERTICALS[active];
+  const verticals = VERTICALS.map((v) =>
+    v.id === 'cap'
+      ? {
+          ...v,
+          title:       cms['hp:service1Name']     ?? v.title,
+          description: cms['hp:service1Details']  ?? v.description,
+          cta:         cms['hp:service1CtaLabel'] ?? v.cta,
+        }
+      : v.id === 'study'
+        ? {
+            ...v,
+            title:       cms['hp:service2Name']     ?? v.title,
+            description: cms['hp:service2Details']  ?? v.description,
+            cta:         cms['hp:service2CtaLabel'] ?? v.cta,
+          }
+        : v,
+  );
+  const current = verticals[active];
   const isDark  = current.id === 'study';
 
   const tagline  = cms['hp:servicesTagline']  ?? 'What We Do';
@@ -359,7 +376,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
             role="tablist"
             aria-label="Services"
           >
-            {VERTICALS.map((v, i) => (
+            {verticals.map((v, i) => (
               <button
                 key={v.id}
                 type="button"

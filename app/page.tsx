@@ -12,6 +12,10 @@ import Testimonials from './components/Testimonials';
 import Faq from './components/Faq';
 import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
+import AboutUs from './components/AboutUs';
+import ChooseUs from './components/ChooseUs';
+import CeoQuote from './components/CeoQuote';
+import Cta from './components/Cta';
 import PlacedlyFixes from './components/PlacedlyFixes';
 import PlacedlyFloatingCta from './components/FloatingCTA';
 import { getCmsMap } from '@/lib/cms';
@@ -109,14 +113,18 @@ export default async function Home() {
 
       <main className="page-wrapper">
         <Hero cms={cms} />
+        <AboutUs cms={cms} />
         <UtilityToolsSection />
         <Services cms={cms} />
         <HowItWorks cms={cms} />
+        <ChooseUs cms={cms} />
+        <CeoQuote cms={cms} />
         <CapJourneySection cms={cms} />
         <Industries />
         <StudyDestinationsMarquee />
         <Testimonials />
         <Faq />
+        <Cta cms={cms} />
         <Footer cms={cms} />
       </main>
 

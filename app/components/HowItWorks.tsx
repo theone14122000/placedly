@@ -731,13 +731,13 @@ function ParallelSection({ cms }: { cms: Cms }) {
         <FadeUp className="placedly-hiw-header">
           <p className="placedly-hiw-eyebrow">
             <Sparkles size={13} strokeWidth={2.25} aria-hidden />
-            How It Works
+            {cms['hp:hiwTagline'] ?? 'How It Works'}
           </p>
           <h2 className="placedly-hiw-title">
-            Choose Your Path, See the Process, Get the Outcome
+            {cms['hp:hiwTitle'] ?? 'Choose Your Path, See the Process, Get the Outcome'}
           </h2>
           <p className="placedly-hiw-subtitle">
-            Whether you&apos;re chasing a career in India or a degree abroad, the same advisor-led process gets you there.
+            {cms['hp:hiwSubtitle'] ?? 'Whether you\u2019re chasing a career in India or a degree abroad, the same advisor-led process gets you there.'}
           </p>
         </FadeUp>
 
