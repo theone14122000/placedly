@@ -12,7 +12,6 @@ import Testimonials from './components/Testimonials';
 import Faq from './components/Faq';
 import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
-import AboutUs from './components/AboutUs';
 import ChooseUs from './components/ChooseUs';
 import CeoQuote from './components/CeoQuote';
 import Cta from './components/Cta';
@@ -113,7 +112,6 @@ export default async function Home() {
 
       <main className="page-wrapper">
         <Hero cms={cms} />
-        <AboutUs cms={cms} />
         <UtilityToolsSection />
         <Services cms={cms} />
         <HowItWorks cms={cms} />
