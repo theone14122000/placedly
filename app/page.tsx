@@ -78,7 +78,7 @@ const HP_DEFAULTS: Record<string, string> = {
   'hp:ctaBannerHeadline': 'We Only Get Paid After You Get Placed.',
   'hp:ctaBannerSub':      'Free consultation. No upfront cost. Start today.',
   /* Footer */
-  'hp:footerDesc':      "India's career growth and study abroad consultancy. CAP: 12% Success Share, post-placement only. Study Abroad: UK · France · Germany · Dubai. Zero upfront. We grow when you grow.",
+  'hp:footerDesc':      "India's career growth and study abroad consultancy. CAP. Study Abroad: UK · France · Germany · Dubai. Zero upfront. We grow when you grow.",
   'hp:footerCopyright': '© 2026 Placedly · CAP · Study Abroad · India · CAP Fee: 12% of Annual CTC · Post-offer letter only · All engagements governed by signed Candidate Service Agreement',
 };
 

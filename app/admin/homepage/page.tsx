@@ -132,7 +132,7 @@ const DEFAULTS: Record<string, string> = {
   'hp:ctaBannerSub':      'Free consultation. No upfront cost. Start today.',
 
   /* Footer */
-  'hp:footerDesc':      "India's career growth and study abroad consultancy. Career Assistance Programme: 12% Success Share, post-placement only. Study Abroad: UK · France · Germany · Dubai. Zero upfront. We grow when you grow.",
+  'hp:footerDesc':      "India's career growth and study abroad consultancy. Career Assistance Programme. Study Abroad: UK · France · Germany · Dubai. Zero upfront. We grow when you grow.",
   'hp:footerCtaText':   'Grow Careers. Grow Global.',
   'hp:footerInstagram': 'https://www.instagram.com/',
   'hp:footerTwitter':   'https://twitter.com/',
