@@ -135,6 +135,7 @@ export default function FloatingCTA({
             >
               <span className="placedly-floating-cta-shine" aria-hidden />
               <span className="placedly-floating-cta-label">{label}</span>
+              <span className="placedly-floating-cta-line" aria-hidden />
               <span className="placedly-floating-cta-arrow" aria-hidden>
                 <ArrowRight size={16} strokeWidth={2.6} />
               </span>
@@ -240,6 +241,32 @@ export default function FloatingCTA({
           position: relative !important;
           z-index: 1 !important;
           display: inline-block !important;
+        }
+
+        .placedly-floating-cta-line {
+          position: relative !important;
+          z-index: 1 !important;
+          flex: 1 1 14px !important;
+          min-width: 10px !important;
+          height: 2px !important;
+          margin: 0 2px !important;
+          pointer-events: none !important;
+        }
+        .placedly-floating-cta-line::after {
+          content: '' !important;
+          position: absolute !important;
+          inset: 0 !important;
+          background: rgba(255, 255, 255, 0.5) !important;
+          border-radius: 2px !important;
+          transform: scaleX(0.45) !important;
+          transform-origin: left center !important;
+          transition:
+            transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+            background 0.35s ease !important;
+        }
+        .placedly-floating-cta-btn:hover .placedly-floating-cta-line::after {
+          transform: scaleX(1) !important;
+          background: rgba(255, 255, 255, 0.85) !important;
         }
 
         .placedly-floating-cta-arrow {
