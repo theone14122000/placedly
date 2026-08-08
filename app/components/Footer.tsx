@@ -267,7 +267,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
         }
         .pf-brand-logo {
           display: block;
-          height: 36px;
+          height: 42px;
           width: auto;
           max-width: 180px;
           object-fit: contain;

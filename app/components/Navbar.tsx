@@ -65,7 +65,7 @@ export default function Navbar() {
       <style>{`
         .placedly-nav-logo {
           display: block;
-          height: 32px;
+          height: 38px;
           width: auto;
           max-width: 170px;
           object-fit: contain;
