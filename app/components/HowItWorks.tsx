@@ -1135,7 +1135,7 @@ function ParallelSection({ cms }: { cms: Cms }) {
           padding: 9px 12px;
           background: ${SURFACE};
           border: 1.5px solid ${BORDER};
-          border-radius: 12px;
+          border-radius: 999px;
           cursor: pointer;
           text-align: left;
           scroll-snap-align: start;
