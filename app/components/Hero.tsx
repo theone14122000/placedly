@@ -2,8 +2,6 @@
 
 import { motion } from 'framer-motion';
 import {
-  Share2,
-  Sparkles,
   Briefcase,
   Building2,
   Globe,
@@ -32,14 +30,6 @@ const TEXT_BODY     = '#1e293b';
 const TEXT_MUTED    = '#64748b';
 const BORDER        = '#e5e7eb';
 const SURFACE       = '#ffffff';
-
-const SCATTER_AVATARS = [
-  { src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face', top: '0%',  left: '0%',  size: 46, badge: false },
-  { src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&crop=face', top: '2%',  left: '72%', size: 44, badge: true  },
-  { src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&crop=face', top: '38%', left: '6%',  size: 50, badge: true  },
-  { src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop&crop=face', top: '70%', left: '0%',  size: 44, badge: false },
-  { src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&h=128&fit=crop&crop=face', top: '66%', left: '74%', size: 48, badge: true  },
-] as const;
 
 const HERO_CARD_AVATARS = {
   left:  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=96&h=96&fit=crop&crop=face',
@@ -548,55 +538,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
                 </p>
               )}
             </motion.div>
-
-            {/* scatter */}
-            <div className="placedly-lift-connect" aria-hidden>
-              <div className="placedly-lift-scatter">
-                {SCATTER_AVATARS.map((person, i) => (
-                  <div
-                    key={person.src}
-                    className="placedly-lift-scatter-avatar-wrap"
-                    style={{
-                      top: person.top, left: person.left,
-                      width: person.size, height: person.size,
-                      zIndex: i + 1,
-                    }}
-                  >
-                    <img
-                      src={person.src} alt=""
-                      className="placedly-lift-scatter-avatar"
-                      width={person.size} height={person.size}
-                      loading="lazy" decoding="async"
-                    />
-                    {person.badge && (
-                      <span className="placedly-lift-scatter-badge">
-                        <Share2 size={11} strokeWidth={2.5} />
-                      </span>
-                    )}
-                  </div>
-                ))}
-
-                <div className="placedly-lift-glass-pill placedly-lift-glass-pill--share">
-                  <span className="placedly-lift-glass-pill-icon">
-                    <Share2 size={14} strokeWidth={2.25} />
-                  </span>
-                  <span className="placedly-lift-glass-pill-text">
-                    <strong>Shared</strong>
-                    <span>CAP roadmap</span>
-                  </span>
-                </div>
-
-                <div className="placedly-lift-glass-pill placedly-lift-glass-pill--rec">
-                  <span className="placedly-lift-glass-pill-icon">
-                    <Sparkles size={14} strokeWidth={2.25} />
-                  </span>
-                  <span className="placedly-lift-glass-pill-text">
-                    <strong>Recommended</strong>
-                    <span>Admit path</span>
-                  </span>
-                </div>
-              </div>
-            </div>
 
             {/* right card */}
             <motion.div

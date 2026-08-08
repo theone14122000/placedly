@@ -63,17 +63,13 @@ export default function Navbar() {
       className={`placedly-navbar${scrolled ? ' is-scrolled' : ''}${isHome ? ' is-home' : ''}${servicesOpen ? ' is-services-open' : ''}`}
     >
       <style>{`
-        .placedly-nav-wordmark,
-        .placedly-nav-wordmark:visited,
-        .placedly-nav-wordmark:hover,
-        .placedly-nav-wordmark:focus,
-        .placedly-nav-wordmark:active {
-          background-image: linear-gradient(135deg, #f97316, #ea580c) !important;
-          -webkit-background-clip: text !important;
-          background-clip: text !important;
-          -webkit-text-fill-color: transparent !important;
-          color: transparent !important;
-          display: inline-block;
+        .placedly-nav-logo {
+          display: block;
+          height: 32px;
+          width: auto;
+          max-width: 170px;
+          object-fit: contain;
+          flex-shrink: 0;
         }
 
         /* ★★★ FIX: Chevron button — ALWAYS orange circle ★★★
@@ -172,8 +168,8 @@ export default function Navbar() {
       <div className="placedly-navbar-shell" ref={shellRef}>
         <div className="placedly-navbar-inner">
           <div className="placedly-nav-start">
-            <Link href="/" className="placedly-nav-brand" onClick={handleLink}>
-              <span className="placedly-nav-wordmark">placedly</span>
+            <Link href="/" className="placedly-nav-brand" onClick={handleLink} aria-label="Placedly — Home">
+              <img src="/logo.png" alt="Placedly" className="placedly-nav-logo" loading="eager" decoding="async" />
             </Link>
 
             <nav className="placedly-nav-links" aria-label="Main navigation">

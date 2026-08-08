@@ -90,9 +90,8 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
 
           {/* Brand */}
           <div className="pf-brand-block">
-            <Link href="/" className="pf-brand">
-              <span className="pf-brand-mark">P</span>
-              <span className="pf-brand-text">Placedly</span>
+            <Link href="/" className="pf-brand" aria-label="Placedly — Home">
+              <img src="/logo.png" alt="Placedly" className="pf-brand-logo" loading="lazy" decoding="async" />
             </Link>
             <p className="pf-tagline">{tagline}</p>
           </div>
@@ -266,29 +265,16 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           color: #1c1917 !important;
           margin-bottom: 8px;
         }
-        .pf-brand-mark {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 28px; height: 28px;
-          border-radius: 8px;
-          background: ${ORANGE};
-          border: 1px solid ${ORANGE};
-          color: #ffffff;
-          font-size: 14px;
-          font-weight: 900;
-          letter-spacing: -0.02em !important;
-          transition: transform 0.2s ease, filter 0.2s ease;
+        .pf-brand-logo {
+          display: block;
+          height: 36px;
+          width: auto;
+          max-width: 180px;
+          object-fit: contain;
+          transition: opacity 0.2s ease;
         }
-        .pf-brand:hover .pf-brand-mark {
-          filter: brightness(1.08);
-          transform: rotate(-4deg) scale(1.06);
-        }
-        .pf-brand-text {
-          font-size: 16px;
-          font-weight: 800;
-          letter-spacing: -0.025em !important;
-          color: #1c1917;
+        .pf-brand:hover .pf-brand-logo {
+          opacity: 0.85;
         }
         .pf-tagline {
           font-size: 12px;
