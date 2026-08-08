@@ -235,8 +235,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
         .placedly-footer-wrap {
           position: relative;
           z-index: 1;
-          max-width: 1200px;
-          margin: 0 auto;
+          width: 100%;
           padding: 28px 0 0;
         }
 
@@ -340,25 +339,25 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           gap: 5px;
           font-size: 11px;
           font-weight: 600;
-          color: #78716c !important;
+          color: #ffffff !important;
           text-decoration: none !important;
-          background: #ffffff;
-          border: 1px solid #fde3c7;
+          background: ${ORANGE};
+          border: 1px solid ${ORANGE};
           padding: 5px 9px;
           border-radius: 999px;
           white-space: nowrap;
           transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
         .pf-contact-chip:hover {
-          background: #fff7ed;
-          border-color: ${ORANGE};
-          color: ${ORANGE_DARK} !important;
+          background: ${ORANGE_DARK};
+          border-color: ${ORANGE_DARK};
+          color: #ffffff !important;
         }
         .pf-contact-chip--static { cursor: default; }
         .pf-contact-chip--static:hover {
-          background: #ffffff;
-          border-color: #fde3c7;
-          color: #78716c !important;
+          background: ${ORANGE};
+          border-color: ${ORANGE};
+          color: #ffffff !important;
         }
 
         .pf-socials {
@@ -372,15 +371,15 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          background: #ffffff !important;
-          border: 1px solid #fde3c7 !important;
-          color: #a8a29e !important;
+          background: ${ORANGE} !important;
+          border: 1px solid ${ORANGE} !important;
+          color: #ffffff !important;
           text-decoration: none !important;
           transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
         }
         .pf-social:hover {
-          background: ${ORANGE} !important;
-          border-color: ${ORANGE} !important;
+          background: ${ORANGE_DARK} !important;
+          border-color: ${ORANGE_DARK} !important;
           color: #ffffff !important;
           transform: translateY(-2px) rotate(-4deg);
         }
@@ -456,15 +455,15 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           justify-content: center;
           width: 30px; height: 30px;
           border-radius: 50%;
-          background: #ffffff !important;
-          border: 1px solid #fde3c7 !important;
-          color: #a8a29e !important;
+          background: ${ORANGE} !important;
+          border: 1px solid ${ORANGE} !important;
+          color: #ffffff !important;
           text-decoration: none !important;
           transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
         }
         .pf-scroll-top:hover {
-          background: ${ORANGE} !important;
-          border-color: ${ORANGE} !important;
+          background: ${ORANGE_DARK} !important;
+          border-color: ${ORANGE_DARK} !important;
           color: #ffffff !important;
           transform: translateY(-3px);
         }
