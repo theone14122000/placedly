@@ -671,7 +671,7 @@ export default function UtilityToolsSection() {
             <ChevronLeft size={18} strokeWidth={2.5} aria-hidden />
           </button>
 
-          <span className="utility-label" style={{ color: ORANGE, fontWeight: 700 }}>Utility Tools</span>
+          <span className="utility-label" style={{ color: ORANGE, fontWeight: 800 }}>Utility Tools</span>
 
           {/* right arrow — mobile only */}
           <button
@@ -855,7 +855,7 @@ export default function UtilityToolsSection() {
         .utility-label {
           display: inline-block;
           font-size: clamp(0.7rem, 1.8vw, 0.8rem);
-          font-weight: 700;
+          font-weight: 800;
           text-transform: uppercase;
           letter-spacing: 0.14em;
           color: ${ORANGE};
