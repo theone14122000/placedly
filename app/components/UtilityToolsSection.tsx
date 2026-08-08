@@ -635,7 +635,8 @@ export default function UtilityToolsSection() {
 
           <p style={{
             fontSize: 'clamp(0.875rem,1.3vw,1rem)',
-            color: TEXT_MUTED,
+            color: ORANGE,
+            fontWeight: 700,
             maxWidth: '560px',
             margin: '0 auto',
             lineHeight: 1.65,
@@ -711,10 +712,11 @@ export default function UtilityToolsSection() {
                     whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: '7px',
-                      padding: '9px 16px', borderRadius: '999px', border: 'none',
-                      background: isActive ? ORANGE : 'rgba(15,23,42,0.03)',
-                      color: isActive ? '#ffffff' : TEXT_BODY,
-                      fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                      padding: '9px 16px', borderRadius: '999px',
+                      border: `1.5px solid ${ORANGE_BORDER}`,
+                      background: isActive ? ORANGE : '#ffffff',
+                      color: isActive ? '#ffffff' : ORANGE,
+                      fontSize: '13px', fontWeight: 700, cursor: 'pointer',
                       transition: 'all 0.2s ease',
                       boxShadow: isActive ? '0 4px 14px rgba(249,115,22,0.30)' : 'none',
                       fontFamily: GEOM_FONT,
@@ -814,14 +816,14 @@ export default function UtilityToolsSection() {
         #utility-tools div { color: ${TEXT_BODY}; }
         #utility-tools h1,
         #utility-tools h2,
-        #utility-tools h3  { color: ${BLACK}; }
+        #utility-tools h3  { color: ${ORANGE}; }
 
         .main-headline {
           margin: 0 0 10px;
           font-weight: 800;
           line-height: 1.1;
           letter-spacing: -0.03em;
-          color: ${BLACK};
+          color: ${ORANGE};
           font-size: clamp(2rem, 8vw, 2.6rem);
           display: flex;
           flex-wrap: wrap;
@@ -838,10 +840,10 @@ export default function UtilityToolsSection() {
 
         .sub-headline {
           font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-          font-weight: 600;
+          font-weight: 700;
           line-height: 1.35;
           letter-spacing: -0.01em;
-          color: ${TEXT_MUTED};
+          color: ${ORANGE};
           margin: 0 0 10px;
         }
         @media (min-width: 480px) {
@@ -859,6 +861,8 @@ export default function UtilityToolsSection() {
           letter-spacing: 0.14em;
           color: ${ORANGE};
         }
+        #utility-tools .tool-title-desktop,
+        #utility-tools .tool-title-mobile { color: inherit; }
 
         /* ── ★ NEW: Arrows around "Utility Tools" label ── */
         .tools-arrow {
@@ -985,14 +989,14 @@ function ToolPanel({
             style={{
               fontSize: isMob ? '1rem' : 'clamp(1.05rem,1.8vw,1.3rem)',
               fontWeight: 700, lineHeight: 1.3, letterSpacing: '-0.02em',
-              color: BLACK, margin: 0,
+              color: ORANGE, margin: 0,
             }}
           >
             {active.title}
           </h3>
           {!isMob && (
             <p style={{
-              fontSize: '13px', color: TEXT_MUTED, marginTop: '4px', lineHeight: 1.5,
+              fontSize: '13px', color: ORANGE, fontWeight: 700, marginTop: '4px', lineHeight: 1.5,
             }}>
               {active.description}
             </p>
@@ -1004,14 +1008,14 @@ function ToolPanel({
         type="button" onClick={closePanel} aria-label="Close tool"
         className="tool-close-btn"
         style={{
-          border: 'none', background: 'rgba(15,23,42,0.05)',
-          width: '34px', height: '34px', borderRadius: '10px',
+          border: `1.5px solid ${ORANGE_BORDER}`, background: '#ffffff',
+          width: '34px', height: '34px', borderRadius: '50%',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', color: TEXT_MUTED, flexShrink: 0,
+          cursor: 'pointer', color: ORANGE, flexShrink: 0,
           transition: 'background 0.18s',
         }}
-        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.1)'; }}
-        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.05)'; }}
+        onMouseEnter={e => { e.currentTarget.style.background = ORANGE_TINT; }}
+        onMouseLeave={e => { e.currentTarget.style.background = '#ffffff'; }}
       >
         <X size={16} strokeWidth={2.5} />
       </button>
@@ -1065,14 +1069,14 @@ function ToolPanel({
       className="tool-textarea"
       style={{
         width: '100%', resize: 'vertical', padding: '14px',
-        borderRadius: '12px', border: '1.5px solid rgba(15,23,42,0.1)',
+        borderRadius: '12px', border: `1.5px solid ${ORANGE_BORDER}`,
         fontSize: '14px', lineHeight: 1.62, color: BLACK,
         outline: 'none', marginBottom: '14px',
         fontFamily: GEOM_FONT, background: BG,
         transition: 'border-color 0.2s',
       }}
       onFocus={e  => { e.currentTarget.style.borderColor = ORANGE; }}
-      onBlur={e   => { e.currentTarget.style.borderColor = 'rgba(15,23,42,0.1)'; }}
+      onBlur={e   => { e.currentTarget.style.borderColor = 'rgba(249,115,22,0.30)'; }}
     />
   );
 
