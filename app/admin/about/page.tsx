@@ -40,7 +40,7 @@ const DEFAULT_FOUNDER = {
 const inputS: React.CSSProperties = {
   width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0',
   borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif",
-  color: '#0b0d20', background: '#f8faff', outline: 'none',
+  color: '#0b0d20', background: '#fff7ed', outline: 'none',
   boxSizing: 'border-box' as const,
 };
 
@@ -110,12 +110,12 @@ export default function AdminAboutPage() {
       {/* Stats */}
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', marginBottom: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-          <Info size={16} color="#2145fb" />
+          <Info size={16} color="#f97316" />
           <span style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Hero Stats</span>
         </div>
         <div className="adm-stats-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '14px' }}>
           {stats.map((s, i) => (
-            <div key={i} style={{ padding: '14px', background: '#f8faff', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+            <div key={i} style={{ padding: '14px', background: '#fff7ed', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
               <div style={{ marginBottom: '8px' }}>
                 <label style={labelS}>Value</label>
                 <input style={inputS} value={s.num} onChange={e => updateStat(i, 'num', e.target.value)} />
@@ -134,13 +134,13 @@ export default function AdminAboutPage() {
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <div style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Core Values ({values.length})</div>
-            <button onClick={addValue} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '7px 14px', background: '#eff6ff', color: '#2145fb', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+            <button onClick={addValue} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '7px 14px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
               <Plus size={12} /> Add
             </button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '420px', overflowY: 'auto' }}>
             {values.map((v, i) => (
-              <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', background: '#f8faff', position: 'relative' }}>
+              <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', background: '#fff7ed', position: 'relative' }}>
                 <button onClick={() => deleteValue(i)} style={{ position: 'absolute', top: '10px', right: '10px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '3px', cursor: 'pointer', display: 'flex' }}>
                   <Trash2 size={11} color="#ef4444" />
                 </button>
@@ -163,13 +163,13 @@ export default function AdminAboutPage() {
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <div style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Company Timeline ({timeline.length})</div>
-            <button onClick={addTimeline} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '7px 14px', background: '#eff6ff', color: '#2145fb', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+            <button onClick={addTimeline} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '7px 14px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
               <Plus size={12} /> Add
             </button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '420px', overflowY: 'auto' }}>
             {timeline.map((t, i) => (
-              <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', background: '#f8faff', position: 'relative' }}>
+              <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', background: '#fff7ed', position: 'relative' }}>
                 <button onClick={() => deleteTimeline(i)} style={{ position: 'absolute', top: '10px', right: '10px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '3px', cursor: 'pointer', display: 'flex' }}>
                   <Trash2 size={11} color="#ef4444" />
                 </button>

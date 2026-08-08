@@ -13,14 +13,14 @@ type App = {
 const STATUSES = ['NEW', 'REVIEWING', 'SHORTLISTED', 'REJECTED', 'PLACED'];
 
 const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
-  NEW:        { bg: '#eff6ff', color: '#2145fb' },
+  NEW:        { bg: '#fff7ed', color: '#f97316' },
   REVIEWING:  { bg: '#fff7ed', color: '#f97316' },
   SHORTLISTED:{ bg: '#f0fdf4', color: '#16a34a' },
   REJECTED:   { bg: '#fef2f2', color: '#ef4444' },
   PLACED:     { bg: '#faf5ff', color: '#7c3aed' },
 };
 
-const inp: React.CSSProperties = { padding: '6px 10px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#f8faff', outline: 'none', cursor: 'pointer' };
+const inp: React.CSSProperties = { padding: '6px 10px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', cursor: 'pointer' };
 
 export default function AdminVacancyApplications() {
   const [apps, setApps] = useState<App[]>([]);
@@ -81,7 +81,7 @@ export default function AdminVacancyApplications() {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '14px', marginBottom: '20px' }}>
         {[
-          { label: 'Total Applications', value: apps.length, color: '#2145fb', bg: '#eff6ff' },
+          { label: 'Total Applications', value: apps.length, color: '#f97316', bg: '#fff7ed' },
           { label: 'New', value: apps.filter(a => a.status === 'NEW').length, color: '#f97316', bg: '#fff7ed' },
           { label: 'Shortlisted', value: apps.filter(a => a.status === 'SHORTLISTED').length, color: '#16a34a', bg: '#f0fdf4' },
           { label: 'Placed', value: apps.filter(a => a.status === 'PLACED').length, color: '#7c3aed', bg: '#faf5ff' },
@@ -114,7 +114,7 @@ export default function AdminVacancyApplications() {
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '980px' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#f8faff' }}>
+              <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#fff7ed' }}>
                 {['Candidate', 'Vacancy', 'Experience', 'CTC', 'Status', 'Received', 'Actions'].map(h => (
                   <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
@@ -161,7 +161,7 @@ export default function AdminVacancyApplications() {
                         </select>
                         {app.resumeUrl && (
                           <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer" title="View resume"
-                            style={{ display: 'inline-flex', padding: '6px', background: '#eff6ff', borderRadius: '7px', color: '#2145fb' }}>
+                            style={{ display: 'inline-flex', padding: '6px', background: '#fff7ed', borderRadius: '7px', color: '#f97316' }}>
                             <ExternalLink size={13} />
                           </a>
                         )}

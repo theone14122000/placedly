@@ -525,7 +525,7 @@ function TypingDots() {
   );
 }
 
-export default function UtilityToolsSection() {
+export default function UtilityToolsSection({ cms = {} }: { cms?: Record<string, string> }) {
   const [activeId, setActiveId]     = useState<string | null>(null);
   const [input, setInput]           = useState('');
   const [phase, setPhase]           = useState<'idle' | 'loading' | 'done'>('idle');
@@ -630,7 +630,7 @@ export default function UtilityToolsSection() {
           </h1>
 
           <h2 className="sub-headline">
-            AI-Powered Tools Built for Real Career Decisions
+            {cms['hp:utilSubline'] ?? 'AI-Powered Tools Built for Real Career Decisions'}
           </h2>
 
           <p style={{
@@ -640,8 +640,8 @@ export default function UtilityToolsSection() {
             margin: '0 auto',
             lineHeight: 1.65,
           }}>
-            Interactive assistants for resumes, interviews, salaries,
-            study abroad, and more — designed to feel fast, useful, and advisor-grade.
+            {cms['hp:utilDesc'] ??
+              'Interactive assistants for resumes, interviews, salaries, study abroad, and more — designed to feel fast, useful, and advisor-grade.'}
           </p>
         </motion.div>
 
@@ -671,7 +671,7 @@ export default function UtilityToolsSection() {
             <ChevronLeft size={18} strokeWidth={2.5} aria-hidden />
           </button>
 
-          <span className="utility-label" style={{ color: ORANGE, fontWeight: 800 }}>Utility Tools</span>
+          <span className="utility-label" style={{ color: ORANGE, fontWeight: 800 }}>{cms['hp:utilLabel'] ?? 'Utility Tools'}</span>
 
           {/* right arrow — mobile only */}
           <button

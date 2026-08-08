@@ -8,7 +8,7 @@ const BLANK = { title: '', company: '', location: '', type: 'Full Time', salary:
 const CATEGORIES = ['Tech', 'Sales', 'Finance', 'Marketing', 'Healthcare', 'Operations', 'HR', 'General'];
 const TYPES = ['Full Time', 'Hybrid', 'Remote', 'Contract', 'Part Time'];
 
-const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#f8faff', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 const lbl: React.CSSProperties = { display: 'block', fontSize: '10px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' as const, letterSpacing: '0.4px', marginBottom: '5px' };
 
 export default function AdminVacancies() {
@@ -53,7 +53,7 @@ export default function AdminVacancies() {
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           {status && <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600 }}>✓ {status}</span>}
-          <button onClick={openAdd} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 18px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+          <button onClick={openAdd} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 18px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <Plus size={14} /> Add Vacancy
           </button>
         </div>
@@ -67,7 +67,7 @@ export default function AdminVacancies() {
       <div style={{ background: '#fff', border: '1px solid #eef0f6', borderRadius: '16px', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
           <thead>
-            <tr style={{ background: '#f8faff', borderBottom: '1px solid #eef0f6' }}>
+            <tr style={{ background: '#fff7ed', borderBottom: '1px solid #eef0f6' }}>
               {['Role', 'Company', 'Location', 'Type', 'Salary', 'Category', 'Actions'].map(h => (
                 <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontWeight: 600, color: '#64748b', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.4px', whiteSpace: 'nowrap' }}>{h}</th>
               ))}
@@ -80,7 +80,7 @@ export default function AdminVacancies() {
                   <div style={{ fontWeight: 700, color: '#0b0d20' }}>{job.title}</div>
                   {job.tags && <div style={{ display: 'flex', gap: '4px', marginTop: '5px', flexWrap: 'wrap' }}>
                     {job.tags.split(',').slice(0, 3).map(t => t.trim()).filter(Boolean).map(t => (
-                      <span key={t} style={{ fontSize: '10px', background: '#eff6ff', color: '#2145fb', padding: '2px 8px', borderRadius: '999px', fontWeight: 600, border: '1px solid #bfdbfe' }}>{t}</span>
+                      <span key={t} style={{ fontSize: '10px', background: '#fff7ed', color: '#f97316', padding: '2px 8px', borderRadius: '999px', fontWeight: 600, border: '1px solid #fed7aa' }}>{t}</span>
                     ))}
                     {job.tags.split(',').filter(Boolean).length > 3 && (
                       <span style={{ fontSize: '10px', background: '#f1f5f9', color: '#64748b', padding: '2px 7px', borderRadius: '999px', fontWeight: 500 }}>+{job.tags.split(',').filter(Boolean).length - 3}</span>
@@ -90,13 +90,13 @@ export default function AdminVacancies() {
                 <td style={{ padding: '14px 16px', color: '#374151' }}>{job.company}</td>
                 <td style={{ padding: '14px 16px', color: '#64748b' }}>{job.location}</td>
                 <td style={{ padding: '14px 16px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 600, padding: '3px 9px', borderRadius: '999px', background: job.type === 'Remote' ? '#f0fdf4' : job.type === 'Hybrid' ? '#fff7ed' : '#eff6ff', color: job.type === 'Remote' ? '#16a34a' : job.type === 'Hybrid' ? '#f97316' : '#2145fb' }}>{job.type}</span>
+                  <span style={{ fontSize: '11px', fontWeight: 600, padding: '3px 9px', borderRadius: '999px', background: job.type === 'Remote' ? '#f0fdf4' : job.type === 'Hybrid' ? '#fff7ed' : '#fff7ed', color: job.type === 'Remote' ? '#16a34a' : job.type === 'Hybrid' ? '#f97316' : '#f97316' }}>{job.type}</span>
                 </td>
                 <td style={{ padding: '14px 16px', fontWeight: 600, color: '#0b0d20' }}>{job.salary}</td>
                 <td style={{ padding: '14px 16px', color: '#64748b' }}>{job.category}</td>
                 <td style={{ padding: '14px 16px' }}>
                   <div style={{ display: 'flex', gap: '6px' }}>
-                    <button onClick={() => openEdit(job)} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 10px', background: '#eff6ff', color: '#2145fb', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', fontWeight: 600, fontFamily: "'Poppins',sans-serif" }}><Pencil size={11} /> Edit</button>
+                    <button onClick={() => openEdit(job)} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 10px', background: '#fff7ed', color: '#f97316', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', fontWeight: 600, fontFamily: "'Poppins',sans-serif" }}><Pencil size={11} /> Edit</button>
                     <button onClick={() => setDeleteId(job.id)} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 10px', background: '#fef2f2', color: '#ef4444', border: 'none', borderRadius: '7px', fontSize: '12px', cursor: 'pointer', fontWeight: 600, fontFamily: "'Poppins',sans-serif" }}><Trash2 size={11} /> Delete</button>
                   </div>
                 </td>
@@ -127,7 +127,7 @@ export default function AdminVacancies() {
             </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '24px' }}>
               <button onClick={close} style={{ padding: '10px 20px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>Cancel</button>
-              <button onClick={handleSave} disabled={loading || !form.title || !form.company} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 24px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: loading ? 0.6 : 1 }}>
+              <button onClick={handleSave} disabled={loading || !form.title || !form.company} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 24px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: loading ? 0.6 : 1 }}>
                 <Save size={13} /> {loading ? 'Saving…' : modal === 'add' ? 'Add Vacancy' : 'Save Changes'}
               </button>
             </div>

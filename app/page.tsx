@@ -36,10 +36,13 @@ const HP_DEFAULTS: Record<string, string> = {
   'hp:heroOfferJoining': 'Aug 2025',
   'hp:heroAdmitUniversity': 'University of Manchester',
   'hp:heroAdmitProgramme':  "MSc International Business · Fall '25",
+  'hp:heroBgVideo':          '/bg.mp4',
   /* Services */
   'hp:servicesTagline':  'What We Do',
   'hp:servicesTitle':    'One Platform. Two Powerful Verticals.',
   'hp:servicesSubtitle': 'Both Designed Around Your Growth — Not Our Revenue.',
+  'hp:service1Video':    '/new1.mp4',
+  'hp:service2Video':    '/new2.mp4',
   'hp:service1Name':     'Career Assistance Programme (CAP) — India',
   'hp:service1Details':  "Resume rebuild, interview coaching, and direct warm introductions to hiring managers at EXL, Optum, WNS, Quatrro & more. We work on your side — not the employer's. Our 12% Career Assistance Fee applies only after your offer letter arrives. Zero upfront, zero risk.",
   'hp:service1CtaLabel': 'See How CAP Works',
@@ -67,6 +70,26 @@ const HP_DEFAULTS: Record<string, string> = {
   /* Why Placedly */
   'hp:whyTitle':    'Why Professionals Choose Placedly',
   'hp:whySubtitle': "We don't just find you a job. We build your career.",
+
+  /* Utility Tools */
+  'hp:utilLabel':   'Utility Tools',
+  'hp:utilSubline': 'AI-Powered Tools Built for Real Career Decisions',
+  'hp:utilDesc':    'Interactive assistants for resumes, interviews, salaries, study abroad, and more — designed to feel fast, useful, and advisor-grade.',
+
+  /* Industries */
+  'hp:indEyebrow':     'Our Focus Areas',
+  'hp:indTitle':       'Domains Where We Place Talent — ',
+  'hp:indTitleAccent': 'And Know It Deeply',
+
+  /* Study Destinations */
+  'hp:destinationEyebrow':     'Study Destinations',
+  'hp:destinationLabel':       'Study Abroad Destinations We Support',
+  'hp:destinationSub':         "From UK's post-study work visa to Germany's zero tuition fees — we match you to the right country, right university, right course.",
+  'hp:destinationCountries':   'United Kingdom,France,Germany,Dubai / UAE,Canada,Australia,Singapore',
+
+  /* Testimonials */
+  'hp:testiEyebrow': 'Success Stories',
+  'hp:testiTitle':   'Real People. Real Growth.',
   /* CEO Quote */
   'hp:ceoImg':     'https://cdn.prod.website-files.com/68297ae923cb528bf9784f53/682db74463bfe59bcce17434_Ceo-Quote-Img.png',
   'hp:ceoName':    'Pavan Mishra',
@@ -109,13 +132,13 @@ export default async function Home() {
 
       <main className="page-wrapper">
         <Hero cms={cms} />
-        <UtilityToolsSection />
+        <UtilityToolsSection cms={cms} />
         <Services cms={cms} />
         <HowItWorks cms={cms} />
         <CapJourneySection cms={cms} />
-        <Industries />
-        <StudyDestinationsMarquee />
-        <Testimonials />
+        <Industries cms={cms} />
+        <StudyDestinationsMarquee cms={cms} />
+        <Testimonials cms={cms} />
         <Faq />
         <Footer cms={cms} />
       </main>
@@ -123,7 +146,7 @@ export default async function Home() {
       <FloatingWhatsApp cms={cms} />
       
       <PlacedlyFloatingCta
-        label="Apply for CAP"
+        label={cms['hp:capFloatingCtaLabel'] ?? 'Apply for CAP'}
         href="/cap/apply"
         showAt={0.22}
         footerSelector="footer.placedly-footer"

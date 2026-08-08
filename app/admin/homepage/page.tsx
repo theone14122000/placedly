@@ -5,7 +5,7 @@ import ImageUpload from '../components/ImageUpload';
 
 /* ─── helpers ──────────────────────────────────────────────────────── */
 
-const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '10px 13px', border: '1.5px solid #e2e8f0', borderRadius: '9px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#f8faff', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '10px 13px', border: '1.5px solid #e2e8f0', borderRadius: '9px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 const ta: React.CSSProperties  = { ...inp, resize: 'vertical' as const, minHeight: '80px' };
 const lbl: React.CSSProperties = { display: 'block', fontSize: '10px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' as const, letterSpacing: '0.4px', marginBottom: '5px' };
 const row: React.CSSProperties = { display: 'flex', flexDirection: 'column' as const, gap: '14px' };
@@ -72,6 +72,37 @@ const DEFAULTS: Record<string, string> = {
   'hp:service2Name':     'Study Abroad Programme — Go Global',
   'hp:service2Details':  '140+ universities across UK, France, Germany & Dubai. Course shortlisting, university applications, SOP writing, and student visa documentation — handled end to end by one dedicated advisor. Real admissions, zero confusion.',
   'hp:service2CtaLabel': 'Explore Study Abroad',
+  'hp:service1Video':    '/new1.mp4',
+  'hp:service2Video':    '/new2.mp4',
+
+  /* Hero background video */
+  'hp:heroBgVideo': '/bg.mp4',
+
+  /* CAP Journey */
+  'hp:capJourneyKicker':   'Career Assistance Programme',
+  'hp:capJourneyTitle':    'Your CAP Journey — From Resume to Offer',
+  'hp:capJourneySubtitle': 'Scroll through each stage of the programme. Every step is advisor-led, transparent, and built to get you placed — not just applied.',
+  'hp:capFloatingCtaLabel': 'Apply for CAP',
+
+  /* Utility Tools */
+  'hp:utilLabel':   'Utility Tools',
+  'hp:utilSubline': 'AI-Powered Tools Built for Real Career Decisions',
+  'hp:utilDesc':    'Interactive assistants for resumes, interviews, salaries, study abroad, and more — designed to feel fast, useful, and advisor-grade.',
+
+  /* Industries */
+  'hp:indEyebrow':     'Our Focus Areas',
+  'hp:indTitle':       'Domains Where We Place Talent — ',
+  'hp:indTitleAccent': 'And Know It Deeply',
+
+  /* Study Destinations */
+  'hp:destinationEyebrow':   'Study Destinations',
+  'hp:destinationLabel':     'Study Abroad Destinations We Support',
+  'hp:destinationSub':       "From UK's post-study work visa to Germany's zero tuition fees — we match you to the right country, right university, right course.",
+  'hp:destinationCountries': 'United Kingdom,France,Germany,Dubai / UAE,Canada,Australia,Singapore',
+
+  /* Testimonials */
+  'hp:testiEyebrow': 'Success Stories',
+  'hp:testiTitle':   'Real People. Real Growth.',
 
   /* Hiring Partners Marquee */
   'hp:marqueeLabel':     'Our CAP Candidates Have Landed Roles At:',
@@ -181,13 +212,13 @@ export default function AdminHomepage() {
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           {status && <span style={{ fontSize: '12px', color: status.includes('fail') ? '#dc2626' : '#16a34a', fontWeight: 600 }}>{status}</span>}
-          <a href="/" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#0b0d20', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 600, textDecoration: 'none', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+          <a href="/" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#0b0d20', color: '#fff', border: 'none', borderRadius: '999px', fontSize: '13px', fontWeight: 600, textDecoration: 'none', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <ExternalLink size={13} /> View Home Page
           </a>
-          <button onClick={() => setData(DEFAULTS)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '9px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+          <button onClick={() => setData(DEFAULTS)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '999px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <RefreshCw size={13} /> Defaults
           </button>
-          <button onClick={handleSave} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 20px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1 }}>
+          <button onClick={handleSave} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 20px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '999px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1, boxShadow: '0 4px 14px rgba(249,115,22,0.30)' }}>
             <Save size={13} /> {saving ? 'Saving…' : 'Save All'}
           </button>
         </div>
@@ -242,8 +273,8 @@ export default function AdminHomepage() {
             <Inp label="Section subtitle (below title)" k="hp:servicesSubtitle" data={data} set={set} />
           </div>
           <Inp label="Section title" k="hp:servicesTitle" data={data} set={set} />
-          <div style={{ background: '#f8faff', borderRadius: 12, padding: 16, border: '1px solid #e2e8f0' }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#2145fb', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Service Card 1 — CAP</div>
+          <div style={{ background: '#fff7ed', borderRadius: 12, padding: 16, border: '1px solid #e2e8f0' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#f97316', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Service Card 1 — CAP</div>
             <div style={row}>
               <Inp label="Card title" k="hp:service1Name" data={data} set={set} />
               <Inp label="Card body" k="hp:service1Details" data={data} set={set} textarea />
@@ -258,6 +289,74 @@ export default function AdminHomepage() {
               <Inp label="CTA label" k="hp:service2CtaLabel" data={data} set={set} />
             </div>
           </div>
+        </div>
+      </Section>
+
+      {/* ── Videos ── */}
+      <Section title="🎬 Videos (Hero + Services)" open={false}>
+        <div style={row}>
+          <div style={{ background: '#fff7ed', borderRadius: 12, padding: 16, border: '1px solid #fed7aa' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#f97316', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Hero Background Video</div>
+            <Inp label="Video URL" k="hp:heroBgVideo" data={data} set={set} />
+            <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>e.g. /bg.mp4 or a full https:// URL. Upload files via Media → then paste the path here.</div>
+          </div>
+          <div style={{ background: '#fff7ed', borderRadius: 12, padding: 16, border: '1px solid #fed7aa' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#f97316', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Services Section Videos</div>
+            <Inp label="Video 1 — CAP (Get Placed)" k="hp:service1Video" data={data} set={set} />
+            <Inp label="Video 2 — Go Global (Study Abroad)" k="hp:service2Video" data={data} set={set} />
+            <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>Defaults: /new1.mp4 and /new2.mp4</div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ── CAP Journey ── */}
+      <Section title="🚀 CAP Journey Section" open={false}>
+        <div style={row}>
+          <Inp label="Kicker / tagline" k="hp:capJourneyKicker" data={data} set={set} />
+          <Inp label="Section title" k="hp:capJourneyTitle" data={data} set={set} />
+          <Inp label="Subtitle" k="hp:capJourneySubtitle" data={data} set={set} textarea />
+          <Inp label="Floating CTA button label" k="hp:capFloatingCtaLabel" data={data} set={set} />
+        </div>
+      </Section>
+
+      {/* ── Utility Tools ── */}
+      <Section title="🛠️ Utility Tools Section" open={false}>
+        <div style={row}>
+          <Inp label="Utility Tools label (above tool pills)" k="hp:utilLabel" data={data} set={set} />
+          <Inp label="Sub-headline" k="hp:utilSubline" data={data} set={set} />
+          <Inp label="Description paragraph" k="hp:utilDesc" data={data} set={set} textarea />
+        </div>
+      </Section>
+
+      {/* ── Industries ── */}
+      <Section title="🏭 Industries Section Header" open={false}>
+        <div style={row}>
+          <Inp label="Eyebrow text" k="hp:indEyebrow" data={data} set={set} />
+          <Inp label="Title (before accent)" k="hp:indTitle" data={data} set={set} />
+          <Inp label="Title (accent part, orange)" k="hp:indTitleAccent" data={data} set={set} />
+        </div>
+      </Section>
+
+      {/* ── Study Destinations ── */}
+      <Section title="🌍 Study Destinations Marquee" open={false}>
+        <div style={row}>
+          <Inp label="Eyebrow text" k="hp:destinationEyebrow" data={data} set={set} />
+          <Inp label="Section title" k="hp:destinationLabel" data={data} set={set} />
+          <Inp label="Subtitle" k="hp:destinationSub" data={data} set={set} textarea />
+          <div>
+            <label style={lbl}>Countries (comma-separated list)</label>
+            <textarea style={{ ...ta, minHeight: 64 }} value={data['hp:destinationCountries'] ?? ''} onChange={set('hp:destinationCountries')} />
+            <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>e.g. United Kingdom,France,Germany,Dubai / UAE,Canada,Australia,Singapore — flags auto-match by name</div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ── Testimonials ── */}
+      <Section title="💬 Testimonials Header" open={false}>
+        <div style={row}>
+          <Inp label="Eyebrow text" k="hp:testiEyebrow" data={data} set={set} />
+          <Inp label="Section title" k="hp:testiTitle" data={data} set={set} />
+          <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>Testimonial cards themselves are managed under FAQ &amp; Reviews → Testimonials.</div>
         </div>
       </Section>
 
@@ -298,7 +397,7 @@ export default function AdminHomepage() {
             </div>
           </div>
           {[1,2,3].map(i => (
-            <div key={i} style={{ background: '#f8faff', borderRadius: 12, padding: 14, border: '1px solid #e2e8f0' }}>
+            <div key={i} style={{ background: '#fff7ed', borderRadius: 12, padding: 14, border: '1px solid #e2e8f0' }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#0b0d20', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Feature {i}</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 12 }}>
                 <Inp label="Title" k={`hp:aboutFeat${i}Title`} data={data} set={set} />
@@ -318,8 +417,8 @@ export default function AdminHomepage() {
           </div>
           <Inp label="Section title" k="hp:hiwTitle" data={data} set={set} />
           {[1,2,3,4,5].map(i => (
-            <div key={i} style={{ background: '#f8faff', borderRadius: 12, padding: 14, border: '1px solid #e2e8f0' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#2145fb', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Step {i} — 0{i}</div>
+            <div key={i} style={{ background: '#fff7ed', borderRadius: 12, padding: 14, border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#f97316', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Step {i} — 0{i}</div>
               <div style={row}>
                 <Inp label="Title" k={`hp:hiw${i}Title`} data={data} set={set} />
                 <Inp label="Details / body" k={`hp:hiw${i}Details`} data={data} set={set} textarea />
@@ -383,7 +482,7 @@ export default function AdminHomepage() {
 
       {/* Sticky save */}
       <div style={{ position: 'sticky', bottom: 24, display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-        <button onClick={handleSave} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 28px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1, boxShadow: '0 8px 24px rgba(33,69,251,0.35)' }}>
+        <button onClick={handleSave} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 28px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '999px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1, boxShadow: '0 8px 24px rgba(249,115,22,0.35)' }}>
           <Save size={15} /> {saving ? 'Saving…' : 'Save All Changes'}
         </button>
       </div>

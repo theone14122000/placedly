@@ -4,7 +4,7 @@ import { CheckCircle2, Clock, AlertCircle, TrendingUp, Award, Target } from 'luc
 
 const JOURNEY = [
   { step: 1, label: 'Free Discovery Call', desc: '15-minute assessment. Goals understood. Advisor matched.', badge: 'Free', badgeColor: '#16a34a', badgeBg: '#f0fdf4' },
-  { step: 2, label: 'Deep Profile Assessment', desc: 'Career story mapped. Gaps identified. Roadmap delivered.', badge: 'Foundation', badgeColor: '#2145fb', badgeBg: '#eff6ff' },
+  { step: 2, label: 'Deep Profile Assessment', desc: 'Career story mapped. Gaps identified. Roadmap delivered.', badge: 'Foundation', badgeColor: '#f97316', badgeBg: '#fff7ed' },
   { step: 3, label: 'Service Agreement Sign', desc: 'Digital agreement with scope, success share %, and terms.', badge: 'Pending', badgeColor: '#f97316', badgeBg: '#fff7ed' },
   { step: 4, label: 'Resume & LinkedIn Rebuild', desc: 'ATS-optimized resume + LinkedIn. Ready in 1–2 days.', badge: 'Core', badgeColor: '#7c3aed', badgeBg: '#faf5ff' },
   { step: 5, label: 'Interview Mastery — 3 Sessions', desc: 'HR Round → Technical → Full Mock + Salary Negotiation Script.', badge: 'Biggest Edge', badgeColor: '#ef4444', badgeBg: '#fef2f2' },
@@ -49,7 +49,7 @@ export default function ProgressPage() {
 
       <div className="dash-prog-top" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '14px', marginBottom: '24px' }}>
         <div style={{ background: '#0b0d20', borderRadius: '16px', padding: '24px', gridColumn: '1', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', top: -30, right: -30, width: 120, height: 120, borderRadius: '50%', background: 'rgba(33,69,251,0.2)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: -30, right: -30, width: 120, height: 120, borderRadius: '50%', background: 'rgba(249,115,22,0.2)', pointerEvents: 'none' }} />
           <div style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Overall Progress</div>
           <div style={{ fontSize: '42px', fontWeight: 900, color: '#fff', lineHeight: 1, marginBottom: '8px' }}>{pct}%</div>
           <div style={{ height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: 999, marginBottom: '8px' }}>
@@ -93,14 +93,14 @@ export default function ProgressPage() {
                   <div style={{
                     width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: item.done ? '#2145fb' : '#f8faff',
+                    background: item.done ? '#f97316' : '#fff7ed',
                     border: item.done ? 'none' : '2px solid #e2e8f0',
                   }}>
                     {item.done
                       ? <CheckCircle2 size={18} color="#fff" />
                       : <span style={{ fontSize: '13px', fontWeight: 700, color: '#94a3b8' }}>{item.step}</span>}
                   </div>
-                  {i < JOURNEY.length - 1 && <div style={{ width: '2px', flex: 1, minHeight: '20px', background: item.done ? 'rgba(33,69,251,0.2)' : '#e2e8f0', margin: '6px 0' }} />}
+                  {i < JOURNEY.length - 1 && <div style={{ width: '2px', flex: 1, minHeight: '20px', background: item.done ? 'rgba(249,115,22,0.2)' : '#e2e8f0', margin: '6px 0' }} />}
                 </div>
                 <div style={{ paddingBottom: i < JOURNEY.length - 1 ? '24px' : 0, flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px', flexWrap: 'wrap' }}>
@@ -108,8 +108,8 @@ export default function ProgressPage() {
                     <span style={{ fontSize: '10px', fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: item.badgeBg, color: item.badgeColor }}>{item.badge}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                    <Clock size={11} color={item.done ? '#2145fb' : '#94a3b8'} />
-                    <span style={{ fontSize: '11px', color: item.done ? '#2145fb' : '#94a3b8', fontWeight: 600 }}>{item.date}</span>
+                    <Clock size={11} color={item.done ? '#f97316' : '#94a3b8'} />
+                    <span style={{ fontSize: '11px', color: item.done ? '#f97316' : '#94a3b8', fontWeight: 600 }}>{item.date}</span>
                   </div>
                   <div style={{ fontSize: '13px', color: '#64748b', lineHeight: 1.6 }}>{item.desc}</div>
                 </div>
@@ -129,7 +129,7 @@ export default function ProgressPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {journeyWithDone.map(m => (
                 <div key={m.label} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: m.done ? '#2145fb' : '#f1f5f9', border: m.done ? 'none' : '1.5px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: m.done ? '#f97316' : '#f1f5f9', border: m.done ? 'none' : '1.5px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     {m.done ? <CheckCircle2 size={12} color="#fff" /> : <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#cbd5e1', display: 'block' }} />}
                   </div>
                   <span style={{ fontSize: '12px', fontWeight: 500, color: m.done ? '#0b0d20' : '#94a3b8' }}>{m.label}</span>
@@ -141,7 +141,7 @@ export default function ProgressPage() {
           {/* Stats */}
           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '22px', boxShadow: '0 1px 3px rgba(0,0,0,.04)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <TrendingUp size={15} color="#2145fb" />
+              <TrendingUp size={15} color="#f97316" />
               <div style={{ fontSize: '14px', fontWeight: 800, color: '#0b0d20' }}>Placement Stats</div>
             </div>
             {[
@@ -150,7 +150,7 @@ export default function ProgressPage() {
               { label: 'Avg salary growth', value: '60%+' },
               { label: 'Interview calls (avg)', value: '3–5' },
             ].map(s => (
-              <div key={s.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 0', borderBottom: '1px solid #f8faff' }}>
+              <div key={s.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 0', borderBottom: '1px solid #fff7ed' }}>
                 <span style={{ fontSize: '12px', color: '#64748b' }}>{s.label}</span>
                 <span style={{ fontSize: '13px', fontWeight: 700, color: '#0b0d20' }}>{s.value}</span>
               </div>

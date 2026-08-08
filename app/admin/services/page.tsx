@@ -14,7 +14,7 @@ const DEFAULT_SERVICES: Service[] = [
   },
   {
     id: 2, title: 'Study Abroad Guidance', tag: 'Global Education',
-    color: '#2145fb',
+    color: '#f97316',
     desc: 'Full-service study abroad consultancy for UK, France, Germany, and Dubai. From university shortlisting to visa documentation and pre-departure support.',
     features: ['140+ university partnerships', 'Application management', 'SOP & LOR guidance', 'Visa documentation support', 'Pre-departure orientation'],
   },
@@ -30,7 +30,7 @@ const DEFAULT_DIFF: Differentiator[] = [
 const inputS: React.CSSProperties = {
   width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0',
   borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif",
-  color: '#0b0d20', background: '#f8faff', outline: 'none',
+  color: '#0b0d20', background: '#fff7ed', outline: 'none',
   boxSizing: 'border-box' as const,
 };
 
@@ -108,16 +108,16 @@ export default function AdminServicesPage() {
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', marginBottom: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Layers size={16} color="#2145fb" />
+            <Layers size={16} color="#f97316" />
             <span style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Services ({services.length})</span>
           </div>
-          <button onClick={addService} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#eff6ff', color: '#2145fb', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+          <button onClick={addService} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <Plus size={13} /> Add Service
           </button>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {services.map(svc => (
-            <div key={svc.id} style={{ border: '2px solid #e2e8f0', borderRadius: '14px', padding: '20px', background: '#f8faff' }}>
+            <div key={svc.id} style={{ border: '2px solid #e2e8f0', borderRadius: '14px', padding: '20px', background: '#fff7ed' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: svc.color, flexShrink: 0 }} />
@@ -148,7 +148,7 @@ export default function AdminServicesPage() {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                   <label style={labelS}>Features</label>
-                  <button onClick={() => addFeature(svc.id)} style={{ fontSize: '11px', color: '#2145fb', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", fontWeight: 600 }}>+ Add</button>
+                  <button onClick={() => addFeature(svc.id)} style={{ fontSize: '11px', color: '#f97316', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", fontWeight: 600 }}>+ Add</button>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {svc.features.map((f, fi) => (
@@ -171,7 +171,7 @@ export default function AdminServicesPage() {
         <div style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20', marginBottom: '20px' }}>Differentiators / Why Choose Us ({diff.length})</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '14px' }}>
           {diff.map((d, i) => (
-            <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px', background: '#f8faff' }}>
+            <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px', background: '#fff7ed' }}>
               <div style={{ marginBottom: '8px' }}>
                 <label style={labelS}>Title</label>
                 <input style={inputS} value={d.title} onChange={e => updateDiff(i, 'title', e.target.value)} />

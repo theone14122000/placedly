@@ -5,7 +5,7 @@ import { Plus, Pencil, Trash2, X, Save, ToggleLeft, ToggleRight } from 'lucide-r
 type Programme = { id: string; name: string; description: string | null; cycleDays: number; isActive: boolean; createdAt: string; _count?: { applications: number } };
 const BLANK = { name: '', description: '', cycleDays: 90 };
 
-const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#f8faff', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 const lbl: React.CSSProperties = { display: 'block', fontSize: '10px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' as const, letterSpacing: '0.4px', marginBottom: '5px' };
 
 export default function AdminProgrammes() {
@@ -46,7 +46,7 @@ export default function AdminProgrammes() {
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           {status && <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600 }}>✓ {status}</span>}
-          <button onClick={openAdd} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 18px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+          <button onClick={openAdd} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 18px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <Plus size={14} /> Add Programme
           </button>
         </div>
@@ -58,7 +58,7 @@ export default function AdminProgrammes() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
               <span style={{ fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: 999, background: p.isActive ? '#f0fdf4' : '#f1f5f9', color: p.isActive ? '#16a34a' : '#94a3b8' }}>{p.isActive ? 'Active' : 'Inactive'}</span>
               <div style={{ display: 'flex', gap: '6px' }}>
-                <button onClick={() => openEdit(p)} style={{ padding: '5px 9px', background: '#eff6ff', color: '#2145fb', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '3px', fontFamily: "'Poppins',sans-serif" }}><Pencil size={10} /> Edit</button>
+                <button onClick={() => openEdit(p)} style={{ padding: '5px 9px', background: '#fff7ed', color: '#f97316', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '3px', fontFamily: "'Poppins',sans-serif" }}><Pencil size={10} /> Edit</button>
                 <button onClick={() => toggleActive(p)} title={p.isActive ? 'Deactivate' : 'Activate'} style={{ padding: '5px', background: p.isActive ? '#fff7ed' : '#f0fdf4', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex' }}>
                   {p.isActive ? <ToggleRight size={16} color="#f97316" /> : <ToggleLeft size={16} color="#16a34a" />}
                 </button>
@@ -67,8 +67,8 @@ export default function AdminProgrammes() {
             <div style={{ fontSize: '16px', fontWeight: 800, color: '#0b0d20', marginBottom: '6px' }}>{p.name}</div>
             <div style={{ fontSize: '12px', color: '#64748b', lineHeight: 1.6, marginBottom: '14px' }}>{p.description || '—'}</div>
             <div style={{ display: 'flex', gap: '10px' }}>
-              <div style={{ background: '#eff6ff', borderRadius: '8px', padding: '8px 12px', flex: 1, textAlign: 'center' }}>
-                <div style={{ fontSize: '18px', fontWeight: 900, color: '#2145fb' }}>{p.cycleDays}</div>
+              <div style={{ background: '#fff7ed', borderRadius: '8px', padding: '8px 12px', flex: 1, textAlign: 'center' }}>
+                <div style={{ fontSize: '18px', fontWeight: 900, color: '#f97316' }}>{p.cycleDays}</div>
                 <div style={{ fontSize: '10px', color: '#64748b', fontWeight: 600 }}>DAYS ACCESS</div>
               </div>
             </div>
@@ -91,7 +91,7 @@ export default function AdminProgrammes() {
             </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '24px' }}>
               <button onClick={close} style={{ padding: '10px 20px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>Cancel</button>
-              <button onClick={handleSave} disabled={loading || !form.name || !form.cycleDays} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 24px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: loading ? 0.7 : 1 }}>
+              <button onClick={handleSave} disabled={loading || !form.name || !form.cycleDays} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 24px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: loading ? 0.7 : 1 }}>
                 <Save size={13} /> {loading ? 'Saving…' : 'Save'}
               </button>
             </div>

@@ -39,7 +39,7 @@ export default function AdminAuditPage() {
 
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-          <Shield size={16} color="#2145fb" />
+          <Shield size={16} color="#f97316" />
           <span style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Events ({logs.length})</span>
         </div>
 
@@ -59,9 +59,9 @@ export default function AdminAuditPage() {
               </thead>
               <tbody>
                 {logs.map(log => {
-                  const c = ACTION_COLORS[log.action] ?? { bg: '#eff6ff', color: '#2145fb' };
+                  const c = ACTION_COLORS[log.action] ?? { bg: '#fff7ed', color: '#f97316' };
                   return (
-                    <tr key={log.id} style={{ borderBottom: '1px solid #f8faff' }}>
+                    <tr key={log.id} style={{ borderBottom: '1px solid #fff7ed' }}>
                       <td style={{ padding: '10px 12px', color: '#94a3b8', fontSize: '12px', whiteSpace: 'nowrap' }}>
                         {new Date(log.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                       </td>

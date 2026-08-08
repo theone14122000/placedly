@@ -45,7 +45,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (status === 'loading' || (session?.user as any)?.role !== 'master_admin') {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8faff', fontFamily: "'Poppins',sans-serif" }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff7ed', fontFamily: "'Poppins',sans-serif" }}>
         <img src="/logo.png" alt="Placedly" style={{ height: '48px', width: 'auto' }} />
       </div>
     );
@@ -78,11 +78,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={item.href}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '10px',
-                  padding: '9px 12px', borderRadius: '10px', textDecoration: 'none',
-                  background: active ? 'rgba(33,69,251,0.2)' : 'transparent',
-                  borderLeft: active ? '3px solid #2145fb' : '3px solid transparent',
-                  color: active ? '#fff' : 'rgba(255,255,255,0.5)',
+                  padding: '9px 14px', borderRadius: '999px', textDecoration: 'none',
+                  background: active ? '#f97316' : 'transparent',
+                  borderLeft: '3px solid transparent',
+                  color: active ? '#fff' : 'rgba(255,255,255,0.55)',
                   fontSize: '13px', fontWeight: active ? 600 : 400,
+                  boxShadow: active ? '0 4px 14px rgba(249,115,22,0.35)' : 'none',
                 }}
               >
                 <item.Icon size={14} />
@@ -105,7 +106,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
           <button
             onClick={() => signOut({ callbackUrl: '/login' })}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.35)', fontSize: '12px', cursor: 'pointer', padding: '8px 12px', borderRadius: '8px', width: '100%', fontFamily: "'Poppins',sans-serif" }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.35)', fontSize: '12px', cursor: 'pointer', padding: '8px 12px', borderRadius: '999px', width: '100%', fontFamily: "'Poppins',sans-serif" }}
           >
             <LogOut size={12} /> Sign Out
           </button>
@@ -113,7 +114,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Content */}
-      <div className="portal-main" style={{ background: '#f8faff', overflowY: 'auto' }}>
+      <div className="portal-main" style={{ background: '#fff7ed', overflowY: 'auto' }}>
         {/* Mobile topbar */}
         <header style={{ display: 'none', background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '0 20px', height: '52px', alignItems: 'center', gap: '12px', position: 'sticky', top: 0, zIndex: 20 }} className="portal-admin-topbar">
           <button
@@ -123,10 +124,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           >
             <span />
           </button>
+          <img src="/logo.png" alt="Placedly" style={{ height: '26px', width: 'auto' }} />
           <span style={{ fontSize: '13px', fontWeight: 700, color: '#0b0d20' }}>Admin Panel</span>
         </header>
 
         {children}
+
+        {/* Branding footer */}
+        <footer style={{ borderTop: '1px solid #e2e8f0', background: '#fff', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <a href="/" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+            <img src="/logo.png" alt="Placedly" style={{ height: '22px', width: 'auto' }} />
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#0b0d20' }}>Placedly</span>
+          </a>
+          <span style={{ fontSize: '11px', color: '#94a3b8' }}>· © 2026 Placedly · Master Admin Panel</span>
+          <a href="/" target="_blank" rel="noopener noreferrer" style={{ fontSize: '11px', fontWeight: 600, color: '#f97316', textDecoration: 'none' }}>View Website →</a>
+        </footer>
       </div>
     </div>
   );

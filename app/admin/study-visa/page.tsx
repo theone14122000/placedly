@@ -32,7 +32,7 @@ const DEFAULT_APPLY_POINTS = [
 const inp: React.CSSProperties = {
   width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0',
   borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif",
-  color: '#0b0d20', background: '#f8faff', outline: 'none', boxSizing: 'border-box' as const,
+  color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const,
 };
 const lbl: React.CSSProperties = {
   display: 'block', fontSize: '11px', fontWeight: 600, color: '#374151',
@@ -120,7 +120,7 @@ export default function AdminStudyVisaPage() {
 
       {/* Hero */}
       <div style={card}>
-        {sectionTitle('🦸 Hero Section', <Globe size={16} color="#2145fb" />)}
+        {sectionTitle('🦸 Hero Section', <Globe size={16} color="#f97316" />)}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
           <div><label style={lbl}>Tag pill</label><input style={inp} value={hero.tag} onChange={e => setHero({ ...hero, tag: e.target.value })} /></div>
           <div><label style={lbl}>Primary CTA text</label><input style={inp} value={hero.cta1} onChange={e => setHero({ ...hero, cta1: e.target.value })} /></div>
@@ -146,13 +146,13 @@ export default function AdminStudyVisaPage() {
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
             <span style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Destination Countries ({countries.length})</span>
-            <button onClick={() => setCountries(p => [...p, { flag: '', name: 'New Country', sub: 'Subtitle' }])} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', background: '#eff6ff', color: '#2145fb', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+            <button onClick={() => setCountries(p => [...p, { flag: '', name: 'New Country', sub: 'Subtitle' }])} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
               <Plus size={12} /> Add
             </button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {countries.map((c, i) => (
-              <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', background: '#f8faff', position: 'relative' }}>
+              <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', background: '#fff7ed', position: 'relative' }}>
                 <button onClick={() => setCountries(p => p.filter((_, idx) => idx !== i))} style={{ position: 'absolute', top: '8px', right: '8px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '3px', cursor: 'pointer', display: 'flex' }}><Trash2 size={11} color="#ef4444" /></button>
                 <div style={{ paddingRight: '28px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <div><label style={{ ...lbl, fontSize: '10px' }}>Name</label><input style={{ ...inp, padding: '6px 10px', fontSize: '12px' }} value={c.name} onChange={e => setCountries(p => p.map((x, idx) => idx === i ? { ...x, name: e.target.value } : x))} /></div>
@@ -168,7 +168,7 @@ export default function AdminStudyVisaPage() {
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
             <span style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Features ({features.length})</span>
-            <button onClick={() => setFeatures(p => [...p, { icon: 'Star', title: 'New Feature', desc: 'Description' }])} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', background: '#eff6ff', color: '#2145fb', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+            <button onClick={() => setFeatures(p => [...p, { icon: 'Star', title: 'New Feature', desc: 'Description' }])} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
               <Plus size={12} /> Add
             </button>
           </div>
@@ -178,7 +178,7 @@ export default function AdminStudyVisaPage() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {features.map((f, i) => (
-              <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', background: '#f8faff', position: 'relative' }}>
+              <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', background: '#fff7ed', position: 'relative' }}>
                 <button onClick={() => setFeatures(p => p.filter((_, idx) => idx !== i))} style={{ position: 'absolute', top: '8px', right: '8px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '3px', cursor: 'pointer', display: 'flex' }}><Trash2 size={11} color="#ef4444" /></button>
                 <div style={{ paddingRight: '28px' }}>
                   <div style={{ marginBottom: '6px' }}><label style={{ ...lbl, fontSize: '10px' }}>Title</label><input style={{ ...inp, padding: '6px 10px', fontSize: '12px' }} value={f.title} onChange={e => setFeatures(p => p.map((x, idx) => idx === i ? { ...x, title: e.target.value } : x))} /></div>

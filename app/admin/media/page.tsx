@@ -71,24 +71,24 @@ export default function AdminMedia() {
         onDrop={e => { e.preventDefault(); setDragOver(false); uploadFiles(Array.from(e.dataTransfer.files)); }}
         onClick={() => inputRef.current?.click()}
         style={{
-          border: `2px dashed ${dragOver ? '#2145fb' : '#cbd5e1'}`,
+          border: `2px dashed ${dragOver ? '#f97316' : '#cbd5e1'}`,
           borderRadius: '16px',
           padding: '40px',
           textAlign: 'center',
-          background: dragOver ? '#eff3ff' : '#f8faff',
+          background: dragOver ? '#eff3ff' : '#fff7ed',
           cursor: 'pointer',
           marginBottom: '28px',
           transition: 'all 0.15s',
         }}
       >
         {uploading ? (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', color: '#2145fb', fontSize: '14px', fontWeight: 600 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', color: '#f97316', fontSize: '14px', fontWeight: 600 }}>
             <Loader size={20} style={{ animation: 'spin 1s linear infinite' }} /> Uploading…
           </div>
         ) : (
           <>
-            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-              <Upload size={22} color="#2145fb" />
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+              <Upload size={22} color="#f97316" />
             </div>
             <div style={{ fontSize: '15px', fontWeight: 700, color: '#0b0d20', marginBottom: '4px' }}>
               {dragOver ? 'Drop to upload' : 'Click or drag & drop to upload'}
@@ -129,7 +129,7 @@ export default function AdminMedia() {
                   <div style={{ fontSize: '11px', fontWeight: 600, color: '#0b0d20', marginBottom: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{img.name}</div>
                   <button
                     onClick={() => copyUrl(img.url)}
-                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '6px', background: copied === img.url ? '#f0fdf4' : '#eff6ff', color: copied === img.url ? '#16a34a' : '#2145fb', border: 'none', borderRadius: '7px', fontSize: '11px', cursor: 'pointer', fontWeight: 600, fontFamily: "'Poppins',sans-serif" }}
+                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '6px', background: copied === img.url ? '#f0fdf4' : '#fff7ed', color: copied === img.url ? '#16a34a' : '#f97316', border: 'none', borderRadius: '7px', fontSize: '11px', cursor: 'pointer', fontWeight: 600, fontFamily: "'Poppins',sans-serif" }}
                   >
                     {copied === img.url ? <><Check size={11} /> Copied!</> : <><Copy size={11} /> Copy URL</>}
                   </button>
@@ -145,7 +145,7 @@ export default function AdminMedia() {
       <div style={{ background: '#fff', border: '1px solid #eef0f6', borderRadius: '16px', overflow: 'hidden' }}>
         {SITE_IMAGES.map((img, i) => (
           <div key={img.name} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', borderBottom: i < SITE_IMAGES.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
-            <div style={{ width: '56px', height: '40px', borderRadius: '8px', background: '#f8faff', border: '1px solid #eef0f6', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+            <div style={{ width: '56px', height: '40px', borderRadius: '8px', background: '#fff7ed', border: '1px solid #eef0f6', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
               <img src={img.path} alt={img.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
             </div>
             <div style={{ flex: 1, overflow: 'hidden' }}>
@@ -155,7 +155,7 @@ export default function AdminMedia() {
             <code style={{ fontSize: '11px', color: '#475569', background: '#f1f5f9', padding: '4px 8px', borderRadius: '6px' }}>{img.path}</code>
             <button
               onClick={() => copyUrl(img.path)}
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', background: copied === img.path ? '#f0fdf4' : '#eff6ff', color: copied === img.path ? '#16a34a' : '#2145fb', border: 'none', borderRadius: '7px', fontSize: '11px', cursor: 'pointer', fontWeight: 600, fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', background: copied === img.path ? '#f0fdf4' : '#fff7ed', color: copied === img.path ? '#16a34a' : '#f97316', border: 'none', borderRadius: '7px', fontSize: '11px', cursor: 'pointer', fontWeight: 600, fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}
             >
               {copied === img.path ? <><Check size={11} /> Copied</> : <><Copy size={11} /> Copy Path</>}
             </button>

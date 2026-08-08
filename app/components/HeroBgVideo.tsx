@@ -4,8 +4,9 @@ import { useEffect, useRef } from 'react';
 
 const HERO_BG_VIDEO_SRC = '/bg.mp4';
 
-export default function HeroBgVideo() {
+export default function HeroBgVideo({ videoSrc }: { videoSrc?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const src = videoSrc || HERO_BG_VIDEO_SRC;
 
   useEffect(() => {
     const video = videoRef.current;
@@ -23,7 +24,7 @@ export default function HeroBgVideo() {
       <video
         ref={videoRef}
         className="placedly-hero-bg-video"
-        src={HERO_BG_VIDEO_SRC}
+        src={src}
         autoPlay
         muted
         loop

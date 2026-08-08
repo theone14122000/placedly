@@ -59,10 +59,10 @@ export default function ImageUpload({ label, value, onChange, hint, shape = 'rec
           handleFile(e.dataTransfer.files[0]);
         }}
         style={{
-          border: `2px dashed ${dragOver ? '#2145fb' : '#d1d5db'}`,
+          border: `2px dashed ${dragOver ? '#f97316' : '#d1d5db'}`,
           borderRadius: 12,
           padding: 16,
-          background: dragOver ? '#eff3ff' : '#f8faff',
+          background: dragOver ? '#eff3ff' : '#fff7ed',
           transition: 'all 0.15s',
           display: 'flex',
           flexDirection: 'column',
@@ -99,7 +99,7 @@ export default function ImageUpload({ label, value, onChange, hint, shape = 'rec
         {/* Upload zone */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '8px 0' }}>
           {uploading ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#2145fb', fontSize: 13 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#f97316', fontSize: 13 }}>
               <Loader size={16} style={{ animation: 'spin 1s linear infinite' }} />
               Uploading…
             </div>
@@ -111,7 +111,7 @@ export default function ImageUpload({ label, value, onChange, hint, shape = 'rec
                 <button
                   type="button"
                   onClick={() => inputRef.current?.click()}
-                  style={{ color: '#2145fb', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, fontFamily: "'Poppins',sans-serif", padding: 0 }}
+                  style={{ color: '#f97316', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, fontFamily: "'Poppins',sans-serif", padding: 0 }}
                 >
                   browse
                 </button>

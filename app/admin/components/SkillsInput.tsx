@@ -11,7 +11,7 @@ interface Props {
 }
 
 const CAT_COLORS: Record<string, string> = {
-  Tech: '#2145fb', Data: '#7c3aed', Finance: '#16a34a', Healthcare: '#0891b2',
+  Tech: '#f97316', Data: '#7c3aed', Finance: '#16a34a', Healthcare: '#0891b2',
   Sales: '#f97316', Marketing: '#db2777', Operations: '#64748b', HR: '#d97706',
   Design: '#ec4899', 'Soft Skills': '#6366f1', BPO: '#475569',
 };
@@ -84,8 +84,8 @@ export default function SkillsInput({ value, onChange, placeholder = 'Search or 
         onClick={() => { inputRef.current?.focus(); setOpen(true); }}
         style={{
           display: 'flex', flexWrap: 'wrap', gap: '6px', padding: '8px 10px',
-          border: `1.5px solid ${open ? '#2145fb' : '#e2e8f0'}`, borderRadius: '9px',
-          background: '#f8faff', cursor: 'text', minHeight: '42px', transition: 'border-color 0.15s',
+          border: `1.5px solid ${open ? '#f97316' : '#e2e8f0'}`, borderRadius: '9px',
+          background: '#fff7ed', cursor: 'text', minHeight: '42px', transition: 'border-color 0.15s',
           fontFamily: "'Poppins',sans-serif",
         }}
       >
@@ -94,9 +94,9 @@ export default function SkillsInput({ value, onChange, placeholder = 'Search or 
             key={skill}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '4px',
-              background: '#eff6ff', color: '#2145fb', padding: '3px 9px 3px 10px',
+              background: '#fff7ed', color: '#f97316', padding: '3px 9px 3px 10px',
               borderRadius: '999px', fontSize: '12px', fontWeight: 600, lineHeight: 1,
-              border: '1px solid #bfdbfe',
+              border: '1px solid #fed7aa',
             }}
           >
             {skill}
@@ -179,12 +179,12 @@ export default function SkillsInput({ value, onChange, placeholder = 'Search or 
                         type="button"
                         onMouseDown={e => { e.preventDefault(); add(skill.name); }}
                         style={{
-                          padding: '4px 10px', background: '#f8faff', border: '1px solid #e2e8f0',
+                          padding: '4px 10px', background: '#fff7ed', border: '1px solid #e2e8f0',
                           borderRadius: '999px', fontSize: '12px', color: '#374151', fontWeight: 500,
                           cursor: 'pointer', fontFamily: "'Poppins',sans-serif",
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.background = '#eff6ff'; e.currentTarget.style.borderColor = '#bfdbfe'; e.currentTarget.style.color = '#2145fb'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = '#f8faff'; e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#374151'; }}
+                        onMouseEnter={e => { e.currentTarget.style.background = '#fff7ed'; e.currentTarget.style.borderColor = '#fed7aa'; e.currentTarget.style.color = '#f97316'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = '#fff7ed'; e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#374151'; }}
                       >
                         {skill.name}
                       </button>

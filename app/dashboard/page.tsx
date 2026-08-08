@@ -14,8 +14,8 @@ const JOURNEY_LABELS = [
   'Offer & Placement',
 ];
 
-const COLORS = ['#2145fb', '#f97316', '#16a34a', '#ef4444', '#7c3aed', '#0891b2'];
-const BGS    = ['#eff6ff', '#fff7ed', '#f0fdf4', '#fef2f2', '#faf5ff', '#ecfeff'];
+const COLORS = ['#f97316', '#f97316', '#16a34a', '#ef4444', '#7c3aed', '#0891b2'];
+const BGS    = ['#fff7ed', '#fff7ed', '#f0fdf4', '#fef2f2', '#faf5ff', '#ecfeff'];
 
 type Profile = {
   name: string; capStep: number; programme: string; status: string;
@@ -89,7 +89,7 @@ export default function DashboardHome() {
     <div>
       {/* Welcome banner */}
       <div style={{ background: '#0b0d20', borderRadius: '16px', padding: '28px 32px', marginBottom: '24px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', right: -40, top: -40, width: 220, height: 220, borderRadius: '50%', background: 'rgba(33,69,251,0.15)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', right: -40, top: -40, width: 220, height: 220, borderRadius: '50%', background: 'rgba(249,115,22,0.15)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', right: 60, bottom: -60, width: 160, height: 160, borderRadius: '50%', background: 'rgba(249,115,22,0.10)', pointerEvents: 'none' }} />
         <div style={{ position: 'relative' }}>
           <div style={{ fontSize: '11px', fontWeight: 700, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.7px', marginBottom: '8px' }}>
@@ -117,7 +117,7 @@ export default function DashboardHome() {
       {/* Stats */}
       <div className="dash-stats-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '14px', marginBottom: '24px' }}>
         {[
-          { Icon: TrendingUp, label: 'CAP Status',  value: `Step ${capStep}/7`,        sub: isDone ? 'Completed!' : 'In Progress',    color: '#2145fb', bg: '#eff6ff' },
+          { Icon: TrendingUp, label: 'CAP Status',  value: `Step ${capStep}/7`,        sub: isDone ? 'Completed!' : 'In Progress',    color: '#f97316', bg: '#fff7ed' },
           { Icon: BookOpen,   label: 'Courses',      value: `${courses.length} Enrolled`, sub: `${courses.filter(c => c.progress === 100).length} completed`, color: '#f97316', bg: '#fff7ed' },
           { Icon: Briefcase,  label: 'Jobs Live',    value: `${jobCount} Open`,           sub: 'Browse vacancies',                       color: '#16a34a', bg: '#f0fdf4' },
           { Icon: Clock,      label: 'Next Step',    value: isDone ? 'Done!' : nextLabel, sub: isDone ? 'All complete' : 'Action needed', color: '#7c3aed', bg: '#faf5ff' },
@@ -137,8 +137,8 @@ export default function DashboardHome() {
       {(profile?.interviewSchedule || profile?.advisorFeedback || profile?.resumeUrl) && (
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,.04)', marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <MessageSquare size={16} color="#2145fb" />
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <MessageSquare size={16} color="#f97316" />
             </div>
             <div>
               <div style={{ fontSize: '15px', fontWeight: 800, color: '#0b0d20' }}>Updates from your Advisor</div>
@@ -148,7 +148,7 @@ export default function DashboardHome() {
           <div style={{ display: 'grid', gap: '14px', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
             {profile.interviewSchedule && (
               <div style={{ border: '1px solid #f1f5f9', background: '#fafcff', borderRadius: '12px', padding: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 700, color: '#2145fb', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 700, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '8px' }}>
                   <CalendarDays size={13} /> Interview Schedule
                 </div>
                 <div style={{ fontSize: '13px', color: '#374151', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{profile.interviewSchedule}</div>
@@ -191,7 +191,7 @@ export default function DashboardHome() {
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,.04)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
             <h2 style={{ fontSize: '15px', fontWeight: 800, color: '#0b0d20' }}>Continue Learning</h2>
-            <Link href="/dashboard/courses" style={{ fontSize: '12px', color: '#2145fb', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '3px' }}>
+            <Link href="/dashboard/courses" style={{ fontSize: '12px', color: '#f97316', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '3px' }}>
               All courses <ChevronRight size={13} />
             </Link>
           </div>
@@ -228,16 +228,16 @@ export default function DashboardHome() {
               {journey.map((item, i) => (
                 <div key={item.step} style={{ display: 'flex', gap: '12px', alignItems: 'stretch' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
-                    <div style={{ width: '26px', height: '26px', borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: item.done ? '#2145fb' : '#f1f5f9', border: item.done ? 'none' : '1.5px solid #e2e8f0' }}>
+                    <div style={{ width: '26px', height: '26px', borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: item.done ? '#f97316' : '#f1f5f9', border: item.done ? 'none' : '1.5px solid #e2e8f0' }}>
                       {item.done
                         ? <CheckCircle2 size={13} color="#fff" />
                         : <span style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8' }}>{item.step}</span>}
                     </div>
-                    {i < journey.length - 1 && <div style={{ width: '1px', flex: 1, minHeight: '14px', background: item.done ? 'rgba(33,69,251,0.25)' : '#e2e8f0', margin: '3px 0' }} />}
+                    {i < journey.length - 1 && <div style={{ width: '1px', flex: 1, minHeight: '14px', background: item.done ? 'rgba(249,115,22,0.25)' : '#e2e8f0', margin: '3px 0' }} />}
                   </div>
                   <div style={{ paddingBottom: i < journey.length - 1 ? '14px' : 0 }}>
                     <div style={{ fontSize: '12px', fontWeight: 600, color: item.done ? '#0b0d20' : '#94a3b8' }}>{item.label}</div>
-                    <div style={{ fontSize: '10px', color: item.done ? '#2145fb' : '#cbd5e1', marginTop: '1px' }}>{item.date}</div>
+                    <div style={{ fontSize: '10px', color: item.done ? '#f97316' : '#cbd5e1', marginTop: '1px' }}>{item.date}</div>
                   </div>
                 </div>
               ))}
@@ -253,7 +253,7 @@ export default function DashboardHome() {
               { label: 'Track My Progress',     href: '/dashboard/progress' },
               { label: 'Contact Advisor',        href: '/contact' },
             ].map(l => (
-              <Link key={l.label} href={l.href} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid #f8faff', textDecoration: 'none', color: '#374151', fontSize: '13px' }}>
+              <Link key={l.label} href={l.href} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid #fff7ed', textDecoration: 'none', color: '#374151', fontSize: '13px' }}>
                 {l.label} <ChevronRight size={13} color="#cbd5e1" />
               </Link>
             ))}

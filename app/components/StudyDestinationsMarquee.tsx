@@ -77,7 +77,7 @@ const SingaporeFlag = () => (
 
 type Destination = {
   label: string;
-  Flag: () => JSX.Element;
+  Flag?: () => JSX.Element;
 };
 
 const DESTINATIONS: Destination[] = [
@@ -110,9 +110,11 @@ function buildRowSequence(items: Destination[]): Destination[] {
 function DestinationItem({ dest }: { dest: Destination }) {
   return (
     <span className="placedly-dest-item">
-      <span className="placedly-dest-flag">
-        <dest.Flag />
-      </span>
+      {dest.Flag && (
+        <span className="placedly-dest-flag">
+          <dest.Flag />
+        </span>
+      )}
       <span className="placedly-dest-label">{dest.label}</span>
     </span>
   );
@@ -158,6 +160,29 @@ type StudyDestinationsMarqueeProps = {
   sub?: string;
 };
 
+const FLAG_MATCHERS: { keys: string[]; Flag: () => JSX.Element }[] = [
+  { keys: ['uk', 'united kingdom', 'britain', 'england'], Flag: UKFlag },
+  { keys: ['france', 'french'],                            Flag: FranceFlag },
+  { keys: ['germany', 'german'],                           Flag: GermanyFlag },
+  { keys: ['uae', 'dubai', 'emirates'],                    Flag: UAEFlag },
+  { keys: ['canada'],                                      Flag: CanadaFlag },
+  { keys: ['australia'],                                   Flag: AustraliaFlag },
+  { keys: ['singapore'],                                   Flag: SingaporeFlag },
+];
+
+function flagForLabel(label: string): (() => JSX.Element) | undefined {
+  const lower = label.toLowerCase();
+  const match = FLAG_MATCHERS.find((m) => m.keys.some((k) => lower.includes(k)));
+  return match?.Flag;
+}
+
+function resolveDestinations(raw: string | undefined): Destination[] {
+  if (!raw || !raw.trim()) return DESTINATIONS;
+  const items = raw.split(',').map((s) => s.trim()).filter(Boolean);
+  if (!items.length) return DESTINATIONS;
+  return items.map((label) => ({ label, Flag: flagForLabel(label) }));
+}
+
 export default function StudyDestinationsMarquee({
   cms = {},
   label: overrideLabel,
@@ -168,11 +193,13 @@ export default function StudyDestinationsMarquee({
     overrideSub ??
     cms['hp:destinationSub'] ??
     "From UK's post-study work visa to Germany's zero tuition fees — we match you to the right country, right university, right course.";
+  const eyebrow = cms['hp:destinationEyebrow'] ?? 'Study Destinations';
+  const destinations = resolveDestinations(cms['hp:destinationCountries']);
 
   const rowSets = [
-    DESTINATIONS,
-    rotateList(DESTINATIONS, 3),
-    rotateList(DESTINATIONS, 5),
+    destinations,
+    rotateList(destinations, 3),
+    rotateList(destinations, 5),
   ];
 
   return (
@@ -180,7 +207,7 @@ export default function StudyDestinationsMarquee({
       <FadeUp className="placedly-destinations-header">
         <p className="placedly-destinations-eyebrow">
           <Sparkles size={13} strokeWidth={2.25} aria-hidden />
-          Study Destinations
+          {eyebrow}
         </p>
         <h2 className="placedly-destinations-title">{label}</h2>
         <p className="placedly-destinations-sub">{sub}</p>

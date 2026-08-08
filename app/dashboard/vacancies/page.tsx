@@ -11,7 +11,7 @@ type Job = {
 const CATS = ['All', 'Tech', 'Sales', 'Finance', 'Marketing', 'Healthcare', 'Operations'];
 
 const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
-  'Full Time': { bg: '#eff6ff', color: '#2145fb' },
+  'Full Time': { bg: '#fff7ed', color: '#f97316' },
   'Hybrid':    { bg: '#fff7ed', color: '#f97316' },
   'Remote':    { bg: '#f0fdf4', color: '#16a34a' },
 };
@@ -98,7 +98,7 @@ export default function DashboardVacancies() {
                   {tags.length > 0 && (
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                       {tags.map(t => (
-                        <span key={t} style={{ fontSize: '11px', background: '#f8faff', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 9px', borderRadius: 999, fontWeight: 500 }}>{t}</span>
+                        <span key={t} style={{ fontSize: '11px', background: '#fff7ed', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 9px', borderRadius: 999, fontWeight: 500 }}>{t}</span>
                       ))}
                     </div>
                   )}
@@ -109,7 +109,7 @@ export default function DashboardVacancies() {
                   <div style={{ fontSize: '15px', fontWeight: 800, color: '#0b0d20' }}>{job.salary}</div>
                   <button
                     onClick={() => setApplyJob(job)}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '9px 18px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '9px 18px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}
                   >
                     <ExternalLink size={12} /> Apply
                   </button>

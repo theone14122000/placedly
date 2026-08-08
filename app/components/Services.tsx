@@ -254,6 +254,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
     v.id === 'cap'
       ? {
           ...v,
+          videoSrc:    cms['hp:service1Video']    ?? v.videoSrc,
           title:       cms['hp:service1Name']     ?? v.title,
           description: cms['hp:service1Details']  ?? v.description,
           cta:         cms['hp:service1CtaLabel'] ?? v.cta,
@@ -261,6 +262,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
       : v.id === 'study'
         ? {
             ...v,
+            videoSrc:    cms['hp:service2Video']    ?? v.videoSrc,
             title:       cms['hp:service2Name']     ?? v.title,
             description: cms['hp:service2Details']  ?? v.description,
             cta:         cms['hp:service2CtaLabel'] ?? v.cta,

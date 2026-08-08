@@ -104,8 +104,8 @@ export default function ApplicationsPage() {
         {STATUS_TABS.map(t => (
           <button key={t} onClick={() => setTab(t)} style={{
             padding: '7px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 600,
-            border: tab === t ? '2px solid #2145fb' : '2px solid #e2e8f0',
-            background: tab === t ? '#eff6ff' : '#fff', color: tab === t ? '#2145fb' : '#64748b',
+            border: tab === t ? '2px solid #f97316' : '2px solid #e2e8f0',
+            background: tab === t ? '#fff7ed' : '#fff', color: tab === t ? '#f97316' : '#64748b',
             cursor: 'pointer', fontFamily: "'Poppins',sans-serif",
           }}>{t}</button>
         ))}
@@ -140,7 +140,7 @@ export default function ApplicationsPage() {
                     </>
                   )}
                   {app.candidate && (app.candidate.status === 'EXPIRED' || app.candidate.status === 'ACTIVE') && (
-                    <button onClick={() => renew(app.candidate!.id)} disabled={!!busy} style={btnStyle('#2145fb')}>
+                    <button onClick={() => renew(app.candidate!.id)} disabled={!!busy} style={btnStyle('#f97316')}>
                       {busy === app.candidate.id + '-renew' ? '…' : <><RefreshCw size={13} /> Renew</>}
                     </button>
                   )}
@@ -157,7 +157,7 @@ export default function ApplicationsPage() {
 
               {/* Expanded details */}
               {expanded === app.id && (
-                <div style={{ borderTop: '1px solid #f1f5f9', padding: '16px 20px', background: '#f8faff', display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: '12px' }}>
+                <div style={{ borderTop: '1px solid #f1f5f9', padding: '16px 20px', background: '#fff7ed', display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: '12px' }}>
                   {[
                     ['City', app.city],
                     ['Experience', app.experience],

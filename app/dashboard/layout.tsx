@@ -60,7 +60,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (status === 'loading') {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8faff', fontFamily: "'Poppins',sans-serif" }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff7ed', fontFamily: "'Poppins',sans-serif" }}>
         <div style={{ textAlign: 'center' }}>
           <img src="/logo-dark.png" alt="Placedly" style={{ height: '48px', marginBottom: '12px' }} />
           <p style={{ fontSize: '13px', color: '#94a3b8' }}>Loading your dashboard...</p>
@@ -99,11 +99,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             return (
               <Link key={item.href} href={item.href} style={{
                 display: 'flex', alignItems: 'center', gap: '10px',
-                padding: '10px 14px', borderRadius: '10px', textDecoration: 'none',
-                background: active ? 'rgba(33,69,251,0.2)' : 'transparent',
-                borderLeft: `3px solid ${active ? '#2145fb' : 'transparent'}`,
-                color: active ? '#fff' : 'rgba(255,255,255,0.45)',
+                padding: '10px 14px', borderRadius: '999px', textDecoration: 'none',
+                background: active ? '#f97316' : 'transparent',
+                borderLeft: `3px solid transparent`,
+                color: active ? '#fff' : 'rgba(255,255,255,0.55)',
                 fontSize: '13px', fontWeight: active ? 600 : 400,
+                boxShadow: active ? '0 4px 14px rgba(249,115,22,0.35)' : 'none',
                 transition: 'all 0.15s',
               }}>
                 <item.Icon size={15} />
@@ -113,7 +114,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           })}
 
           <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.06)', marginLeft: '-12px', marginRight: '-12px', paddingLeft: '12px', paddingRight: '12px' }}>
-            <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '10px', textDecoration: 'none', background: 'rgba(34,197,94,0.12)', color: '#4ade80', fontSize: '13px', fontWeight: 500 }}>
+            <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '999px', textDecoration: 'none', background: 'rgba(249,115,22,0.14)', color: '#f97316', fontSize: '13px', fontWeight: 600 }}>
               <MessageCircle size={15} />
               Talk to Advisor
             </a>
@@ -125,14 +126,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
             {user?.image
               ? <img src={user.image} alt="" style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-              : <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#2145fb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>{firstName[0]}</div>
+              : <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>{firstName[0]}</div>
             }
             <div style={{ overflow: 'hidden', flex: 1 }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.name}</div>
               <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.35)' }}>Candidate</div>
             </div>
           </div>
-          <button onClick={() => signOut({ callbackUrl: '/login' })} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', fontSize: '12px', cursor: 'pointer', padding: '6px 8px', borderRadius: '8px', width: '100%', fontFamily: "'Poppins',sans-serif" }}>
+          <button onClick={() => signOut({ callbackUrl: '/login' })} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', fontSize: '12px', cursor: 'pointer', padding: '6px 8px', borderRadius: '999px', width: '100%', fontFamily: "'Poppins',sans-serif" }}>
             <LogOut size={12} /> Sign Out
           </button>
         </div>
@@ -150,11 +151,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             >
               <span />
             </button>
+            <img src="/logo.png" alt="Placedly" style={{ height: '24px', width: 'auto', display: 'block' }} />
             <span className="portal-header-greeting" style={{ fontSize: '14px', color: '#64748b' }}>
               Hey, <strong style={{ color: '#0b0d20' }}>{firstName}</strong> — welcome back!
             </span>
           </div>
-          <Link href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '7px 16px', background: '#2145fb', color: '#fff', borderRadius: '8px', textDecoration: 'none', fontSize: '13px', fontWeight: 600, fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}>
+          <Link href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 18px', background: '#f97316', color: '#fff', borderRadius: '999px', textDecoration: 'none', fontSize: '13px', fontWeight: 600, fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap', boxShadow: '0 4px 14px rgba(249,115,22,0.30)' }}>
             Free Consultation
           </Link>
         </header>
@@ -163,6 +165,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <ExpiryBanner session={session} />
           {children}
         </main>
+
+        {/* Branding footer */}
+        <footer style={{ borderTop: '1px solid #e2e8f0', background: '#fff', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <a href="/" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+            <img src="/logo.png" alt="Placedly" style={{ height: '22px', width: 'auto' }} />
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#0b0d20' }}>Placedly</span>
+          </a>
+          <span style={{ fontSize: '11px', color: '#94a3b8' }}>· © 2026 Placedly · Candidate Portal</span>
+          <a href="/" target="_blank" rel="noopener noreferrer" style={{ fontSize: '11px', fontWeight: 600, color: '#f97316', textDecoration: 'none' }}>View Website →</a>
+        </footer>
       </div>
     </div>
   );

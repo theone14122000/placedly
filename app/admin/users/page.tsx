@@ -15,7 +15,7 @@ const STATUS_STYLE: Record<string, { color: string; bg: string; label: string }>
   SUSPENDED: { color: '#ef4444', bg: '#fef2f2', label: 'Suspended' },
 };
 
-const inp: React.CSSProperties = { width: '100%', padding: '9px 12px 9px 36px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#f8faff', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { width: '100%', padding: '9px 12px 9px 36px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 
 export default function AdminUsersPage() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -67,7 +67,7 @@ export default function AdminUsersPage() {
       {/* Stats */}
       <div className="adm-stats-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '14px', marginBottom: '24px' }}>
         {[
-          { Icon: Users,        label: 'Total Candidates', value: counts.ALL,       color: '#2145fb', bg: '#eff6ff' },
+          { Icon: Users,        label: 'Total Candidates', value: counts.ALL,       color: '#f97316', bg: '#fff7ed' },
           { Icon: CheckCircle2, label: 'Active',           value: counts.ACTIVE,    color: '#16a34a', bg: '#f0fdf4' },
           { Icon: Clock,        label: 'Expired',          value: counts.EXPIRED,   color: '#f97316', bg: '#fff7ed' },
           { Icon: XCircle,      label: 'Suspended',        value: counts.SUSPENDED, color: '#ef4444', bg: '#fef2f2' },
@@ -106,7 +106,7 @@ export default function AdminUsersPage() {
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#f8faff' }}>
+              <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#fff7ed' }}>
                 {['Candidate', 'Contact', 'Programme', 'Status', 'Access Until', 'Last Login', 'Actions'].map(h => (
                   <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
@@ -122,7 +122,7 @@ export default function AdminUsersPage() {
                   <tr key={c.id} style={{ borderBottom: i < filtered.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
                     <td style={{ padding: '14px 16px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#2145fb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>{c.name[0]}</div>
+                        <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>{c.name[0]}</div>
                         <div style={{ fontSize: '13px', fontWeight: 600, color: '#0b0d20' }}>{c.name}</div>
                       </div>
                     </td>

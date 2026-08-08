@@ -9,7 +9,7 @@ type App = {
 };
 type Recruiter = { id: string; name: string; email: string };
 
-const inp: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#f8faff', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 
 export default function AdminATS() {
   const [apps, setApps] = useState<App[]>([]);
@@ -63,7 +63,7 @@ export default function AdminATS() {
       {/* Stats */}
       <div className="adm-stats-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '14px', marginBottom: '20px' }}>
         {[
-          { label: 'Total Applications', value: apps.length, color: '#2145fb', bg: '#eff6ff' },
+          { label: 'Total Applications', value: apps.length, color: '#f97316', bg: '#fff7ed' },
           { label: 'Assigned', value: apps.filter(a => a.recruiter).length, color: '#16a34a', bg: '#f0fdf4' },
           { label: 'Unassigned', value: apps.filter(a => !a.recruiter).length, color: '#f97316', bg: '#fff7ed' },
           { label: 'Active Recruiters', value: recruiters.length, color: '#7c3aed', bg: '#faf5ff' },
@@ -96,7 +96,7 @@ export default function AdminATS() {
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '760px' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#f8faff' }}>
+              <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#fff7ed' }}>
                 {['Candidate', 'Role', 'Stage', 'Status', 'Assigned Recruiter', 'Actions'].map(h => (
                   <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}

@@ -63,7 +63,7 @@ export default function AdminAnalyticsPage() {
       {/* Top KPI row */}
       <div className="adm-stats-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '16px', marginBottom: '24px' }}>
         {[
-          { Icon: FileText, label: 'Total Applications', value: stats.totalApplications, sub: `+${stats.last7DaysApps} this week`, color: '#2145fb', bg: '#eff6ff' },
+          { Icon: FileText, label: 'Total Applications', value: stats.totalApplications, sub: `+${stats.last7DaysApps} this week`, color: '#f97316', bg: '#fff7ed' },
           { Icon: Users,    label: 'Active Candidates', value: stats.activeCandidates,   sub: `${stats.expiredCandidates} expired`, color: '#16a34a', bg: '#f0fdf4' },
           { Icon: TrendingUp, label: 'Conversion Rate', value: `${conversionRate}%`,      sub: `${stats.approvedApplications} approved`, color: '#f97316', bg: '#fff7ed' },
           { Icon: Clock,    label: 'Pending Review',   value: stats.pendingApplications, sub: 'Need action', color: '#a16207', bg: '#fef9c3' },
@@ -86,7 +86,7 @@ export default function AdminAnalyticsPage() {
           <div style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20', marginBottom: '20px' }}>Application Funnel</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {[
-              { label: 'Total Received', value: stats.totalApplications, Icon: FileText, color: '#2145fb' },
+              { label: 'Total Received', value: stats.totalApplications, Icon: FileText, color: '#f97316' },
               { label: 'Pending Review', value: stats.pendingApplications, Icon: AlertCircle, color: '#a16207' },
               { label: 'Approved', value: stats.approvedApplications, Icon: CheckCircle2, color: '#16a34a' },
               { label: 'Rejected', value: stats.rejectedApplications, Icon: XCircle, color: '#dc2626' },
@@ -134,7 +134,7 @@ export default function AdminAnalyticsPage() {
               {[
                 { Icon: Briefcase, label: 'Live Vacancies', value: stats.activeVacancies, color: '#7c3aed', bg: '#faf5ff' },
                 { Icon: BookOpen, label: 'Active Courses', value: stats.activeCourses, color: '#f97316', bg: '#fff7ed' },
-                { Icon: TrendingUp, label: 'Last 30 Days', value: stats.last30DaysApps, color: '#2145fb', bg: '#eff6ff' },
+                { Icon: TrendingUp, label: 'Last 30 Days', value: stats.last30DaysApps, color: '#f97316', bg: '#fff7ed' },
                 { Icon: TrendingUp, label: 'Last 7 Days', value: stats.last7DaysApps, color: '#16a34a', bg: '#f0fdf4' },
               ].map(({ Icon, label, value, color, bg }) => (
                 <div key={label} style={{ background: bg, borderRadius: '10px', padding: '14px', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -164,7 +164,7 @@ export default function AdminAnalyticsPage() {
                     <span style={{ fontSize: '13px', fontWeight: 700, color: '#0b0d20' }}>{p.count}</span>
                   </div>
                   <div style={{ height: '6px', background: '#f1f5f9', borderRadius: 999 }}>
-                    <div style={{ height: '100%', width: `${pct}%`, background: '#2145fb', borderRadius: 999 }} />
+                    <div style={{ height: '100%', width: `${pct}%`, background: '#f97316', borderRadius: 999 }} />
                   </div>
                 </div>
               );
@@ -187,7 +187,7 @@ export default function AdminAnalyticsPage() {
             </thead>
             <tbody>
               {stats.recentApplications.map(a => (
-                <tr key={a.id} style={{ borderBottom: '1px solid #f8faff' }}>
+                <tr key={a.id} style={{ borderBottom: '1px solid #fff7ed' }}>
                   <td style={{ padding: '10px 12px', fontWeight: 600, color: '#0b0d20' }}>{a.name}</td>
                   <td style={{ padding: '10px 12px', color: '#64748b' }}>{a.email}</td>
                   <td style={{ padding: '10px 12px', color: '#374151' }}>{a.programme.name}</td>

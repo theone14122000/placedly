@@ -181,7 +181,7 @@ function TestimonialsCarousel({ items }: { items: TestimonialItem[] }) {
   );
 }
 
-export default function Testimonials() {
+export default function Testimonials({ cms = {} }: { cms?: Record<string, string> }) {
   const [cmsTestimonials, setCmsTestimonials] = useState<
     Array<{ name: string; role: string; company: string; text: string; rating: number }> | null
   >(null);
@@ -232,8 +232,8 @@ export default function Testimonials() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.5 }}
         >
-          <p className="placedly-genz-eyebrow">Success Stories</p>
-          <h2 className="placedly-genz-title">Real People. Real Growth.</h2>
+          <p className="placedly-genz-eyebrow">{cms['hp:testiEyebrow'] ?? 'Success Stories'}</p>
+          <h2 className="placedly-genz-title">{cms['hp:testiTitle'] ?? 'Real People. Real Growth.'}</h2>
         </motion.div>
 
         <TestimonialsCarousel items={items} />

@@ -10,7 +10,7 @@ type Course = {
 };
 
 const DEFAULT_COURSES: Course[] = [
-  { id: 'default-1', title: 'ATS Resume & LinkedIn Mastery', category: 'Career', level: 'Beginner', duration: '2.5 hrs', modules: 5, lessons: 15, progress: 0, color: '#2145fb', bg: '#eff6ff', enrolled: true, instructor: 'Placedly Career Team', description: 'Build an ATS-optimized resume that clears automated filters and gets noticed by hiring managers at top MNCs. Includes LinkedIn rebuild.' },
+  { id: 'default-1', title: 'ATS Resume & LinkedIn Mastery', category: 'Career', level: 'Beginner', duration: '2.5 hrs', modules: 5, lessons: 15, progress: 0, color: '#f97316', bg: '#fff7ed', enrolled: true, instructor: 'Placedly Career Team', description: 'Build an ATS-optimized resume that clears automated filters and gets noticed by hiring managers at top MNCs. Includes LinkedIn rebuild.' },
   { id: 'default-2', title: 'Interview Mastery Programme', category: 'Interview', level: 'Intermediate', duration: '4 hrs', modules: 5, lessons: 15, progress: 0, color: '#f97316', bg: '#fff7ed', enrolled: true, instructor: 'Placedly Advisors', description: 'Three-session system covering HR Round, Technical/Domain Round, and a Full Mock with Salary Negotiation Script.' },
   { id: 'default-3', title: 'Salary Negotiation Secrets', category: 'Career', level: 'Intermediate', duration: '1.5 hrs', modules: 5, lessons: 15, progress: 0, color: '#16a34a', bg: '#f0fdf4', enrolled: true, instructor: 'Placedly Career Team', description: 'Word-for-word scripts and proven tactics to negotiate 20–40% higher offers — without sounding greedy.' },
 ];
@@ -32,8 +32,8 @@ export default function CoursesPage() {
   const [progressMap, setProgressMap] = useState<Record<string, Set<number>>>({});
 
   useEffect(() => {
-    const COLORS = ['#2145fb', '#f97316', '#16a34a', '#ef4444', '#7c3aed', '#0891b2'];
-    const BGS    = ['#eff6ff', '#fff7ed', '#f0fdf4', '#fef2f2', '#faf5ff', '#ecfeff'];
+    const COLORS = ['#f97316', '#f97316', '#16a34a', '#ef4444', '#7c3aed', '#0891b2'];
+    const BGS    = ['#fff7ed', '#fff7ed', '#f0fdf4', '#fef2f2', '#faf5ff', '#ecfeff'];
 
     Promise.all([
       fetch('/api/admin/courses').then(r => r.json()),
@@ -95,7 +95,7 @@ export default function CoursesPage() {
       {/* Stats row */}
       <div className="dash-stats-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '12px', marginBottom: '28px' }}>
         {[
-          { Icon: BookOpen, label: 'Enrolled', value: enrolledCount, color: '#2145fb', bg: '#eff6ff' },
+          { Icon: BookOpen, label: 'Enrolled', value: enrolledCount, color: '#f97316', bg: '#fff7ed' },
           { Icon: CheckCircle2, label: 'Completed', value: completedCount, color: '#16a34a', bg: '#f0fdf4' },
           { Icon: Zap, label: 'Available', value: courses.length - enrolledCount, color: '#f97316', bg: '#fff7ed' },
           { Icon: Star, label: 'Total Courses', value: courses.length, color: '#7c3aed', bg: '#faf5ff' },
@@ -176,13 +176,13 @@ export default function CoursesPage() {
 
                   {/* Meta pills */}
                   <div style={{ display: 'flex', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#64748b', background: '#f8faff', border: '1px solid #e2e8f0', padding: '4px 10px', borderRadius: 999 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#64748b', background: '#fff7ed', border: '1px solid #e2e8f0', padding: '4px 10px', borderRadius: 999 }}>
                       <Clock size={10} />{course.duration}
                     </span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#64748b', background: '#f8faff', border: '1px solid #e2e8f0', padding: '4px 10px', borderRadius: 999 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#64748b', background: '#fff7ed', border: '1px solid #e2e8f0', padding: '4px 10px', borderRadius: 999 }}>
                       <BookOpen size={10} />{course.modules} modules
                     </span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#64748b', background: '#f8faff', border: '1px solid #e2e8f0', padding: '4px 10px', borderRadius: 999 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#64748b', background: '#fff7ed', border: '1px solid #e2e8f0', padding: '4px 10px', borderRadius: 999 }}>
                       {course.lessons} lessons
                     </span>
                   </div>
@@ -202,7 +202,7 @@ export default function CoursesPage() {
                   {/* Instructor + Module Progress */}
                   {isExpanded && (
                     <>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', padding: '10px 12px', background: '#f8faff', borderRadius: '10px', border: '1px solid #eef0f6' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', padding: '10px 12px', background: '#fff7ed', borderRadius: '10px', border: '1px solid #eef0f6' }}>
                         <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: course.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>
                           {course.instructor[0]}
                         </div>
@@ -233,11 +233,11 @@ export default function CoursesPage() {
 
                   <div style={{ marginTop: 'auto', display: 'flex', gap: '8px' }}>
                     {/* Main CTA */}
-                    <button style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '11px', background: course.enrolled ? course.color : '#f8faff', color: course.enrolled ? '#fff' : '#94a3b8', border: `1.5px solid ${course.enrolled ? course.color : '#e2e8f0'}`, borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: course.enrolled ? 'pointer' : 'default', fontFamily: "'Poppins',sans-serif", boxShadow: course.enrolled ? `0 2px 8px ${course.color}33` : 'none' }}>
+                    <button style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '11px', background: course.enrolled ? course.color : '#fff7ed', color: course.enrolled ? '#fff' : '#94a3b8', border: `1.5px solid ${course.enrolled ? course.color : '#e2e8f0'}`, borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: course.enrolled ? 'pointer' : 'default', fontFamily: "'Poppins',sans-serif", boxShadow: course.enrolled ? `0 2px 8px ${course.color}33` : 'none' }}>
                       {course.enrolled ? <><Play size={13} />Start Learning</> : <><Lock size={13} />Locked</>}
                     </button>
                     {/* Details toggle */}
-                    <button onClick={() => setExpanded(isExpanded ? null : course.id)} style={{ padding: '11px 14px', background: isExpanded ? course.bg : '#f8faff', color: isExpanded ? course.color : '#64748b', border: `1.5px solid ${isExpanded ? course.color : '#e2e8f0'}`, borderRadius: '10px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}>
+                    <button onClick={() => setExpanded(isExpanded ? null : course.id)} style={{ padding: '11px 14px', background: isExpanded ? course.bg : '#fff7ed', color: isExpanded ? course.color : '#64748b', border: `1.5px solid ${isExpanded ? course.color : '#e2e8f0'}`, borderRadius: '10px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}>
                       {isExpanded ? 'Less' : 'Details'}
                     </button>
                   </div>

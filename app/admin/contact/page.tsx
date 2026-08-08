@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Save, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 
-const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '10px 13px', border: '1.5px solid #e2e8f0', borderRadius: '9px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#f8faff', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '10px 13px', border: '1.5px solid #e2e8f0', borderRadius: '9px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 const ta: React.CSSProperties  = { ...inp, resize: 'vertical' as const, minHeight: '80px' };
 const lbl: React.CSSProperties = { display: 'block', fontSize: '10px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' as const, letterSpacing: '0.4px', marginBottom: '5px' };
 const row: React.CSSProperties = { display: 'flex', flexDirection: 'column' as const, gap: '14px' };
@@ -106,7 +106,7 @@ export default function AdminContact() {
           <button onClick={() => setData(DEFAULTS)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '9px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <RefreshCw size={13} /> Defaults
           </button>
-          <button onClick={handleSave} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 20px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1 }}>
+          <button onClick={handleSave} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 20px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1 }}>
             <Save size={13} /> {saving ? 'Saving…' : 'Save All'}
           </button>
         </div>
@@ -158,7 +158,7 @@ export default function AdminContact() {
             { label: 'Office',   numK: 'ct:office',  hrefK: null,         noteK: 'ct:officeNote' },
             { label: 'Hours',    numK: 'ct:hours',   hrefK: null,         noteK: 'ct:hoursNote' },
           ].map(item => (
-            <div key={item.label} style={{ background: '#f8faff', borderRadius: 12, padding: 14, border: '1px solid #e2e8f0' }}>
+            <div key={item.label} style={{ background: '#fff7ed', borderRadius: 12, padding: 14, border: '1px solid #e2e8f0' }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#0b0d20', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{item.label}</div>
               <div className={item.hrefK ? 'adm-grid-3' : 'adm-grid-2'}>
                 <Field label="Display text" k={item.numK} data={data} set={set} />
@@ -175,8 +175,8 @@ export default function AdminContact() {
         <div style={row}>
           <Field label="Section title" k="ct:faqSectionTitle" data={data} set={set} />
           {[1,2,3,4].map(i => (
-            <div key={i} style={{ background: '#f8faff', borderRadius: 12, padding: 14, border: '1px solid #e2e8f0' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#2145fb', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.4px' }}>FAQ {i}</div>
+            <div key={i} style={{ background: '#fff7ed', borderRadius: 12, padding: 14, border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#f97316', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.4px' }}>FAQ {i}</div>
               <div style={row}>
                 <Field label="Question" k={`ct:faq${i}Q`} data={data} set={set} />
                 <Field label="Answer" k={`ct:faq${i}A`} data={data} set={set} textarea />
@@ -187,7 +187,7 @@ export default function AdminContact() {
       </Section>
 
       <div style={{ position: 'sticky', bottom: 24, display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-        <button onClick={handleSave} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 28px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1, boxShadow: '0 8px 24px rgba(33,69,251,0.35)' }}>
+        <button onClick={handleSave} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 28px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1, boxShadow: '0 8px 24px rgba(249,115,22,0.35)' }}>
           <Save size={15} /> {saving ? 'Saving…' : 'Save All Changes'}
         </button>
       </div>

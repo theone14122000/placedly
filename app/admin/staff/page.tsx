@@ -7,13 +7,13 @@ type StaffData  = { admins: StaffMember[]; recruiters: StaffMember[]; freelancer
 
 const TABS = [
   { key: 'admin',      label: 'Admins',     Icon: Shield,    color: '#f97316' },
-  { key: 'recruiter',  label: 'Recruiters', Icon: Briefcase, color: '#2145fb' },
+  { key: 'recruiter',  label: 'Recruiters', Icon: Briefcase, color: '#f97316' },
   { key: 'freelancer', label: 'Partners',   Icon: Link2,     color: '#7c3aed' },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
 
-const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '9px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#f8faff', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '9px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 const lbl: React.CSSProperties = { display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '5px' };
 
 export default function StaffPage() {
@@ -74,7 +74,7 @@ export default function StaffPage() {
         </div>
         <button
           onClick={() => { setShowForm(v => !v); setError(''); }}
-          style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap', flexShrink: 0 }}
+          style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap', flexShrink: 0 }}
         >
           <UserPlus size={15} /> Add {tabMeta.label.slice(0, -1)}
         </button>
@@ -107,7 +107,7 @@ export default function StaffPage() {
               )}
             </div>
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <button type="submit" disabled={busy} style={{ padding: '9px 20px', background: busy ? '#93a5fd' : '#2145fb', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 700, cursor: busy ? 'not-allowed' : 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+              <button type="submit" disabled={busy} style={{ padding: '9px 20px', background: busy ? '#fdba74' : '#f97316', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 700, cursor: busy ? 'not-allowed' : 'pointer', fontFamily: "'Poppins',sans-serif" }}>
                 {busy ? 'Creating…' : 'Create Account'}
               </button>
               <button type="button" onClick={() => setShowForm(false)} style={{ padding: '9px 16px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '9px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
@@ -148,7 +148,7 @@ export default function StaffPage() {
           <div className="staff-table-wrap">
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: '#f8faff' }}>
+                <tr style={{ background: '#fff7ed' }}>
                   {['Name', 'Email', 'Phone', ...(tab === 'freelancer' ? ['Referral Code', 'City'] : []), 'Status', 'Created', 'Actions'].map(h => (
                     <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.4px', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}
@@ -163,7 +163,7 @@ export default function StaffPage() {
                     {tab === 'freelancer' && (
                       <>
                         <td style={{ padding: '13px 16px' }}>
-                          <span style={{ padding: '3px 10px', borderRadius: '7px', background: '#eff6ff', color: '#2145fb', fontSize: '12px', fontWeight: 700, letterSpacing: '1px' }}>{m.referralCode ?? '—'}</span>
+                          <span style={{ padding: '3px 10px', borderRadius: '7px', background: '#fff7ed', color: '#f97316', fontSize: '12px', fontWeight: 700, letterSpacing: '1px' }}>{m.referralCode ?? '—'}</span>
                         </td>
                         <td style={{ padding: '13px 16px', fontSize: '13px', color: '#64748b' }}>{m.city ?? '—'}</td>
                       </>
@@ -208,9 +208,9 @@ export default function StaffPage() {
                     </div>
                   )}
                   {tab === 'freelancer' && m.referralCode && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#2145fb' }}>
-                      <Hash size={13} color="#2145fb" />
-                      <span style={{ background: '#eff6ff', padding: '2px 8px', borderRadius: '6px', fontWeight: 700, letterSpacing: '0.8px' }}>{m.referralCode}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#f97316' }}>
+                      <Hash size={13} color="#f97316" />
+                      <span style={{ background: '#fff7ed', padding: '2px 8px', borderRadius: '6px', fontWeight: 700, letterSpacing: '0.8px' }}>{m.referralCode}</span>
                     </div>
                   )}
                   {tab === 'freelancer' && m.city && (

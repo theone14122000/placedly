@@ -12,7 +12,7 @@ type Profile = {
 const inputS: React.CSSProperties = {
   width: '100%', padding: '10px 14px', border: '1.5px solid #e2e8f0',
   borderRadius: '10px', fontSize: '14px', fontFamily: "'Poppins',sans-serif",
-  color: '#0b0d20', background: '#f8faff', outline: 'none', boxSizing: 'border-box' as const,
+  color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const,
 };
 const labelS: React.CSSProperties = {
   display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748b',
@@ -64,7 +64,7 @@ export default function ProfilePage() {
     <div style={{ fontFamily: "'Poppins',sans-serif" }}>
       {/* Header card */}
       <div style={{ background: '#0b0d20', borderRadius: '16px', padding: '28px 32px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
-        <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#2145fb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 900, color: '#fff', flexShrink: 0 }}>
+        <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 900, color: '#fff', flexShrink: 0 }}>
           {profile.name[0]}
         </div>
         <div style={{ flex: 1 }}>
@@ -89,7 +89,7 @@ export default function ProfilePage() {
             <div style={{ fontSize: '15px', fontWeight: 800, color: '#0b0d20' }}>My Information</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               {status && <span style={{ fontSize: '12px', color: status.includes('fail') ? '#ef4444' : '#16a34a', fontWeight: 600 }}>{status}</span>}
-              <button onClick={save} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 20px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1 }}>
+              <button onClick={save} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 20px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1 }}>
                 <Save size={13} />{saving ? 'Saving…' : 'Save'}
               </button>
             </div>
@@ -133,8 +133,8 @@ export default function ProfilePage() {
               { Icon: Calendar, label: 'Valid Until', value: new Date(profile.validUntil).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) },
             ].map(({ Icon, label, value }) => (
               <div key={label} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', marginBottom: '14px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon size={14} color="#2145fb" />
+                <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon size={14} color="#f97316" />
                 </div>
                 <div>
                   <div style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '2px' }}>{label}</div>

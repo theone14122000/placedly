@@ -17,11 +17,11 @@ const TYPE_META: Record<string, { icon: React.ReactNode; label: string; color: s
   PDF:   { icon: <FileText size={13} />,  label: 'PDF',      color: '#ef4444', accept: 'application/pdf' },
   DOC:   { icon: <File size={13} />,      label: 'Document', color: '#f97316', accept: '.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv' },
   IMAGE: { icon: <ImageIcon size={13} />, label: 'Image',    color: '#0891b2', accept: 'image/*' },
-  LINK:  { icon: <Link size={13} />,      label: 'Link',     color: '#2145fb', accept: '' },
+  LINK:  { icon: <Link size={13} />,      label: 'Link',     color: '#f97316', accept: '' },
   TEXT:  { icon: <FileText size={13} />,  label: 'Text',     color: '#64748b', accept: '' },
 };
 
-const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#f8faff', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 const lbl: React.CSSProperties = { display: 'block', fontSize: '10px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' as const, letterSpacing: '0.4px', marginBottom: '5px' };
 
 /* ── FileUploadZone ─────────────────────────────────────────────────── */
@@ -42,7 +42,7 @@ function FileUploadZone({ accept, onFile, preview }: { accept: string; onFile: (
       onDragLeave={() => setDrag(false)}
       onDrop={e => { e.preventDefault(); setDrag(false); handle(e.dataTransfer.files[0]); }}
       onClick={() => ref.current?.click()}
-      style={{ border: `2px dashed ${drag ? '#2145fb' : '#d1d5db'}`, borderRadius: 10, padding: 16, background: drag ? '#eff3ff' : '#f8faff', cursor: 'pointer', textAlign: 'center', transition: 'all 0.15s' }}
+      style={{ border: `2px dashed ${drag ? '#f97316' : '#d1d5db'}`, borderRadius: 10, padding: 16, background: drag ? '#eff3ff' : '#fff7ed', cursor: 'pointer', textAlign: 'center', transition: 'all 0.15s' }}
     >
       {preview && (
         <img src={preview} alt="" style={{ maxHeight: 80, maxWidth: '100%', borderRadius: 6, marginBottom: 8, objectFit: 'cover', display: 'block', margin: '0 auto 8px' }} />
@@ -171,7 +171,7 @@ function AddModuleModal({ courseId, onDone, onClose, existingCount }: {
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 24 }}>
           <button onClick={onClose} style={{ padding: '10px 20px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>Cancel</button>
           <button onClick={handleSave} disabled={saving || uploading}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: (saving || uploading) ? 0.6 : 1 }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px', background: '#f97316', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: (saving || uploading) ? 0.6 : 1 }}>
             {(uploading || saving)
               ? <><Loader size={13} style={{ animation: 'spin 1s linear infinite' }} /> {uploading ? 'Uploading…' : 'Saving…'}</>
               : <><Save size={13} /> Add Module</>}
@@ -193,7 +193,7 @@ function ModuleRow({ mod, onDelete }: { mod: CourseModule; onDelete: () => void 
         <div style={{ fontSize: 13, fontWeight: 600, color: '#0b0d20', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{mod.title}</div>
         {mod.url && (
           <a href={mod.url} target="_blank" rel="noreferrer"
-            style={{ fontSize: 11, color: '#2145fb', textDecoration: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>
+            style={{ fontSize: 11, color: '#f97316', textDecoration: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>
             {mod.url.length > 60 ? mod.url.slice(0, 60) + '…' : mod.url}
           </a>
         )}
@@ -238,11 +238,11 @@ function CourseCard({ course, onEdit, onDelete }: { course: Course; onEdit: () =
     <div style={{ background: '#fff', border: '1px solid #eef0f6', borderRadius: 14, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,.04)' }}>
       <div style={{ padding: 20 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 10, background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <BookOpen size={16} color="#2145fb" />
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <BookOpen size={16} color="#f97316" />
           </div>
           <div style={{ display: 'flex', gap: 6 }}>
-            <button onClick={onEdit} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 9px', background: '#eff6ff', color: '#2145fb', border: 'none', borderRadius: 6, fontSize: 11, cursor: 'pointer', fontWeight: 600, fontFamily: "'Poppins',sans-serif" }}><Pencil size={10} /> Edit</button>
+            <button onClick={onEdit} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 9px', background: '#fff7ed', color: '#f97316', border: 'none', borderRadius: 6, fontSize: 11, cursor: 'pointer', fontWeight: 600, fontFamily: "'Poppins',sans-serif" }}><Pencil size={10} /> Edit</button>
             <button onClick={onDelete} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 9px', background: '#fef2f2', color: '#ef4444', border: 'none', borderRadius: 6, fontSize: 11, cursor: 'pointer', fontWeight: 600, fontFamily: "'Poppins',sans-serif" }}><Trash2 size={10} /></button>
           </div>
         </div>
@@ -254,16 +254,16 @@ function CourseCard({ course, onEdit, onDelete }: { course: Course; onEdit: () =
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
           <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: '999px', background: '#f1f5f9', color: '#475569', fontWeight: 600 }}>{course.category}</span>
           <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: '999px', background: '#f0fdf4', color: LEVEL_COLORS[course.level] ?? '#16a34a', fontWeight: 600 }}>{course.level}</span>
-          {course.duration && <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: '999px', background: '#eff6ff', color: '#2145fb', fontWeight: 600 }}>{course.duration}</span>}
+          {course.duration && <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: '999px', background: '#fff7ed', color: '#f97316', fontWeight: 600 }}>{course.duration}</span>}
         </div>
 
         {/* Content toggle */}
         <button onClick={toggleExpand}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '8px 12px', background: expanded ? '#eff6ff' : '#f8faff', border: '1px solid #e2e8f0', borderRadius: 9, fontSize: 12, fontWeight: 600, color: expanded ? '#2145fb' : '#64748b', cursor: 'pointer', fontFamily: "'Poppins',sans-serif' " }}>
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '8px 12px', background: expanded ? '#fff7ed' : '#fff7ed', border: '1px solid #e2e8f0', borderRadius: 9, fontSize: 12, fontWeight: 600, color: expanded ? '#f97316' : '#64748b', cursor: 'pointer', fontFamily: "'Poppins',sans-serif' " }}>
           <span>📁 Course Content</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             {expanded && modules.length > 0 && (
-              <span style={{ fontSize: 11, background: '#2145fb', color: '#fff', borderRadius: '999px', padding: '1px 7px' }}>{modules.length}</span>
+              <span style={{ fontSize: 11, background: '#f97316', color: '#fff', borderRadius: '999px', padding: '1px 7px' }}>{modules.length}</span>
             )}
             {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
           </div>
@@ -272,7 +272,7 @@ function CourseCard({ course, onEdit, onDelete }: { course: Course; onEdit: () =
 
       {/* Modules panel */}
       {expanded && (
-        <div style={{ background: '#f8faff', borderTop: '1px solid #eef0f6', padding: 16 }}>
+        <div style={{ background: '#fff7ed', borderTop: '1px solid #eef0f6', padding: 16 }}>
           {loadingMods ? (
             <div style={{ textAlign: 'center', padding: 16, color: '#94a3b8', fontSize: 13 }}>
               <Loader size={16} style={{ animation: 'spin 1s linear infinite', display: 'inline-block', marginRight: 6 }} />Loading…
@@ -284,7 +284,7 @@ function CourseCard({ course, onEdit, onDelete }: { course: Course; onEdit: () =
               )}
               {modules.map(m => <ModuleRow key={m.id} mod={m} onDelete={() => deleteModule(m.id)} />)}
               <button onClick={() => setAddingModule(true)}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px', background: '#fff', border: '1.5px dashed #2145fb', borderRadius: 9, fontSize: 12, fontWeight: 600, color: '#2145fb', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", marginTop: 4 }}>
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px', background: '#fff', border: '1.5px dashed #f97316', borderRadius: 9, fontSize: 12, fontWeight: 600, color: '#f97316', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", marginTop: 4 }}>
                 <Plus size={13} /> Add Content Module
               </button>
             </div>
@@ -348,7 +348,7 @@ export default function AdminCourses() {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           {status && <span style={{ fontSize: 12, color: '#16a34a', fontWeight: 600 }}>✓ {status}</span>}
           <button onClick={openAdd}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', background: '#f97316', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <Plus size={14} /> Add Course
           </button>
         </div>
@@ -385,7 +385,7 @@ export default function AdminCourses() {
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 24 }}>
               <button onClick={close} style={{ padding: '10px 20px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>Cancel</button>
               <button onClick={handleSave} disabled={loading || !form.title}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: loading ? 0.6 : 1 }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px', background: '#f97316', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: loading ? 0.6 : 1 }}>
                 <Save size={13} /> {loading ? 'Saving…' : modal === 'add' ? 'Add Course' : 'Save Changes'}
               </button>
             </div>

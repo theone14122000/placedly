@@ -22,7 +22,7 @@ const DEFAULT_TESTIMONIALS: Testimonial[] = [
 const inputS: React.CSSProperties = {
   width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0',
   borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif",
-  color: '#0b0d20', background: '#f8faff', outline: 'none', boxSizing: 'border-box' as const,
+  color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const,
 };
 const labelS: React.CSSProperties = {
   display: 'block', fontSize: '11px', fontWeight: 600, color: '#374151',
@@ -87,16 +87,16 @@ export default function AdminFaqPage() {
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', marginBottom: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <MessageSquare size={16} color="#2145fb" />
+            <MessageSquare size={16} color="#f97316" />
             <span style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>FAQs ({faqs.length})</span>
           </div>
-          <button onClick={addFaq} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#eff6ff', color: '#2145fb', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+          <button onClick={addFaq} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <Plus size={13} /> Add FAQ
           </button>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {faqs.map((f, i) => (
-            <div key={i} style={{ border: '1.5px solid #e2e8f0', borderRadius: '12px', padding: '16px', background: '#f8faff', position: 'relative' }}>
+            <div key={i} style={{ border: '1.5px solid #e2e8f0', borderRadius: '12px', padding: '16px', background: '#fff7ed', position: 'relative' }}>
               <button onClick={() => deleteFaq(i)} style={{ position: 'absolute', top: '12px', right: '12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '4px', cursor: 'pointer', display: 'flex' }}>
                 <Trash2 size={12} color="#ef4444" />
               </button>
@@ -128,7 +128,7 @@ export default function AdminFaqPage() {
         </div>
         <div className="adm-steps-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '16px' }}>
           {testimonials.map((t, i) => (
-            <div key={i} style={{ border: '1.5px solid #e2e8f0', borderRadius: '12px', padding: '16px', background: '#f8faff', position: 'relative' }}>
+            <div key={i} style={{ border: '1.5px solid #e2e8f0', borderRadius: '12px', padding: '16px', background: '#fff7ed', position: 'relative' }}>
               <button onClick={() => deleteTestimonial(i)} style={{ position: 'absolute', top: '12px', right: '12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '4px', cursor: 'pointer', display: 'flex' }}>
                 <Trash2 size={12} color="#ef4444" />
               </button>

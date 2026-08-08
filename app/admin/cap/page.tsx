@@ -41,7 +41,7 @@ const DEFAULT_HERO = {
 const inputS: React.CSSProperties = {
   width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0',
   borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif",
-  color: '#0b0d20', background: '#f8faff', outline: 'none',
+  color: '#0b0d20', background: '#fff7ed', outline: 'none',
   boxSizing: 'border-box' as const,
 };
 
@@ -145,7 +145,7 @@ export default function AdminCapPage() {
           <div style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20', marginBottom: '20px' }}>Stats Bar</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {stats.map((s, i) => (
-              <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', padding: '12px', background: '#f8faff', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+              <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', padding: '12px', background: '#fff7ed', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
                 <div>
                   <label style={labelS}>Value</label>
                   <input style={inputS} value={s.value} onChange={e => updateStat(i, 'value', e.target.value)} />
@@ -164,13 +164,13 @@ export default function AdminCapPage() {
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', marginTop: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Programme Steps ({steps.length})</div>
-          <button onClick={addStep} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#eff6ff', color: '#2145fb', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+          <button onClick={addStep} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <Plus size={13} /> Add Step
           </button>
         </div>
         <div className="adm-steps-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '16px' }}>
           {steps.map(step => (
-            <div key={step.id} style={{ border: '1.5px solid #e2e8f0', borderRadius: '12px', padding: '16px', background: '#f8faff', position: 'relative' }}>
+            <div key={step.id} style={{ border: '1.5px solid #e2e8f0', borderRadius: '12px', padding: '16px', background: '#fff7ed', position: 'relative' }}>
               <button onClick={() => deleteStep(step.id)} style={{ position: 'absolute', top: '12px', right: '12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '4px', cursor: 'pointer', display: 'flex' }}>
                 <Trash2 size={12} color="#ef4444" />
               </button>
@@ -203,7 +203,7 @@ export default function AdminCapPage() {
             <TrendingUp size={16} color="#f97316" />
             <span style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Success Share Table ({shareTable.length} rows)</span>
           </div>
-          <button onClick={() => setShare(p => [...p, { ctc: '₹0', fee: '₹0', net: '₹0', roi: '0x ROI' }])} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#eff6ff', color: '#2145fb', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+          <button onClick={() => setShare(p => [...p, { ctc: '₹0', fee: '₹0', net: '₹0', roi: '0x ROI' }])} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <Plus size={13} /> Add Row
           </button>
         </div>
@@ -215,7 +215,7 @@ export default function AdminCapPage() {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {shareTable.map((row, i) => (
-            <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 36px', gap: '10px', alignItems: 'center', padding: '10px 12px', background: '#f8faff', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+            <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 36px', gap: '10px', alignItems: 'center', padding: '10px 12px', background: '#fff7ed', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
               <input style={inputS} value={row.ctc} placeholder="₹3,00,000" onChange={e => setShare(p => p.map((r, idx) => idx === i ? { ...r, ctc: e.target.value } : r))} />
               <input style={inputS} value={row.fee} placeholder="₹36,000"   onChange={e => setShare(p => p.map((r, idx) => idx === i ? { ...r, fee: e.target.value } : r))} />
               <input style={inputS} value={row.net} placeholder="₹2.64L+"   onChange={e => setShare(p => p.map((r, idx) => idx === i ? { ...r, net: e.target.value } : r))} />

@@ -4467,10 +4467,13 @@ select.contact-input{
 }
 .portal-hamburger{
   display:none;align-items:center;justify-content:center;
-  width:36px;height:36px;border-radius:8px;
-  background:none;border:1.5px solid #e2e8f0;
+  width:36px;height:36px;border-radius:999px;
+  background:#fff;border:1.5px solid rgba(249,115,22,0.45);
   cursor:pointer;flex-shrink:0;
+  color:#f97316;
 }
+.portal-sidebar nav a{transition:background .15s ease,color .15s ease,box-shadow .15s ease}
+.portal-sidebar nav a:hover{background:rgba(255,255,255,0.08);color:#fff}
 .portal-hamburger span{
   display:block;width:18px;height:2px;background:#0b0d20;border-radius:2px;
   position:relative;transition:all .2s ease;

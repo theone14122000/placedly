@@ -5,7 +5,7 @@ import { Users, Briefcase, ClipboardList, TrendingUp, ExternalLink, ArrowRight, 
 type Stats = { totalApplications: number; pendingApplications: number; activeCandidates: number; expiredCandidates: number };
 
 const SECTIONS = [
-  { label: '📋 Applications', desc: 'Review, approve & renew CAP candidates', href: '/admin/applications', color: '#2145fb' },
+  { label: '📋 Applications', desc: 'Review, approve & renew CAP candidates', href: '/admin/applications', color: '#f97316' },
   { label: 'Homepage',        desc: 'Edit hero, stats, testimonials',          href: '/admin/homepage',     color: '#6366f1' },
   { label: 'Vacancies',       desc: 'Add, edit, delete job listings',          href: '/admin/vacancies',    color: '#f97316' },
   { label: 'Courses',         desc: 'Manage dashboard learning hub',           href: '/admin/courses',      color: '#16a34a' },
@@ -26,7 +26,7 @@ export default function AdminOverview() {
   const s = stats;
 
   const QUICK_STATS = [
-    { label: 'Total Applications', value: s ? String(s.totalApplications) : '…', sub: 'All time', color: '#2145fb', bg: '#eff6ff', Icon: ClipboardList, href: '/admin/applications' },
+    { label: 'Total Applications', value: s ? String(s.totalApplications) : '…', sub: 'All time', color: '#f97316', bg: '#fff7ed', Icon: ClipboardList, href: '/admin/applications' },
     { label: 'Pending Review',     value: s ? String(s.pendingApplications) : '…', sub: 'Awaiting approval', color: '#f97316', bg: '#fff7ed', Icon: Clock,          href: '/admin/applications?status=PENDING' },
     { label: 'Active Candidates',  value: s ? String(s.activeCandidates)   : '…', sub: 'Portal access live', color: '#16a34a', bg: '#f0fdf4', Icon: Users,          href: '/admin/applications?status=APPROVED' },
     { label: 'Expired Access',     value: s ? String(s.expiredCandidates)  : '…', sub: 'May need renewal',   color: '#7c3aed', bg: '#faf5ff', Icon: TrendingUp,     href: '/admin/applications' },

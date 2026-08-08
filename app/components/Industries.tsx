@@ -349,7 +349,7 @@ function IndustryCard({
 }
 
 /* ─── Section ─── */
-export default function Industries() {
+export default function Industries({ cms = {} }: { cms?: Record<string, string> }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
@@ -382,13 +382,13 @@ export default function Industries() {
           <p className="placedly-industries-eyebrow">
             <span className="placedly-industries-eyebrow-rule" style={{ background: ACCENT.from }} />
             <span className="placedly-industries-eyebrow-text" style={{ color: ACCENT.from }}>
-              Our Focus Areas
+              {cms['hp:indEyebrow'] ?? 'Our Focus Areas'}
             </span>
             <span className="placedly-industries-eyebrow-rule" style={{ background: ACCENT.from }} />
           </p>
           <h2 className="placedly-industries-title">
-            Domains Where We Place Talent —{' '}
-            <span style={{ color: ACCENT.from }}>And Know It Deeply</span>
+            {cms['hp:indTitle'] ?? "Domains Where We Place Talent — "}
+            <span style={{ color: ACCENT.from }}>{cms['hp:indTitleAccent'] ?? 'And Know It Deeply'}</span>
           </h2>
         </motion.div>
 

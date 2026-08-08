@@ -472,7 +472,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
       {/* backgrounds */}
       <div className="placedly-hero-desktop-gradient" aria-hidden>
         <HeroGradientBg />
-        <HeroBgVideo />
+        <HeroBgVideo videoSrc={cms['hp:heroBgVideo']} />
       </div>
 
       <div className="placedly-hero-desktop-only">
