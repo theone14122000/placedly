@@ -635,8 +635,7 @@ export default function UtilityToolsSection() {
 
           <p style={{
             fontSize: 'clamp(0.875rem,1.3vw,1rem)',
-            color: ORANGE,
-            fontWeight: 700,
+            color: TEXT_MUTED,
             maxWidth: '560px',
             margin: '0 auto',
             lineHeight: 1.65,
@@ -816,14 +815,14 @@ export default function UtilityToolsSection() {
         #utility-tools div { color: ${TEXT_BODY}; }
         #utility-tools h1,
         #utility-tools h2,
-        #utility-tools h3  { color: ${ORANGE}; }
+        #utility-tools h3  { color: ${BLACK}; }
 
         .main-headline {
           margin: 0 0 10px;
           font-weight: 800;
           line-height: 1.1;
           letter-spacing: -0.03em;
-          color: ${ORANGE};
+          color: ${BLACK};
           font-size: clamp(2rem, 8vw, 2.6rem);
           display: flex;
           flex-wrap: wrap;
@@ -840,10 +839,10 @@ export default function UtilityToolsSection() {
 
         .sub-headline {
           font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-          font-weight: 700;
+          font-weight: 600;
           line-height: 1.35;
           letter-spacing: -0.01em;
-          color: ${ORANGE};
+          color: ${TEXT_MUTED};
           margin: 0 0 10px;
         }
         @media (min-width: 480px) {
@@ -989,14 +988,14 @@ function ToolPanel({
             style={{
               fontSize: isMob ? '1rem' : 'clamp(1.05rem,1.8vw,1.3rem)',
               fontWeight: 700, lineHeight: 1.3, letterSpacing: '-0.02em',
-              color: ORANGE, margin: 0,
+              color: BLACK, margin: 0,
             }}
           >
             {active.title}
           </h3>
           {!isMob && (
             <p style={{
-              fontSize: '13px', color: ORANGE, fontWeight: 700, marginTop: '4px', lineHeight: 1.5,
+              fontSize: '13px', color: TEXT_MUTED, marginTop: '4px', lineHeight: 1.5,
             }}>
               {active.description}
             </p>
