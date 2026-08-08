@@ -671,7 +671,7 @@ export default function UtilityToolsSection() {
             <ChevronLeft size={18} strokeWidth={2.5} aria-hidden />
           </button>
 
-          <span className="utility-label">Utility Tools</span>
+          <span className="utility-label" style={{ color: ORANGE, fontWeight: 700 }}>Utility Tools</span>
 
           {/* right arrow — mobile only */}
           <button
@@ -860,6 +860,7 @@ export default function UtilityToolsSection() {
           letter-spacing: 0.14em;
           color: ${ORANGE};
         }
+        #utility-tools .utility-label { color: ${ORANGE} !important; }
         #utility-tools .tool-title-desktop,
         #utility-tools .tool-title-mobile { color: inherit !important; }
 
