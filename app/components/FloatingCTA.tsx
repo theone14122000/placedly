@@ -121,13 +121,13 @@ export default function FloatingCTA({
             animate="animate"
             exit="exit"
           >
-            {/* White pocket — a SMALL rounded notch behind the button,
-                only slightly wider than the button. It rises from the
-                bottom white area (extends below the viewport edge) and
-                hugs the button with a clean white margin, large rounded
-                top corners, no border, same white as the bottom area.
-                The orange button sits on top, embedded in the pocket. */}
-            <span className="placedly-floating-cta-pocket" aria-hidden />
+            {/* White bottom band + small centered notch.
+                The band is the "white section" below the colored
+                content (full-width strip at the viewport bottom).
+                The notch is a small upward tab from that band that
+                wraps around the button; the button sits on top of it. */}
+            <span className="placedly-floating-cta-band" aria-hidden />
+            <span className="placedly-floating-cta-notch" aria-hidden />
 
             <motion.a
               href={href}
@@ -148,36 +148,56 @@ export default function FloatingCTA({
       </AnimatePresence>
 
       <style>{`
-        /* Fixed to the actual bottom of the viewport, centered horizontally */
+        /* ── Root anchor ──
+           Fixed at the very bottom edge of the viewport. Height fits
+           the button + band; children are absolutely positioned. */
         .placedly-floating-cta {
           position: fixed !important;
           left: 50% !important;
-          bottom: 22px !important;
+          bottom: 0 !important;
           transform: translate3d(-50%, 0, 0) !important;
           z-index: ${zIndex} !important;
           will-change: transform, opacity !important;
           pointer-events: auto !important;
+          width: max-content !important;
+          display: flex !important;
+          align-items: flex-end !important;
+          height: 100px !important;
         }
 
-        /* ── White pocket ──
-           Small upward notch from the white bottom strip: sits
-           BEHIND the button (z-index 0) and rises only ~8–12px
-           above the button top. Slightly wider than the button,
-           large rounded TOP corners only, straight sides merge
-           into the white area below (extends below the viewport
-           edge so no white panel is visible). The colored section
-           stays visible on both sides. */
-        .placedly-floating-cta-pocket {
+        /* ── White bottom band ──
+           The white section below the colored section: a short
+           full-width strip at the viewport bottom, sitting BEHIND
+           the notch and button. */
+        .placedly-floating-cta-band {
           position: absolute !important;
           left: 50% !important;
-          bottom: -150px !important;
-          width: calc(100% + 44px) !important;
-          max-width: 240px !important;
-          height: 210px !important;
+          bottom: 0 !important;
           transform: translateX(-50%) !important;
+          width: 100vw !important;
+          height: 24px !important;
+          background: #ffffff !important;
+          z-index: 0 !important;
+          pointer-events: none !important;
+        }
+
+        /* ── White notch ──
+           Small centered upward tab from the band: only slightly
+           wider than the button (button + 40px), large rounded TOP
+           corners only, straight sides flowing into the band below.
+           Rises exactly 8px above the button top. Merges with the
+           band (same white) into one shape. Colored section stays
+           visible on both sides. */
+        .placedly-floating-cta-notch {
+          position: absolute !important;
+          left: 50% !important;
+          bottom: 0 !important;
+          transform: translateX(-50%) !important;
+          width: calc(100% + 40px) !important;
+          max-width: 240px !important;
+          height: 82px !important;
           border-radius: 26px 26px 0 0 !important;
           background: #ffffff !important;
-          box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06) !important;
           z-index: 0 !important;
           pointer-events: none !important;
         }
@@ -186,9 +206,11 @@ export default function FloatingCTA({
           position: relative !important;
           display: inline-flex !important;
           align-items: center !important;
-          gap: 12px !important;
-          padding: 12px 18px 12px 24px !important;
-          min-height: 52px !important;
+          gap: 10px !important;
+          padding: 10px 14px 10px 22px !important;
+          min-height: 50px !important;
+          max-width: 190px !important;
+          margin-bottom: 24px !important;
           border: 1px solid rgba(255, 255, 255, 0.18) !important;
           border-radius: 9999px !important;
           background: linear-gradient(135deg, ${ORANGE} 0%, ${ORANGE_DARK} 100%) !important;
@@ -200,7 +222,7 @@ export default function FloatingCTA({
           text-decoration: none !important;
           font-family: 'Inter', 'Manrope', 'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
           font-weight: 600 !important;
-          font-size: 14.5px !important;
+          font-size: 14px !important;
           letter-spacing: -0.005em !important;
           line-height: 1 !important;
           white-space: nowrap !important;
@@ -273,20 +295,21 @@ export default function FloatingCTA({
         }
 
         @media (max-width: 640px) {
-          .placedly-floating-cta {
-            bottom: 18px !important;
-          }
-          .placedly-floating-cta-pocket {
+          .placedly-floating-cta-notch {
             width: calc(100% + 36px) !important;
-            height: 174px !important;
-            bottom: -120px !important;
+            height: 74px !important;
             border-radius: 22px 22px 0 0 !important;
+          }
+          .placedly-floating-cta-band {
+            height: 20px !important;
           }
           .placedly-floating-cta-btn {
             min-height: 46px !important;
-            padding: 10px 14px 10px 18px !important;
-            font-size: 13.5px !important;
-            gap: 10px !important;
+            padding: 10px 12px 10px 18px !important;
+            font-size: 13px !important;
+            gap: 8px !important;
+            margin-bottom: 20px !important;
+            max-width: 175px !important;
           }
           .placedly-floating-cta-arrow {
             width: 28px !important;
@@ -298,7 +321,8 @@ export default function FloatingCTA({
           .placedly-floating-cta,
           .placedly-floating-cta-btn,
           .placedly-floating-cta-arrow,
-          .placedly-floating-cta-pocket,
+          .placedly-floating-cta-notch,
+          .placedly-floating-cta-band,
           .placedly-floating-cta-shine {
             transition: opacity 0.2s ease !important;
             animation: none !important;
