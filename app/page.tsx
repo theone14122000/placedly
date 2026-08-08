@@ -12,7 +12,6 @@ import Testimonials from './components/Testimonials';
 import Faq from './components/Faq';
 import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
-import Cta from './components/Cta';
 import PlacedlyFixes from './components/PlacedlyFixes';
 import PlacedlyFloatingCta from './components/FloatingCTA';
 import { getCmsMap } from '@/lib/cms';
@@ -118,7 +117,6 @@ export default async function Home() {
         <StudyDestinationsMarquee />
         <Testimonials />
         <Faq />
-        <Cta cms={cms} />
         <Footer cms={cms} />
       </main>
 

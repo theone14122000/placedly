@@ -440,6 +440,16 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
 
         /* ── Popup cards ── */
+        .placedly-lift-network-spacer {
+          width: 0;
+          height: 0;
+          pointer-events: none;
+        }
+        .placedly-lift-network > .placedly-lift-card--right {
+          align-self: end;
+          margin-top: auto !important;
+          margin-bottom: clamp(0px, 2vw, 28px);
+        }
         .placedly-lift-card--left,
         .placedly-lift-card--right {
           opacity: 0.7 !important;
@@ -538,6 +548,9 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
                 </p>
               )}
             </motion.div>
+
+            {/* spacer — keeps the 3-column grid: left card | empty | right card */}
+            <span aria-hidden className="placedly-lift-network-spacer" />
 
             {/* right card */}
             <motion.div
