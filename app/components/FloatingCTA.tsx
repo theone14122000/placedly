@@ -121,10 +121,12 @@ export default function FloatingCTA({
             animate="animate"
             exit="exit"
           >
-            {/* External decorative line — runs BEHIND the button,
-                extending past it on both sides. The opaque button
-                sits above it, so the line visually passes under. */}
-            <span className="placedly-floating-cta-track" aria-hidden />
+            {/* White cutout/dome — a soft white rounded shape BEHIND the
+                button. It rises up and wraps around both sides of the
+                button (larger and wider than the button itself), so the
+                orange button looks embedded inside a white notch that
+                blends into the light page background below. */}
+            <span className="placedly-floating-cta-cutout" aria-hidden />
 
             <motion.a
               href={href}
@@ -156,50 +158,47 @@ export default function FloatingCTA({
           pointer-events: auto !important;
         }
 
-        /* ── External decorative line ──
-           Absolutely positioned, vertically centered on the wrapper.
-           Extends BEYOND the button on both sides (negative insets).
-           Sits behind the button via z-index 0; the opaque button
-           (z-index 1) hides the line where they overlap, producing
-           the "line passes behind the button" effect. */
-        .placedly-floating-cta-track {
+        /* ── White cutout shape ──
+           A tall white rounded dome that sits BEHIND the button
+           (z-index 0) and extends below the viewport bottom edge,
+           so it reads as a white section rising up around the
+           button from the bottom. The button (z-index 1, opaque
+           orange) sits on top of it, embedded in the notch. */
+        .placedly-floating-cta-cutout {
           position: absolute !important;
+          left: 50% !important;
           top: 50% !important;
-          left: -190px !important;
-          right: -190px !important;
-          height: 2px !important;
-          transform: translateY(-50%) !important;
-          border-radius: 999px !important;
-          background: linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.65) 12%,
-            rgba(255, 255, 255, 0.65) 88%,
-            rgba(255, 255, 255, 0) 100%
-          ) !important;
+          width: 640px !important;
+          max-width: 96vw !important;
+          height: 340px !important;
+          transform: translate(-50%, -38%) !important;
+          border-radius: 50% !important;
+          background: #ffffff !important;
+          box-shadow:
+            0 -2px 0 rgba(255, 255, 255, 1),
+            0 18px 48px rgba(15, 23, 42, 0.1) !important;
           z-index: 0 !important;
           pointer-events: none !important;
-          overflow: hidden !important;
         }
 
-        /* ── Animated highlight that travels left → right along the
-           track on hover, while the base line stays put ── */
-        .placedly-floating-cta-track::after {
+        /* Soft highlight along the dome's top edge so it reads as a
+           curved surface catching light, not a flat circle */
+        .placedly-floating-cta-cutout::before {
           content: '' !important;
           position: absolute !important;
-          inset: 0 !important;
+          top: 18px !important;
+          left: 12% !important;
+          right: 12% !important;
+          height: 1px !important;
           border-radius: 999px !important;
           background: linear-gradient(
             90deg,
             rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.95) 45%,
+            rgba(15, 23, 42, 0.06) 30%,
+            rgba(15, 23, 42, 0.06) 70%,
             rgba(255, 255, 255, 0) 100%
           ) !important;
-          transform: translateX(-100%) !important;
-          transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1) !important;
-        }
-        .placedly-floating-cta:hover .placedly-floating-cta-track::after {
-          transform: translateX(100%) !important;
+          pointer-events: none !important;
         }
 
         .placedly-floating-cta-btn {
@@ -296,9 +295,11 @@ export default function FloatingCTA({
           .placedly-floating-cta {
             bottom: 18px !important;
           }
-          .placedly-floating-cta-track {
-            left: -90px !important;
-            right: -90px !important;
+          .placedly-floating-cta-cutout {
+            width: 420px !important;
+            max-width: 96vw !important;
+            height: 260px !important;
+            transform: translate(-50%, -36%) !important;
           }
           .placedly-floating-cta-btn {
             min-height: 46px !important;
@@ -316,8 +317,7 @@ export default function FloatingCTA({
           .placedly-floating-cta,
           .placedly-floating-cta-btn,
           .placedly-floating-cta-arrow,
-          .placedly-floating-cta-track,
-          .placedly-floating-cta-track::after,
+          .placedly-floating-cta-cutout,
           .placedly-floating-cta-shine {
             transition: opacity 0.2s ease !important;
             animation: none !important;
