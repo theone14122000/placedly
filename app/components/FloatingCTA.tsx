@@ -160,25 +160,24 @@ export default function FloatingCTA({
         }
 
         /* ── White pocket ──
-           A SMALL centered rounded rectangle rising from the bottom
-           white area, hugging the button. It is only slightly wider
-           than the button (button width + ~40px), has large rounded
-           top corners only, no border, same white as the bottom
-           section, and sits BEHIND the button (z-index 0). The
-           button (z-index 1) floats inside it with a clean margin. */
+           Small upward notch from the white bottom strip: sits
+           BEHIND the button (z-index 0) and rises only ~8–12px
+           above the button top. Slightly wider than the button,
+           large rounded TOP corners only, straight sides merge
+           into the white area below (extends below the viewport
+           edge so no white panel is visible). The colored section
+           stays visible on both sides. */
         .placedly-floating-cta-pocket {
           position: absolute !important;
           left: 50% !important;
-          bottom: -140px !important;
-          width: calc(100% + 40px) !important;
-          max-width: 260px !important;
-          height: 230px !important;
+          bottom: -150px !important;
+          width: calc(100% + 44px) !important;
+          max-width: 240px !important;
+          height: 210px !important;
           transform: translateX(-50%) !important;
-          border-radius: 30px 30px 0 0 !important;
+          border-radius: 26px 26px 0 0 !important;
           background: #ffffff !important;
-          box-shadow:
-            0 -1px 0 rgba(255, 255, 255, 1),
-            0 20px 44px rgba(15, 23, 42, 0.08) !important;
+          box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06) !important;
           z-index: 0 !important;
           pointer-events: none !important;
         }
@@ -279,9 +278,9 @@ export default function FloatingCTA({
           }
           .placedly-floating-cta-pocket {
             width: calc(100% + 36px) !important;
-            height: 200px !important;
+            height: 174px !important;
             bottom: -120px !important;
-            border-radius: 24px 24px 0 0 !important;
+            border-radius: 22px 22px 0 0 !important;
           }
           .placedly-floating-cta-btn {
             min-height: 46px !important;
