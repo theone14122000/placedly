@@ -24,7 +24,7 @@ export default function FloatingCTA({
   hideNearFooterPx = 120,
   footerSelector = 'footer',
   href = '/cap/apply',
-  label = 'Apply for CAP',
+  label = 'Apply for CAP 1',
   zIndex = 80,
 }: Props) {
   const [visible, setVisible] = useState(false);

@@ -16,7 +16,7 @@ type CapFloatingCtaProps = {
 };
 
 export default function CapFloatingCta({
-  label = 'Apply for CAP',
+  label = 'Apply for CAP 2',
   href = '/cap/apply',
 }: CapFloatingCtaProps) {
   const [visible, setVisible] = useState(false);
