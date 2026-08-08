@@ -1085,7 +1085,7 @@ function ToolPanel({
         width: '100%', display: 'inline-flex', alignItems: 'center',
         justifyContent: 'center', gap: '9px', padding: '14px 24px',
         background: ORANGE, color: '#fff',
-        border: `1px solid ${ORANGE_DARK}`, borderRadius: '12px',
+        border: `1px solid ${ORANGE_DARK}`, borderRadius: '999px',
         fontWeight: 700, fontSize: '14.5px',
         cursor: phase === 'loading' ? 'wait' : 'pointer',
         opacity: phase === 'loading' ? 0.82 : 1,

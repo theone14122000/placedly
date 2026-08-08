@@ -734,7 +734,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
         .services-cta {
           display: inline-flex; align-items: center; gap: 8px;
           padding: 14px 28px; color: #fff; border: none;
-          border-radius: 12px; font-weight: 700; font-size: 15px;
+          border-radius: 999px; font-weight: 700; font-size: 15px;
           cursor: pointer; width: 100%; justify-content: center;
           background: ${ORANGE};
           box-shadow: 0 8px 20px rgba(249,115,22,0.30);

@@ -368,7 +368,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
         }
         .pf-social {
           width: 28px; height: 28px;
-          border-radius: 8px;
+          border-radius: 50%;
           display: inline-flex;
           align-items: center;
           justify-content: center;
