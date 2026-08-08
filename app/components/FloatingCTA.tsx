@@ -183,18 +183,19 @@ export default function FloatingCTA({
 
         /* ── White notch ──
            Small centered upward tab from the band: only slightly
-           wider than the button (button + 40px), large rounded TOP
+           wider than the button (button + ~36px), large rounded TOP
            corners only, straight sides flowing into the band below.
-           Rises exactly 8px above the button top. Merges with the
-           band (same white) into one shape. Colored section stays
-           visible on both sides. */
+           The button sits ~10px below the notch top (vertically
+           centered in the pocket). Merges with the band (same
+           white) into one shape. Colored section stays visible on
+           both sides. */
         .placedly-floating-cta-notch {
           position: absolute !important;
           left: 50% !important;
           bottom: 0 !important;
           transform: translateX(-50%) !important;
-          width: calc(100% + 40px) !important;
-          max-width: 240px !important;
+          width: calc(100% + 36px) !important;
+          max-width: 210px !important;
           height: 82px !important;
           border-radius: 26px 26px 0 0 !important;
           background: #ffffff !important;
@@ -207,10 +208,10 @@ export default function FloatingCTA({
           display: inline-flex !important;
           align-items: center !important;
           gap: 10px !important;
-          padding: 10px 14px 10px 22px !important;
+          padding: 8px 14px 8px 20px !important;
           min-height: 50px !important;
-          max-width: 190px !important;
-          margin-bottom: 24px !important;
+          max-width: 175px !important;
+          margin-bottom: 22px !important;
           border: 1px solid rgba(255, 255, 255, 0.18) !important;
           border-radius: 9999px !important;
           background: linear-gradient(135deg, ${ORANGE} 0%, ${ORANGE_DARK} 100%) !important;
@@ -279,8 +280,8 @@ export default function FloatingCTA({
           display: inline-flex !important;
           align-items: center !important;
           justify-content: center !important;
-          width: 32px !important;
-          height: 32px !important;
+          width: 28px !important;
+          height: 28px !important;
           border-radius: 50% !important;
           background: rgba(255, 255, 255, 0.24) !important;
           color: #ffffff !important;
@@ -296,7 +297,8 @@ export default function FloatingCTA({
 
         @media (max-width: 640px) {
           .placedly-floating-cta-notch {
-            width: calc(100% + 36px) !important;
+            width: calc(100% + 32px) !important;
+            max-width: 200px !important;
             height: 74px !important;
             border-radius: 22px 22px 0 0 !important;
           }
@@ -304,16 +306,16 @@ export default function FloatingCTA({
             height: 20px !important;
           }
           .placedly-floating-cta-btn {
-            min-height: 46px !important;
-            padding: 10px 12px 10px 18px !important;
+            min-height: 48px !important;
+            padding: 8px 12px 8px 16px !important;
             font-size: 13px !important;
             gap: 8px !important;
-            margin-bottom: 20px !important;
-            max-width: 175px !important;
+            margin-bottom: 18px !important;
+            max-width: 170px !important;
           }
           .placedly-floating-cta-arrow {
-            width: 28px !important;
-            height: 28px !important;
+            width: 26px !important;
+            height: 26px !important;
           }
         }
 
