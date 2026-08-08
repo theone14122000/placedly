@@ -121,12 +121,13 @@ export default function FloatingCTA({
             animate="animate"
             exit="exit"
           >
-            {/* White cutout/dome — a soft white rounded shape BEHIND the
-                button. It rises up and wraps around both sides of the
-                button (larger and wider than the button itself), so the
-                orange button looks embedded inside a white notch that
-                blends into the light page background below. */}
-            <span className="placedly-floating-cta-cutout" aria-hidden />
+            {/* White pocket — a SMALL rounded notch behind the button,
+                only slightly wider than the button. It rises from the
+                bottom white area (extends below the viewport edge) and
+                hugs the button with a clean white margin, large rounded
+                top corners, no border, same white as the bottom area.
+                The orange button sits on top, embedded in the pocket. */}
+            <span className="placedly-floating-cta-pocket" aria-hidden />
 
             <motion.a
               href={href}
@@ -158,46 +159,27 @@ export default function FloatingCTA({
           pointer-events: auto !important;
         }
 
-        /* ── White cutout shape ──
-           A tall white rounded dome that sits BEHIND the button
-           (z-index 0) and extends below the viewport bottom edge,
-           so it reads as a white section rising up around the
-           button from the bottom. The button (z-index 1, opaque
-           orange) sits on top of it, embedded in the notch. */
-        .placedly-floating-cta-cutout {
+        /* ── White pocket ──
+           A SMALL centered rounded rectangle rising from the bottom
+           white area, hugging the button. It is only slightly wider
+           than the button (button width + ~40px), has large rounded
+           top corners only, no border, same white as the bottom
+           section, and sits BEHIND the button (z-index 0). The
+           button (z-index 1) floats inside it with a clean margin. */
+        .placedly-floating-cta-pocket {
           position: absolute !important;
           left: 50% !important;
-          top: 50% !important;
-          width: 640px !important;
-          max-width: 96vw !important;
-          height: 340px !important;
-          transform: translate(-50%, -38%) !important;
-          border-radius: 50% !important;
+          bottom: -140px !important;
+          width: calc(100% + 40px) !important;
+          max-width: 260px !important;
+          height: 230px !important;
+          transform: translateX(-50%) !important;
+          border-radius: 30px 30px 0 0 !important;
           background: #ffffff !important;
           box-shadow:
-            0 -2px 0 rgba(255, 255, 255, 1),
-            0 18px 48px rgba(15, 23, 42, 0.1) !important;
+            0 -1px 0 rgba(255, 255, 255, 1),
+            0 20px 44px rgba(15, 23, 42, 0.08) !important;
           z-index: 0 !important;
-          pointer-events: none !important;
-        }
-
-        /* Soft highlight along the dome's top edge so it reads as a
-           curved surface catching light, not a flat circle */
-        .placedly-floating-cta-cutout::before {
-          content: '' !important;
-          position: absolute !important;
-          top: 18px !important;
-          left: 12% !important;
-          right: 12% !important;
-          height: 1px !important;
-          border-radius: 999px !important;
-          background: linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(15, 23, 42, 0.06) 30%,
-            rgba(15, 23, 42, 0.06) 70%,
-            rgba(255, 255, 255, 0) 100%
-          ) !important;
           pointer-events: none !important;
         }
 
@@ -295,11 +277,11 @@ export default function FloatingCTA({
           .placedly-floating-cta {
             bottom: 18px !important;
           }
-          .placedly-floating-cta-cutout {
-            width: 420px !important;
-            max-width: 96vw !important;
-            height: 260px !important;
-            transform: translate(-50%, -36%) !important;
+          .placedly-floating-cta-pocket {
+            width: calc(100% + 36px) !important;
+            height: 200px !important;
+            bottom: -120px !important;
+            border-radius: 24px 24px 0 0 !important;
           }
           .placedly-floating-cta-btn {
             min-height: 46px !important;
@@ -317,7 +299,7 @@ export default function FloatingCTA({
           .placedly-floating-cta,
           .placedly-floating-cta-btn,
           .placedly-floating-cta-arrow,
-          .placedly-floating-cta-cutout,
+          .placedly-floating-cta-pocket,
           .placedly-floating-cta-shine {
             transition: opacity 0.2s ease !important;
             animation: none !important;
