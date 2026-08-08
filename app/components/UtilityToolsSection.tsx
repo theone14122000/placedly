@@ -722,8 +722,8 @@ export default function UtilityToolsSection() {
                     }}
                   >
                     <tool.Icon size={15} strokeWidth={2} />
-                    <span className="tool-title-desktop">{tool.title}</span>
-                    <span className="tool-title-mobile">{tool.title.split(' ')[0]}</span>
+                    <span className="tool-title-desktop" style={{ color: 'inherit' }}>{tool.title}</span>
+                    <span className="tool-title-mobile" style={{ color: 'inherit' }}>{tool.title.split(' ')[0]}</span>
                     {tool.popular && (
                       <span className="tool-hot-badge" style={{
                         fontSize: '9px', fontWeight: 700, letterSpacing: '0.4px',
@@ -861,7 +861,7 @@ export default function UtilityToolsSection() {
           color: ${ORANGE};
         }
         #utility-tools .tool-title-desktop,
-        #utility-tools .tool-title-mobile { color: inherit; }
+        #utility-tools .tool-title-mobile { color: inherit !important; }
 
         /* ── ★ NEW: Arrows around "Utility Tools" label ── */
         .tools-arrow {
