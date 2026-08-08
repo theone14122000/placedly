@@ -631,7 +631,7 @@ function DocumentChecklistSection() {
           text-align: left;
           background: ${SURFACE};
           border: 1.5px solid;
-          border-radius: 14px;
+          border-radius: 999px;
           padding: 11px 14px;
           cursor: pointer;
           transition: border-color 0.25s, box-shadow 0.25s;
