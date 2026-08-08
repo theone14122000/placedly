@@ -24,7 +24,7 @@ export default function FloatingCTA({
   hideNearFooterPx = 120,
   footerSelector = 'footer',
   href = '/cap/apply',
-  label = 'Apply for CAP 1',
+  label = 'Apply for CAP ',
   zIndex = 80,
 }: Props) {
   const [visible, setVisible] = useState(false);
@@ -121,6 +121,11 @@ export default function FloatingCTA({
             animate="animate"
             exit="exit"
           >
+            {/* External decorative line — runs BEHIND the button,
+                extending past it on both sides. The opaque button
+                sits above it, so the line visually passes under. */}
+            <span className="placedly-floating-cta-track" aria-hidden />
+
             <motion.a
               href={href}
               className="placedly-floating-cta-btn"
@@ -131,7 +136,6 @@ export default function FloatingCTA({
             >
               <span className="placedly-floating-cta-shine" aria-hidden />
               <span className="placedly-floating-cta-label">{label}</span>
-              <span className="placedly-floating-cta-line" aria-hidden />
               <span className="placedly-floating-cta-arrow" aria-hidden>
                 <ArrowRight size={16} strokeWidth={2.6} />
               </span>
@@ -150,6 +154,52 @@ export default function FloatingCTA({
           z-index: ${zIndex} !important;
           will-change: transform, opacity !important;
           pointer-events: auto !important;
+        }
+
+        /* ── External decorative line ──
+           Absolutely positioned, vertically centered on the wrapper.
+           Extends BEYOND the button on both sides (negative insets).
+           Sits behind the button via z-index 0; the opaque button
+           (z-index 1) hides the line where they overlap, producing
+           the "line passes behind the button" effect. */
+        .placedly-floating-cta-track {
+          position: absolute !important;
+          top: 50% !important;
+          left: -190px !important;
+          right: -190px !important;
+          height: 2px !important;
+          transform: translateY(-50%) !important;
+          border-radius: 999px !important;
+          background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.65) 12%,
+            rgba(255, 255, 255, 0.65) 88%,
+            rgba(255, 255, 255, 0) 100%
+          ) !important;
+          z-index: 0 !important;
+          pointer-events: none !important;
+          overflow: hidden !important;
+        }
+
+        /* ── Animated highlight that travels left → right along the
+           track on hover, while the base line stays put ── */
+        .placedly-floating-cta-track::after {
+          content: '' !important;
+          position: absolute !important;
+          inset: 0 !important;
+          border-radius: 999px !important;
+          background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.95) 45%,
+            rgba(255, 255, 255, 0) 100%
+          ) !important;
+          transform: translateX(-100%) !important;
+          transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1) !important;
+        }
+        .placedly-floating-cta:hover .placedly-floating-cta-track::after {
+          transform: translateX(100%) !important;
         }
 
         .placedly-floating-cta-btn {
@@ -221,32 +271,6 @@ export default function FloatingCTA({
           display: inline-block !important;
         }
 
-        .placedly-floating-cta-line {
-          position: relative !important;
-          z-index: 1 !important;
-          flex: 1 1 14px !important;
-          min-width: 10px !important;
-          height: 2px !important;
-          margin: 0 2px !important;
-          pointer-events: none !important;
-        }
-        .placedly-floating-cta-line::after {
-          content: '' !important;
-          position: absolute !important;
-          inset: 0 !important;
-          background: rgba(255, 255, 255, 0.5) !important;
-          border-radius: 2px !important;
-          transform: scaleX(0.45) !important;
-          transform-origin: left center !important;
-          transition:
-            transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-            background 0.35s ease !important;
-        }
-        .placedly-floating-cta-btn:hover .placedly-floating-cta-line::after {
-          transform: scaleX(1) !important;
-          background: rgba(255, 255, 255, 0.85) !important;
-        }
-
         .placedly-floating-cta-arrow {
           position: relative !important;
           z-index: 1 !important;
@@ -272,6 +296,10 @@ export default function FloatingCTA({
           .placedly-floating-cta {
             bottom: 18px !important;
           }
+          .placedly-floating-cta-track {
+            left: -90px !important;
+            right: -90px !important;
+          }
           .placedly-floating-cta-btn {
             min-height: 46px !important;
             padding: 10px 14px 10px 18px !important;
@@ -288,6 +316,8 @@ export default function FloatingCTA({
           .placedly-floating-cta,
           .placedly-floating-cta-btn,
           .placedly-floating-cta-arrow,
+          .placedly-floating-cta-track,
+          .placedly-floating-cta-track::after,
           .placedly-floating-cta-shine {
             transition: opacity 0.2s ease !important;
             animation: none !important;
