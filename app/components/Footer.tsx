@@ -237,7 +237,7 @@ export default function Footer({ cms = {} }: { cms?: Cms }) {
           z-index: 1;
           max-width: 1200px;
           margin: 0 auto;
-          padding: 28px clamp(20px, 4vw, 40px) 0;
+          padding: 28px 0 0;
         }
 
         /* ════════════════════════════════════════
