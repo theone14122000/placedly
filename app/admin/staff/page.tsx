@@ -13,7 +13,7 @@ const TABS = [
 
 type TabKey = typeof TABS[number]['key'];
 
-const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '9px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '9999px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 const lbl: React.CSSProperties = { display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '5px' };
 
 export default function StaffPage() {
@@ -57,7 +57,7 @@ export default function StaffPage() {
   const ToggleBtn = ({ m }: { m: StaffMember }) => (
     <button
       onClick={() => toggle(m.id, m.isActive)}
-      style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 12px', borderRadius: '8px', border: '1.5px solid', borderColor: m.isActive ? '#fecaca' : '#bbf7d0', background: m.isActive ? '#fef2f2' : '#f0fdf4', color: m.isActive ? '#dc2626' : '#16a34a', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 12px', borderRadius: '9999px', border: '1.5px solid', borderColor: m.isActive ? '#fecaca' : '#bbf7d0', background: m.isActive ? '#fef2f2' : '#f0fdf4', color: m.isActive ? '#dc2626' : '#16a34a', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}
     >
       {m.isActive ? <><ToggleLeft size={13} /> Deactivate</> : <><ToggleRight size={13} /> Activate</>}
     </button>
@@ -74,7 +74,7 @@ export default function StaffPage() {
         </div>
         <button
           onClick={() => { setShowForm(v => !v); setError(''); }}
-          style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap', flexShrink: 0 }}
+          style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap', flexShrink: 0 }}
         >
           <UserPlus size={15} /> Add {tabMeta.label.slice(0, -1)}
         </button>
@@ -107,10 +107,10 @@ export default function StaffPage() {
               )}
             </div>
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <button type="submit" disabled={busy} style={{ padding: '9px 20px', background: busy ? '#fdba74' : '#f97316', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 700, cursor: busy ? 'not-allowed' : 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+              <button type="submit" disabled={busy} style={{ padding: '9px 20px', background: busy ? '#fdba74' : '#f97316', color: '#fff', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 700, cursor: busy ? 'not-allowed' : 'pointer', fontFamily: "'Poppins',sans-serif" }}>
                 {busy ? 'Creating…' : 'Create Account'}
               </button>
-              <button type="button" onClick={() => setShowForm(false)} style={{ padding: '9px 16px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '9px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+              <button type="button" onClick={() => setShowForm(false)} style={{ padding: '9px 16px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '9999px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
                 Cancel
               </button>
             </div>
@@ -124,7 +124,7 @@ export default function StaffPage() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '8px 14px', borderRadius: '9px', border: '1.5px solid', borderColor: tab === t.key ? t.color : '#e2e8f0', background: tab === t.key ? t.color + '12' : '#fff', color: tab === t.key ? t.color : '#64748b', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", flexShrink: 0, whiteSpace: 'nowrap' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '8px 14px', borderRadius: '9999px', border: '1.5px solid', borderColor: tab === t.key ? t.color : '#e2e8f0', background: tab === t.key ? t.color + '12' : '#fff', color: tab === t.key ? t.color : '#64748b', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", flexShrink: 0, whiteSpace: 'nowrap' }}
           >
             <t.Icon size={14} /> {t.label}
             <span style={{ marginLeft: '2px', padding: '1px 7px', borderRadius: '99px', background: tab === t.key ? t.color : '#f1f5f9', color: tab === t.key ? '#fff' : '#64748b', fontSize: '11px', fontWeight: 700 }}>

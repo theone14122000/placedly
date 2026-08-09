@@ -40,7 +40,7 @@ export default function FreelancerCommissions() {
       {/* Summary cards */}
       <div className="comm-summary-grid">
         {[
-          { label: 'Total Earned',   value: `₹${(pending + paid).toLocaleString('en-IN')}`, Icon: IndianRupee, color: '#2145fb',  bg: '#eff6ff' },
+          { label: 'Total Earned',   value: `₹${(pending + paid).toLocaleString('en-IN')}`, Icon: IndianRupee, color: '#f97316',  bg: '#fff7ed' },
           { label: 'Pending Payout', value: `₹${pending.toLocaleString('en-IN')}`,          Icon: Clock,       color: '#f97316',  bg: '#fff7ed' },
           { label: 'Paid Out',       value: `₹${paid.toLocaleString('en-IN')}`,             Icon: CheckCircle2, color: '#16a34a', bg: '#f0fdf4' },
         ].map(c => (
@@ -62,7 +62,7 @@ export default function FreelancerCommissions() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            style={{ padding: '7px 16px', borderRadius: '8px', border: '1.5px solid', borderColor: filter === f ? '#2145fb' : '#e2e8f0', background: filter === f ? '#2145fb' : '#fff', color: filter === f ? '#fff' : '#64748b', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}
+            style={{ padding: '7px 16px', borderRadius: '9999px', border: '1.5px solid', borderColor: filter === f ? '#f97316' : '#e2e8f0', background: filter === f ? '#f97316' : '#fff', color: filter === f ? '#fff' : '#64748b', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}
           >
             {f}
           </button>
@@ -85,7 +85,7 @@ export default function FreelancerCommissions() {
           <div className="comm-table-wrap">
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
               <thead>
-                <tr style={{ background: '#f8faff' }}>
+                <tr style={{ background: '#fff7ed' }}>
                   {['Candidate', 'Email', 'Amount', 'Status', 'Note', 'Created', 'Paid On'].map(h => (
                     <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.4px', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}

@@ -20,7 +20,7 @@ const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
   PLACED:     { bg: '#faf5ff', color: '#7c3aed' },
 };
 
-const inp: React.CSSProperties = { padding: '6px 10px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', cursor: 'pointer' };
+const inp: React.CSSProperties = { padding: '6px 10px', border: '1.5px solid #e2e8f0', borderRadius: '9999px', fontSize: '12px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', cursor: 'pointer' };
 
 export default function AdminVacancyApplications() {
   const [apps, setApps] = useState<App[]>([]);
@@ -73,7 +73,7 @@ export default function AdminVacancyApplications() {
           <h1 style={{ fontSize: '22px', fontWeight: 900, color: '#0b0d20', marginBottom: '4px' }}>Vacancy Applications</h1>
           <p style={{ fontSize: '13px', color: '#64748b' }}>Applications submitted by candidates against posted vacancies.</p>
         </div>
-        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f1f5f9', border: 'none', borderRadius: '9px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", color: '#374151' }}>
+        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f1f5f9', border: 'none', borderRadius: '9999px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", color: '#374151' }}>
           <RefreshCw size={13} /> Refresh
         </button>
       </div>

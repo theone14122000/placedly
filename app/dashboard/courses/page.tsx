@@ -114,9 +114,9 @@ export default function CoursesPage() {
 
       {/* Tabs + filters */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '22px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: '10px', padding: '3px', gap: '2px' }}>
+        <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: '9999px', padding: '3px', gap: '2px' }}>
           {(['enrolled', 'all'] as const).map(t => (
-            <button key={t} onClick={() => setTab(t)} style={{ padding: '7px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", fontSize: '12px', fontWeight: 700, background: tab === t ? '#fff' : 'transparent', color: tab === t ? '#0b0d20' : '#64748b', boxShadow: tab === t ? '0 1px 3px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.15s' }}>
+            <button key={t} onClick={() => setTab(t)} style={{ padding: '7px 16px', borderRadius: '9999px', border: 'none', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", fontSize: '12px', fontWeight: 700, background: tab === t ? '#fff' : 'transparent', color: tab === t ? '#0b0d20' : '#64748b', boxShadow: tab === t ? '0 1px 3px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.15s' }}>
               {t === 'enrolled' ? `My Courses (${enrolledCount})` : `All Courses (${courses.length})`}
             </button>
           ))}
@@ -233,11 +233,11 @@ export default function CoursesPage() {
 
                   <div style={{ marginTop: 'auto', display: 'flex', gap: '8px' }}>
                     {/* Main CTA */}
-                    <button style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '11px', background: course.enrolled ? course.color : '#fff7ed', color: course.enrolled ? '#fff' : '#94a3b8', border: `1.5px solid ${course.enrolled ? course.color : '#e2e8f0'}`, borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: course.enrolled ? 'pointer' : 'default', fontFamily: "'Poppins',sans-serif", boxShadow: course.enrolled ? `0 2px 8px ${course.color}33` : 'none' }}>
+                    <button style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '11px', background: course.enrolled ? course.color : '#fff7ed', color: course.enrolled ? '#fff' : '#94a3b8', border: `1.5px solid ${course.enrolled ? course.color : '#e2e8f0'}`, borderRadius: '9999px', fontSize: '13px', fontWeight: 700, cursor: course.enrolled ? 'pointer' : 'default', fontFamily: "'Poppins',sans-serif", boxShadow: course.enrolled ? `0 2px 8px ${course.color}33` : 'none' }}>
                       {course.enrolled ? <><Play size={13} />Start Learning</> : <><Lock size={13} />Locked</>}
                     </button>
                     {/* Details toggle */}
-                    <button onClick={() => setExpanded(isExpanded ? null : course.id)} style={{ padding: '11px 14px', background: isExpanded ? course.bg : '#fff7ed', color: isExpanded ? course.color : '#64748b', border: `1.5px solid ${isExpanded ? course.color : '#e2e8f0'}`, borderRadius: '10px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}>
+                    <button onClick={() => setExpanded(isExpanded ? null : course.id)} style={{ padding: '11px 14px', background: isExpanded ? course.bg : '#fff7ed', color: isExpanded ? course.color : '#64748b', border: `1.5px solid ${isExpanded ? course.color : '#e2e8f0'}`, borderRadius: '9999px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}>
                       {isExpanded ? 'Less' : 'Details'}
                     </button>
                   </div>
@@ -257,7 +257,7 @@ export default function CoursesPage() {
             </div>
             <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>Talk to your advisor to unlock domain and study abroad courses.</div>
           </div>
-          <a href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '10px 22px', background: '#f97316', color: '#fff', borderRadius: '10px', textDecoration: 'none', fontSize: '13px', fontWeight: 700, fontFamily: "'Poppins',sans-serif", flexShrink: 0 }}>
+          <a href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '10px 22px', background: '#f97316', color: '#fff', borderRadius: '9999px', textDecoration: 'none', fontSize: '13px', fontWeight: 700, fontFamily: "'Poppins',sans-serif", flexShrink: 0 }}>
             Talk to Advisor →
           </a>
         </div>

@@ -40,7 +40,7 @@ const DEFAULT_HERO = {
 
 const inputS: React.CSSProperties = {
   width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0',
-  borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif",
+  borderRadius: '9999px', fontSize: '13px', fontFamily: "'Poppins',sans-serif",
   color: '#0b0d20', background: '#fff7ed', outline: 'none',
   boxSizing: 'border-box' as const,
 };
@@ -100,7 +100,7 @@ export default function AdminCapPage() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           {status && <span style={{ fontSize: '12px', color: status.includes('fail') ? '#ef4444' : '#16a34a', fontWeight: 600 }}>{status}</span>}
-          <button onClick={save} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: '#0b0d20', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1 }}>
+          <button onClick={save} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: '#0b0d20', color: '#fff', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1 }}>
             <Save size={14} />{saving ? 'Saving…' : 'Save Changes'}
           </button>
         </div>
@@ -164,7 +164,7 @@ export default function AdminCapPage() {
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', marginTop: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Programme Steps ({steps.length})</div>
-          <button onClick={addStep} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+          <button onClick={addStep} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '9999px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <Plus size={13} /> Add Step
           </button>
         </div>
@@ -203,7 +203,7 @@ export default function AdminCapPage() {
             <TrendingUp size={16} color="#f97316" />
             <span style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Success Share Table ({shareTable.length} rows)</span>
           </div>
-          <button onClick={() => setShare(p => [...p, { ctc: '₹0', fee: '₹0', net: '₹0', roi: '0x ROI' }])} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+          <button onClick={() => setShare(p => [...p, { ctc: '₹0', fee: '₹0', net: '₹0', roi: '0x ROI' }])} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '9999px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <Plus size={13} /> Add Row
           </button>
         </div>

@@ -12,7 +12,7 @@ const INK = '#0b0d20';
 
 const inputStyle: React.CSSProperties = {
   display: 'block', width: '100%', padding: '11px 14px',
-  border: '1.5px solid #e2e8f0', borderRadius: '10px',
+  border: '1.5px solid #e2e8f0', borderRadius: '9999px',
   fontSize: '14px', fontFamily: "'Poppins',sans-serif",
   color: '#0b0d20', background: '#fafafa', outline: 'none',
   boxSizing: 'border-box' as const, transition: 'border-color 0.15s, box-shadow 0.15s, background 0.15s',

@@ -8,7 +8,7 @@ const BLANK = { title: '', company: '', location: '', type: 'Full Time', salary:
 const CATEGORIES = ['Tech', 'Sales', 'Finance', 'Marketing', 'Healthcare', 'Operations', 'HR', 'General'];
 const TYPES = ['Full Time', 'Hybrid', 'Remote', 'Contract', 'Part Time'];
 
-const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '9999px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 const lbl: React.CSSProperties = { display: 'block', fontSize: '10px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' as const, letterSpacing: '0.4px', marginBottom: '5px' };
 
 export default function AdminVacancies() {
@@ -53,7 +53,7 @@ export default function AdminVacancies() {
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           {status && <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600 }}>✓ {status}</span>}
-          <button onClick={openAdd} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 18px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+          <button onClick={openAdd} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 18px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <Plus size={14} /> Add Vacancy
           </button>
         </div>
@@ -123,11 +123,11 @@ export default function AdminVacancies() {
               <div><label style={lbl}>Job Type</label><select style={{ ...inp, cursor: 'pointer' }} value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>{TYPES.map(t => <option key={t}>{t}</option>)}</select></div>
               <div><label style={lbl}>Category</label><select style={{ ...inp, cursor: 'pointer' }} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>{CATEGORIES.map(c => <option key={c}>{c}</option>)}</select></div>
               <div style={{ gridColumn: '1/-1' }}><SkillsInput value={form.tags} onChange={tags => setForm(f => ({ ...f, tags }))} /></div>
-              <div style={{ gridColumn: '1/-1' }}><label style={lbl}>Description</label><textarea style={{ ...inp, resize: 'vertical' as const, minHeight: '80px' }} placeholder="Job description…" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} /></div>
+              <div style={{ gridColumn: '1/-1' }}><label style={lbl}>Description</label><textarea style={{ ...inp, borderRadius: '14px', resize: 'vertical' as const, minHeight: '80px' }} placeholder="Job description…" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} /></div>
             </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '24px' }}>
-              <button onClick={close} style={{ padding: '10px 20px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>Cancel</button>
-              <button onClick={handleSave} disabled={loading || !form.title || !form.company} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 24px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: loading ? 0.6 : 1 }}>
+              <button onClick={close} style={{ padding: '10px 20px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>Cancel</button>
+              <button onClick={handleSave} disabled={loading || !form.title || !form.company} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 24px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: loading ? 0.6 : 1 }}>
                 <Save size={13} /> {loading ? 'Saving…' : modal === 'add' ? 'Add Vacancy' : 'Save Changes'}
               </button>
             </div>
@@ -142,8 +142,8 @@ export default function AdminVacancies() {
             <div style={{ fontSize: '16px', fontWeight: 700, color: '#0b0d20', marginBottom: '8px' }}>Delete this vacancy?</div>
             <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '24px' }}>This cannot be undone.</div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-              <button onClick={() => setDeleteId(null)} style={{ padding: '9px 20px', background: '#f1f5f9', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', color: '#374151', fontFamily: "'Poppins',sans-serif" }}>Cancel</button>
-              <button onClick={() => handleDelete(deleteId)} style={{ padding: '9px 20px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>Yes, Delete</button>
+              <button onClick={() => setDeleteId(null)} style={{ padding: '9px 20px', background: '#f1f5f9', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', color: '#374151', fontFamily: "'Poppins',sans-serif" }}>Cancel</button>
+              <button onClick={() => handleDelete(deleteId)} style={{ padding: '9px 20px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>Yes, Delete</button>
             </div>
           </div>
         </div>

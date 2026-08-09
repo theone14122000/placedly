@@ -31,7 +31,7 @@ const DEFAULT_APPLY_POINTS = [
 
 const inp: React.CSSProperties = {
   width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0',
-  borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif",
+  borderRadius: '9999px', fontSize: '13px', fontFamily: "'Poppins',sans-serif",
   color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const,
 };
 const lbl: React.CSSProperties = {
@@ -112,7 +112,7 @@ export default function AdminStudyVisaPage() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           {status && <span style={{ fontSize: '12px', color: status.includes('fail') ? '#ef4444' : '#16a34a', fontWeight: 600 }}>{status}</span>}
-          <button onClick={save} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: '#0b0d20', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1 }}>
+          <button onClick={save} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: '#0b0d20', color: '#fff', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1 }}>
             <Save size={14} />{saving ? 'Saving…' : 'Save Changes'}
           </button>
         </div>
@@ -125,7 +125,7 @@ export default function AdminStudyVisaPage() {
           <div><label style={lbl}>Tag pill</label><input style={inp} value={hero.tag} onChange={e => setHero({ ...hero, tag: e.target.value })} /></div>
           <div><label style={lbl}>Primary CTA text</label><input style={inp} value={hero.cta1} onChange={e => setHero({ ...hero, cta1: e.target.value })} /></div>
           <div style={{ gridColumn: '1/-1' }}><label style={lbl}>Page Title</label><input style={inp} value={hero.title} onChange={e => setHero({ ...hero, title: e.target.value })} /></div>
-          <div style={{ gridColumn: '1/-1' }}><label style={lbl}>Subtitle</label><textarea style={{ ...inp, minHeight: '72px', resize: 'vertical' as const }} value={hero.subtitle} onChange={e => setHero({ ...hero, subtitle: e.target.value })} /></div>
+          <div style={{ gridColumn: '1/-1' }}><label style={lbl}>Subtitle</label><textarea style={{ ...inp, borderRadius: '14px', minHeight: '72px', resize: 'vertical' as const }} value={hero.subtitle} onChange={e => setHero({ ...hero, subtitle: e.target.value })} /></div>
           <div><label style={lbl}>WhatsApp CTA text</label><input style={inp} value={hero.cta2} onChange={e => setHero({ ...hero, cta2: e.target.value })} /></div>
           <div><label style={lbl}>WhatsApp link (wa.me/...)</label><input style={inp} value={hero.waHref} onChange={e => setHero({ ...hero, waHref: e.target.value })} /></div>
         </div>
@@ -146,7 +146,7 @@ export default function AdminStudyVisaPage() {
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
             <span style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Destination Countries ({countries.length})</span>
-            <button onClick={() => setCountries(p => [...p, { flag: '', name: 'New Country', sub: 'Subtitle' }])} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+            <button onClick={() => setCountries(p => [...p, { flag: '', name: 'New Country', sub: 'Subtitle' }])} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '9999px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
               <Plus size={12} /> Add
             </button>
           </div>
@@ -168,7 +168,7 @@ export default function AdminStudyVisaPage() {
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
             <span style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20' }}>Features ({features.length})</span>
-            <button onClick={() => setFeatures(p => [...p, { icon: 'Star', title: 'New Feature', desc: 'Description' }])} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+            <button onClick={() => setFeatures(p => [...p, { icon: 'Star', title: 'New Feature', desc: 'Description' }])} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', background: '#fff7ed', color: '#f97316', border: '1.5px solid #fed7aa', borderRadius: '9999px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
               <Plus size={12} /> Add
             </button>
           </div>
@@ -196,11 +196,11 @@ export default function AdminStudyVisaPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
           <div><label style={lbl}>Eyebrow</label><input style={inp} value={apply.eyebrow} onChange={e => setApply({ ...apply, eyebrow: e.target.value })} /></div>
           <div><label style={lbl}>Heading</label><input style={inp} value={apply.heading} onChange={e => setApply({ ...apply, heading: e.target.value })} /></div>
-          <div style={{ gridColumn: '1/-1' }}><label style={lbl}>Description</label><textarea style={{ ...inp, minHeight: '60px', resize: 'vertical' as const }} value={apply.desc} onChange={e => setApply({ ...apply, desc: e.target.value })} /></div>
+          <div style={{ gridColumn: '1/-1' }}><label style={lbl}>Description</label><textarea style={{ ...inp, borderRadius: '14px', minHeight: '60px', resize: 'vertical' as const }} value={apply.desc} onChange={e => setApply({ ...apply, desc: e.target.value })} /></div>
         </div>
         <div style={{ marginBottom: '14px' }}>
           <label style={lbl}>Bullet points (one per line)</label>
-          <textarea style={{ ...inp, minHeight: '110px', resize: 'vertical' as const }} value={applyPoints.join('\n')} onChange={e => setApplyPoints(e.target.value.split('\n'))} />
+          <textarea style={{ ...inp, borderRadius: '14px', minHeight: '110px', resize: 'vertical' as const }} value={applyPoints.join('\n')} onChange={e => setApplyPoints(e.target.value.split('\n'))} />
         </div>
       </div>
 
@@ -221,7 +221,7 @@ export default function AdminStudyVisaPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
           <div><label style={lbl}>Success title</label><input style={inp} value={apply.successTitle} onChange={e => setApply({ ...apply, successTitle: e.target.value })} /></div>
           <div><label style={lbl}>WhatsApp button text</label><input style={inp} value={apply.successWaText} onChange={e => setApply({ ...apply, successWaText: e.target.value })} /></div>
-          <div style={{ gridColumn: '1/-1' }}><label style={lbl}>Success sub-text</label><textarea style={{ ...inp, minHeight: '60px', resize: 'vertical' as const }} value={apply.successSub} onChange={e => setApply({ ...apply, successSub: e.target.value })} /></div>
+          <div style={{ gridColumn: '1/-1' }}><label style={lbl}>Success sub-text</label><textarea style={{ ...inp, borderRadius: '14px', minHeight: '60px', resize: 'vertical' as const }} value={apply.successSub} onChange={e => setApply({ ...apply, successSub: e.target.value })} /></div>
         </div>
       </div>
     </div>

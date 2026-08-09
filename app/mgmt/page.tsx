@@ -32,7 +32,7 @@ export default function MgmtDashboard() {
   if (!stats) return <div style={{ padding: '40px', color: '#64748b', fontSize: '14px' }}>Loading…</div>;
 
   const cards = [
-    { label: 'Total Applications', value: stats.totalApplications,  Icon: ClipboardList, color: '#2145fb', href: '/mgmt/applications' },
+    { label: 'Total Applications', value: stats.totalApplications,  Icon: ClipboardList, color: '#f97316', href: '/mgmt/applications' },
     { label: 'Pending Review',     value: stats.pendingApplications, Icon: Clock,         color: '#f97316', href: '/mgmt/applications?status=PENDING' },
     { label: 'Approved',           value: stats.approvedApplications,Icon: CheckCircle2,  color: '#16a34a', href: '/mgmt/applications?status=APPROVED' },
     { label: 'Active Candidates',  value: stats.activeCandidates,    Icon: Users,         color: '#7c3aed', href: '/mgmt/users' },
@@ -68,7 +68,7 @@ export default function MgmtDashboard() {
       <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #eef0f6', overflow: 'hidden' }}>
         <div style={{ padding: '18px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: '15px', fontWeight: 700, color: '#0b0d20' }}>Recent Applications</span>
-          <Link href="/mgmt/applications" style={{ fontSize: '12px', color: '#2145fb', fontWeight: 600, textDecoration: 'none' }}>View all →</Link>
+          <Link href="/mgmt/applications" style={{ fontSize: '12px', color: '#f97316', fontWeight: 600, textDecoration: 'none' }}>View all →</Link>
         </div>
         {stats.recentApplications.length === 0 ? (
           <div style={{ padding: '40px', textAlign: 'center', color: '#94a3b8', fontSize: '14px' }}>No applications yet.</div>
@@ -76,7 +76,7 @@ export default function MgmtDashboard() {
           <div className="mgmt-table-wrap">
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '540px' }}>
             <thead>
-              <tr style={{ background: '#f8faff' }}>
+              <tr style={{ background: '#fff7ed' }}>
                 {['Name', 'Email', 'Programme', 'Status', 'Applied'].map(h => (
                   <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.4px' }}>{h}</th>
                 ))}

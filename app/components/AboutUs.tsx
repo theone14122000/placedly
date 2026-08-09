@@ -8,7 +8,7 @@ type Cms = Record<string, string>;
 
 const FEAT_META = [
   { Icon: Target, bg: '#f97316', glow: 'rgba(249,115,22,0.18)' },
-  { Icon: Handshake, bg: '#2145fb', glow: 'rgba(33,69,251,0.18)' },
+  { Icon: Handshake, bg: '#f97316', glow: 'rgba(249,115,22,0.18)' },
   { Icon: Building2, bg: '#10b981', glow: 'rgba(16,185,129,0.18)' },
 ];
 
@@ -287,7 +287,7 @@ export default function AboutUs({ cms = {} }: { cms?: Cms }) {
         }
         .placedly-about-glass--accent strong {
           font-size: 22px;
-          color: #2145fb;
+          color: #f97316;
         }
 
         .placedly-about-glass--chip {
@@ -315,8 +315,8 @@ export default function AboutUs({ cms = {} }: { cms?: Cms }) {
         .placedly-about-eyebrow {
           display: inline-block;
           padding: 6px 14px;
-          background: #eef2ff;
-          color: #2145fb;
+          background: #fff7ed;
+          color: #f97316;
           font-weight: 700;
           font-size: 12px;
           letter-spacing: 0.08em;
@@ -412,7 +412,7 @@ export default function AboutUs({ cms = {} }: { cms?: Cms }) {
           transition: background 0.25s ease, transform 0.25s ease;
         }
         .placedly-about-cta:hover {
-          background: #2145fb;
+          background: #f97316;
           transform: translateY(-2px);
         }
 

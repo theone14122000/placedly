@@ -9,7 +9,7 @@ type App = {
 };
 type Recruiter = { id: string; name: string; email: string };
 
-const inp: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1.5px solid #e2e8f0', borderRadius: '9999px', fontSize: '12px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 
 export default function AdminATS() {
   const [apps, setApps] = useState<App[]>([]);
@@ -55,7 +55,7 @@ export default function AdminATS() {
           <h1 style={{ fontSize: '22px', fontWeight: 900, color: '#0b0d20', marginBottom: '4px' }}>Recruiter ATS — Applications</h1>
           <p style={{ fontSize: '13px', color: '#64748b' }}>View all job applications and assign or move candidates between recruiters.</p>
         </div>
-        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f1f5f9', border: 'none', borderRadius: '9px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", color: '#374151' }}>
+        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f1f5f9', border: 'none', borderRadius: '9999px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", color: '#374151' }}>
           <RefreshCw size={13} /> Refresh
         </button>
       </div>
@@ -110,7 +110,7 @@ export default function AdminATS() {
                     <div style={{ fontSize: '11px', color: '#94a3b8' }}>{app.email} · {app.phone}{app.experience ? ` · ${app.experience}` : ''}</div>
                   </td>
                   <td style={{ padding: '12px 16px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '999px', background: app.role === 'AP' ? '#dbeafe' : '#fef3c7', color: app.role === 'AP' ? '#1e40af' : '#92400e' }}>{app.role}</span>
+                    <span style={{ fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '999px', background: app.role === 'AP' ? '#fed7aa' : '#fef3c7', color: app.role === 'AP' ? '#c2410c' : '#92400e' }}>{app.role}</span>
                   </td>
                   <td style={{ padding: '12px 16px', fontSize: '12px', color: '#374151' }}>{app.currentStage.replace(/_/g, ' ')}</td>
                   <td style={{ padding: '12px 16px', fontSize: '12px', color: '#64748b' }}>{app.currentStatus.replace(/_/g, ' ')}</td>

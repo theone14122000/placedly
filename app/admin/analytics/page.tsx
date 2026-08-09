@@ -16,7 +16,7 @@ const STATUS_COLORS: Record<string, { bg: string; color: string; label: string }
   PENDING:  { bg: '#fef9c3', color: '#a16207', label: 'Pending' },
   APPROVED: { bg: '#dcfce7', color: '#15803d', label: 'Approved' },
   REJECTED: { bg: '#fee2e2', color: '#dc2626', label: 'Rejected' },
-  ACTIVE:   { bg: '#dbeafe', color: '#1d4ed8', label: 'Active' },
+  ACTIVE:   { bg: '#fed7aa', color: '#c2410c', label: 'Active' },
   EXPIRED:  { bg: '#f1f5f9', color: '#64748b', label: 'Expired' },
   SUSPENDED:{ bg: '#fce7f3', color: '#be185d', label: 'Suspended' },
 };

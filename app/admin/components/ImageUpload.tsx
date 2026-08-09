@@ -130,7 +130,7 @@ export default function ImageUpload({ label, value, onChange, hint, shape = 'rec
             value={value}
             onChange={e => onChange(e.target.value)}
             placeholder="https://…"
-            style={{ display: 'block', width: '100%', padding: '8px 11px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff', outline: 'none', boxSizing: 'border-box' }}
+            style={{ display: 'block', width: '100%', padding: '8px 11px', border: '1.5px solid #e2e8f0', borderRadius: '9999px', fontSize: '12px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff', outline: 'none', boxSizing: 'border-box' }}
           />
         </div>
       </div>

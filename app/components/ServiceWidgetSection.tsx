@@ -57,7 +57,7 @@ const SERVICES: Service[] = [
     meta: 'Zero Upfront · Offer First',
     cta: 'Apply Now',
     href: '/cap/apply',
-    accent: makeAccent('#2563eb', '#4f46e5'),
+    accent: makeAccent('#f97316', '#ea580c'),
   },
   {
     id: 'career',
@@ -81,7 +81,7 @@ const SERVICES: Service[] = [
     meta: 'Free Counselling',
     cta: 'Get Started',
     href: '/study-visa',
-    accent: makeAccent('#9333ea', '#2563eb'),
+    accent: makeAccent('#9333ea', '#f97316'),
   },
 ];
 
@@ -221,7 +221,7 @@ export default function ServiceWidgetSection() {
       <div
         aria-hidden
         className="service-blob service-blob--a"
-        style={{ background: 'radial-gradient(circle, rgba(37,99,235,0.14) 0%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, rgba(249,115,22,0.14) 0%, transparent 70%)' }}
       />
       <div
         aria-hidden
@@ -250,7 +250,7 @@ export default function ServiceWidgetSection() {
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '1.5px',
-              color: '#6366f1',
+              color: '#f97316',
               marginBottom: '14px',
             }}
           >
@@ -488,13 +488,13 @@ export default function ServiceWidgetSection() {
         }
         .service-footer-note-link {
           font-weight: 700;
-          color: #4f46e5;
+          color: #ea580c;
           text-decoration: underline;
           text-underline-offset: 3px;
           transition: color 0.2s ease;
         }
         .service-footer-note-link:hover {
-          color: #2563eb;
+          color: #f97316;
         }
 
         @media (max-width: 900px) {

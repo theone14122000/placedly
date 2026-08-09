@@ -170,7 +170,7 @@ export default function ContactPage() {
   const inp = (name: string): React.CSSProperties => ({
     display: 'block', width: '100%', padding: '11px 14px',
     border: `1.5px solid ${focused === name ? ORANGE : BORDER}`,
-    borderRadius: '10px', fontSize: '14px',
+    borderRadius: '9999px', fontSize: '14px',
     fontFamily: FONT, color: BLACK,
     background: focused === name ? SURFACE : BG_ALT,
     outline: 'none',
@@ -742,7 +742,7 @@ export default function ContactPage() {
                           className="ct-btn-primary"
                           style={{
                             width: '100%', justifyContent: 'center',
-                            borderRadius: '10px', fontSize: '15px',
+                            borderRadius: '9999px', fontSize: '15px',
                             padding: '14px 24px',
                             opacity: submitting ? 0.72 : 1,
                           }}

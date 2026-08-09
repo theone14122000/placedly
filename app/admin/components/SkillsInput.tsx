@@ -13,7 +13,7 @@ interface Props {
 const CAT_COLORS: Record<string, string> = {
   Tech: '#f97316', Data: '#7c3aed', Finance: '#16a34a', Healthcare: '#0891b2',
   Sales: '#f97316', Marketing: '#db2777', Operations: '#64748b', HR: '#d97706',
-  Design: '#ec4899', 'Soft Skills': '#6366f1', BPO: '#475569',
+  Design: '#ec4899', 'Soft Skills': '#f97316', BPO: '#475569',
 };
 
 export default function SkillsInput({ value, onChange, placeholder = 'Search or type a skill…' }: Props) {
@@ -84,7 +84,7 @@ export default function SkillsInput({ value, onChange, placeholder = 'Search or 
         onClick={() => { inputRef.current?.focus(); setOpen(true); }}
         style={{
           display: 'flex', flexWrap: 'wrap', gap: '6px', padding: '8px 10px',
-          border: `1.5px solid ${open ? '#f97316' : '#e2e8f0'}`, borderRadius: '9px',
+          border: `1.5px solid ${open ? '#f97316' : '#e2e8f0'}`, borderRadius: '9999px',
           background: '#fff7ed', cursor: 'text', minHeight: '42px', transition: 'border-color 0.15s',
           fontFamily: "'Poppins',sans-serif",
         }}
@@ -152,7 +152,7 @@ export default function SkillsInput({ value, onChange, placeholder = 'Search or 
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     width: '100%', padding: '8px 12px', background: 'none', border: 'none',
-                    borderRadius: '8px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif",
+                    borderRadius: '9999px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif",
                     fontSize: '13px', color: '#0b0d20', textAlign: 'left',
                   }}
                   onMouseEnter={e => (e.currentTarget.style.background = '#f1f5f9')}

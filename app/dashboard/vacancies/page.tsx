@@ -51,7 +51,7 @@ export default function DashboardVacancies() {
         <div style={{ position: 'relative', flex: '0 0 280px' }}>
           <Search size={14} color="#94a3b8" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
           <input
-            style={{ display: 'block', width: '100%', padding: '9px 12px 9px 36px', border: '1.5px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff', outline: 'none', boxSizing: 'border-box' as const }}
+            style={{ display: 'block', width: '100%', padding: '9px 12px 9px 36px', border: '1.5px solid #e2e8f0', borderRadius: '9999px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff', outline: 'none', boxSizing: 'border-box' as const }}
             placeholder="Search role or company..."
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -109,7 +109,7 @@ export default function DashboardVacancies() {
                   <div style={{ fontSize: '15px', fontWeight: 800, color: '#0b0d20' }}>{job.salary}</div>
                   <button
                     onClick={() => setApplyJob(job)}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '9px 18px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '9px 18px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' }}
                   >
                     <ExternalLink size={12} /> Apply
                   </button>

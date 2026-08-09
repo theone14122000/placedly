@@ -104,10 +104,10 @@ export default function DashboardHome() {
               : `You are on Step ${capStep} of 7. ${capStep < 7 ? `Next: ${JOURNEY_LABELS[capStep]}.` : ''}`}
           </p>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <Link href="/dashboard/progress" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '9px 18px', background: '#f97316', color: '#fff', borderRadius: '8px', textDecoration: 'none', fontSize: '13px', fontWeight: 700, fontFamily: "'Poppins',sans-serif" }}>
+            <Link href="/dashboard/progress" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '9px 18px', background: '#f97316', color: '#fff', borderRadius: '9999px', textDecoration: 'none', fontSize: '13px', fontWeight: 700, fontFamily: "'Poppins',sans-serif" }}>
               View Progress <ArrowRight size={13} />
             </Link>
-            <Link href="/dashboard/courses" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '9px 18px', background: 'rgba(255,255,255,0.08)', color: '#fff', borderRadius: '8px', textDecoration: 'none', fontSize: '13px', fontWeight: 500, border: '1px solid rgba(255,255,255,0.12)', fontFamily: "'Poppins',sans-serif" }}>
+            <Link href="/dashboard/courses" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '9px 18px', background: 'rgba(255,255,255,0.08)', color: '#fff', borderRadius: '9999px', textDecoration: 'none', fontSize: '13px', fontWeight: 500, border: '1px solid rgba(255,255,255,0.12)', fontFamily: "'Poppins',sans-serif" }}>
               Start Learning
             </Link>
           </div>
@@ -174,7 +174,7 @@ export default function DashboardHome() {
                   href={profile.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', alignSelf: 'flex-start', padding: '8px 16px', background: '#16a34a', color: '#fff', borderRadius: '8px', fontSize: '12px', fontWeight: 700, textDecoration: 'none', fontFamily: "'Poppins',sans-serif" }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', alignSelf: 'flex-start', padding: '8px 16px', background: '#16a34a', color: '#fff', borderRadius: '9999px', fontSize: '12px', fontWeight: 700, textDecoration: 'none', fontFamily: "'Poppins',sans-serif" }}
                 >
                   <FileDown size={13} /> Download
                 </a>

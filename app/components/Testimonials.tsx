@@ -272,7 +272,7 @@ export default function Testimonials({ cms = {} }: { cms?: Record<string, string
         .placedly-genz-eyebrow {
           display: inline-block;
           padding: 6px 14px;
-          background: #eef2ff;
+          background: #fff7ed;
           color: #1e1b4b;
           font-weight: 600;
           font-size: 12.5px;
@@ -343,7 +343,7 @@ export default function Testimonials({ cms = {} }: { cms?: Record<string, string
         }
 
         .placedly-testimonial-quote-icon {
-          color: #2563eb;
+          color: #f97316;
           opacity: 0.4;
           flex-shrink: 0;
         }
@@ -360,7 +360,7 @@ export default function Testimonials({ cms = {} }: { cms?: Record<string, string
           font-size: 12.5px;
           font-weight: 700;
           color: #1e1b4b;
-          background: #eef2ff;
+          background: #fff7ed;
           padding: 4px 10px;
           border-radius: 999px;
           margin-bottom: 10px;

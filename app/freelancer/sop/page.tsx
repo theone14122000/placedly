@@ -8,7 +8,7 @@ const SECTIONS: Section[] = [
   {
     title: 'Getting Started as a Partner',
     icon: <Target size={18} />,
-    color: '#2145fb',
+    color: '#f97316',
     items: [
       {
         q: 'What is the Placedly Partner Programme?',
@@ -159,8 +159,8 @@ export default function FreelancerSOP() {
 
       <div style={{ marginBottom: '32px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-          <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <BookOpen size={18} color="#2145fb" />
+          <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <BookOpen size={18} color="#f97316" />
           </div>
           <h1 style={{ fontSize: 'clamp(17px, 4vw, 22px)', fontWeight: 900, color: '#0b0d20' }}>Partner Training & SOPs</h1>
         </div>
@@ -186,7 +186,7 @@ export default function FreelancerSOP() {
                 const key = `${si}-${ii}`;
                 const isOpen = !!open[key];
                 return (
-                  <div key={ii} style={{ borderBottom: ii < section.items.length - 1 ? '1px solid #f8faff' : 'none' }}>
+                  <div key={ii} style={{ borderBottom: ii < section.items.length - 1 ? '1px solid #fff7ed' : 'none' }}>
                     <button
                       className="sop-q-btn"
                       onClick={() => toggle(key)}
@@ -198,7 +198,7 @@ export default function FreelancerSOP() {
                     </button>
                     {isOpen && (
                       <div className="sop-answer" style={{ padding: '0 24px 18px 24px' }}>
-                        <div style={{ background: '#f8faff', borderRadius: '10px', padding: '16px', fontSize: '13px', color: '#374151', lineHeight: 1.8, whiteSpace: 'pre-line', borderLeft: `3px solid ${section.color}` }}>
+                        <div style={{ background: '#fff7ed', borderRadius: '10px', padding: '16px', fontSize: '13px', color: '#374151', lineHeight: 1.8, whiteSpace: 'pre-line', borderLeft: `3px solid ${section.color}` }}>
                           {item.a}
                         </div>
                       </div>
@@ -211,7 +211,7 @@ export default function FreelancerSOP() {
         ))}
       </div>
 
-      <div style={{ marginTop: '28px', padding: '18px 22px', background: 'linear-gradient(135deg, #2145fb 0%, #1a38d4 100%)', borderRadius: '14px', color: '#fff' }}>
+      <div style={{ marginTop: '28px', padding: '18px 22px', background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)', borderRadius: '14px', color: '#fff' }}>
         <div className="sop-cta">
           <MessageCircle size={28} style={{ flexShrink: 0 }} />
           <div>

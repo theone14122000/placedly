@@ -85,9 +85,9 @@ export default function PrivacyPage() {
             ))}
           </div>
 
-          <div style={{ marginTop: '56px', padding: '28px 32px', background: '#f8faff', borderRadius: '16px', border: '1px solid #eef0f6', textAlign: 'center' }}>
+          <div style={{ marginTop: '56px', padding: '28px 32px', background: '#fff7ed', borderRadius: '16px', border: '1px solid #eef0f6', textAlign: 'center' }}>
             <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '16px' }}>Privacy questions or data requests?</p>
-            <a href="/contact" style={{ display: 'inline-flex', alignItems: 'center', background: '#2145fb', color: '#fff', fontWeight: 600, fontSize: '14px', fontFamily: 'Poppins,sans-serif', padding: '12px 28px', borderRadius: '999px', textDecoration: 'none' }}>
+            <a href="/contact" style={{ display: 'inline-flex', alignItems: 'center', background: '#f97316', color: '#fff', fontWeight: 600, fontSize: '14px', fontFamily: 'Poppins,sans-serif', padding: '12px 28px', borderRadius: '999px', textDecoration: 'none' }}>
               Contact Us →
             </a>
           </div>

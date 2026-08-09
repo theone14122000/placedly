@@ -48,7 +48,7 @@ export default function MgmtAnalytics() {
       {/* Top stats */}
       <div className="mgmt-grid-3">
         {[
-          { label: 'Total Applications', value: stats.totalApplications, sub: `${stats.last30DaysApps} in last 30 days`, Icon: ClipboardList, color: '#2145fb', bg: '#eff6ff' },
+          { label: 'Total Applications', value: stats.totalApplications, sub: `${stats.last30DaysApps} in last 30 days`, Icon: ClipboardList, color: '#f97316', bg: '#fff7ed' },
           { label: 'This Week',          value: stats.last7DaysApps,     sub: 'new applications',                          Icon: TrendingUp,   color: '#7c3aed', bg: '#f5f3ff' },
           { label: 'Active Candidates',  value: stats.activeCandidates,  sub: `${stats.expiredCandidates} expired`,         Icon: Users,        color: '#16a34a', bg: '#f0fdf4' },
         ].map(c => (
@@ -71,7 +71,7 @@ export default function MgmtAnalytics() {
         <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #eef0f6', padding: '24px' }}>
           <div style={{ fontSize: '15px', fontWeight: 800, color: '#0b0d20', marginBottom: '20px' }}>Application Funnel</div>
           {[
-            { label: 'Total Received', value: stats.totalApplications,  color: '#2145fb', pct: 100 },
+            { label: 'Total Received', value: stats.totalApplications,  color: '#f97316', pct: 100 },
             { label: 'Approved',       value: stats.approvedApplications, color: '#16a34a', pct: approvalRate },
             { label: 'Pending',        value: stats.pendingApplications,  color: '#f97316', pct: pendingRate },
             { label: 'Rejected',       value: stats.rejectedApplications, color: '#dc2626', pct: rejectionRate },
@@ -96,7 +96,7 @@ export default function MgmtAnalytics() {
             { label: 'Expired',   value: stats.expiredCandidates,   Icon: Clock,        color: '#f97316', bg: '#fff7ed' },
             { label: 'Suspended', value: stats.suspendedCandidates, Icon: XCircle,      color: '#dc2626', bg: '#fef2f2' },
           ].map(row => (
-            <div key={row.label} style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 0', borderBottom: '1px solid #f8faff' }}>
+            <div key={row.label} style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 0', borderBottom: '1px solid #fff7ed' }}>
               <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: row.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <row.Icon size={17} color={row.color} />
               </div>
@@ -106,7 +106,7 @@ export default function MgmtAnalytics() {
               <div style={{ fontSize: '22px', fontWeight: 900, color: '#0b0d20' }}>{row.value}</div>
             </div>
           ))}
-          <div style={{ marginTop: '16px', padding: '12px 14px', background: '#f8faff', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ marginTop: '16px', padding: '12px 14px', background: '#fff7ed', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: '13px', color: '#64748b' }}>Total enrolled</span>
             <span style={{ fontSize: '18px', fontWeight: 900, color: '#0b0d20' }}>{stats.activeCandidates + stats.expiredCandidates + stats.suspendedCandidates}</span>
           </div>
@@ -125,7 +125,7 @@ export default function MgmtAnalytics() {
                   <span style={{ fontSize: '13px', fontWeight: 900, color: '#0b0d20' }}>{p.count}</span>
                 </div>
                 <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${Math.round((p.count / maxProgrammeCount) * 100)}%`, background: 'linear-gradient(90deg, #2145fb, #4f6bff)', borderRadius: '4px' }} />
+                  <div style={{ height: '100%', width: `${Math.round((p.count / maxProgrammeCount) * 100)}%`, background: 'linear-gradient(90deg, #f97316, #fb923c)', borderRadius: '4px' }} />
                 </div>
               </div>
             ))}

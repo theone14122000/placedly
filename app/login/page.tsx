@@ -111,7 +111,7 @@ export default function LoginPage() {
     border: `1.5px solid ${
       focused === n ? ORANGE : error ? '#ef4444' : BORDER
     }`,
-    borderRadius: '10px',
+    borderRadius: '9999px',
     fontSize: '14px',
     fontFamily: FONT,
     color: BLACK,

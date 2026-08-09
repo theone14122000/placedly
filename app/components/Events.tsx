@@ -9,7 +9,7 @@ import GenZBlobs from './GenZBlobs';
 const latestJobs = jobs.slice(0, 3);
 
 const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
-  Tech: { bg: 'rgba(37,99,235,0.12)', text: '#2563eb', border: 'rgba(37,99,235,0.22)' },
+  Tech: { bg: 'rgba(249,115,22,0.12)', text: '#f97316', border: 'rgba(249,115,22,0.22)' },
   Sales: { bg: 'rgba(22,163,74,0.12)', text: '#16a34a', border: 'rgba(22,163,74,0.22)' },
   Marketing: { bg: 'rgba(234,88,12,0.12)', text: '#ea580c', border: 'rgba(234,88,12,0.22)' },
   Finance: { bg: 'rgba(124,58,237,0.12)', text: '#7c3aed', border: 'rgba(124,58,237,0.22)' },

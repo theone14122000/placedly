@@ -35,7 +35,7 @@ export default function FreelancerLayout({ children }: { children: React.ReactNo
           {NAV.map(({ href, label, Icon }) => {
             const active = pathname.startsWith(href);
             return (
-              <Link key={href} href={href} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '10px', marginBottom: '4px', textDecoration: 'none', background: active ? '#2145fb' : 'transparent', color: active ? '#fff' : 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: active ? 700 : 500, transition: '0.15s' }}>
+              <Link key={href} href={href} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '9999px', marginBottom: '4px', textDecoration: 'none', background: active ? '#f97316' : 'transparent', color: active ? '#fff' : 'rgba(255,255,255,0.55)', fontSize: '13px', fontWeight: active ? 700 : 500, transition: '0.15s' }}>
                 <Icon size={16} /> {label}
               </Link>
             );
@@ -44,7 +44,7 @@ export default function FreelancerLayout({ children }: { children: React.ReactNo
         <div style={{ padding: '16px 12px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
           <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '4px', paddingLeft: '4px' }}>{session?.user?.name}</div>
           <button onClick={() => signOut({ callbackUrl: '/login' })}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '8px', background: 'rgba(255,255,255,0.06)', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '12px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", width: '100%' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '9999px', background: 'rgba(255,255,255,0.06)', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '12px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", width: '100%' }}>
             <LogOut size={13} /> Sign out
           </button>
         </div>

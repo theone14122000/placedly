@@ -30,14 +30,14 @@ import {
 ──────────────────────────────────────────────────────────── */
 
 const HEADING_COLOR = '#0f172a';
-const ACCENT_PRIMARY = '#2563eb';
+const ACCENT_PRIMARY = '#f97316';
 
 const headingStyle: React.CSSProperties = {
   color: HEADING_COLOR,
 };
 
 /* Cycle through the same 3 flat blues used across the Hero CTAs */
-const BLUE_SHADES = ['#1e3a8a', '#2563eb', '#0ea5e9'];
+const BLUE_SHADES = ['#9a3412', '#ea580c', '#f97316'];
 
 function stepAccent(i: number) {
   const color = BLUE_SHADES[i % BLUE_SHADES.length];
@@ -655,7 +655,7 @@ export default function OurProcessSection() {
           padding: clamp(20px, 3vw, 28px) clamp(22px, 4vw, 32px);
           border-radius: 22px;
           background: #f4f7fd;
-          border: 1px solid rgba(37,99,235,0.14);
+          border: 1px solid rgba(249,115,22,0.14);
         }
         .process-cta-text { position: relative; z-index: 1; max-width: 420px; }
         .process-cta-text h3 {
@@ -681,9 +681,9 @@ export default function OurProcessSection() {
           font-weight: 700;
           font-size: 13.5px;
           color: #fff;
-          background-color: #2563eb;
+          background-color: #f97316;
           border: 1px solid rgba(255,255,255,0.2);
-          box-shadow: 0 8px 20px rgba(37,99,235,0.24);
+          box-shadow: 0 8px 20px rgba(249,115,22,0.24);
           overflow: hidden;
           isolation: isolate;
           white-space: nowrap;
@@ -691,7 +691,7 @@ export default function OurProcessSection() {
         }
         .process-cta-btn:hover {
           filter: brightness(1.06);
-          box-shadow: 0 12px 26px rgba(37,99,235,0.32);
+          box-shadow: 0 12px 26px rgba(249,115,22,0.32);
         }
         .process-cta-btn-arrow { position: relative; z-index: 1; transition: transform 0.25s ease; }
         .process-cta-btn:hover .process-cta-btn-arrow { transform: translateX(3px); }

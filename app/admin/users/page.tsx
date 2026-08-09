@@ -15,7 +15,7 @@ const STATUS_STYLE: Record<string, { color: string; bg: string; label: string }>
   SUSPENDED: { color: '#ef4444', bg: '#fef2f2', label: 'Suspended' },
 };
 
-const inp: React.CSSProperties = { width: '100%', padding: '9px 12px 9px 36px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { width: '100%', padding: '9px 12px 9px 36px', border: '1.5px solid #e2e8f0', borderRadius: '9999px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 
 export default function AdminUsersPage() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -59,7 +59,7 @@ export default function AdminUsersPage() {
           <h1 style={{ fontSize: '22px', fontWeight: 900, color: '#0b0d20', marginBottom: '3px' }}>Candidate Accounts</h1>
           <p style={{ fontSize: '13px', color: '#64748b' }}>Manage portal access for approved candidates.</p>
         </div>
-        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f1f5f9', border: 'none', borderRadius: '9px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", color: '#374151' }}>
+        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f1f5f9', border: 'none', borderRadius: '9999px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", color: '#374151' }}>
           <RefreshCw size={13} /> Refresh
         </button>
       </div>
@@ -92,7 +92,7 @@ export default function AdminUsersPage() {
         </div>
         <div style={{ display: 'flex', gap: '6px' }}>
           {(['ALL', 'ACTIVE', 'EXPIRED', 'SUSPENDED'] as const).map(s => (
-            <button key={s} onClick={() => setStatusFilter(s)} style={{ padding: '7px 14px', borderRadius: '8px', border: '1.5px solid', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", fontSize: '12px', fontWeight: 600, background: statusFilter === s ? '#0b0d20' : '#fff', borderColor: statusFilter === s ? '#0b0d20' : '#e2e8f0', color: statusFilter === s ? '#fff' : '#64748b' }}>
+            <button key={s} onClick={() => setStatusFilter(s)} style={{ padding: '7px 14px', borderRadius: '9999px', border: '1.5px solid', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", fontSize: '12px', fontWeight: 600, background: statusFilter === s ? '#0b0d20' : '#fff', borderColor: statusFilter === s ? '#0b0d20' : '#e2e8f0', color: statusFilter === s ? '#fff' : '#64748b' }}>
               {s === 'ALL' ? 'All' : STATUS_STYLE[s].label}
             </button>
           ))}

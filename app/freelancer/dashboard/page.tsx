@@ -26,7 +26,7 @@ export default function FreelancerDashboard() {
     const s = r.placementStatus;
     const map: Record<string, { bg: string; color: string }> = {
       'Applied':        { bg: '#fef9c3', color: '#854d0e' },
-      'In Progress':    { bg: '#dbeafe', color: '#1e40af' },
+      'In Progress':    { bg: '#fed7aa', color: '#c2410c' },
       'Placed':         { bg: '#dcfce7', color: '#166534' },
       'Not Selected':   { bg: '#fee2e2', color: '#991b1b' },
     };
@@ -42,12 +42,12 @@ export default function FreelancerDashboard() {
       </div>
 
       {/* Referral link card */}
-      <div className="dash-ref-card" style={{ background: 'linear-gradient(135deg, #2145fb 0%, #1a38d4 100%)', borderRadius: '16px', color: '#fff' }}>
+      <div className="dash-ref-card" style={{ background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)', borderRadius: '16px', color: '#fff' }}>
         <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Your Referral Code</div>
         <div style={{ fontSize: 'clamp(22px, 6vw, 28px)', fontWeight: 900, letterSpacing: '2px', marginBottom: '16px' }}>{data.referralCode}</div>
         <div className="dash-reflink-row">
           <span style={{ flex: 1, fontSize: '12px', color: 'rgba(255,255,255,0.8)', wordBreak: 'break-all' }}>{data.referralLink}</span>
-          <button onClick={copyLink} style={{ display: 'flex', alignItems: 'center', gap: '5px', background: '#fff', color: '#2145fb', border: 'none', borderRadius: '7px', padding: '8px 14px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", flexShrink: 0 }}>
+          <button onClick={copyLink} style={{ display: 'flex', alignItems: 'center', gap: '5px', background: '#fff', color: '#f97316', border: 'none', borderRadius: '7px', padding: '8px 14px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", flexShrink: 0 }}>
             {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy Link</>}
           </button>
         </div>
@@ -59,7 +59,7 @@ export default function FreelancerDashboard() {
       {/* Stats grid */}
       <div className="dash-stats-grid">
         {[
-          { label: 'Total Referrals', value: data.stats.totalReferrals, Icon: Users, color: '#2145fb' },
+          { label: 'Total Referrals', value: data.stats.totalReferrals, Icon: Users, color: '#f97316' },
           { label: 'Approved',        value: data.stats.approved,       Icon: TrendingUp, color: '#16a34a' },
           { label: 'Pending Earning', value: `₹${data.stats.pendingCommission.toLocaleString('en-IN')}`, Icon: Clock, color: '#f97316' },
           { label: 'Total Earned',    value: `₹${data.stats.paidCommission.toLocaleString('en-IN')}`,   Icon: IndianRupee, color: '#7c3aed' },
@@ -85,7 +85,7 @@ export default function FreelancerDashboard() {
           <div className="dash-table-wrap">
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '520px' }}>
               <thead>
-                <tr style={{ background: '#f8faff' }}>
+                <tr style={{ background: '#fff7ed' }}>
                   {['Candidate', 'Email', 'Programme', 'Status', 'Applied On'].map(h => (
                     <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.4px', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}

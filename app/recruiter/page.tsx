@@ -32,7 +32,7 @@ const STATUS_COLOR: Record<string, { bg: string; color: string }> = {
   SELECTED:        { bg: '#dcfce7', color: '#166534' },
   REJECTED:        { bg: '#fee2e2', color: '#991b1b' },
   HOLD:            { bg: '#ede9fe', color: '#5b21b6' },
-  OFFER_DISCUSSED: { bg: '#dbeafe', color: '#1e40af' },
+  OFFER_DISCUSSED: { bg: '#fed7aa', color: '#c2410c' },
   OFFER_ACCEPTED:  { bg: '#d1fae5', color: '#065f46' },
   DECLINED:        { bg: '#fee2e2', color: '#991b1b' },
   DROPPED:         { bg: '#f1f5f9', color: '#475569' },
@@ -72,14 +72,14 @@ function ResumeDrawer({ url, name, onClose }: { url: string; name: string; onClo
       <style>{`@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}`}</style>
 
       {/* Header */}
-      <div style={{ padding: '14px 20px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8faff', flexShrink: 0 }}>
+      <div style={{ padding: '14px 20px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fff7ed', flexShrink: 0 }}>
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, color: '#0b0d20' }}>📄 Resume — {name}</div>
           <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>If resume doesn't load, open in new tab</div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <a href={url} target="_blank" rel="noreferrer"
-            style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#2145fb', textDecoration: 'none' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#f97316', textDecoration: 'none' }}>
             <ExternalLink size={12} /> Open Tab
           </a>
           <button onClick={onClose}
@@ -104,10 +104,10 @@ function ResumeDrawer({ url, name, onClose }: { url: string; name: string; onClo
 function CandidateRow({ app, selected, onClick }: { app: App; selected: boolean; onClick: () => void }) {
   return (
     <div onClick={onClick}
-      style={{ padding: '12px 16px', borderBottom: '1px solid #f8faff', cursor: 'pointer', background: selected ? '#eff6ff' : '#fff', borderLeft: `3px solid ${selected ? '#2145fb' : 'transparent'}`, transition: '0.1s' }}>
+      style={{ padding: '12px 16px', borderBottom: '1px solid #fff7ed', cursor: 'pointer', background: selected ? '#fff7ed' : '#fff', borderLeft: `3px solid ${selected ? '#f97316' : 'transparent'}`, transition: '0.1s' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
         <div style={{ fontSize: 14, fontWeight: 700, color: '#0b0d20' }}>{app.name}</div>
-        <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: '999px', background: app.role === 'AP' ? '#dbeafe' : '#fef3c7', color: app.role === 'AP' ? '#1e40af' : '#92400e', flexShrink: 0 }}>{app.role}</span>
+        <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: '999px', background: app.role === 'AP' ? '#fed7aa' : '#fef3c7', color: app.role === 'AP' ? '#c2410c' : '#92400e', flexShrink: 0 }}>{app.role}</span>
       </div>
       <div style={{ fontSize: 12, color: '#64748b', marginBottom: 5 }}>
         {app.phone}
@@ -226,14 +226,14 @@ export default function RecruiterATS() {
       style={{
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
         padding: '10px 4px', background: leftTab === id ? '#fff' : 'transparent',
-        border: 'none', borderBottom: `2px solid ${leftTab === id ? '#2145fb' : 'transparent'}`,
-        color: leftTab === id ? '#2145fb' : '#94a3b8', fontSize: 11, fontWeight: 700,
+        border: 'none', borderBottom: `2px solid ${leftTab === id ? '#f97316' : 'transparent'}`,
+        color: leftTab === id ? '#f97316' : '#94a3b8', fontSize: 11, fontWeight: 700,
         cursor: 'pointer', fontFamily: "'Poppins',sans-serif", transition: '0.15s', whiteSpace: 'nowrap' as const,
       }}
     >
       {icon} {label}
       {count !== undefined && count > 0 && (
-        <span style={{ background: leftTab === id ? '#2145fb' : '#e2e8f0', color: leftTab === id ? '#fff' : '#64748b', borderRadius: '999px', fontSize: 10, fontWeight: 700, padding: '1px 6px' }}>{count}</span>
+        <span style={{ background: leftTab === id ? '#f97316' : '#e2e8f0', color: leftTab === id ? '#fff' : '#64748b', borderRadius: '999px', fontSize: 10, fontWeight: 700, padding: '1px 6px' }}>{count}</span>
       )}
     </button>
   );
@@ -246,7 +246,7 @@ export default function RecruiterATS() {
         <div className={`ats-left${selected ? ' hidden' : ''}`}>
 
           {/* Tabs */}
-          <div className="ats-tab-strip" style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', background: '#f8faff', flexShrink: 0 }}>
+          <div className="ats-tab-strip" style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', background: '#fff7ed', flexShrink: 0 }}>
             <TabBtn id="applications" label="Applications" icon={<ClipboardList size={13} />} count={apps.length} />
             <TabBtn id="notes"        label="Notes"        icon={<MessageSquare size={13} />} />
             <TabBtn id="offer"        label="Offer Stage"  icon={<Gift size={13} />}          count={offerApps.length} />
@@ -256,26 +256,26 @@ export default function RecruiterATS() {
           {leftTab !== 'notes' && (
             <div style={{ padding: '12px 14px', borderBottom: '1px solid #f1f5f9', flexShrink: 0 }}>
               <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 6, background: '#f8faff', border: '1px solid #e2e8f0', borderRadius: 8, padding: '7px 10px' }}>
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 6, background: '#fff7ed', border: '1px solid #e2e8f0', borderRadius: 8, padding: '7px 10px' }}>
                   <Search size={13} color="#94a3b8" />
                   <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search name, email, phone…"
                     style={{ border: 'none', background: 'none', outline: 'none', fontSize: 13, fontFamily: "'Poppins',sans-serif", color: '#0b0d20', width: '100%' }} />
                 </div>
                 <button onClick={() => setShowAdd(true)}
-                  style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '7px 12px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' as const }}>
+                  style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '7px 12px', background: '#f97316', color: '#fff', border: 'none', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", whiteSpace: 'nowrap' as const }}>
                   <Plus size={13} /> Add
                 </button>
               </div>
               <div style={{ display: 'flex', gap: 6 }}>
                 <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)}
-                  style={{ flex: 1, padding: '6px 8px', borderRadius: 7, border: '1px solid #e2e8f0', fontSize: 12, fontFamily: "'Poppins',sans-serif", background: '#f8faff', color: '#475569' }}>
+                  style={{ flex: 1, padding: '6px 8px', borderRadius: 9999, border: '1px solid #e2e8f0', fontSize: 12, fontFamily: "'Poppins',sans-serif", background: '#fff7ed', color: '#475569' }}>
                   <option value="">All Roles</option>
                   <option value="AP">AP</option>
                   <option value="R2R">R2R</option>
                 </select>
                 {leftTab === 'applications' && (
                   <select value={stageFilter} onChange={e => setStageFilter(e.target.value)}
-                    style={{ flex: 1, padding: '6px 8px', borderRadius: 7, border: '1px solid #e2e8f0', fontSize: 12, fontFamily: "'Poppins',sans-serif", background: '#f8faff', color: '#475569' }}>
+                    style={{ flex: 1, padding: '6px 8px', borderRadius: 9999, border: '1px solid #e2e8f0', fontSize: 12, fontFamily: "'Poppins',sans-serif", background: '#fff7ed', color: '#475569' }}>
                     <option value="">All Stages</option>
                     {STAGES.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
@@ -309,7 +309,7 @@ export default function RecruiterATS() {
                 <div style={{ padding: '40px 20px', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>No candidates yet.</div>
               ) : apps.map(app => (
                 <div key={app.id} onClick={() => selectApp(app)}
-                  style={{ padding: '12px 16px', borderBottom: '1px solid #f8faff', cursor: 'pointer', background: selected?.id === app.id ? '#eff6ff' : '#fff', borderLeft: `3px solid ${selected?.id === app.id ? '#2145fb' : 'transparent'}`, transition: '0.1s' }}>
+                  style={{ padding: '12px 16px', borderBottom: '1px solid #fff7ed', cursor: 'pointer', background: selected?.id === app.id ? '#fff7ed' : '#fff', borderLeft: `3px solid ${selected?.id === app.id ? '#f97316' : 'transparent'}`, transition: '0.1s' }}>
                   <div style={{ fontSize: 13, fontWeight: 700, color: '#0b0d20', marginBottom: 3 }}>{app.name}</div>
                   <div style={{ fontSize: 11, color: '#94a3b8' }}>{app.phone} · {app.role}</div>
                 </div>
@@ -320,7 +320,7 @@ export default function RecruiterATS() {
           {/* Export */}
           <div style={{ padding: '12px 14px', borderTop: '1px solid #f1f5f9', flexShrink: 0 }}>
             <a href="/api/recruiter/export" download
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%', padding: '9px', background: '#f8faff', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#475569', textDecoration: 'none' }}>
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%', padding: '9px', background: '#fff7ed', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#475569', textDecoration: 'none' }}>
               <Download size={13} /> Export to CSV
             </a>
           </div>
@@ -340,7 +340,7 @@ export default function RecruiterATS() {
                   <div style={{ fontSize: 13, color: '#64748b', marginTop: 2 }}>
                     {selected.email}
                     {selected.experience ? <> · {selected.experience} exp</> : ''} ·{' '}
-                    <a href={`tel:${selected.phone}`} style={{ color: '#2145fb', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <a href={`tel:${selected.phone}`} style={{ color: '#f97316', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                       <Phone size={12} /> {selected.phone}
                     </a>
                   </div>
@@ -349,7 +349,7 @@ export default function RecruiterATS() {
                   {selected.resumeUrl && (
                     <button
                       onClick={() => setShowResume(v => !v)}
-                      style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px', background: showResume ? '#2145fb' : '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, fontSize: 12, fontWeight: 600, color: showResume ? '#fff' : '#2145fb', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+                      style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px', background: showResume ? '#f97316' : '#fff7ed', border: '1px solid #fed7aa', borderRadius: 8, fontSize: 12, fontWeight: 600, color: showResume ? '#fff' : '#f97316', cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
                       <FileText size={13} /> {showResume ? 'Close Resume' : 'View Resume'}
                     </button>
                   )}
@@ -369,7 +369,7 @@ export default function RecruiterATS() {
                     {STAGES.map((st, i) => (
                       <div key={st} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <button onClick={() => updateStage(st, STAGE_ACTIONS[st][0])}
-                          style={{ padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", border: `2px solid ${selected.currentStage === st ? '#2145fb' : '#e2e8f0'}`, background: selected.currentStage === st ? '#eff6ff' : '#fff', color: selected.currentStage === st ? '#2145fb' : '#94a3b8' }}>
+                          style={{ padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", border: `2px solid ${selected.currentStage === st ? '#f97316' : '#e2e8f0'}`, background: selected.currentStage === st ? '#fff7ed' : '#fff', color: selected.currentStage === st ? '#f97316' : '#94a3b8' }}>
                           {i + 1}. {st}
                         </button>
                         {i < STAGES.length - 1 && <span style={{ color: '#cbd5e1' }}>›</span>}
@@ -377,7 +377,7 @@ export default function RecruiterATS() {
                     ))}
                   </div>
 
-                  <div style={{ background: '#f8faff', border: '1px solid #eef0f6', borderRadius: 12, padding: 16 }}>
+                  <div style={{ background: '#fff7ed', border: '1px solid #eef0f6', borderRadius: 12, padding: 16 }}>
                     <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 10 }}>{STAGE_LABELS[selected.currentStage]}</div>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' as const }}>
                       {STAGE_ACTIONS[selected.currentStage]?.map(action => {
@@ -405,7 +405,7 @@ export default function RecruiterATS() {
                       { t: 'GENERAL',   label: '📋 General' },
                     ].map(({ t, label }) => (
                       <button key={t} onClick={() => setNoteType(t)}
-                        style={{ padding: '6px 12px', borderRadius: 7, fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", background: noteType === t ? '#0b0d20' : '#fff', color: noteType === t ? '#fff' : '#64748b', border: `1.5px solid ${noteType === t ? '#0b0d20' : '#e2e8f0'}` }}>
+                        style={{ padding: '6px 12px', borderRadius: 9999, fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", background: noteType === t ? '#0b0d20' : '#fff', color: noteType === t ? '#fff' : '#64748b', border: `1.5px solid ${noteType === t ? '#0b0d20' : '#e2e8f0'}` }}>
                         {label}
                       </button>
                     ))}
@@ -419,7 +419,7 @@ export default function RecruiterATS() {
                     rows={3}
                     style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e2e8f0', borderRadius: 10, fontSize: 13, fontFamily: "'Poppins',sans-serif", resize: 'vertical' as const, outline: 'none', boxSizing: 'border-box' as const, color: '#0b0d20' }} />
                   <button className="ats-save-note" onClick={saveNote} disabled={busy || !noteText.trim()}
-                    style={{ marginTop: 8, padding: '9px 22px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: busy || !noteText.trim() ? 'not-allowed' : 'pointer', fontFamily: "'Poppins',sans-serif", opacity: busy ? 0.6 : 1 }}>
+                    style={{ marginTop: 8, padding: '9px 22px', background: '#f97316', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: busy || !noteText.trim() ? 'not-allowed' : 'pointer', fontFamily: "'Poppins',sans-serif", opacity: busy ? 0.6 : 1 }}>
                     Save Note
                   </button>
                 </div>
@@ -434,7 +434,7 @@ export default function RecruiterATS() {
                   ) : notes.map(n => (
                     <div key={n.id} style={{ padding: '12px 14px', background: '#fff', border: '1px solid #eef0f6', borderRadius: 10, marginBottom: 8 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: '999px', background: n.type === 'CALL' ? '#dcfce7' : n.type === 'INTERVIEW' ? '#dbeafe' : '#f1f5f9', color: n.type === 'CALL' ? '#166534' : n.type === 'INTERVIEW' ? '#1e40af' : '#475569' }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: '999px', background: n.type === 'CALL' ? '#dcfce7' : n.type === 'INTERVIEW' ? '#fed7aa' : '#f1f5f9', color: n.type === 'CALL' ? '#166534' : n.type === 'INTERVIEW' ? '#c2410c' : '#475569' }}>
                           {n.type === 'CALL' ? '📞' : n.type === 'INTERVIEW' ? '🧑‍💼' : '📋'} {n.type}
                         </span>
                         <span style={{ fontSize: 11, color: '#94a3b8' }}>
@@ -485,7 +485,7 @@ export default function RecruiterATS() {
             ))}
             <div style={{ marginBottom: 14 }}>
               <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#374151', textTransform: 'uppercase' as const, letterSpacing: '0.5px', marginBottom: 5 }}>Resume (PDF)</label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', border: '1.5px dashed #e2e8f0', borderRadius: 9, cursor: 'pointer', background: resumeFile ? '#f0fdf4' : '#f8faff', borderColor: resumeFile ? '#86efac' : '#e2e8f0' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', border: '1.5px dashed #e2e8f0', borderRadius: 9, cursor: 'pointer', background: resumeFile ? '#f0fdf4' : '#fff7ed', borderColor: resumeFile ? '#86efac' : '#e2e8f0' }}>
                 <FileText size={16} color={resumeFile ? '#16a34a' : '#94a3b8'} />
                 <span style={{ fontSize: 13, color: resumeFile ? '#166534' : '#94a3b8', fontFamily: "'Poppins',sans-serif", flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>
                   {resumeFile ? resumeFile.name : 'Click to upload PDF'}
@@ -499,21 +499,21 @@ export default function RecruiterATS() {
                 <input type="file" accept="application/pdf" style={{ display: 'none' }}
                   onChange={e => setResumeFile(e.target.files?.[0] ?? null)} />
               </label>
-              {resumeUploading && <div style={{ fontSize: 11, color: '#2145fb', marginTop: 4 }}>Uploading…</div>}
+              {resumeUploading && <div style={{ fontSize: 11, color: '#f97316', marginTop: 4 }}>Uploading…</div>}
             </div>
             <div style={{ marginBottom: 20 }}>
               <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#374151', textTransform: 'uppercase' as const, letterSpacing: '0.5px', marginBottom: 5 }}>Role *</label>
               <div style={{ display: 'flex', gap: 10 }}>
                 {['AP', 'R2R'].map(r => (
                   <button key={r} onClick={() => setAddForm({ ...addForm, role: r })}
-                    style={{ flex: 1, padding: 9, borderRadius: 9, border: `2px solid ${addForm.role === r ? '#2145fb' : '#e2e8f0'}`, background: addForm.role === r ? '#eff6ff' : '#fff', color: addForm.role === r ? '#2145fb' : '#64748b', fontWeight: 700, fontSize: 14, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+                    style={{ flex: 1, padding: 9, borderRadius: 9, border: `2px solid ${addForm.role === r ? '#f97316' : '#e2e8f0'}`, background: addForm.role === r ? '#fff7ed' : '#fff', color: addForm.role === r ? '#f97316' : '#64748b', fontWeight: 700, fontSize: 14, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
                     {r}
                   </button>
                 ))}
               </div>
             </div>
             <button onClick={addApplication} disabled={busy}
-              style={{ display: 'block', width: '100%', padding: 12, background: '#2145fb', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+              style={{ display: 'block', width: '100%', padding: 12, background: '#f97316', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
               Add Candidate
             </button>
           </div>

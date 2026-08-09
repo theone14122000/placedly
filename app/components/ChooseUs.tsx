@@ -9,7 +9,7 @@ const stats = [
     Icon: Handshake,
     digits: '100+',
     info: 'Hiring Partners Across India',
-    grad: 'linear-gradient(135deg,#60a5fa,#2145fb)',
+    grad: 'linear-gradient(135deg,#fb923c,#f97316)',
     desc: 'Direct connects to active MNC hiring teams — no middlemen.',
   },
   {

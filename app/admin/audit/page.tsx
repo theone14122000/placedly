@@ -32,7 +32,7 @@ export default function AdminAuditPage() {
           <h1 style={{ fontSize: '22px', fontWeight: 900, color: '#0b0d20', marginBottom: '3px' }}>Audit Log</h1>
           <p style={{ fontSize: '13px', color: '#64748b' }}>All admin actions and security events.</p>
         </div>
-        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 18px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", color: '#374151' }}>
+        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 18px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '9999px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", color: '#374151' }}>
           <RefreshCw size={13} />Refresh
         </button>
       </div>

@@ -64,14 +64,14 @@ export default function FreelancerReferrals() {
           value={q}
           onChange={e => setQ(e.target.value)}
           placeholder="Search by name or email…"
-          style={{ padding: '9px 14px', border: '1.5px solid #e2e8f0', borderRadius: '9px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", outline: 'none', color: '#0b0d20' }}
+          style={{ padding: '9px 14px', border: '1.5px solid #e2e8f0', borderRadius: '9999px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", outline: 'none', color: '#0b0d20' }}
         />
         <div className="ref-filter-btns">
           {['ALL', 'PENDING', 'APPROVED', 'REJECTED'].map(f => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              style={{ padding: '9px 14px', borderRadius: '9px', border: '1.5px solid', borderColor: filter === f ? '#2145fb' : '#e2e8f0', background: filter === f ? '#2145fb' : '#fff', color: filter === f ? '#fff' : '#64748b', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}
+              style={{ padding: '9px 14px', borderRadius: '9999px', border: '1.5px solid', borderColor: filter === f ? '#f97316' : '#e2e8f0', background: filter === f ? '#f97316' : '#fff', color: filter === f ? '#fff' : '#64748b', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}
             >
               {f}
             </button>
@@ -90,7 +90,7 @@ export default function FreelancerReferrals() {
           <div className="ref-table-wrap">
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '640px' }}>
               <thead>
-                <tr style={{ background: '#f8faff' }}>
+                <tr style={{ background: '#fff7ed' }}>
                   {['#', 'Candidate', 'Email', 'Phone', 'City', 'Programme', 'Status', 'Applied On'].map(h => (
                     <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.4px', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}

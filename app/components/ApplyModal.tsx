@@ -22,11 +22,11 @@ const inputS: React.CSSProperties = {
   display: 'block', width: '100%',
   padding: '11px 14px',
   border: '1.5px solid #e2e8f0',
-  borderRadius: '10px',
+  borderRadius: '9999px',
   fontSize: '14px',
   fontFamily: "'Poppins', sans-serif",
   color: '#0b0d20',
-  background: '#f8faff',
+  background: '#fff7ed',
   outline: 'none',
   boxShadow: 'none',
   appearance: 'none' as const,
@@ -84,9 +84,9 @@ export default function ApplyModal({ job, onClose }: Props) {
 
   const fi = (name: string): React.CSSProperties => ({
     ...inputS,
-    borderColor: focusedField === name ? '#2145fb' : '#e2e8f0',
-    background: focusedField === name ? '#ffffff' : '#f8faff',
-    boxShadow: focusedField === name ? '0 0 0 3px rgba(33,69,251,0.09)' : 'none',
+    borderColor: focusedField === name ? '#f97316' : '#e2e8f0',
+    background: focusedField === name ? '#ffffff' : '#fff7ed',
+    boxShadow: focusedField === name ? '0 0 0 3px rgba(249,115,22,0.09)' : 'none',
   });
 
   const handleFile = (file: File | null) => {
@@ -156,7 +156,7 @@ export default function ApplyModal({ job, onClose }: Props) {
             {/* Modal header */}
             <div style={{ padding: '24px 28px 20px', borderBottom: '1px solid #f0f2f7', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, background: '#ffffff', zIndex: 2, borderRadius: '20px 20px 0 0' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ fontSize: '28px', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8faff', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
+                <div style={{ fontSize: '28px', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff7ed', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
                   {job.logo}
                 </div>
                 <div>
@@ -166,7 +166,7 @@ export default function ApplyModal({ job, onClose }: Props) {
               </div>
               <button
                 onClick={onClose}
-                style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #e2e8f0', background: '#f8faff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', color: '#64748b', flexShrink: 0 }}
+                style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #e2e8f0', background: '#fff7ed', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', color: '#64748b', flexShrink: 0 }}
               >
                 ✕
               </button>
@@ -282,10 +282,10 @@ export default function ApplyModal({ job, onClose }: Props) {
                       type="button"
                       onClick={() => setForm({ ...form, usShift: v })}
                       style={{
-                        flex: 1, padding: '10px', borderRadius: '10px', cursor: 'pointer',
-                        border: form.usShift === v ? '2px solid #2145fb' : '1.5px solid #e2e8f0',
-                        background: form.usShift === v ? '#eff6ff' : '#f8faff',
-                        color: form.usShift === v ? '#2145fb' : '#374151',
+                        flex: 1, padding: '10px', borderRadius: '9999px', cursor: 'pointer',
+                        border: form.usShift === v ? '2px solid #f97316' : '1.5px solid #e2e8f0',
+                        background: form.usShift === v ? '#fff7ed' : '#fff7ed',
+                        color: form.usShift === v ? '#f97316' : '#374151',
                         fontWeight: form.usShift === v ? 700 : 500,
                         fontSize: '14px', fontFamily: "'Poppins', sans-serif",
                         transition: 'all 0.15s',
@@ -306,12 +306,12 @@ export default function ApplyModal({ job, onClose }: Props) {
                   onDragLeave={() => setDragOver(false)}
                   onDrop={e => { e.preventDefault(); setDragOver(false); handleFile(e.dataTransfer.files[0]); }}
                   style={{
-                    border: `2px dashed ${dragOver ? '#2145fb' : resumeFile ? '#22c55e' : '#e2e8f0'}`,
+                    border: `2px dashed ${dragOver ? '#f97316' : resumeFile ? '#22c55e' : '#e2e8f0'}`,
                     borderRadius: '12px',
                     padding: '20px',
                     textAlign: 'center',
                     cursor: 'pointer',
-                    background: dragOver ? '#eff6ff' : resumeFile ? '#f0fdf4' : '#f8faff',
+                    background: dragOver ? '#fff7ed' : resumeFile ? '#f0fdf4' : '#fff7ed',
                     transition: 'all 0.15s',
                   }}
                 >
@@ -324,7 +324,7 @@ export default function ApplyModal({ job, onClose }: Props) {
                   ) : (
                     <>
                       <div style={{ fontSize: '22px', marginBottom: '4px' }}>📄</div>
-                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#374151' }}>Drop your resume here or <span style={{ color: '#2145fb' }}>browse</span></div>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#374151' }}>Drop your resume here or <span style={{ color: '#f97316' }}>browse</span></div>
                       <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>PDF or Word · Max 5 MB</div>
                     </>
                   )}
@@ -341,14 +341,14 @@ export default function ApplyModal({ job, onClose }: Props) {
                 disabled={!form.usShift || !resumeFile}
                 style={{
                   width: '100%', padding: '14px',
-                  background: (!form.usShift || !resumeFile) ? '#e2e8f0' : 'linear-gradient(135deg,#2145fb,#1a38d4)',
+                  background: (!form.usShift || !resumeFile) ? '#e2e8f0' : 'linear-gradient(135deg,#f97316,#ea580c)',
                   color: (!form.usShift || !resumeFile) ? '#94a3b8' : '#ffffff',
                   fontWeight: 700, fontSize: '15px',
                   fontFamily: "'Poppins', sans-serif",
-                  border: 'none', borderRadius: '10px',
+                  border: 'none', borderRadius: '9999px',
                   cursor: (!form.usShift || !resumeFile) ? 'not-allowed' : 'pointer',
                   marginTop: '4px',
-                  boxShadow: (!form.usShift || !resumeFile) ? 'none' : '0 4px 18px rgba(33,69,251,0.28)',
+                  boxShadow: (!form.usShift || !resumeFile) ? 'none' : '0 4px 18px rgba(249,115,22,0.28)',
                 }}
               >
                 Continue to Review →
@@ -367,7 +367,7 @@ export default function ApplyModal({ job, onClose }: Props) {
             </div>
 
             <div style={{
-              background: '#f8faff', border: '1px solid #e2e8f0', borderRadius: '12px',
+              background: '#fff7ed', border: '1px solid #e2e8f0', borderRadius: '12px',
               padding: '24px', fontSize: '13px', color: '#374151', lineHeight: 1.75,
               maxHeight: '340px', overflowY: 'auto', marginBottom: '24px',
             }}>
@@ -383,12 +383,12 @@ export default function ApplyModal({ job, onClose }: Props) {
             {/* Agree checkbox */}
             <div
               onClick={() => setAgreed(!agreed)}
-              style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', marginBottom: '20px', padding: '14px', borderRadius: '10px', border: `1.5px solid ${agreed ? '#2145fb' : '#e2e8f0'}`, background: agreed ? '#eff6ff' : '#f8faff' }}
+              style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', marginBottom: '20px', padding: '14px', borderRadius: '10px', border: `1.5px solid ${agreed ? '#f97316' : '#e2e8f0'}`, background: agreed ? '#fff7ed' : '#fff7ed' }}
             >
               <div style={{
                 width: '20px', height: '20px', minWidth: '20px', borderRadius: '6px',
-                border: `2px solid ${agreed ? '#2145fb' : '#cbd5e1'}`,
-                background: agreed ? '#2145fb' : '#ffffff',
+                border: `2px solid ${agreed ? '#f97316' : '#cbd5e1'}`,
+                background: agreed ? '#f97316' : '#ffffff',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 marginTop: '1px', transition: 'all 0.15s',
               }}>
@@ -405,8 +405,8 @@ export default function ApplyModal({ job, onClose }: Props) {
                 disabled={submitting}
                 style={{
                   flex: 1, padding: '13px',
-                  border: '1.5px solid #e2e8f0', borderRadius: '10px',
-                  background: '#f8faff', color: '#374151',
+                  border: '1.5px solid #e2e8f0', borderRadius: '9999px',
+                  background: '#fff7ed', color: '#374151',
                   fontWeight: 600, fontSize: '14px',
                   fontFamily: "'Poppins', sans-serif", cursor: submitting ? 'not-allowed' : 'pointer',
                 }}
@@ -422,7 +422,7 @@ export default function ApplyModal({ job, onClose }: Props) {
                   color: (agreed && !submitting) ? '#ffffff' : '#94a3b8',
                   fontWeight: 700, fontSize: '15px',
                   fontFamily: "'Poppins', sans-serif",
-                  border: 'none', borderRadius: '10px',
+                  border: 'none', borderRadius: '9999px',
                   cursor: (agreed && !submitting) ? 'pointer' : 'not-allowed',
                   boxShadow: agreed ? '0 4px 18px rgba(249,115,22,0.30)' : 'none',
                 }}
@@ -455,7 +455,7 @@ export default function ApplyModal({ job, onClose }: Props) {
                   display: 'inline-flex', alignItems: 'center', gap: '6px',
                   padding: '12px 20px',
                   background: '#22c55e', color: '#fff',
-                  borderRadius: '10px', fontWeight: 600, fontSize: '14px',
+                  borderRadius: '9999px', fontWeight: 600, fontSize: '14px',
                   textDecoration: 'none', fontFamily: "'Poppins', sans-serif",
                 }}
               >
@@ -465,8 +465,8 @@ export default function ApplyModal({ job, onClose }: Props) {
                 onClick={onClose}
                 style={{
                   padding: '12px 20px',
-                  border: '1.5px solid #e2e8f0', borderRadius: '10px',
-                  background: '#f8faff', color: '#374151',
+                  border: '1.5px solid #e2e8f0', borderRadius: '9999px',
+                  background: '#fff7ed', color: '#374151',
                   fontWeight: 600, fontSize: '14px',
                   fontFamily: "'Poppins', sans-serif", cursor: 'pointer',
                 }}

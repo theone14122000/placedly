@@ -59,7 +59,7 @@ export default function AuthRedirectPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#f8faff',
+        background: '#fff7ed',
         fontFamily: "'Poppins', sans-serif",
       }}
     >

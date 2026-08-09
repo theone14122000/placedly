@@ -5,8 +5,8 @@ import ImageUpload from '../components/ImageUpload';
 
 /* ─── helpers ──────────────────────────────────────────────────────── */
 
-const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '10px 13px', border: '1.5px solid #e2e8f0', borderRadius: '9px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
-const ta: React.CSSProperties  = { ...inp, resize: 'vertical' as const, minHeight: '80px' };
+const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '10px 13px', border: '1.5px solid #e2e8f0', borderRadius: '9999px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
+const ta: React.CSSProperties  = { ...inp, borderRadius: '14px', resize: 'vertical' as const, minHeight: '80px' };
 const lbl: React.CSSProperties = { display: 'block', fontSize: '10px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' as const, letterSpacing: '0.4px', marginBottom: '5px' };
 const row: React.CSSProperties = { display: 'flex', flexDirection: 'column' as const, gap: '14px' };
 

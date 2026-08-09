@@ -21,7 +21,7 @@ const TYPE_META: Record<string, { icon: React.ReactNode; label: string; color: s
   TEXT:  { icon: <FileText size={13} />,  label: 'Text',     color: '#64748b', accept: '' },
 };
 
-const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
+const inp: React.CSSProperties = { display: 'block', width: '100%', padding: '9px 12px', border: '1.5px solid #e2e8f0', borderRadius: '9999px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const };
 const lbl: React.CSSProperties = { display: 'block', fontSize: '10px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' as const, letterSpacing: '0.4px', marginBottom: '5px' };
 
 /* ── FileUploadZone ─────────────────────────────────────────────────── */
@@ -157,12 +157,12 @@ function AddModuleModal({ courseId, onDone, onClose, existingCount }: {
           )}
 
           {form.type === 'TEXT' && (
-            <div><label style={lbl}>Content (text or HTML)</label><textarea style={{ ...inp, minHeight: 120, resize: 'vertical' as const }} placeholder="Write content here…" value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} /></div>
+            <div><label style={lbl}>Content (text or HTML)</label><textarea style={{ ...inp, borderRadius: '14px', minHeight: 120, resize: 'vertical' as const }} placeholder="Write content here…" value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} /></div>
           )}
 
           {/* Optional description for non-text types */}
           {form.type !== 'TEXT' && (
-            <div><label style={lbl}>Description / Notes (optional)</label><textarea style={{ ...inp, minHeight: 60, resize: 'vertical' as const }} placeholder="Brief description of this module…" value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} /></div>
+            <div><label style={lbl}>Description / Notes (optional)</label><textarea style={{ ...inp, borderRadius: '14px', minHeight: 60, resize: 'vertical' as const }} placeholder="Brief description of this module…" value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} /></div>
           )}
 
           {error && <div style={{ fontSize: 12, color: '#ef4444', fontWeight: 600, background: '#fef2f2', padding: '8px 12px', borderRadius: 8 }}>{error}</div>}
@@ -380,7 +380,7 @@ export default function AdminCourses() {
                 <div><label style={lbl}>Level</label><select style={{ ...inp, cursor: 'pointer' }} value={form.level} onChange={e => setForm(f => ({ ...f, level: e.target.value }))}>{LEVELS.map(l => <option key={l}>{l}</option>)}</select></div>
               </div>
               <div><label style={lbl}>Duration</label><input style={inp} placeholder="e.g. 3 hrs · 6 sessions" value={form.duration} onChange={e => setForm(f => ({ ...f, duration: e.target.value }))} /></div>
-              <div><label style={lbl}>Description</label><textarea style={{ ...inp, resize: 'vertical' as const, minHeight: 90 }} placeholder="What will candidates learn?" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} /></div>
+              <div><label style={lbl}>Description</label><textarea style={{ ...inp, borderRadius: '14px', resize: 'vertical' as const, minHeight: 90 }} placeholder="What will candidates learn?" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} /></div>
             </div>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 24 }}>
               <button onClick={close} style={{ padding: '10px 20px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>Cancel</button>

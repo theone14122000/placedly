@@ -11,7 +11,7 @@ type Profile = {
 
 const inputS: React.CSSProperties = {
   width: '100%', padding: '10px 14px', border: '1.5px solid #e2e8f0',
-  borderRadius: '10px', fontSize: '14px', fontFamily: "'Poppins',sans-serif",
+  borderRadius: '9999px', fontSize: '14px', fontFamily: "'Poppins',sans-serif",
   color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const,
 };
 const labelS: React.CSSProperties = {
@@ -89,7 +89,7 @@ export default function ProfilePage() {
             <div style={{ fontSize: '15px', fontWeight: 800, color: '#0b0d20' }}>My Information</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               {status && <span style={{ fontSize: '12px', color: status.includes('fail') ? '#ef4444' : '#16a34a', fontWeight: 600 }}>{status}</span>}
-              <button onClick={save} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 20px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1 }}>
+              <button onClick={save} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 20px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.7 : 1 }}>
                 <Save size={13} />{saving ? 'Saving…' : 'Save'}
               </button>
             </div>

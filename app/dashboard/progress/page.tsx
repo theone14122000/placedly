@@ -161,7 +161,7 @@ export default function ProgressPage() {
           <a href="/contact" style={{ display: 'block', background: '#0b0d20', borderRadius: '16px', padding: '22px', textDecoration: 'none' }}>
             <div style={{ fontSize: '14px', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>Need help with Step 3?</div>
             <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '14px' }}>Your advisor is ready to guide you through the agreement.</div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f97316', color: '#fff', borderRadius: '8px', fontSize: '12px', fontWeight: 700, fontFamily: "'Poppins',sans-serif" }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f97316', color: '#fff', borderRadius: '9999px', fontSize: '12px', fontWeight: 700, fontFamily: "'Poppins',sans-serif" }}>
               Contact Advisor →
             </div>
           </a>

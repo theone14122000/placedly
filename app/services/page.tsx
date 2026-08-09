@@ -21,7 +21,7 @@ const ICON_MAP: Record<string, React.ComponentType<any>> = {
 const DEFAULT_DIFFERENTIATORS = [
   { Icon: Target,      iconBg: '#fff7ed', iconColor: '#f97316', title: 'Domain Specialist',       desc: 'We specialize in BPO, US Healthcare Claims, Insurance Operations, and Finance — not generic careers. Deep domain expertise = better results.' },
   { Icon: DollarSign,  iconBg: '#f0fdf4', iconColor: '#16a34a', title: 'Zero Upfront Model',       desc: 'We invest first — time, expertise, network. You pay only when your career genuinely grows. This is our commitment.' },
-  { Icon: Handshake,   iconBg: '#eff6ff', iconColor: '#2145fb', title: 'Direct Employer Access',   desc: 'Your profile reaches hiring managers directly — not portals. We have warm connections at EXL, Quatrro, eBiz, WNS, Optum & more.' },
+  { Icon: Handshake,   iconBg: '#fff7ed', iconColor: '#f97316', title: 'Direct Employer Access',   desc: 'Your profile reaches hiring managers directly — not portals. We have warm connections at EXL, Quatrro, eBiz, WNS, Optum & more.' },
   { Icon: Globe2,      iconBg: '#faf5ff', iconColor: '#7c3aed', title: 'Global University Network', desc: '140+ universities across UK, France, Germany & Dubai. Dedicated account manager. Application to visa — all handled.' },
   { Icon: FileCheck,   iconBg: '#ecfeff', iconColor: '#0891b2', title: 'Transparent Agreements',   desc: 'Everything in writing. Signed service agreement before we start. No surprises, no hidden terms, ever.' },
   { Icon: TrendingUp,  iconBg: '#f0fdf4', iconColor: '#16a34a', title: 'Proven Results',           desc: '300+ professionals placed. Average 60%+ career growth. Fastest placement in 9 days. Numbers speak for themselves.' },
@@ -98,13 +98,13 @@ export default async function ServicesPage() {
                   </div>
                 ))}
               </div>
-              <a href="/cap" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '13px 20px', background: '#f97316', color: '#fff', borderRadius: '10px', fontWeight: 700, fontSize: '14px', textDecoration: 'none', fontFamily: "'Poppins',sans-serif", width: 'fit-content', boxShadow: '0 4px 18px rgba(249,115,22,0.35)' }}>
+              <a href="/cap" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '13px 20px', background: '#f97316', color: '#fff', borderRadius: '9999px', fontWeight: 700, fontSize: '14px', textDecoration: 'none', fontFamily: "'Poppins',sans-serif", width: 'fit-content', boxShadow: '0 4px 18px rgba(249,115,22,0.35)' }}>
                 Explore CAP →
               </a>
             </div>
 
             {/* Study Abroad */}
-            <div style={{ background: '#2145fb', borderRadius: '24px', padding: '40px', color: '#fff', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ background: '#f97316', borderRadius: '24px', padding: '40px', color: '#fff', display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div style={{ width: '52px', height: '52px', borderRadius: '14px', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Globe size={26} color="#ffffff" />
               </div>
@@ -125,7 +125,7 @@ export default async function ServicesPage() {
                   </div>
                 ))}
               </div>
-              <a href="/study-visa" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '13px 20px', background: '#fff', color: '#2145fb', borderRadius: '10px', fontWeight: 700, fontSize: '14px', textDecoration: 'none', fontFamily: "'Poppins',sans-serif", width: 'fit-content' }}>
+              <a href="/study-visa" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '13px 20px', background: '#fff', color: '#f97316', borderRadius: '9999px', fontWeight: 700, fontSize: '14px', textDecoration: 'none', fontFamily: "'Poppins',sans-serif", width: 'fit-content' }}>
                 Study Visa →
               </a>
             </div>

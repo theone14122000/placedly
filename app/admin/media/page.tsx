@@ -163,7 +163,7 @@ export default function AdminMedia() {
         ))}
       </div>
 
-      <div style={{ marginTop: 16, background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '10px', padding: '12px 16px', fontSize: '12px', color: '#0369a1' }}>
+      <div style={{ marginTop: 16, background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '10px', padding: '12px 16px', fontSize: '12px', color: '#c2410c' }}>
         <strong>Tip:</strong> Images uploaded here are stored on Vercel Blob and are live immediately. Copy the URL and paste it into any image field in the CMS editors above.
       </div>
     </div>

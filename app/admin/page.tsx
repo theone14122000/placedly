@@ -6,7 +6,7 @@ type Stats = { totalApplications: number; pendingApplications: number; activeCan
 
 const SECTIONS = [
   { label: '📋 Applications', desc: 'Review, approve & renew CAP candidates', href: '/admin/applications', color: '#f97316' },
-  { label: 'Homepage',        desc: 'Edit hero, stats, testimonials',          href: '/admin/homepage',     color: '#6366f1' },
+  { label: 'Homepage',        desc: 'Edit hero, stats, testimonials',          href: '/admin/homepage',     color: '#f97316' },
   { label: 'Vacancies',       desc: 'Add, edit, delete job listings',          href: '/admin/vacancies',    color: '#f97316' },
   { label: 'Courses',         desc: 'Manage dashboard learning hub',           href: '/admin/courses',      color: '#16a34a' },
   { label: 'CAP Page',        desc: 'Edit CAP programme content',              href: '/admin/cap',          color: '#ef4444' },
@@ -40,7 +40,7 @@ export default function AdminOverview() {
           <h1 style={{ fontSize: '24px', fontWeight: 900, color: '#0b0d20', marginBottom: '4px' }}>Admin Dashboard</h1>
           <p style={{ fontSize: '14px', color: '#64748b' }}>Control everything on the Placedly website from here.</p>
         </div>
-        <a href="/" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#374151', textDecoration: 'none', fontFamily: "'Poppins',sans-serif" }}>
+        <a href="/" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: '9999px', fontSize: '13px', fontWeight: 600, color: '#374151', textDecoration: 'none', fontFamily: "'Poppins',sans-serif" }}>
           <ExternalLink size={13} /> View Live Site
         </a>
       </div>

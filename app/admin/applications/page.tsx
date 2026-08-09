@@ -25,7 +25,7 @@ const badge = (s: string) => {
     PENDING:  { bg: '#fef9c3', color: '#854d0e' },
     APPROVED: { bg: '#dcfce7', color: '#166534' },
     REJECTED: { bg: '#fee2e2', color: '#991b1b' },
-    ACTIVE:   { bg: '#dbeafe', color: '#1e40af' },
+    ACTIVE:   { bg: '#fed7aa', color: '#c2410c' },
     EXPIRED:  { bg: '#f1f5f9', color: '#475569' },
   };
   const c = map[s] ?? { bg: '#f1f5f9', color: '#475569' };
@@ -103,7 +103,7 @@ export default function ApplicationsPage() {
       <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' as const }}>
         {STATUS_TABS.map(t => (
           <button key={t} onClick={() => setTab(t)} style={{
-            padding: '7px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 600,
+            padding: '7px 18px', borderRadius: '9999px', fontSize: '13px', fontWeight: 600,
             border: tab === t ? '2px solid #f97316' : '2px solid #e2e8f0',
             background: tab === t ? '#fff7ed' : '#fff', color: tab === t ? '#f97316' : '#64748b',
             cursor: 'pointer', fontFamily: "'Poppins',sans-serif",
@@ -189,7 +189,7 @@ export default function ApplicationsPage() {
 
 const btnStyle = (color: string, ghost = false): React.CSSProperties => ({
   display: 'inline-flex', alignItems: 'center', gap: '5px',
-  padding: '6px 13px', borderRadius: '8px', fontSize: '12px', fontWeight: 700,
+  padding: '6px 13px', borderRadius: '9999px', fontSize: '12px', fontWeight: 700,
   border: `1.5px solid ${ghost ? '#e2e8f0' : color}`,
   background: ghost ? '#fff' : color + '15',
   color: ghost ? '#64748b' : color,

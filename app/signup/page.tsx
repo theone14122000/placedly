@@ -50,7 +50,7 @@ export default function SignupPage() {
     display: 'block', width: '100%',
     padding: '12px 14px 12px 42px',
     border: `1.5px solid ${focused === n ? ORANGE : BORDER}`,
-    borderRadius: '10px',
+    borderRadius: '9999px',
     fontSize: '14px',
     fontFamily: FONT,
     color: BLACK,

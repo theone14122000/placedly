@@ -19,7 +19,7 @@ export default function RecruiterLayout({ children }: { children: React.ReactNod
       {/* Top bar */}
       <header style={{ background: '#0b0d20', padding: '0 clamp(12px, 3vw, 24px)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '52px', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Users size={18} color="#2145fb" />
+          <Users size={18} color="#f97316" />
           <span style={{ fontSize: '15px', fontWeight: 800, color: '#fff' }}>Placedly ATS</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>

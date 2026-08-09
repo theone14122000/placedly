@@ -96,14 +96,14 @@ export default function MgmtUsersPage() {
           <h1 style={{ fontSize: '22px', fontWeight: 900, color: '#0b0d20', marginBottom: '3px' }}>Candidate Accounts</h1>
           <p style={{ fontSize: '13px', color: '#64748b' }}>Manage portal access for approved candidates.</p>
         </div>
-        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f1f5f9', border: 'none', borderRadius: '9px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", color: '#374151' }}>
+        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', background: '#f1f5f9', border: 'none', borderRadius: '9999px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", color: '#374151' }}>
           <RefreshCw size={13} /> Refresh
         </button>
       </div>
 
       <div className="mgmt-grid-4">
         {[
-          { Icon: Users,        label: 'Total', value: counts.ALL,       color: '#2145fb', bg: '#eff6ff' },
+          { Icon: Users,        label: 'Total', value: counts.ALL,       color: '#f97316', bg: '#fff7ed' },
           { Icon: CheckCircle2, label: 'Active', value: counts.ACTIVE,   color: '#16a34a', bg: '#f0fdf4' },
           { Icon: Clock,        label: 'Expired', value: counts.EXPIRED, color: '#f97316', bg: '#fff7ed' },
           { Icon: XCircle,      label: 'Suspended', value: counts.SUSPENDED, color: '#ef4444', bg: '#fef2f2' },
@@ -123,11 +123,11 @@ export default function MgmtUsersPage() {
       <div className="mgmt-filter-row" style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '14px 18px', marginBottom: '16px', alignItems: 'center' }}>
         <div style={{ flex: 1, minWidth: '200px', position: 'relative' }}>
           <Search size={14} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-          <input style={{ width: '100%', padding: '9px 12px 9px 36px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#f8faff', outline: 'none', boxSizing: 'border-box' as const }} placeholder="Search by name or email…" value={search} onChange={e => setSearch(e.target.value)} />
+          <input style={{ width: '100%', padding: '9px 12px 9px 36px', border: '1.5px solid #e2e8f0', borderRadius: '9999px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", color: '#0b0d20', background: '#fff7ed', outline: 'none', boxSizing: 'border-box' as const }} placeholder="Search by name or email…" value={search} onChange={e => setSearch(e.target.value)} />
         </div>
         <div className="mgmt-filter-tabs">
           {(['ALL', 'ACTIVE', 'EXPIRED', 'SUSPENDED'] as const).map(s => (
-            <button key={s} onClick={() => setStatusFilter(s)} style={{ padding: '7px 14px', borderRadius: '8px', border: '1.5px solid', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", fontSize: '12px', fontWeight: 600, background: statusFilter === s ? '#0b0d20' : '#fff', borderColor: statusFilter === s ? '#0b0d20' : '#e2e8f0', color: statusFilter === s ? '#fff' : '#64748b' }}>
+            <button key={s} onClick={() => setStatusFilter(s)} style={{ padding: '7px 14px', borderRadius: '9999px', border: '1.5px solid', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", fontSize: '12px', fontWeight: 600, background: statusFilter === s ? '#0b0d20' : '#fff', borderColor: statusFilter === s ? '#0b0d20' : '#e2e8f0', color: statusFilter === s ? '#fff' : '#64748b' }}>
               {s === 'ALL' ? 'All' : STATUS_STYLE[s].label}
             </button>
           ))}
@@ -140,7 +140,7 @@ export default function MgmtUsersPage() {
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '680px' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#f8faff' }}>
+              <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#fff7ed' }}>
                 {['Candidate', 'Contact', 'Programme', 'Status', 'CAP Step', 'Access Until', 'Last Login', 'Actions'].map(h => (
                   <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
@@ -156,7 +156,7 @@ export default function MgmtUsersPage() {
                   <tr key={c.id} style={{ borderBottom: i < filtered.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
                     <td style={{ padding: '14px 16px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#2145fb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>{c.name[0]}</div>
+                        <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>{c.name[0]}</div>
                         <div style={{ fontSize: '13px', fontWeight: 600, color: '#0b0d20' }}>{c.name}</div>
                       </div>
                     </td>
@@ -177,7 +177,7 @@ export default function MgmtUsersPage() {
                           style={{ width: 22, height: 22, borderRadius: '50%', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontWeight: 700, fontSize: 14, color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>−</button>
                         <span style={{ fontSize: 13, fontWeight: 700, color: '#0b0d20', minWidth: 32, textAlign: 'center' }}>{c.capStep ?? 1}/7</span>
                         <button onClick={() => setCapStep(c.id, Math.min(7, (c.capStep ?? 1) + 1))} disabled={actionId === c.id || (c.capStep ?? 1) >= 7}
-                          style={{ width: 22, height: 22, borderRadius: '50%', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontWeight: 700, fontSize: 14, color: '#2145fb', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>+</button>
+                          style={{ width: 22, height: 22, borderRadius: '50%', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontWeight: 700, fontSize: 14, color: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>+</button>
                       </div>
                     </td>
                     <td style={{ padding: '14px 16px' }}>
@@ -202,7 +202,7 @@ export default function MgmtUsersPage() {
                             Suspend
                           </button>
                         )}
-                        <button onClick={() => openNotes(c)} style={{ padding: '5px 10px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600, color: '#2145fb', fontFamily: "'Poppins',sans-serif", display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <button onClick={() => openNotes(c)} style={{ padding: '5px 10px', background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600, color: '#f97316', fontFamily: "'Poppins',sans-serif", display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                           <FileText size={11} /> Notes
                         </button>
                       </div>
@@ -233,7 +233,7 @@ export default function MgmtUsersPage() {
               {notes.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '30px', color: '#94a3b8', fontSize: '13px' }}>No notes yet.</div>
               ) : notes.map(n => (
-                <div key={n.id} style={{ padding: '12px 14px', background: '#f8faff', border: '1px solid #eef0f6', borderRadius: '10px', marginBottom: 10 }}>
+                <div key={n.id} style={{ padding: '12px 14px', background: '#fff7ed', border: '1px solid #eef0f6', borderRadius: '10px', marginBottom: 10 }}>
                   <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: 4 }}>
                     {n.authorName} · {new Date(n.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                   </div>
@@ -248,10 +248,10 @@ export default function MgmtUsersPage() {
                 onChange={e => setNoteText(e.target.value)}
                 placeholder="Add a note about this candidate…"
                 rows={2}
-                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", resize: 'vertical' as const, outline: 'none', boxSizing: 'border-box' as const, color: '#0b0d20' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e2e8f0', borderRadius: '14px', fontSize: '13px', fontFamily: "'Poppins',sans-serif", resize: 'vertical' as const, outline: 'none', boxSizing: 'border-box' as const, color: '#0b0d20' }}
               />
               <button onClick={addNote} disabled={notesBusy || !noteText.trim()}
-                style={{ marginTop: 10, padding: '9px 22px', background: '#2145fb', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 700, cursor: notesBusy || !noteText.trim() ? 'not-allowed' : 'pointer', fontFamily: "'Poppins',sans-serif", opacity: notesBusy ? 0.6 : 1 }}>
+                style={{ marginTop: 10, padding: '9px 22px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 700, cursor: notesBusy || !noteText.trim() ? 'not-allowed' : 'pointer', fontFamily: "'Poppins',sans-serif", opacity: notesBusy ? 0.6 : 1 }}>
                 Add Note
               </button>
             </div>

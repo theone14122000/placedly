@@ -6,9 +6,9 @@ import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react';
 const inputBase: React.CSSProperties = {
   display: 'block', width: '100%',
   padding: '12px 14px 12px 42px',
-  border: '1.5px solid #e2e8f0', borderRadius: '10px',
+  border: '1.5px solid #e2e8f0', borderRadius: '9999px',
   fontSize: '14px', fontFamily: "'Poppins', sans-serif",
-  color: '#0b0d20', background: '#f8faff',
+  color: '#0b0d20', background: '#fff7ed',
   outline: 'none', boxSizing: 'border-box' as const,
   transition: 'border-color 0.15s, box-shadow 0.15s',
 };
@@ -21,9 +21,9 @@ export default function ForgotPasswordPage() {
 
   const inputStyle: React.CSSProperties = {
     ...inputBase,
-    borderColor: focused ? '#2145fb' : '#e2e8f0',
-    background: focused ? '#fff' : '#f8faff',
-    boxShadow: focused ? '0 0 0 3px rgba(33,69,251,0.10)' : 'none',
+    borderColor: focused ? '#f97316' : '#e2e8f0',
+    background: focused ? '#fff' : '#fff7ed',
+    boxShadow: focused ? '0 0 0 3px rgba(249,115,22,0.10)' : 'none',
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8faff', fontFamily: "'Poppins', sans-serif", padding: '24px' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff7ed', fontFamily: "'Poppins', sans-serif", padding: '24px' }}>
       <div style={{ width: '100%', maxWidth: '420px' }}>
 
         {/* Logo */}
@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
                   </label>
                   <div style={{ position: 'relative' }}>
                     <div style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
-                      <Mail size={15} color={focused ? '#2145fb' : '#cbd5e1'} />
+                      <Mail size={15} color={focused ? '#f97316' : '#cbd5e1'} />
                     </div>
                     <input
                       type="email"
@@ -83,12 +83,12 @@ export default function ForgotPasswordPage() {
                   disabled={loading || !email}
                   style={{
                     width: '100%', padding: '13px',
-                    background: loading || !email ? '#93a5fd' : '#2145fb',
+                    background: loading || !email ? '#fdba74' : '#f97316',
                     color: '#fff', fontWeight: 700, fontSize: '15px',
                     fontFamily: "'Poppins', sans-serif",
-                    border: 'none', borderRadius: '10px',
+                    border: 'none', borderRadius: '9999px',
                     cursor: loading || !email ? 'not-allowed' : 'pointer',
-                    boxShadow: '0 4px 18px rgba(33,69,251,0.25)',
+                    boxShadow: '0 4px 18px rgba(249,115,22,0.25)',
                   }}
                 >
                   {loading ? 'Sending…' : 'Send Reset Link'}
@@ -107,7 +107,7 @@ export default function ForgotPasswordPage() {
               <p style={{ fontSize: '14px', fontWeight: 700, color: '#0b0d20', marginBottom: '28px' }}>{email}</p>
               <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: 1.6 }}>
                 Didn&apos;t receive it? Check your spam folder or{' '}
-                <button onClick={() => setSent(false)} style={{ background: 'none', border: 'none', color: '#2145fb', fontWeight: 600, fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins', sans-serif", padding: 0 }}>
+                <button onClick={() => setSent(false)} style={{ background: 'none', border: 'none', color: '#f97316', fontWeight: 600, fontSize: '13px', cursor: 'pointer', fontFamily: "'Poppins', sans-serif", padding: 0 }}>
                   try again
                 </button>.
               </p>
