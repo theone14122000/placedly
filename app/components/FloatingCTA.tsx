@@ -128,6 +128,8 @@ export default function FloatingCTA({
                 wraps around the button; the button sits on top of it. */}
             <span className="placedly-floating-cta-band" aria-hidden />
             <span className="placedly-floating-cta-notch" aria-hidden />
+            <span className="placedly-floating-cta-flare placedly-floating-cta-flare--left" aria-hidden />
+            <span className="placedly-floating-cta-flare placedly-floating-cta-flare--right" aria-hidden />
 
             <motion.a
               href={href}
@@ -203,6 +205,23 @@ export default function FloatingCTA({
           z-index: 0 !important;
           pointer-events: none !important;
         }
+
+        .placedly-floating-cta-flare {
+          position: absolute !important;
+          bottom: 0 !important;
+          width: 34px !important;
+          height: 34px !important;
+          background: #ffffff !important;
+          border-radius: 50% !important;
+          z-index: 0 !important;
+          pointer-events: none !important;
+        }
+        /* Left/right flare rams flush against the notch's lower side walls,
+           merging with the band below — the pocket's sides now slope out
+           in a soft curve instead of a sharp 90° step. 26px = half of the
+           notch's 52px overhang (22px on mobile). */
+        .placedly-floating-cta-flare--left  { left: calc(50% - 26px - 34px) !important; }
+        .placedly-floating-cta-flare--right { right: calc(50% - 26px - 34px) !important; }
 
         .placedly-floating-cta-btn {
           position: relative !important;
@@ -303,6 +322,12 @@ export default function FloatingCTA({
             height: 68px !important;
             border-radius: 22px 22px 0 0 !important;
           }
+          .placedly-floating-cta-flare {
+            width: 30px !important;
+            height: 30px !important;
+          }
+          .placedly-floating-cta-flare--left  { left: calc(50% - 22px - 30px) !important; }
+          .placedly-floating-cta-flare--right { right: calc(50% - 22px - 30px) !important; }
           .placedly-floating-cta-band {
             height: 20px !important;
           }
