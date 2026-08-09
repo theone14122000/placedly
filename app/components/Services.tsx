@@ -171,6 +171,8 @@ function PlainVideoCard({ current }: { current: VerticalContent }) {
         background: '#000',
         aspectRatio: '4/5',
         position: 'relative',
+        border: '1.5px solid rgba(249,115,22,0.45)',
+        boxShadow: '0 12px 36px rgba(249,115,22,0.18)',
       }}
     >
       <VideoCard src={current.videoSrc} ariaLabel={current.ariaLabel} />
@@ -372,7 +374,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
               boxShadow:   isDark
                 ? '0 4px 30px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.06)'
                 : '0 4px 24px rgba(0,0,0,0.08)',
-              borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+              borderColor: isDark ? 'rgba(249,115,22,0.5)' : 'rgba(249,115,22,0.45)',
             }}
             transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
             role="tablist"
@@ -697,21 +699,20 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           flex-direction: column; gap: 10px;
         }
         .services-highlight-item {
-          display: flex; align-items: flex-start; gap: 12px;
+          display: flex; align-items: center; gap: 12px;
           font-size: clamp(13px, 1vw, 15px);
           color: #334155; line-height: 1.5;
-          border-radius: 12px; padding: 12px 14px;
+          border-radius: 9999px; padding: 10px 18px;
           background: ${ORANGE_SOFT};
           border: 1.5px solid ${ORANGE_BORDER};
         }
         .services-highlight-icon {
           font-size: 16px; flex-shrink: 0;
-          width: 32px; height: 32px; border-radius: 9px;
+          width: 32px; height: 32px; border-radius: 50%;
           background: #fff; display: flex;
           align-items: center; justify-content: center;
           box-shadow: 0 2px 8px rgba(249,115,22,0.10);
         }
-        .services-highlight-text { padding-top: 4px; }
 
         /* ── Stats ── */
         .services-stats {
