@@ -2729,14 +2729,14 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
     pointer-events:none;
   }
   .placedly-hero-desktop-gradient .placedly-lift-hero-gradient{
-    top:44%;
-    left:50%;
-    width:100vw;
-    min-width:100vw;
-    max-width:none;
-    margin:0;
-    transform:translate(-50%,-50%) scale(1.18,1.12);
-    transform-origin:center center;
+    top: 44%;
+    left: 50%;
+    width: 100vw;
+    min-width: 100vw;
+    max-width: none;
+    margin: 0;
+    transform: translate(-50%, -50%) scale(1.04, 1.0);
+    transform-origin: center center;
   }
   .placedly-hero-desktop-gradient .placedly-hero-bg-video-wrap{
     top:48%;
