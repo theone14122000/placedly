@@ -2744,7 +2744,7 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
     height:min(46vh,400px);
   }
   .placedly-hero-desktop-gradient .placedly-hero-bg-video{
-    opacity:0.36;
+    opacity:0.5;
     filter:blur(4px) saturate(0.68) contrast(1.02) brightness(0.86);
   }
   .placedly-lift-hero{

@@ -170,6 +170,17 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
         </div>
       </div>
 
+      {/* Empty stage — keeps the original mobile hero rhythm/spacing
+          (same size as the removed pop-up cards) */}
+      <motion.div
+        className="placedly-lift-hero-stage placedly-lift-hero-stage--liftoff"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.55, delay: 0.18 }}
+      >
+        <div className="placedly-lift-mobile-scene" aria-hidden />
+      </motion.div>
+
       {/* ── Compact stats grid — mobile counterpart to desktop's stats bar ── */}
       <div className="placedly-liftoff-m-stats-wrap">
         <div className="placedly-liftoff-m-stats-label" aria-hidden>

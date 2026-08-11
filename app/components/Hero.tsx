@@ -505,6 +505,15 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         </div>
 
         {/* ── Network / Stage ── */}
+        {/* Empty stage — keeps the original hero rhythm/spacing
+            (same size as the removed pop-up cards) */}
+        <motion.div
+          className="placedly-lift-hero-stage"
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, delay: 0.28 }}
+        />
+
         {/* ════════════════════════════════════════
             ★ STATS BAR — improved with label row
         ════════════════════════════════════════ */}
