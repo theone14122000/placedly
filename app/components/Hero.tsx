@@ -31,11 +31,6 @@ const TEXT_MUTED    = '#64748b';
 const BORDER        = '#e5e7eb';
 const SURFACE       = '#ffffff';
 
-const HERO_CARD_AVATARS = {
-  left:  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=96&h=96&fit=crop&crop=face',
-  right: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face',
-} as const;
-
 const HERO_CTAS = [
   {
     id: 'candidates',
@@ -154,9 +149,6 @@ function HeroStatCard({
    Main Hero
 ════════════════════════════════════════════════════════ */
 export default function Hero({ cms = {} }: { cms?: HeroCms }) {
-  const offerRole      = cms['hp:heroOfferRole']      ?? 'Senior Claims Analyst';
-  const admitProgramme = cms['hp:heroAdmitProgramme'] ?? "MSc International Business · Fall '25";
-
   return (
     <section id="Top" className="placedly-lift-hero">
       <link
@@ -513,72 +505,6 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         </div>
 
         {/* ── Network / Stage ── */}
-        <motion.div
-          className="placedly-lift-hero-stage"
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 0.28 }}
-        >
-          <div className="placedly-lift-network">
-            {/* left card */}
-            <motion.div
-              className="placedly-lift-card placedly-lift-card--left"
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <div className="placedly-lift-card-profile">
-                <img
-                  src={HERO_CARD_AVATARS.left}
-                  alt=""
-                  className="placedly-lift-avatar placedly-lift-avatar--photo"
-                  width={48} height={48}
-                  loading="lazy" decoding="async"
-                />
-                <div className="placedly-lift-card-identity">
-                  <p className="placedly-lift-name">{cms['hp:heroOfferCompany'] ?? cms['hp:heroOfferName'] ?? 'Priya'}</p>
-                  <p className="placedly-lift-role">CAP · India careers</p>
-                </div>
-              </div>
-              <p className="placedly-lift-card-line">
-                Targeting <strong>{offerRole}</strong>
-              </p>
-              {cms['hp:heroOfferCtc'] && cms['hp:heroOfferJoining'] && (
-                <p className="placedly-lift-card-line">
-                  {cms['hp:heroOfferCtc']} · Joining {cms['hp:heroOfferJoining']}
-                </p>
-              )}
-            </motion.div>
-
-            {/* spacer — keeps the 3-column grid: left card | empty | right card */}
-            <span aria-hidden className="placedly-lift-network-spacer" />
-
-            {/* right card */}
-            <motion.div
-              className="placedly-lift-card placedly-lift-card--right"
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
-            >
-              <div className="placedly-lift-card-profile">
-                <img
-                  src={HERO_CARD_AVATARS.right}
-                  alt=""
-                  className="placedly-lift-avatar placedly-lift-avatar--photo"
-                  width={48} height={48}
-                  loading="lazy" decoding="async"
-                />
-                <div className="placedly-lift-card-identity">
-                  <p className="placedly-lift-name">{cms['hp:heroAdmitUniversity'] ?? cms['hp:heroAdmitName'] ?? 'Arjun'}</p>
-                  <p className="placedly-lift-role">Study abroad track</p>
-                </div>
-              </div>
-              <p className="placedly-lift-card-line">
-                Interested in{' '}
-                <strong>{admitProgramme.split('·')[0]?.trim() ?? 'UK Masters'}</strong>
-              </p>
-            </motion.div>
-          </div>
-        </motion.div>
-
         {/* ════════════════════════════════════════
             ★ STATS BAR — improved with label row
         ════════════════════════════════════════ */}
