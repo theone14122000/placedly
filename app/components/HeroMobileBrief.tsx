@@ -392,10 +392,11 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           text-align: center;
           gap: 5px;
           padding: 8px 4px;
-          border-radius: 12px;
+          border-radius: 9999px;
           background: #ffffff;
           border: 1.5px solid rgba(249,115,22,0.30);
           box-shadow: 0 3px 12px rgba(249,115,22,0.08);
+          opacity: 0.9;
         }
         .placedly-liftoff-m-stat-icon {
           display: flex;
