@@ -78,11 +78,13 @@ function HeroCtaPill({
   label,
   icon: Icon,
   delay = 0,
+  rect = false,
 }: {
   href: string;
   label: string;
   icon: LucideIcon;
   delay?: number;
+  rect?: boolean;
 }) {
   return (
     <motion.div
@@ -93,7 +95,10 @@ function HeroCtaPill({
       whileTap={{ scale: 0.97 }}
       style={{ flex: '0 0 auto' }}
     >
-      <Link href={href} className="placedly-hero-cta-pill">
+      <Link
+        href={href}
+        className={`placedly-hero-cta-pill${rect ? ' placedly-hero-cta-pill--rect' : ''}`}
+      >
         <span className="placedly-hero-cta-pill-shine" aria-hidden />
         <span className="placedly-hero-cta-pill-icon">
           <Icon size={11} strokeWidth={2.15} />
@@ -240,6 +245,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
             inset 0 1px 0 rgba(255,255,255,0.22) !important;
         }
         .placedly-hero-cta-pill:active { filter: brightness(0.94); }
+        .placedly-hero-cta-pill--rect { border-radius: 10px; }
 
         .placedly-hero-cta-pill-shine {
           position: absolute; top: 0; left: -130%;
@@ -507,6 +513,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
                 label={cms[cta.cmsKey] ?? cta.fallback}
                 icon={cta.icon}
                 delay={0.16 + i * 0.07}
+                rect={cta.id === 'candidates'}
               />
             ))}
           </div>
