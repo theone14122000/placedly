@@ -2682,6 +2682,7 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   pointer-events:none;
   user-select:none;
   z-index:0;
+  opacity:0.8;
 }
 .placedly-hero-bg-video-wrap{
   position:absolute;
@@ -2895,10 +2896,10 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
   letter-spacing:-0.02em;
 }
 .placedly-lift-role{
-  font-size:13px;font-weight:400;color:#6b7280;margin:3px 0 0;line-height:1.35;
+  font-size:13px;font-weight:400;color:#334155;margin:3px 0 0;line-height:1.35;
 }
 .placedly-lift-card-line{
-  font-size:15px;line-height:1.45;color:#6b7280;margin:0;font-weight:400;
+  font-size:15px;line-height:1.45;color:#334155;margin:0;font-weight:400;
 }
 .placedly-lift-card-line strong{color:#0a0a0a;font-weight:700}
 .placedly-lift-connect{

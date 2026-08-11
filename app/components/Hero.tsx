@@ -452,7 +452,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         }
         .placedly-lift-card--left,
         .placedly-lift-card--right {
-          opacity: 0.7 !important;
+          opacity: 0.85 !important;
           transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
         }
         .placedly-lift-card--left:hover,

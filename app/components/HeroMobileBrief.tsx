@@ -308,13 +308,13 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
 
         /* ── Popup cards: contain text inside the rounded card
            instead of letting it overflow past the edges.
-           Sized up + set to 70% opacity per latest feedback. ── */
+           Sized up + set to 85% opacity per latest feedback. ── */
         .placedly-lift-hero .placedly-lift-card--mobile {
           box-sizing: border-box !important;
           overflow: hidden !important;
           max-width: 172px !important;
           padding: 10px 13px !important;
-          opacity: 0.7 !important;
+          opacity: 0.85 !important;
         }
         .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-card-profile {
           gap: 7px !important;
