@@ -58,20 +58,18 @@ function FaqItem({
   open,
   index,
   onToggle,
-  rect = false,
 }: {
   q: string;
   a: string;
   open: boolean;
   index: number;
   onToggle: () => void;
-  rect?: boolean;
 }) {
   const paragraphs = a.split(/\n\n/).filter(Boolean);
 
   return (
     <motion.div
-      className={`faq-item${open ? ' faq-item--open' : ''}${rect ? ' faq-item--rect' : ''}`}
+      className={`faq-item${open ? ' faq-item--open' : ''}`}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
@@ -288,8 +286,8 @@ export default function Faq() {
           border-color: ${ORANGE_BORDER_STRONG};
           background: #fffaf4;
           box-shadow: 0 6px 20px rgba(249, 115, 22, 0.10);
+          border-radius: 14px;
         }
-        .faq-item--rect { border-radius: 14px; }
 
         /* ── TRIGGER ─────────────────────────────── */
         .faq-trigger {
@@ -403,7 +401,6 @@ export default function Faq() {
                 open={openIndex === i}
                 index={i}
                 onToggle={() => setOpenIndex(openIndex === i ? -1 : i)}
-                rect={i === 0}
               />
             ))}
           </div>
