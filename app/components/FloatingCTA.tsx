@@ -233,7 +233,7 @@ export default function FloatingCTA({
           max-width: 175px !important;
           margin-bottom: 14px !important;
           border: 1px solid rgba(255, 255, 255, 0.18) !important;
-          border-radius: 9999px !important;
+          border-radius: 12px !important;
           background: linear-gradient(135deg, ${ORANGE} 0%, ${ORANGE_DARK} 100%) !important;
           box-shadow:
             0 8px 22px rgba(249, 115, 22, 0.42),

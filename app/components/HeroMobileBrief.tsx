@@ -70,13 +70,11 @@ function HeroCtaPill({
   label,
   icon: Icon,
   delay = 0,
-  rect = false,
 }: {
   href: string;
   label: string;
   icon: LucideIcon;
   delay?: number;
-  rect?: boolean;
 }) {
   return (
     <motion.div
@@ -86,10 +84,7 @@ function HeroCtaPill({
       whileTap={{ scale: 0.97 }}
       style={{ flex: '0 0 auto' }}
     >
-      <Link
-        href={href}
-        className={`placedly-hero-cta-pill${rect ? ' placedly-hero-cta-pill--rect' : ''}`}
-      >
+      <Link href={href} className="placedly-hero-cta-pill">
         <span className="placedly-hero-cta-pill-shine" aria-hidden />
         <span className="placedly-hero-cta-pill-icon">
           <Icon size={11} strokeWidth={2.15} />
@@ -179,7 +174,6 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               label={cms[cta.cmsKey] ?? cta.fallback}
               icon={cta.icon}
               delay={0.14 + i * 0.07}
-              rect={cta.id === 'candidates'}
             />
           ))}
         </div>
@@ -301,7 +295,6 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           width: 12px;
           height: 12px;
         }
-        .placedly-liftoff-m-ctas .placedly-hero-cta-pill--rect { border-radius: 10px; }
         @media (max-width: 360px) {
           .placedly-liftoff-m-ctas.placedly-lift-hero-ctas .placedly-hero-cta-pill {
             padding: 6px 6px 6px 6px !important;
