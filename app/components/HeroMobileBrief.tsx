@@ -207,7 +207,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               </div>
             </div>
             <p className="placedly-lift-card-line">
-              Hiring a <strong>Head of Marketing</strong>
+              <strong>Marketing</strong>
             </p>
           </motion.div>
 
@@ -232,7 +232,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               </div>
             </div>
             <p className="placedly-lift-card-line">
-              Interested in <strong>{admitInterest}</strong>
+              <strong>AI</strong>
             </p>
           </motion.div>
         </div>
