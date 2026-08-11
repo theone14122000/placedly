@@ -35,11 +35,11 @@
   }
 
   .placedly-hero-mobile-brief .placedly-lift-hero-gradient {
-    top: 56%;
+    top: 60%;
     width: 190vw;
     max-width: none;
     min-width: 100vw;
-    transform: translate(-50%, -50%) scale(0.92, 0.92);
+    transform: translate(-50%, -50%) scale(0.9, 0.9);
   }
 
   .placedly-hero-mobile-brief .placedly-hero-bg-video-wrap {
