@@ -619,7 +619,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
           position: relative; display: inline-flex;
           width: 100%; max-width: 440px;
           border-radius: 999px; padding: 6px;
-          border: 1px solid rgba(0,0,0,0.05);
+          border: 2px solid rgba(0,0,0,0.05);
         }
         .services-toggle-btn {
           position: relative; flex: 1;
