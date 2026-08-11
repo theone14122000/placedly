@@ -325,7 +325,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           height: 32px !important;
         }
         .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-name {
-          font-size: 13px !important;
+          font-size: 14.5px !important;
           line-height: 1.25 !important;
           white-space: nowrap !important;
           overflow: hidden !important;
@@ -333,7 +333,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           max-width: 118px !important;
         }
         .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-role {
-          font-size: 10.5px !important;
+          font-size: 12px !important;
           line-height: 1.25 !important;
           white-space: nowrap !important;
           overflow: hidden !important;
@@ -341,7 +341,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           max-width: 118px !important;
         }
         .placedly-lift-hero .placedly-lift-card--mobile .placedly-lift-card-line {
-          font-size: 11px !important;
+          font-size: 12.5px !important;
           line-height: 1.4 !important;
           white-space: normal !important;
           word-break: break-word !important;
