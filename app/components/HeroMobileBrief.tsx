@@ -98,33 +98,35 @@ function HeroCtaPill({
 }
 
 /* ════════════════════════════════════════════════════════
-   HeroStatCard (mobile) — compact 2x2 grid cell, same
-   orange/white treatment as the desktop pill bar
+   HeroStatCard (mobile) — same markup/classes as the desktop
+   pill bar so it inherits the identical styling
 ════════════════════════════════════════════════════════ */
 function HeroStatCard({
   icon: Icon,
   value,
   label,
   delay = 0,
+  isLast = false,
 }: {
   icon: LucideIcon;
   value: string;
   label: string;
   delay?: number;
+  isLast?: boolean;
 }) {
   return (
     <motion.div
-      className="placedly-liftoff-m-stat-card"
+      className={`placedly-hero-stat-card${isLast ? '' : ' placedly-hero-stat-card--divider'}`}
       initial={{ opacity: 0, y: 10, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.4, delay }}
     >
-      <span className="placedly-liftoff-m-stat-icon">
+      <span className="placedly-hero-stat-card-icon">
         <Icon size={14} strokeWidth={2.1} />
       </span>
-      <span className="placedly-liftoff-m-stat-text">
-        <strong className="placedly-liftoff-m-stat-value">{value}</strong>
-        <span className="placedly-liftoff-m-stat-label">{label}</span>
+      <span className="placedly-hero-stat-card-text">
+        <strong className="placedly-hero-stat-card-value">{value}</strong>
+        <span className="placedly-hero-stat-card-label">{label}</span>
       </span>
     </motion.div>
   );
@@ -181,14 +183,14 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
         <div className="placedly-lift-mobile-scene" aria-hidden />
       </motion.div>
 
-      {/* ── Compact stats grid — mobile counterpart to desktop's stats bar ── */}
-      <div className="placedly-liftoff-m-stats-wrap">
-        <div className="placedly-liftoff-m-stats-label" aria-hidden>
-          <span className="placedly-liftoff-m-stats-label-line" />
-          <span className="placedly-liftoff-m-stats-label-text">Trusted by professionals</span>
-          <span className="placedly-liftoff-m-stats-label-line" />
+      {/* ── Stats bar — same style as desktop ── */}
+      <div className="placedly-hero-stats-wrap">
+        <div className="placedly-hero-stats-label" aria-hidden>
+          <span className="placedly-hero-stats-label-line" />
+          <span className="placedly-hero-stats-label-text">Trusted by professionals</span>
+          <span className="placedly-hero-stats-label-line" />
         </div>
-        <div className="placedly-liftoff-m-stats">
+        <div className="placedly-hero-stats-bar">
           {HERO_STATS.map((stat, i) => (
             <HeroStatCard
               key={stat.label}
@@ -196,6 +198,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
               value={cms[`hp:stat${i + 1}Num`] ?? stat.value}
               label={cms[`hp:stat${i + 1}Label`] ?? stat.label}
               delay={0.1 + i * 0.06}
+              isLast={i === HERO_STATS.length - 1}
             />
           ))}
         </div>
@@ -292,92 +295,29 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
           margin: 0 !important;
         }
 
-        /* ── Compact stats grid ── */
-        .placedly-liftoff-m-stats-wrap {
-          margin: 20px auto 0;
+        /* ── Stats bar — desktop style, compact for phones ── */
+        .placedly-hero-stats-wrap {
+          margin: 16px auto 0;
           padding: 0 16px;
-          max-width: 360px;
+          max-width: 520px;
           width: 100%;
         }
-        .placedly-liftoff-m-stats-label {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          margin-bottom: 10px;
+        .placedly-hero-stats-bar {
+          padding: 5px;
         }
-        .placedly-liftoff-m-stats-label-line {
-          flex: 1;
-          height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(249,115,22,0.30), transparent);
-          max-width: 60px;
-        }
-        .placedly-liftoff-m-stats-label-text {
-          font-size: 9px !important;
-          font-weight: 700 !important;
-          text-transform: uppercase;
-          letter-spacing: 0.12em !important;
-          color: #64748b !important;
-          white-space: nowrap;
-        }
-        .placedly-liftoff-m-stats {
-          display: flex;
-          flex-direction: row;
-          flex-wrap: nowrap;
+        .placedly-hero-stat-card {
           gap: 6px;
+          padding: 8px 6px;
         }
-        .placedly-liftoff-m-stat-card {
-          flex: 1 1 0;
-          min-width: 0;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-          gap: 5px;
-          padding: 8px 4px;
-          border-radius: 9999px;
-          background: #ffffff;
-          border: 1.5px solid rgba(249,115,22,0.30);
-          box-shadow: 0 3px 12px rgba(249,115,22,0.08);
-          opacity: 0.9;
+        .placedly-hero-stat-card-icon {
+          width: 24px;
+          height: 24px;
         }
-        .placedly-liftoff-m-stat-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 22px;
-          height: 22px;
-          border-radius: 50%;
-          flex-shrink: 0;
-          background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(249,115,22,0.06));
-          border: 1.5px solid rgba(249,115,22,0.30);
-          color: #f97316;
+        .placedly-hero-stat-card-value {
+          font-size: 13px !important;
         }
-        .placedly-liftoff-m-stat-text {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0px;
-          min-width: 0;
-          width: 100%;
-        }
-        .placedly-liftoff-m-stat-value {
-          font-size: 12px !important;
-          font-weight: 800 !important;
-          letter-spacing: -0.02em !important;
-          color: #f97316 !important;
-          line-height: 1.15;
-        }
-        .placedly-liftoff-m-stat-label {
-          font-size: 7.5px !important;
-          font-weight: 500 !important;
-          color: #64748b !important;
-          line-height: 1.2;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
+        .placedly-hero-stat-card-label {
+          font-size: 8.5px !important;
         }
       `}</style>
     </div>
