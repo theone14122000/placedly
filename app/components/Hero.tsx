@@ -133,7 +133,7 @@ function HeroStatCard({
     >
       {/* icon badge */}
       <span className="placedly-hero-stat-card-icon">
-        <Icon size={16} strokeWidth={2.1} />
+        <Icon size={19} strokeWidth={2.1} />
       </span>
 
       {/* text */}
@@ -315,7 +315,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
             0 1px 4px rgba(15,23,42,0.05);
           overflow: hidden;
           isolation: isolate;
-          padding: 6px;
+          padding: 10px;
           gap: 0;
           width: 100%;
         }
@@ -325,10 +325,10 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           position: relative;
           display: flex;
           align-items: center;
-          gap: 9px;
+          gap: 12px;
           flex: 1 1 0;
           min-width: 0;
-          padding: 10px 18px;
+          padding: 14px 26px;
           border-radius: 9999px;
           cursor: default;
           transition: background 0.25s ease, transform 0.25s ease;
@@ -354,8 +354,8 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 32px;
-          height: 32px;
+          width: 40px;
+          height: 40px;
           border-radius: 50%;
           flex-shrink: 0;
           background: linear-gradient(135deg,
@@ -380,7 +380,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           flex: 1;
         }
         .placedly-hero-stat-card-value {
-          font-size: clamp(14px, 1.4vw, 16px) !important;
+          font-size: clamp(16px, 1.6vw, 19px) !important;
           font-weight: 800 !important;
           letter-spacing: -0.025em !important;
           color: ${ORANGE} !important;
@@ -388,7 +388,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           display: block;
         }
         .placedly-hero-stat-card-label {
-          font-size: clamp(9.5px, 0.85vw, 11px) !important;
+          font-size: clamp(10.5px, 1vw, 12px) !important;
           font-weight: 500 !important;
           letter-spacing: 0.01em !important;
           color: ${TEXT_MUTED} !important;

@@ -304,6 +304,7 @@ export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
         }
         .placedly-hero-stats-bar {
           padding: 5px;
+          border-radius: 9999px !important;
         }
         .placedly-hero-stat-card {
           gap: 6px;
