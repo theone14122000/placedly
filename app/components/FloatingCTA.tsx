@@ -176,7 +176,8 @@ export default function FloatingCTA({
           left: 50% !important;
           bottom: 0 !important;
           transform: translateX(-50%) !important;
-          width: calc(100vw - 28px) !important;
+          width: 20vw !important;
+          min-width: 260px !important;
           height: 24px !important;
           border-radius: 9999px !important;
           background: #ffffff !important;
@@ -331,7 +332,8 @@ export default function FloatingCTA({
           .placedly-floating-cta-flare--right { right: calc(50% - 22px - 30px) !important; }
           .placedly-floating-cta-band {
             height: 20px !important;
-            width: calc(100vw - 20px) !important;
+            width: 20vw !important;
+            min-width: 260px !important;
           }
           .placedly-floating-cta-btn {
             min-height: 48px !important;

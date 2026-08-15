@@ -135,7 +135,7 @@ function HeroStatCard({
 export default function HeroMobileBrief({ cms = {} }: { cms?: HeroCms }) {
   return (
     <div className="placedly-hero-mobile-brief" aria-label="Mobile hero">
-      <HeroGradientBg />
+      <HeroGradientBg src="/images/hero-liftoff-bg3.webp" />
       <HeroBgVideo />
       <div className="placedly-lift-hero-copy">
         <motion.h1

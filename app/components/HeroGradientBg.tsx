@@ -1,10 +1,10 @@
-/** Liftoff-style hero gradient — full asset, no CSS crop (1400×513) */
-export const HERO_LIFTOFF_GRADIENT_SRC = '/images/hero-liftoff-bg3.webp';
+/** Liftoff-style hero gradient — full asset, no CSS crop */
+export const HERO_LIFTOFF_GRADIENT_SRC = '/images/hero-liftoff-bg3.png';
 
-export default function HeroGradientBg() {
+export default function HeroGradientBg({ src = HERO_LIFTOFF_GRADIENT_SRC }: { src?: string }) {
   return (
     <img
-      src={HERO_LIFTOFF_GRADIENT_SRC}
+      src={src}
       alt=""
       className="placedly-lift-hero-gradient"
       width={1400}
