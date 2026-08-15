@@ -39,7 +39,7 @@
     width: 190vw;
     max-width: none;
     min-width: 100vw;
-    transform: translate(-50%, -50%) scale(0.79, 0.63);
+    transform: translate(-50%, -50%) scale(0.63, 0.63);
   }
 
   .placedly-hero-mobile-brief .placedly-hero-bg-video-wrap {
