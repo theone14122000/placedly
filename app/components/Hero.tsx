@@ -285,7 +285,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
           align-items: center;
           justify-content: center;
           gap: 8px;
-          margin-bottom: 12px;
+          margin-bottom: 26px;
         }
         .placedly-hero-stats-label-line {
           flex: 1;

@@ -173,13 +173,11 @@ export default function FloatingCTA({
            the notch and button. */
         .placedly-floating-cta-band {
           position: absolute !important;
-          left: 50% !important;
+          left: 0 !important;
+          right: 0 !important;
           bottom: 0 !important;
-          transform: translateX(-50%) !important;
-          width: 20vw !important;
-          min-width: 260px !important;
+          width: 100vw !important;
           height: 24px !important;
-          border-radius: 9999px !important;
           background: #ffffff !important;
           z-index: 0 !important;
           pointer-events: none !important;
@@ -207,6 +205,27 @@ export default function FloatingCTA({
           z-index: 0 !important;
           pointer-events: none !important;
         }
+
+        /* ── Notch-to-band fillets ──
+           White discs centered exactly on the corner where the notch's
+           straight side wall meets the band's straight top edge, so the
+           outline sweeps a smooth quarter-circle there instead of a
+           sharp 90° angle. Same white as band + notch, so they merge
+           invisibly into one silhouette. */
+        .placedly-floating-cta-notch::before,
+        .placedly-floating-cta-notch::after {
+          content: '' !important;
+          position: absolute !important;
+          bottom: 0 !important;
+          width: 24px !important;
+          height: 24px !important;
+          background: #ffffff !important;
+          border-radius: 50% !important;
+          z-index: 0 !important;
+          pointer-events: none !important;
+        }
+        .placedly-floating-cta-notch::before { left: -24px !important; }
+        .placedly-floating-cta-notch::after  { right: -24px !important; }
 
         .placedly-floating-cta-flare {
           position: absolute !important;
@@ -332,9 +351,15 @@ export default function FloatingCTA({
           .placedly-floating-cta-flare--right { right: calc(50% - 22px - 30px) !important; }
           .placedly-floating-cta-band {
             height: 20px !important;
-            width: 20vw !important;
-            min-width: 260px !important;
+            width: 100vw !important;
           }
+          .placedly-floating-cta-notch::before,
+          .placedly-floating-cta-notch::after {
+            width: 20px !important;
+            height: 20px !important;
+          }
+          .placedly-floating-cta-notch::before { left: -20px !important; }
+          .placedly-floating-cta-notch::after  { right: -20px !important; }
           .placedly-floating-cta-btn {
             min-height: 48px !important;
             padding: 8px 12px 8px 16px !important;
