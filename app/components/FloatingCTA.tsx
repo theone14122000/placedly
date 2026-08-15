@@ -131,29 +131,31 @@ export default function FloatingCTA({
             <span className="placedly-floating-cta-flare placedly-floating-cta-flare--left" aria-hidden />
             <span className="placedly-floating-cta-flare placedly-floating-cta-flare--right" aria-hidden />
 
-            {/* Thin tapered white arcs flanking the button's lower sides,
-                echoing its rounded corner — subtle, symmetric, never
-                reaching the screen edges. */}
+            {/* Thin tapered white arcs starting at the button's bottom
+                corners, curving outward-down along its rounded shape —
+                small, symmetric, never reaching the screen edges. */}
             <span className="placedly-floating-cta-arc placedly-floating-cta-arc--left" aria-hidden>
-              <svg viewBox="0 0 24 28" width="24" height="28" fill="none" aria-hidden>
+              <svg viewBox="0 0 32 26" width="32" height="26" fill="none" aria-hidden>
                 <defs>
-                  <linearGradient id="placedly-arc-grad-l" x1="2" y1="2" x2="22" y2="26" gradientUnits="userSpaceOnUse">
+                  <linearGradient id="placedly-arc-grad-l" x1="30" y1="2" x2="2" y2="24" gradientUnits="userSpaceOnUse">
                     <stop offset="0" stopColor="#ffffff" stopOpacity="0.95" />
+                    <stop offset="0.55" stopColor="#ffffff" stopOpacity="0.95" />
                     <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
                   </linearGradient>
                 </defs>
-                <path d="M 2 2 C 2 18, 12 26, 22 26" stroke="url(#placedly-arc-grad-l)" strokeWidth="2" strokeLinecap="round" />
+                <path d="M 30 2 C 30 14, 18 24, 2 24" stroke="url(#placedly-arc-grad-l)" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </span>
             <span className="placedly-floating-cta-arc placedly-floating-cta-arc--right" aria-hidden>
-              <svg viewBox="0 0 24 28" width="24" height="28" fill="none" aria-hidden>
+              <svg viewBox="0 0 32 26" width="32" height="26" fill="none" aria-hidden>
                 <defs>
-                  <linearGradient id="placedly-arc-grad-r" x1="22" y1="2" x2="2" y2="26" gradientUnits="userSpaceOnUse">
+                  <linearGradient id="placedly-arc-grad-r" x1="2" y1="2" x2="30" y2="24" gradientUnits="userSpaceOnUse">
                     <stop offset="0" stopColor="#ffffff" stopOpacity="0.95" />
+                    <stop offset="0.55" stopColor="#ffffff" stopOpacity="0.95" />
                     <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
                   </linearGradient>
                 </defs>
-                <path d="M 22 2 C 22 18, 12 26, 2 26" stroke="url(#placedly-arc-grad-r)" strokeWidth="2" strokeLinecap="round" />
+                <path d="M 2 2 C 2 14, 14 24, 30 24" stroke="url(#placedly-arc-grad-r)" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </span>
 
@@ -271,24 +273,26 @@ export default function FloatingCTA({
         .placedly-floating-cta-flare--left  { left: calc(50% - 26px - 34px) !important; }
         .placedly-floating-cta-flare--right { right: calc(50% - 26px - 34px) !important; }
 
-        /* ── Button-side white arcs ──
-           Thin tapered curves that start just outside the notch's side
-           walls (close to the button) and sweep down-outward, echoing
-           the button's rounded corner. Symmetric, subtle, and short —
-           they never reach the screen/container edges. */
+        /* ── Button-corner white arcs ──
+           Thin tapered curves that start at the button's bottom-left
+           and bottom-right corners (tucked just under the button's
+           corner edge, so they read as emanating from it) and sweep
+           outward-down along the button's rounded shape, fading out.
+           Small, symmetric, localized — never reaching the screen
+           or container edges. */
         .placedly-floating-cta-arc {
           position: absolute !important;
-          bottom: 26px !important;
-          z-index: 1 !important;
+          bottom: 52px !important;
+          z-index: 0 !important;
           pointer-events: none !important;
         }
         .placedly-floating-cta-arc svg {
           display: block !important;
-          width: 24px !important;
-          height: 28px !important;
+          width: 32px !important;
+          height: 26px !important;
         }
-        .placedly-floating-cta-arc--left  { left: calc(50% + 26px + 4px) !important; }
-        .placedly-floating-cta-arc--right { right: calc(50% + 26px + 4px) !important; }
+        .placedly-floating-cta-arc--left  { left: -30px !important; }
+        .placedly-floating-cta-arc--right { right: -30px !important; }
 
         .placedly-floating-cta-btn {
           position: relative !important;
@@ -395,10 +399,10 @@ export default function FloatingCTA({
           }
           .placedly-floating-cta-flare--left  { left: calc(50% - 22px - 30px) !important; }
           .placedly-floating-cta-flare--right { right: calc(50% - 22px - 30px) !important; }
-          .placedly-floating-cta-arc { bottom: 22px !important; }
-          .placedly-floating-cta-arc svg { width: 20px !important; height: 24px !important; }
-          .placedly-floating-cta-arc--left  { left: calc(50% + 22px + 3px) !important; }
-          .placedly-floating-cta-arc--right { right: calc(50% + 22px + 3px) !important; }
+          .placedly-floating-cta-arc { bottom: 48px !important; }
+          .placedly-floating-cta-arc svg { width: 30px !important; height: 24px !important; }
+          .placedly-floating-cta-arc--left  { left: -26px !important; }
+          .placedly-floating-cta-arc--right { right: -26px !important; }
           .placedly-floating-cta-band {
             height: 20px !important;
             width: 100vw !important;
