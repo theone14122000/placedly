@@ -2735,7 +2735,7 @@ textarea.placedly-demo-input{resize:vertical;min-height:80px}
     min-width: 100vw;
     max-width: none;
     margin: 0;
-    transform: translate(-50%, -50%) scale(0.73, 0.7);
+    transform: translate(-50%, -50%) scale(1.04, 1.0);
     transform-origin: center center;
   }
   .placedly-hero-desktop-gradient .placedly-hero-bg-video-wrap{
