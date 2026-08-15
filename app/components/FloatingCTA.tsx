@@ -215,12 +215,14 @@ export default function FloatingCTA({
         /* ── White notch ──
            Small centered upward tab from the band: only slightly
            wider than the button (button + ~52px, ~220–245px total),
-           large rounded TOP corners only, straight sides flowing
-           into the band below. The button sits roughly centered
-           inside it: ~10px white above, ~14px white below. Merges
-           with the band (same white) into one shape — reads as a
-           small cutout taken out of the colored section's bottom
-           edge, NOT a card. */
+           straight top corners, rounded BOTTOM corners only. The
+           bottom radii equal the notch's side overhang (26px), so
+           each curve starts exactly at the button's left/right edge
+           and sweeps smoothly to the notch's side wall. The button
+           sits roughly centered inside it: ~10px white above,
+           ~14px white below. Merges with the band (same white) into
+           one shape — reads as a small cutout taken out of the
+           colored section's bottom edge, NOT a card. */
         .placedly-floating-cta-notch {
           position: absolute !important;
           left: 50% !important;
@@ -229,7 +231,7 @@ export default function FloatingCTA({
           width: calc(100% + 52px) !important;
           max-width: 245px !important;
           height: 74px !important;
-          border-radius: 26px 26px 0 0 !important;
+          border-radius: 0 0 26px 26px !important;
           background: #ffffff !important;
           z-index: 0 !important;
           pointer-events: none !important;
@@ -391,7 +393,7 @@ export default function FloatingCTA({
             width: calc(100% + 44px) !important;
             max-width: 220px !important;
             height: 68px !important;
-            border-radius: 22px 22px 0 0 !important;
+            border-radius: 0 0 22px 22px !important;
           }
           .placedly-floating-cta-flare {
             width: 30px !important;
