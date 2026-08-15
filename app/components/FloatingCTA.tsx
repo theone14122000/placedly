@@ -173,9 +173,10 @@ export default function FloatingCTA({
            the notch and button. */
         .placedly-floating-cta-band {
           position: absolute !important;
-          left: 0 !important;
-          right: 0 !important;
+          left: 50% !important;
+          right: auto !important;
           bottom: 0 !important;
+          transform: translateX(-50%) !important;
           width: 100vw !important;
           height: 24px !important;
           background: #ffffff !important;

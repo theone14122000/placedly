@@ -273,7 +273,7 @@ export default function Hero({ cms = {} }: { cms?: HeroCms }) {
         ════════════════════════════════════════════════ */
         .placedly-hero-stats-wrap {
           /* sits between network and marquee with clear breathing room */
-          margin: clamp(28px, 4vw, 44px) auto 0;
+          margin: clamp(110px, 10vw, 170px) auto 0;
           padding: 0 clamp(16px, 4vw, 24px);
           max-width: 880px;
           width: 100%;
