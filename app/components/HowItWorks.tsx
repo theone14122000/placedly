@@ -620,6 +620,60 @@ export function DocumentChecklistSection() {
       </div>
 
       <style>{`
+        .placedly-docs-section, .placedly-docs-section * {
+          font-family: ${GEOM_FONT_STACK};
+          font-feature-settings: "ss01", "cv11", "cv02";
+          font-optical-sizing: auto;
+          letter-spacing: -0.011em;
+          box-sizing: border-box;
+          color: ${BLACK};
+        }
+        .placedly-docs-section {
+          position: relative;
+          width: 100%;
+          padding: clamp(48px, 7vw, 96px) clamp(14px, 4vw, 24px);
+          background: ${BG};
+        }
+        .placedly-docs-container {
+          position: relative;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        .placedly-docs-header {
+          text-align: center;
+          max-width: 760px;
+          margin: 0 auto 32px;
+        }
+        .placedly-docs-eyebrow {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: ${ORANGE};
+          margin-bottom: 10px;
+          padding: 5px 11px;
+          background: rgba(249, 115, 22, 0.10);
+          border: 1px solid rgba(249, 115, 22, 0.25);
+          border-radius: 999px;
+        }
+        .placedly-docs-title {
+          font-size: clamp(24px, 4.5vw, 40px);
+          font-weight: 800;
+          line-height: 1.15;
+          letter-spacing: -0.025em;
+          color: ${BLACK};
+          margin: 0 0 12px;
+        }
+        .placedly-docs-subtitle {
+          font-size: clamp(13.5px, 2.6vw, 16px);
+          line-height: 1.6;
+          color: ${TEXT_BODY};
+          margin: 0;
+        }
+
         .placedly-doc-chip-grid {
           display: flex;
           flex-wrap: wrap;
@@ -662,7 +716,7 @@ export function DocumentChecklistSection() {
           gap: 18px;
           margin-top: clamp(32px, 5vw, 56px);
           padding: clamp(20px, 4vw, 30px) clamp(20px, 4vw, 36px);
-          border-radius: 999px;
+          border-radius: 22px;
           background: ${SURFACE};
           border: 1px solid ${BORDER};
         }
