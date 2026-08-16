@@ -2,12 +2,9 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import UtilityToolsSection from './components/UtilityToolsSection';
 import Services from './components/Services';
-import OurProcessSection from './components/OurProcessSection';
-import CapJourneySection from './components/CapJourneySection';
 import CapFloatingCta from './components/CapFloatingCta';
-import HowItWorks from './components/HowItWorks';
-import Industries from './components/Industries';
-import StudyDestinationsMarquee from './components/StudyDestinationsMarquee';
+import HomeModeSections from './components/HomeModeSections';
+import { HomeModeProvider } from './components/HomeModeContext';
 import Testimonials from './components/Testimonials';
 import Faq from './components/Faq';
 import Footer from './components/Footer';
@@ -133,11 +130,10 @@ export default async function Home() {
       <main className="page-wrapper">
         <Hero cms={cms} />
         <UtilityToolsSection cms={cms} />
-        <Services cms={cms} />
-        <HowItWorks cms={cms} />
-        <CapJourneySection cms={cms} />
-        <Industries cms={cms} />
-        <StudyDestinationsMarquee cms={cms} />
+        <HomeModeProvider>
+          <Services cms={cms} />
+          <HomeModeSections cms={cms} />
+        </HomeModeProvider>
         <Testimonials cms={cms} />
         <Faq />
         <Footer cms={cms} />

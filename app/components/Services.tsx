@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   AnimatePresence,
   motion,
@@ -10,6 +10,7 @@ import {
 } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { FadeUp } from './motion';
+import { useHomeMode } from './HomeModeContext';
 
 type Cms = Record<string, string>;
 
@@ -251,7 +252,8 @@ function ScrollingStrip({
    Main export
 ═══════════════════════════════════════ */
 export default function Services({ cms = {} }: { cms?: Cms }) {
-  const [active, setActive] = useState(0);
+  const { mode, setMode } = useHomeMode();
+  const active = mode === 'cap' ? 0 : 1;
   const verticals = VERTICALS.map((v) =>
     v.id === 'cap'
       ? {
@@ -386,7 +388,7 @@ export default function Services({ cms = {} }: { cms?: Cms }) {
                 type="button"
                 role="tab"
                 aria-selected={active === i}
-                onClick={() => setActive(i)}
+                onClick={() => setMode(verticals[i].id === 'cap' ? 'cap' : 'study')}
                 className={`services-toggle-btn${active === i ? ' is-active' : ''} ${isDark ? 'is-dark' : ''}`}
                 style={{
                   color: active === i

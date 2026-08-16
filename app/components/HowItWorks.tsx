@@ -538,8 +538,10 @@ export default function HowItWorks({ cms = {} }: { cms?: Cms }) {
 
 /* ════════════════════════════════════════════════════════════
    DOCUMENT CHECKLIST — at the TOP
+   (named export so the homepage can toggle it with the
+    What We Do switch — shown only in Go Global mode)
 ════════════════════════════════════════════════════════════ */
-function DocumentChecklistSection() {
+export function DocumentChecklistSection() {
   const [expandedDoc, setExpandedDoc] = useState<number | null>(null);
 
   return (
@@ -707,8 +709,10 @@ function DocumentChecklistSection() {
 /* ════════════════════════════════════════════════════════════
    PARALLEL SECTION (A + B) — both use ORANGE (no blue)
    Each section is a separate bordered card for clear separation
+   (named export so the homepage can toggle it with the
+    What We Do switch — shown only in Get Placed mode)
 ════════════════════════════════════════════════════════════ */
-function ParallelSection({ cms }: { cms: Cms }) {
+export function ParallelSection({ cms }: { cms: Cms }) {
   const tabs = useMemo(() => buildTabs(cms), [cms]);
 
   const [tabPaused, setTabPaused] = useState(false);
