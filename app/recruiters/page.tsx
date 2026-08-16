@@ -1,6 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
+import { AnimatePresence, motion } from 'framer-motion';
 import PageLayout from '../components/PageLayout';
 import {
   ArrowUpRight,
@@ -21,8 +22,14 @@ import {
 /* ════════════════════════════════════════════════════════
    Placedly Recruiter Network — public marketing page.
    All copy is source-of-truth content; no mock data.
-   Styled to match the homepage + service pages theme.
+   Pill theme everywhere — items expand on click like the
+   homepage Document Checklist section.
 ════════════════════════════════════════════════════════ */
+
+const ORANGE        = '#f97316';
+const BLACK         = '#0b0d20';
+const TEXT_BODY     = '#404040';
+const BORDER        = 'rgba(0,0,0,0.10)';
 
 const PARTNER_TYPES = [
   {
@@ -130,7 +137,67 @@ function GiftIcon(props: { size?: number }) {
   return <svg xmlns="http://www.w3.org/2000/svg" width={props.size ?? 24} height={props.size ?? 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="8" width="18" height="4" rx="1" /><path d="M12 8v13" /><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" /><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5" /></svg>;
 }
 
+/* ── Expandable pill — same interaction as the homepage
+      Document Checklist: single-open, smooth height reveal,
+      chevron rotates, orange border when open. ── */
+function ExpandablePill({
+  index,
+  open,
+  onToggle,
+  row,
+  body,
+}: {
+  index: number;
+  open: boolean;
+  onToggle: (i: number) => void;
+  row: ReactNode;
+  body: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onToggle(open ? -1 : index)}
+      className={`rnp-pill${open ? ' is-open' : ''}`}
+      style={{ borderColor: open ? ORANGE : BORDER }}
+    >
+      <span className="rnp-pill-row">
+        {row}
+        <ChevronDown
+          size={15} strokeWidth={2.4} className="rnp-pill-chevron"
+          style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', color: ORANGE }}
+        />
+      </span>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.span
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+            className="rnp-pill-body"
+          >
+            {body}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </button>
+  );
+}
+
+/* ── Static pill chip (list items / industries) ── */
+function PillChip({ children, icon }: { children: ReactNode; icon?: boolean }) {
+  return (
+    <span className="rnp-pill-chip">
+      {icon && <CheckCircle2 size={16} />}
+      <span>{children}</span>
+    </span>
+  );
+}
+
 export default function RecruitersPage() {
+  const [openPartners, setOpenPartners] = useState<number | null>(null);
+  const [openWhy, setOpenWhy] = useState<number | null>(null);
+  const [openSteps, setOpenSteps] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
@@ -164,19 +231,27 @@ export default function RecruitersPage() {
       <section className="rnp-section rnp-section--tint">
         <div className="rnp-container">
           <h2 className="rnp-heading rnp-heading--center">Who Can Join?</h2>
-          <div className="rnp-partner-grid">
-            {PARTNER_TYPES.map((p) => (
-              <div key={p.title} className="rnp-partner-card">
-                <div className="rnp-partner-icon"><p.icon size={18} /></div>
-                <h3>{p.title}</h3>
-                <p className="rnp-partner-body">{p.body}</p>
-                <div className="rnp-partner-list-label">{p.listLabel}</div>
-                <ul className="rnp-partner-list">
-                  {p.list.map((item) => (
-                    <li key={item}><Check size={13} />{item}</li>
-                  ))}
-                </ul>
-              </div>
+          <div className="rnp-pill-grid">
+            {PARTNER_TYPES.map((p, i) => (
+              <ExpandablePill
+                key={p.title}
+                index={i}
+                open={openPartners === i}
+                onToggle={setOpenPartners}
+                row={<>
+                  <span className="rnp-pill-icon"><p.icon size={16} /></span>
+                  <span className="rnp-pill-label">{p.title}</span>
+                </>}
+                body={<>
+                  <p className="rnp-pill-note">{p.body}</p>
+                  <span className="rnp-pill-list-label">{p.listLabel}</span>
+                  <ul className="rnp-pill-list">
+                    {p.list.map((item) => (
+                      <li key={item}><Check size={13} />{item}</li>
+                    ))}
+                  </ul>
+                </>}
+              />
             ))}
           </div>
         </div>
@@ -186,13 +261,19 @@ export default function RecruitersPage() {
       <section className="rnp-section">
         <div className="rnp-container">
           <h2 className="rnp-heading rnp-heading--center">Why Recruiters Choose Placedly</h2>
-          <div className="rnp-features-grid">
-            {WHY_RECRUITERS.map((f) => (
-              <div key={f.title} className="rnp-feature-card">
-                <div className="rnp-feature-icon"><f.icon size={18} /></div>
-                <h3>{f.title}</h3>
-                <p>{f.desc}</p>
-              </div>
+          <div className="rnp-pill-grid">
+            {WHY_RECRUITERS.map((f, i) => (
+              <ExpandablePill
+                key={f.title}
+                index={i}
+                open={openWhy === i}
+                onToggle={setOpenWhy}
+                row={<>
+                  <span className="rnp-pill-icon"><f.icon size={16} /></span>
+                  <span className="rnp-pill-label">{f.title}</span>
+                </>}
+                body={<p className="rnp-pill-note">{f.desc}</p>}
+              />
             ))}
           </div>
         </div>
@@ -202,9 +283,9 @@ export default function RecruitersPage() {
       <section className="rnp-section rnp-section--tint">
         <div className="rnp-container">
           <h2 className="rnp-heading rnp-heading--center">Industries We Hire For</h2>
-          <div className="rnp-industries">
+          <div className="rnp-chips">
             {INDUSTRIES.map((ind) => (
-              <span key={ind} className="rnp-industry-pill">{ind}</span>
+              <PillChip key={ind}>{ind}</PillChip>
             ))}
           </div>
         </div>
@@ -212,14 +293,21 @@ export default function RecruitersPage() {
 
       {/* ── How It Works ── */}
       <section className="rnp-section">
-        <div className="rnp-container">
+        <div className="rnp-container rnp-container--narrow">
           <h2 className="rnp-heading rnp-heading--center">How It Works</h2>
-          <div className="rnp-steps">
+          <div className="rnp-pill-list">
             {STEPS.map((step, i) => (
-              <div key={i} className="rnp-step">
-                <div className="rnp-step-num">{String(i + 1).padStart(2, '0')}</div>
-                <p>{step}</p>
-              </div>
+              <ExpandablePill
+                key={i}
+                index={i}
+                open={openSteps === i}
+                onToggle={setOpenSteps}
+                row={<>
+                  <span className="rnp-pill-num">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="rnp-pill-label">Step {i + 1}</span>
+                </>}
+                body={<p className="rnp-pill-note">{step}</p>}
+              />
             ))}
           </div>
         </div>
@@ -229,12 +317,9 @@ export default function RecruitersPage() {
       <section className="rnp-section rnp-section--tint">
         <div className="rnp-container">
           <h2 className="rnp-heading rnp-heading--center">What You'll Get</h2>
-          <div className="rnp-tools-grid">
+          <div className="rnp-chips">
             {TOOLS.map((t) => (
-              <div key={t} className="rnp-tool-item">
-                <CheckCircle2 size={17} />
-                <span>{t}</span>
-              </div>
+              <PillChip key={t} icon>{t}</PillChip>
             ))}
           </div>
         </div>
@@ -245,12 +330,9 @@ export default function RecruitersPage() {
         <div className="rnp-container rnp-container--narrow">
           <h2 className="rnp-heading rnp-heading--center">Commission &amp; Rewards</h2>
           <p className="rnp-section-intro">At Placedly, your earnings grow with your performance.</p>
-          <div className="rnp-check-list">
+          <div className="rnp-chips">
             {COMMISSION.map((c) => (
-              <div key={c} className="rnp-check-item">
-                <span className="rnp-check-badge"><Check size={14} /></span>
-                <span>{c}</span>
-              </div>
+              <PillChip key={c} icon>{c}</PillChip>
             ))}
           </div>
         </div>
@@ -260,12 +342,9 @@ export default function RecruitersPage() {
       <section className="rnp-section rnp-section--tint">
         <div className="rnp-container rnp-container--narrow">
           <h2 className="rnp-heading rnp-heading--center">Why Companies Work With Us</h2>
-          <div className="rnp-check-list">
+          <div className="rnp-chips">
             {WHY_COMPANIES.map((c) => (
-              <div key={c} className="rnp-check-item">
-                <span className="rnp-check-badge"><Check size={14} /></span>
-                <span>{c}</span>
-              </div>
+              <PillChip key={c} icon>{c}</PillChip>
             ))}
           </div>
         </div>
@@ -275,19 +354,17 @@ export default function RecruitersPage() {
       <section className="rnp-section">
         <div className="rnp-container rnp-container--narrow">
           <h2 className="rnp-heading rnp-heading--center">Frequently Asked Questions</h2>
-          <div className="rnp-faq-list">
-            {FAQS.map((f, i) => {
-              const isOpen = openFaq === i;
-              return (
-                <div key={i} className={`rnp-faq-item${isOpen ? ' is-open' : ''}`}>
-                  <button className="rnp-faq-q" onClick={() => setOpenFaq(isOpen ? null : i)} aria-expanded={isOpen}>
-                    {f.q}
-                    <ChevronDown size={16} className="rnp-faq-chevron" />
-                  </button>
-                  {isOpen && <div className="rnp-faq-a">{f.a}</div>}
-                </div>
-              );
-            })}
+          <div className="rnp-pill-list">
+            {FAQS.map((f, i) => (
+              <ExpandablePill
+                key={i}
+                index={i}
+                open={openFaq === i}
+                onToggle={setOpenFaq}
+                row={<span className="rnp-pill-label">{f.q}</span>}
+                body={<p className="rnp-pill-note">{f.a}</p>}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -367,112 +444,65 @@ export default function RecruitersPage() {
         .rnp-heading--center { text-align: center; margin-bottom: 28px; }
         .rnp-section-intro { font-size: 14px; color: #404040; text-align: center; margin: 0 0 22px; }
 
-        /* Partner types */
-        .rnp-partner-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
-        .rnp-partner-card {
-          background: #ffffff; border: 1.5px solid rgba(0,0,0,0.10); border-radius: 14px;
-          padding: 20px; transition: border-color .2s, box-shadow .2s, transform .2s;
+        /* ── Expandable pills (document-checklist style) ── */
+        .rnp-pill-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .rnp-pill-list { display: flex; flex-direction: column; gap: 10px; }
+        .rnp-pill {
+          flex: 1 1 100%;
+          min-width: 0;
+          width: 100%;
+          text-align: left;
+          background: #ffffff;
+          border: 1.5px solid;
+          border-radius: 999px;
+          padding: 13px 18px;
+          cursor: pointer;
+          transition: border-color 0.25s, box-shadow 0.25s;
         }
-        .rnp-partner-card:hover { border-color: rgba(249,115,22,0.35); box-shadow: 0 10px 24px rgba(249,115,22,0.10); transform: translateY(-2px); }
-        .rnp-partner-icon {
-          width: 34px; height: 34px; border-radius: 9px;
-          background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.2);
-          color: #ea580c; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;
+        .rnp-pill:hover { box-shadow: 0 6px 18px rgba(15,23,42,0.06); }
+        .rnp-pill.is-open { box-shadow: 0 10px 24px rgba(249, 115, 22, 0.10); }
+        .rnp-pill-row { display: flex; align-items: center; gap: 12px; width: 100%; }
+        .rnp-pill-icon {
+          width: 30px; height: 30px; border-radius: 50%;
+          display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+          background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.30);
+          color: #ea580c;
         }
-        .rnp-partner-card h3 { font-size: 15px; font-weight: 800; color: #000000; margin: 0 0 6px; }
-        .rnp-partner-body { font-size: 13px; color: #404040; line-height: 1.6; margin: 0 0 12px; }
-        .rnp-partner-list-label {
+        .rnp-pill-num {
+          width: 30px; height: 30px; border-radius: 50%;
+          display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+          background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.25);
+          font-size: 12px; font-weight: 800; color: #ea580c;
+        }
+        .rnp-pill-label { font-size: 13.5px; font-weight: 700; color: ${BLACK}; flex: 1; }
+        .rnp-pill-chevron { flex-shrink: 0; transition: transform 0.25s ease; }
+        .rnp-pill-body { display: block; overflow: hidden; padding: 8px 0 2px 42px; }
+        .rnp-pill-note { font-size: 13px; color: ${TEXT_BODY}; line-height: 1.6; margin: 0 0 10px; }
+        .rnp-pill-list-label {
           font-size: 10px; font-weight: 800; color: #ea580c; text-transform: uppercase;
-          letter-spacing: 0.06em; margin-bottom: 8px;
+          letter-spacing: 0.06em; margin-bottom: 8px; display: block;
         }
-        .rnp-partner-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-        .rnp-partner-list li { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: #404040; }
-        .rnp-partner-list li svg { flex-shrink: 0; color: #f97316; }
+        .rnp-pill-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+        .rnp-pill-list li { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: ${TEXT_BODY}; }
+        .rnp-pill-list li svg { flex-shrink: 0; color: #f97316; }
 
-        /* Why recruiters */
-        .rnp-features-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
-        .rnp-feature-card {
-          background: #ffffff; border: 1.5px solid rgba(0,0,0,0.10); border-radius: 14px;
-          padding: 18px; transition: border-color .2s, box-shadow .2s, transform .2s;
-        }
-        .rnp-feature-card:hover { border-color: rgba(249,115,22,0.35); box-shadow: 0 10px 24px rgba(249,115,22,0.10); transform: translateY(-2px); }
-        .rnp-feature-icon {
-          width: 34px; height: 34px; border-radius: 9px;
-          background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.2);
-          color: #ea580c; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;
-        }
-        .rnp-feature-card h3 { font-size: 14.5px; font-weight: 800; color: #000000; margin: 0 0 6px; }
-        .rnp-feature-card p { font-size: 13px; color: #404040; line-height: 1.6; margin: 0; }
-
-        /* Industries */
-        .rnp-industries { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-        .rnp-industry-pill {
-          display: inline-flex; align-items: center;
+        /* ── Static pill chips ── */
+        .rnp-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .rnp-pill-chip {
+          display: inline-flex; align-items: center; gap: 8px;
           padding: 9px 18px; background: #ffffff;
           border: 1.5px solid rgba(249,115,22,0.25); border-radius: 999px;
           font-size: 13px; font-weight: 600; color: #111827;
           transition: background .2s, border-color .2s, color .2s;
         }
-        .rnp-industry-pill:hover { background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.45); color: #ea580c; }
-
-        /* Steps */
-        .rnp-steps { display: flex; flex-direction: column; gap: 20px; }
-        .rnp-step { display: flex; gap: 14px; align-items: flex-start; }
-        .rnp-step-num {
-          flex-shrink: 0; font-size: 13px; font-weight: 800; color: #ea580c;
-          background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.25);
-          width: 38px; height: 38px; border-radius: 10px;
-          display: flex; align-items: center; justify-content: center;
-        }
-        .rnp-step p { font-size: 13.5px; color: #404040; line-height: 1.6; margin: 0; padding-top: 9px; }
-
-        /* Tools */
-        .rnp-tools-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-        .rnp-tool-item {
-          display: flex; align-items: center; gap: 10px;
-          background: #ffffff; border: 1.5px solid rgba(0,0,0,0.10); border-radius: 12px;
-          padding: 12px 16px; font-size: 13.5px; font-weight: 600; color: #111827;
-          transition: border-color .2s;
-        }
-        .rnp-tool-item:hover { border-color: rgba(249,115,22,0.35); }
-        .rnp-tool-item svg { flex-shrink: 0; color: #f97316; }
-
-        /* Check lists */
-        .rnp-check-list { display: flex; flex-direction: column; gap: 10px; }
-        .rnp-check-item {
-          display: flex; align-items: center; gap: 10px;
-          background: #ffffff; border: 1.5px solid rgba(0,0,0,0.10); border-radius: 12px;
-          padding: 12px 16px; font-size: 13.5px; font-weight: 600; color: #111827;
-          transition: border-color .2s;
-        }
-        .rnp-check-item:hover { border-color: rgba(249,115,22,0.35); }
-        .rnp-check-badge {
-          flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
-          background: rgba(249,115,22,0.10); border: 1px solid rgba(249,115,22,0.30);
-          color: #ea580c; display: flex; align-items: center; justify-content: center;
-        }
-
-        /* FAQ */
-        .rnp-faq-list { display: flex; flex-direction: column; gap: 10px; }
-        .rnp-faq-item {
-          background: #ffffff; border: 1.5px solid rgba(0,0,0,0.10); border-radius: 12px;
-          overflow: hidden; transition: border-color .2s;
-        }
-        .rnp-faq-item.is-open { border-color: rgba(249,115,22,0.35); }
-        .rnp-faq-q {
-          width: 100%; display: flex; align-items: center; justify-content: space-between;
-          gap: 12px; padding: 14px 16px; background: none; border: none; cursor: pointer;
-          font-size: 13.5px; font-weight: 700; color: #000000; text-align: left;
-        }
-        .rnp-faq-chevron { flex-shrink: 0; color: #ea580c; transition: transform .25s ease; }
-        .rnp-faq-item.is-open .rnp-faq-chevron { transform: rotate(180deg); }
-        .rnp-faq-a { padding: 0 16px 16px; font-size: 13px; color: #404040; line-height: 1.65; }
+        .rnp-pill-chip svg { flex-shrink: 0; color: #f97316; }
+        .rnp-pill-chip:hover { background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.45); color: #ea580c; }
 
         /* Final CTA */
         .rnp-final-cta {
-          text-align: center; padding: 32px 20px;
+          text-align: center; padding: 32px 24px;
           background: rgba(249,115,22,0.05); border: 1px solid rgba(249,115,22,0.20);
-          border-radius: 18px;
+          border-radius: 999px;
         }
         .rnp-final-cta h2 { font-size: 20px; font-weight: 800; color: #000000; margin: 0 0 8px; }
         .rnp-final-cta p { font-size: 13.5px; color: #404040; margin: 0 0 10px; }
@@ -487,16 +517,10 @@ export default function RecruitersPage() {
           .rnp-title { font-size: clamp(2rem, 4vw, 2.6rem); }
           .rnp-section { padding: 56px 0; }
           .rnp-heading { font-size: 26px; }
-          .rnp-partner-grid { grid-template-columns: 1fr 1fr; }
-          .rnp-features-grid { grid-template-columns: 1fr 1fr; }
-          .rnp-tools-grid { grid-template-columns: 1fr 1fr; }
-          .rnp-steps { flex-direction: row; flex-wrap: wrap; }
-          .rnp-step { flex: 1 1 calc(50% - 20px); }
+          .rnp-pill-grid { grid-template-columns: 1fr 1fr; }
         }
         @media (min-width: 960px) {
-          .rnp-features-grid { grid-template-columns: repeat(3, 1fr); }
-          .rnp-tools-grid { grid-template-columns: repeat(4, 1fr); }
-          .rnp-step { flex: 1 1 calc(25% - 20px); }
+          .rnp-pill-grid { grid-template-columns: repeat(3, 1fr); }
         }
       `}</style>
     </PageLayout>
