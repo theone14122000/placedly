@@ -641,7 +641,7 @@ export function DocumentChecklistSection() {
         .placedly-doc-chip:hover { box-shadow: 0 6px 18px rgba(15,23,42,0.06); }
         .placedly-doc-chip.is-open { box-shadow: 0 10px 24px rgba(249, 115, 22, 0.10); }
         .placedly-doc-chip-row { display: flex; align-items: center; gap: 10px; }
-        .placedly-doc-chip-icon { width: 26px; height: 26px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .placedly-doc-chip-icon { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .placedly-doc-chip-label { font-size: 13px; font-weight: 700; color: ${BLACK}; flex: 1; }
         .placedly-doc-chip-chevron { flex-shrink: 0; transition: transform 0.25s ease; }
         .placedly-doc-chip-note { display: block; overflow: hidden; font-size: 12.5px; color: ${TEXT_BODY}; line-height: 1.5; padding-left: 36px; padding-top: 6px; }
@@ -649,7 +649,7 @@ export function DocumentChecklistSection() {
         .placedly-doc-advisor-note {
           display: flex; align-items: flex-start; gap: 8px;
           max-width: 600px; margin: 18px auto 0;
-          padding: 10px 16px; border-radius: 12px;
+          padding: 12px 18px; border-radius: 999px;
           background: rgba(249, 115, 22, 0.06);
           border: 1px solid rgba(249, 115, 22, 0.15);
         }
@@ -662,7 +662,7 @@ export function DocumentChecklistSection() {
           gap: 18px;
           margin-top: clamp(32px, 5vw, 56px);
           padding: clamp(20px, 4vw, 30px) clamp(20px, 4vw, 36px);
-          border-radius: 22px;
+          border-radius: 999px;
           background: ${SURFACE};
           border: 1px solid ${BORDER};
         }
