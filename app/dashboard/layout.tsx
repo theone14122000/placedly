@@ -84,8 +84,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [appStatus, setAppStatus] = useState<'checking' | 'APPROVED' | 'PENDING' | 'REJECTED' | 'open'>('checking');
   const [refreshKey, setRefreshKey] = useState(0);
 
+  const sessionRole = (session?.user as any)?.role;
+
+  /* Role guard — the candidate portal must never render another role's
+     identity (e.g. a master-admin session from the same browser). */
   useEffect(() => {
-    if (status !== 'authenticated') return;
+    if (status === 'authenticated' && sessionRole && sessionRole !== 'candidate') {
+      void signOut({ callbackUrl: '/login' });
+    }
+  }, [status, sessionRole]);
+
+  useEffect(() => {
+    if (status !== 'authenticated' || sessionRole !== 'candidate') return;
     let cancelled = false;
     setAppStatus('checking');
     fetch('/api/candidate/profile')
@@ -97,7 +107,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       })
       .catch(() => { if (!cancelled) setAppStatus('open'); });
     return () => { cancelled = true; };
-  }, [status, refreshKey]);
+  }, [status, refreshKey, sessionRole]);
 
   useEffect(() => {
     if (status === 'unauthenticated') router.replace('/login');
@@ -130,6 +140,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const user = session?.user;
   const firstName = user?.name?.split(' ')[0] ?? 'there';
+
+  /* Wrong role — show a neutral loading screen while sign-out redirects */
+  if (status === 'authenticated' && sessionRole && sessionRole !== 'candidate') {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff7ed', fontFamily: "'Poppins',sans-serif" }}>
+        <div style={{ textAlign: 'center' }}>
+          <img src="/logo-dark.png" alt="Placedly" style={{ height: '48px', marginBottom: '12px' }} />
+          <p style={{ fontSize: '13px', color: '#94a3b8' }}>Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
 
   /* Fresh accounts stay here until admin approves the CAP application */
   if (status === 'authenticated' && (appStatus === 'PENDING' || appStatus === 'REJECTED')) {

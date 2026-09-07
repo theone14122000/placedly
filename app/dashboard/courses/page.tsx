@@ -169,6 +169,8 @@ export default function CoursesPage() {
           {displayed.map(course => {
             const lc = LEVEL_COLOR[course.level] ?? { color: '#64748b', bg: '#f1f5f9' };
             const isExpanded = expanded === course.id;
+            // First YouTube lesson — shown as an embedded preview on the card
+            const firstYtUrl = (modulesMap[course.id] ?? []).map(m => youtubeEmbedUrl(m.url)).find(Boolean) as string | undefined;
             return (
               <div key={course.id} style={{ background: '#fff', border: `1px solid ${isExpanded ? course.color : '#e2e8f0'}`, borderRadius: '18px', overflow: 'hidden', boxShadow: isExpanded ? `0 4px 20px ${course.color}22` : '0 1px 3px rgba(0,0,0,.04)', display: 'flex', flexDirection: 'column', transition: 'all 0.2s' }}>
 
@@ -201,6 +203,19 @@ export default function CoursesPage() {
                   <div style={{ fontSize: '13px', color: '#64748b', lineHeight: 1.6, marginBottom: '14px', maxHeight: isExpanded ? '200px' : '40px', overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
                     {course.description}
                   </div>
+
+                  {/* Embedded video preview — visible without expanding */}
+                  {!isExpanded && firstYtUrl && (
+                    <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', borderRadius: 12, overflow: 'hidden', background: '#000', marginBottom: '14px' }}>
+                      <iframe
+                        src={firstYtUrl}
+                        title={`${course.title} — video lesson`}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                      />
+                    </div>
+                  )}
 
                   {/* Meta pills */}
                   <div style={{ display: 'flex', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
@@ -245,7 +260,8 @@ export default function CoursesPage() {
                           {(modulesMap[course.id] ?? []).length > 0 ? (
                             modulesMap[course.id].map((m, mi) => {
                               const done = progressMap[course.id]?.has(mi) ?? false;
-                              const embed = m.type === 'VIDEO' ? youtubeEmbedUrl(m.url) : null;
+                              // Any module carrying a YouTube URL (VIDEO or LINK) embeds inline
+                              const embed = youtubeEmbedUrl(m.url);
                               return (
                                 <div key={m.id} style={{ marginBottom: 12 }}>
                                   {embed ? (
