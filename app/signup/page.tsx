@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import {
   Eye, EyeOff, Mail, Lock, User,
@@ -36,14 +37,33 @@ const STATS = [
   { n: '50+',    l: 'Hiring Partners'  },
 ];
 
-export default function SignupPage() {
+function SignupForm() {
+  const searchParams = useSearchParams();
   const [focused,  setFocused]  = useState('');
   const [showPass, setShowPass] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [loading,  setLoading]  = useState(false);
+  const [error,    setError]    = useState('');
+  const [fromCap,  setFromCap]  = useState(false);
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '',
-    phone: '', password: '', service: '',
+    phone: '', password: '', confirmPassword: '', service: '',
   });
+
+  /* Prefill from CAP application (redirected after apply) */
+  useEffect(() => {
+    const email = searchParams.get('email');
+    const name = searchParams.get('name');
+    if (!email && !name) return;
+    setFromCap(true);
+    const parts = (name ?? '').trim().split(/\s+/).filter(Boolean);
+    setForm(f => ({
+      ...f,
+      email: email ?? f.email,
+      firstName: parts[0] ?? f.firstName,
+      lastName: parts.slice(1).join(' ') || f.lastName,
+    }));
+  }, [searchParams]);
 
   /* input style — orange focus */
   const fi = (n: string): React.CSSProperties => ({
@@ -63,10 +83,40 @@ export default function SignupPage() {
     transition: 'border-color .18s, box-shadow .18s, background .18s',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    if (form.password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      return;
+    }
+    if (form.password !== form.confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
     setLoading(true);
-    setTimeout(() => setLoading(false), 1500);
+    try {
+      const r = await fetch('/api/candidate/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form }),
+      });
+      const data = await r.json();
+      if (!r.ok) {
+        setError(data.error ?? 'Something went wrong. Please try again.');
+        setLoading(false);
+        return;
+      }
+      // Account created as candidate — sign in and land on the dashboard
+      await signIn('credentials', {
+        email: form.email.trim().toLowerCase(),
+        password: form.password,
+        callbackUrl: '/auth/redirect',
+      });
+    } catch {
+      setError('Network error. Please try again.');
+      setLoading(false);
+    }
   };
 
   return (
@@ -371,6 +421,35 @@ export default function SignupPage() {
         }
         .sg-zero-badge-text strong { font-weight: 800; color: ${BLACK}; }
 
+        /* application-received banner (arrived from CAP apply) */
+        .sg-cap-banner {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          background: ${ORANGE_SOFT};
+          border: 1px solid ${ORANGE_BORDER};
+          border-radius: 10px;
+          padding: 12px 14px;
+        }
+        .sg-cap-banner-text {
+          font-size: 12.5px;
+          color: ${BODY};
+          line-height: 1.55;
+          margin: 0;
+        }
+        .sg-cap-banner-text strong { font-weight: 800; color: ${BLACK}; }
+
+        /* form error */
+        .sg-error {
+          padding: 12px 14px;
+          background: #fef2f2;
+          border: 1px solid #fecaca;
+          border-radius: 10px;
+          font-size: 13px;
+          color: #dc2626;
+          line-height: 1.6;
+        }
+
         /* submit button */
         .sg-submit {
           width: 100%;
@@ -558,6 +637,22 @@ export default function SignupPage() {
             onSubmit={handleSubmit}
             style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
           >
+            {/* Arrived from CAP apply */}
+            {fromCap && (
+              <div className="sg-cap-banner">
+                <CheckCircle2 size={15} color={ORANGE} style={{ flexShrink: 0, marginTop: '1px' }} />
+                <p className="sg-cap-banner-text">
+                  <strong>Application received.</strong>{' '}
+                  Set your password below to activate your candidate account.
+                </p>
+              </div>
+            )}
+
+            {/* Error */}
+            {error && (
+              <div className="sg-error">{error}</div>
+            )}
+
             {/* Name row */}
             <div className="sg-name-row">
               <div>
@@ -694,6 +789,36 @@ export default function SignupPage() {
               </div>
             </div>
 
+            {/* Confirm Password */}
+            <div>
+              <label className="sg-label">Confirm Password</label>
+              <div style={{ position: 'relative' }}>
+                <div style={{
+                  position: 'absolute', left: 13, top: '50%',
+                  transform: 'translateY(-50%)', pointerEvents: 'none',
+                }}>
+                  <Lock size={14} color={focused === 'confirm' ? ORANGE : '#cbd5e1'} />
+                </div>
+                <input
+                  type={showConfirm ? 'text' : 'password'}
+                  required placeholder="Repeat your password"
+                  style={{ ...fi('confirm'), paddingRight: '42px' }}
+                  value={form.confirmPassword}
+                  onFocus={() => setFocused('confirm')}
+                  onBlur={() => setFocused('')}
+                  onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
+                />
+                <button
+                  type="button"
+                  className="sg-pw-toggle"
+                  onClick={() => setShowConfirm(v => !v)}
+                  aria-label={showConfirm ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
+            </div>
+
             {/* Zero cost badge */}
             <div className="sg-zero-badge">
               <Sparkles size={15} color={ORANGE} style={{ flexShrink: 0, marginTop: '1px' }} />
@@ -727,5 +852,13 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
   );
 }

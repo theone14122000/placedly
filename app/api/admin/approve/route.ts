@@ -23,6 +23,25 @@ export async function POST(req: NextRequest) {
   if (!application) return NextResponse.json({ error: 'Application not found' }, { status: 404 });
   if (application.status === 'APPROVED') return NextResponse.json({ error: 'Already approved' }, { status: 409 });
 
+  // Self-registered candidates already have an account (created via /signup
+  // with their own password). Just mark the application approved — do NOT
+  // create a duplicate or reset their password.
+  const existingCandidate = await prisma.candidate.findUnique({
+    where: { applicationId },
+  });
+  if (existingCandidate) {
+    await prisma.candidateApplication.update({
+      where: { id: applicationId },
+      data: { status: 'APPROVED' },
+    });
+    return NextResponse.json({
+      success: true,
+      alreadyHadAccount: true,
+      email: existingCandidate.email,
+      validUntil: existingCandidate.validUntil,
+    });
+  }
+
   const plainPassword = generatePassword();
   const passwordHash = await hashPassword(plainPassword);
   const now = new Date();

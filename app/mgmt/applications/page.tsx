@@ -64,7 +64,7 @@ export default function MgmtApplications() {
     setBusy(id + '-approve');
     const r = await fetch('/api/admin/approve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ applicationId: id }) });
     const d = await r.json();
-    if (r.ok) { alert(`✅ Approved!\n\nEmail: ${d.email}\nPassword: ${d.password}\n\nAccess until ${new Date(d.validUntil).toLocaleDateString('en-IN')}\n\nCredentials emailed to candidate.`); load(); }
+    if (r.ok) { alert(d.alreadyHadAccount ? `✅ Approved!\n\nEmail: ${d.email}\nCandidate already has an account (self-registered) — existing password kept.\n\nAccess until ${new Date(d.validUntil).toLocaleDateString('en-IN')}` : `✅ Approved!\n\nEmail: ${d.email}\nPassword: ${d.password}\n\nAccess until ${new Date(d.validUntil).toLocaleDateString('en-IN')}\n\nCredentials emailed to candidate.`); load(); }
     else alert('Error: ' + d.error);
     setBusy(null);
   };

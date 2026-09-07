@@ -1,8 +1,8 @@
 'use client';
 import { Suspense, useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { CheckCircle2, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 const ORANGE = '#f97316';
 const ORANGE_DARK = '#ea580c';
@@ -37,6 +37,7 @@ function Section({ n, title, children }: { n: string; title: string; children: R
 
 function CAPApplyForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [form, setForm] = useState({
     name: '', email: '', phone: '', city: '',
     experience: '', currentRole: '', targetRole: '', message: '',
@@ -45,7 +46,6 @@ function CAPApplyForm() {
   const [referrerName, setReferrerName] = useState('');
   const [focused, setFocused] = useState('');
   const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
   const [error, setError] = useState('');
   const [showTc, setShowTc] = useState(false);
   const [tcChecked, setTcChecked] = useState(false);
@@ -90,30 +90,17 @@ function CAPApplyForm() {
         body: JSON.stringify({ ...form, referralCode: referralCode || undefined }),
       });
       const data = await r.json();
-      if (r.ok) setDone(true);
+      if (r.ok) {
+        // Application saved — continue to account creation with details prefilled
+        const q = new URLSearchParams({ email: form.email, name: form.name });
+        router.push(`/signup?${q.toString()}`);
+      }
       else setError(data.error ?? 'Something went wrong.');
     } catch {
       setError('Network error. Please try again.');
     }
     setLoading(false);
   };
-
-  if (done) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fafafa', fontFamily: "'Poppins',sans-serif", padding: '24px' }}>
-      <div style={{ maxWidth: '480px', textAlign: 'center' }} className="cap-fade">
-        <div style={{ width: 72, height: 72, borderRadius: '50%', background: ORANGE_LIGHT, border: `1px solid ${ORANGE_BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
-          <CheckCircle2 size={34} color={ORANGE} />
-        </div>
-        <h1 style={{ fontSize: '24px', fontWeight: 900, color: INK, marginBottom: '10px' }}>Application submitted!</h1>
-        <p style={{ fontSize: '15px', color: '#64748b', lineHeight: 1.7, marginBottom: '28px' }}>
-          We&apos;ve received your application. Our team will review it and send your login credentials to <strong>{form.email}</strong> once approved — usually within 1–2 business days.
-        </p>
-        <Link href="/" className="cap-btn-primary">
-          Back to Home
-        </Link>
-      </div>
-    </div>
-  );
 
   return (
     <>
