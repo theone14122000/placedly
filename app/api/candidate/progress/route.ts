@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { isCandidateApproved, NOT_APPROVED_ERROR } from '@/lib/candidateAccess';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -26,6 +27,10 @@ export async function POST(req: NextRequest) {
   const candidateId = (session?.user as any)?.candidateId;
   if (!candidateId) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
+  if (!(await isCandidateApproved(candidateId))) {
+    return NextResponse.json({ error: NOT_APPROVED_ERROR }, { status: 403 });
+  }
+
   const { courseId, moduleIndex } = await req.json();
   if (!courseId || typeof moduleIndex !== 'number') {
     return NextResponse.json({ error: 'courseId and moduleIndex required' }, { status: 400 });
@@ -46,6 +51,10 @@ export async function DELETE(req: NextRequest) {
   }
   const candidateId = (session?.user as any)?.candidateId;
   if (!candidateId) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+  if (!(await isCandidateApproved(candidateId))) {
+    return NextResponse.json({ error: NOT_APPROVED_ERROR }, { status: 403 });
+  }
 
   const { courseId, moduleIndex } = await req.json();
   if (!courseId || typeof moduleIndex !== 'number') {

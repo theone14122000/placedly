@@ -2,7 +2,7 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { LayoutDashboard, BookOpen, Briefcase, TrendingUp, LogOut, MessageCircle, User } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Briefcase, TrendingUp, LogOut, MessageCircle, User, Clock, XCircle, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
 const NAV = [
@@ -34,11 +34,70 @@ function ExpiryBanner({ session }: { session: any }) {
   );
 }
 
+/* ── Approval gate screen ──
+   Fresh accounts see this until their CAP application is APPROVED
+   by admin. After approval the full panel unlocks automatically. */
+function GateScreen({ kind, name, onRetry }: {
+  kind: 'PENDING' | 'REJECTED'; name: string; onRetry: () => void;
+}) {
+  const pending = kind === 'PENDING';
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f1f5f9', padding: '24px', fontFamily: "'Poppins',sans-serif" }}>
+      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: 'clamp(28px,5vw,48px)', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 8px 32px rgba(0,0,0,0.06)' }}>
+        <img src="/logo.png" alt="Placedly" style={{ height: '40px', width: 'auto', margin: '0 auto 20px' }} />
+        <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: pending ? '#fff7ed' : '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          {pending ? <Clock size={28} color="#f97316" /> : <XCircle size={28} color="#ef4444" />}
+        </div>
+        <h1 style={{ fontSize: '22px', fontWeight: 900, color: '#0b0d20', margin: '0 0 10px', lineHeight: 1.3 }}>
+          {pending ? 'Application Under Process' : 'Application Not Approved'}
+        </h1>
+        <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.7, margin: '0 0 24px' }}>
+          {pending
+            ? `Thanks ${name}! Your CAP application is currently under review by our team — usually within 1–2 business days. Your courses, vacancies and full dashboard unlock automatically once approved.`
+            : `Hi ${name}, your CAP application was not approved at this time. Please contact our support team to discuss the next steps.`}
+        </p>
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          {pending && (
+            <button onClick={onRetry} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '11px 22px', background: '#f97316', color: '#fff', border: 'none', borderRadius: '9999px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", boxShadow: '0 4px 14px rgba(249,115,22,0.30)' }}>
+              <RefreshCw size={13} /> Check Again
+            </button>
+          )}
+          <Link href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '11px 22px', background: '#fff', color: '#ea580c', border: '1.5px solid #fed7aa', borderRadius: '9999px', fontSize: '13px', fontWeight: 700, textDecoration: 'none' }}>
+            <MessageCircle size={13} /> Talk to Advisor
+          </Link>
+        </div>
+        <button onClick={() => signOut({ callbackUrl: '/login' })} style={{ marginTop: '16px', background: 'none', border: 'none', color: '#94a3b8', fontSize: '12px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", textDecoration: 'underline' }}>
+          Sign Out
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  /* Approval gate: 'checking' while we read the application status,
+     'open' when unknown/fetch failed (preserve today's behaviour). */
+  const [appStatus, setAppStatus] = useState<'checking' | 'APPROVED' | 'PENDING' | 'REJECTED' | 'open'>('checking');
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    if (status !== 'authenticated') return;
+    let cancelled = false;
+    setAppStatus('checking');
+    fetch('/api/candidate/profile')
+      .then(r => (r.ok ? r.json() : null))
+      .then(d => {
+        if (cancelled) return;
+        const s = d?.applicationStatus;
+        setAppStatus(s === 'PENDING' ? 'PENDING' : s === 'REJECTED' ? 'REJECTED' : d ? 'APPROVED' : 'open');
+      })
+      .catch(() => { if (!cancelled) setAppStatus('open'); });
+    return () => { cancelled = true; };
+  }, [status, refreshKey]);
 
   useEffect(() => {
     if (status === 'unauthenticated') router.replace('/login');
@@ -58,7 +117,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // Close sidebar on route change
   useEffect(() => { setSidebarOpen(false); }, [pathname]);
 
-  if (status === 'loading') {
+  if (status === 'loading' || (status === 'authenticated' && appStatus === 'checking')) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff7ed', fontFamily: "'Poppins',sans-serif" }}>
         <div style={{ textAlign: 'center' }}>
@@ -71,6 +130,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const user = session?.user;
   const firstName = user?.name?.split(' ')[0] ?? 'there';
+
+  /* Fresh accounts stay here until admin approves the CAP application */
+  if (status === 'authenticated' && (appStatus === 'PENDING' || appStatus === 'REJECTED')) {
+    return <GateScreen kind={appStatus} name={firstName} onRetry={() => setRefreshKey(k => k + 1)} />;
+  }
 
   return (
     <div className="portal-layout" style={{ background: '#f1f5f9' }}>

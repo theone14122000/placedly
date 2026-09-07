@@ -1,6 +1,7 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { Play, Lock, Clock, BookOpen, BarChart2, CheckCircle2, Zap, Star } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Play, Lock, Clock, BookOpen, BarChart2, CheckCircle2, Zap, Star, ExternalLink, Film } from 'lucide-react';
+import { youtubeEmbedUrl } from '@/lib/youtube';
 
 type Course = {
   id: string; title: string; category: string; level: string;
@@ -9,13 +10,16 @@ type Course = {
   enrolled: boolean; description: string; instructor: string;
 };
 
+type DbModule = {
+  id: string; title: string; type: string;
+  url: string | null; content: string | null;
+};
+
 const DEFAULT_COURSES: Course[] = [
   { id: 'default-1', title: 'ATS Resume & LinkedIn Mastery', category: 'Career', level: 'Beginner', duration: '2.5 hrs', modules: 5, lessons: 15, progress: 0, color: '#f97316', bg: '#fff7ed', enrolled: true, instructor: 'Placedly Career Team', description: 'Build an ATS-optimized resume that clears automated filters and gets noticed by hiring managers at top MNCs. Includes LinkedIn rebuild.' },
   { id: 'default-2', title: 'Interview Mastery Programme', category: 'Interview', level: 'Intermediate', duration: '4 hrs', modules: 5, lessons: 15, progress: 0, color: '#f97316', bg: '#fff7ed', enrolled: true, instructor: 'Placedly Advisors', description: 'Three-session system covering HR Round, Technical/Domain Round, and a Full Mock with Salary Negotiation Script.' },
   { id: 'default-3', title: 'Salary Negotiation Secrets', category: 'Career', level: 'Intermediate', duration: '1.5 hrs', modules: 5, lessons: 15, progress: 0, color: '#16a34a', bg: '#f0fdf4', enrolled: true, instructor: 'Placedly Career Team', description: 'Word-for-word scripts and proven tactics to negotiate 20–40% higher offers — without sounding greedy.' },
 ];
-
-const CATS = ['All', 'Career', 'Interview', 'Domain', 'Study'];
 
 const LEVEL_COLOR: Record<string, { color: string; bg: string }> = {
   Beginner:     { color: '#16a34a', bg: '#f0fdf4' },
@@ -30,34 +34,56 @@ export default function CoursesPage() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const [progressMap, setProgressMap] = useState<Record<string, Set<number>>>({});
+  const [modulesMap, setModulesMap] = useState<Record<string, DbModule[]>>({});
+
+  /* Domain filter options grow automatically with admin-added domains */
+  const cats = useMemo(
+    () => ['All', ...Array.from(new Set(courses.map(c => c.category).filter(Boolean)))],
+    [courses],
+  );
 
   useEffect(() => {
     const COLORS = ['#f97316', '#f97316', '#16a34a', '#ef4444', '#7c3aed', '#0891b2'];
     const BGS    = ['#fff7ed', '#fff7ed', '#f0fdf4', '#fef2f2', '#faf5ff', '#ecfeff'];
 
-    Promise.all([
-      fetch('/api/admin/courses').then(r => r.json()),
-      fetch('/api/candidate/progress').then(r => r.json()).catch(() => []),
-    ]).then(([dbCourses, progressData]: [any[], any[]]) => {
-      if (dbCourses.length === 0) return;
+    (async () => {
+      try {
+        const [dbCourses, progressData]: [any[], any[]] = await Promise.all([
+          fetch('/api/admin/courses').then(r => r.json()),
+          fetch('/api/candidate/progress').then(r => r.json()).catch(() => []),
+        ]);
+        if (!Array.isArray(dbCourses) || dbCourses.length === 0) return;
 
-      const pMap: Record<string, Set<number>> = {};
-      for (const p of progressData) {
-        if (!pMap[p.courseId]) pMap[p.courseId] = new Set();
-        pMap[p.courseId].add(p.moduleIndex);
-      }
-      setProgressMap(pMap);
+        const pMap: Record<string, Set<number>> = {};
+        for (const p of progressData) {
+          if (!pMap[p.courseId]) pMap[p.courseId] = new Set();
+          pMap[p.courseId].add(p.moduleIndex);
+        }
+        setProgressMap(pMap);
 
-      const MODULES = 5;
-      setCourses(dbCourses.map((c: any, i: number) => ({
-        id: c.id,
-        title: c.title, category: c.category, level: c.level,
-        duration: c.duration || '', modules: MODULES, lessons: MODULES * 3,
-        progress: Math.round(((pMap[c.id]?.size ?? 0) / MODULES) * 100),
-        color: COLORS[i % 6], bg: BGS[i % 6],
-        enrolled: true, description: c.description || '', instructor: 'Placedly Team',
-      })));
-    }).catch(() => {});
+        // Real content modules per course (VIDEO embeds, PDFs, links…)
+        const mods: Record<string, DbModule[]> = {};
+        await Promise.all(dbCourses.map(async (c: any) => {
+          try {
+            const r = await fetch(`/api/admin/courses/modules?courseId=${c.id}`);
+            if (r.ok) mods[c.id] = await r.json();
+          } catch {}
+        }));
+        setModulesMap(mods);
+
+        setCourses(dbCourses.map((c: any, i: number) => {
+          const count = mods[c.id]?.length || 5;
+          return {
+            id: c.id,
+            title: c.title, category: c.category, level: c.level,
+            duration: c.duration || '', modules: count, lessons: count * 3,
+            progress: Math.round(((pMap[c.id]?.size ?? 0) / count) * 100),
+            color: COLORS[i % 6], bg: BGS[i % 6],
+            enrolled: true, description: c.description || '', instructor: 'Placedly Team',
+          };
+        }));
+      } catch {}
+    })();
   }, []);
 
   const toggleModule = async (courseId: string, moduleIndex: number, done: boolean) => {
@@ -71,10 +97,12 @@ export default function CoursesPage() {
       done ? next[courseId].delete(moduleIndex) : next[courseId].add(moduleIndex);
       return next;
     });
-    const MODULES = 5;
-    setCourses(prev => prev.map(c => c.id === courseId
-      ? { ...c, progress: Math.round(((progressMap[courseId]?.size ?? 0) + (done ? -1 : 1)) / MODULES * 100) }
-      : c));
+    setCourses(prev => prev.map(c => {
+      if (c.id !== courseId) return c;
+      const total = Math.max(c.modules, 1);
+      const size = (progressMap[courseId]?.size ?? 0) + (done ? -1 : 1);
+      return { ...c, progress: Math.round(size / total * 100) };
+    }));
   };
 
   const displayed = courses
@@ -122,7 +150,7 @@ export default function CoursesPage() {
           ))}
         </div>
         <div style={{ width: '1px', height: '24px', background: '#e2e8f0' }} />
-        {CATS.map(c => (
+        {cats.map(c => (
           <button key={c} onClick={() => setFilter(c)} style={{ padding: '7px 14px', borderRadius: '999px', border: '1.5px solid', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", fontSize: '12px', fontWeight: 600, background: filter === c ? '#0b0d20' : '#fff', borderColor: filter === c ? '#0b0d20' : '#e2e8f0', color: filter === c ? '#fff' : '#64748b', transition: 'all 0.15s' }}>
             {c}
           </button>
@@ -214,18 +242,54 @@ export default function CoursesPage() {
                       {course.enrolled && (
                         <div style={{ marginBottom: '14px' }}>
                           <div style={{ fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '8px' }}>Modules</div>
-                          {Array.from({ length: course.modules }, (_, mi) => {
-                            const done = progressMap[course.id]?.has(mi) ?? false;
-                            return (
-                              <button key={mi} onClick={() => toggleModule(course.id, mi, done)} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', background: 'none', border: 'none', padding: '5px 0', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", textAlign: 'left' }}>
-                                <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: done ? course.color : '#f1f5f9', border: done ? 'none' : '1.5px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                  {done && <CheckCircle2 size={10} color="#fff" />}
+                          {(modulesMap[course.id] ?? []).length > 0 ? (
+                            modulesMap[course.id].map((m, mi) => {
+                              const done = progressMap[course.id]?.has(mi) ?? false;
+                              const embed = m.type === 'VIDEO' ? youtubeEmbedUrl(m.url) : null;
+                              return (
+                                <div key={m.id} style={{ marginBottom: 12 }}>
+                                  {embed ? (
+                                    <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', borderRadius: 10, overflow: 'hidden', background: '#000', marginBottom: 8 }}>
+                                      <iframe
+                                        src={embed}
+                                        title={m.title}
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                                      />
+                                    </div>
+                                  ) : m.type === 'VIDEO' && m.url ? (
+                                    <video controls src={m.url} style={{ width: '100%', borderRadius: 10, marginBottom: 8, background: '#000' }} />
+                                  ) : null}
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <button onClick={() => toggleModule(course.id, mi, done)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '18px', height: '18px', borderRadius: '50%', background: done ? course.color : '#f1f5f9', border: done ? 'none' : '1.5px solid #e2e8f0', cursor: 'pointer', flexShrink: 0, padding: 0 }}>
+                                      {done && <CheckCircle2 size={10} color="#fff" />}
+                                    </button>
+                                    <span style={{ fontSize: '12px', color: done ? '#0b0d20' : '#374151', fontWeight: done ? 600 : 500, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.title}</span>
+                                    {m.type === 'VIDEO'
+                                      ? <Film size={12} color={course.color} style={{ flexShrink: 0 }} />
+                                      : m.url
+                                        ? <a href={m.url} target="_blank" rel="noreferrer" aria-label="Open resource" style={{ display: 'inline-flex', color: course.color, flexShrink: 0 }}><ExternalLink size={12} /></a>
+                                        : null}
+                                    {done && <span style={{ fontSize: '10px', color: course.color, fontWeight: 600, marginLeft: 'auto', flexShrink: 0 }}>✓ Done</span>}
+                                  </div>
                                 </div>
-                                <span style={{ fontSize: '12px', color: done ? '#0b0d20' : '#94a3b8', fontWeight: done ? 600 : 400 }}>Module {mi + 1}</span>
-                                {done && <span style={{ fontSize: '10px', color: course.color, fontWeight: 600, marginLeft: 'auto' }}>✓ Done</span>}
-                              </button>
-                            );
-                          })}
+                              );
+                            })
+                          ) : (
+                            Array.from({ length: course.modules }, (_, mi) => {
+                              const done = progressMap[course.id]?.has(mi) ?? false;
+                              return (
+                                <button key={mi} onClick={() => toggleModule(course.id, mi, done)} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', background: 'none', border: 'none', padding: '5px 0', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", textAlign: 'left' }}>
+                                  <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: done ? course.color : '#f1f5f9', border: done ? 'none' : '1.5px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                    {done && <CheckCircle2 size={10} color="#fff" />}
+                                  </div>
+                                  <span style={{ fontSize: '12px', color: done ? '#0b0d20' : '#94a3b8', fontWeight: done ? 600 : 400 }}>Module {mi + 1}</span>
+                                  {done && <span style={{ fontSize: '10px', color: course.color, fontWeight: 600, marginLeft: 'auto' }}>✓ Done</span>}
+                                </button>
+                              );
+                            })
+                          )}
                         </div>
                       )}
                     </>
@@ -233,7 +297,7 @@ export default function CoursesPage() {
 
                   <div style={{ marginTop: 'auto', display: 'flex', gap: '8px' }}>
                     {/* Main CTA */}
-                    <button style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '11px', background: course.enrolled ? course.color : '#fff7ed', color: course.enrolled ? '#fff' : '#94a3b8', border: `1.5px solid ${course.enrolled ? course.color : '#e2e8f0'}`, borderRadius: '9999px', fontSize: '13px', fontWeight: 700, cursor: course.enrolled ? 'pointer' : 'default', fontFamily: "'Poppins',sans-serif", boxShadow: course.enrolled ? `0 2px 8px ${course.color}33` : 'none' }}>
+                    <button onClick={() => { if (course.enrolled) setExpanded(course.id); }} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '11px', background: course.enrolled ? course.color : '#fff7ed', color: course.enrolled ? '#fff' : '#94a3b8', border: `1.5px solid ${course.enrolled ? course.color : '#e2e8f0'}`, borderRadius: '9999px', fontSize: '13px', fontWeight: 700, cursor: course.enrolled ? 'pointer' : 'default', fontFamily: "'Poppins',sans-serif", boxShadow: course.enrolled ? `0 2px 8px ${course.color}33` : 'none' }}>
                       {course.enrolled ? <><Play size={13} />Start Learning</> : <><Lock size={13} />Locked</>}
                     </button>
                     {/* Details toggle */}

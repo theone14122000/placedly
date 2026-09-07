@@ -1,6 +1,7 @@
 'use client';
 import { useRef, useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, X, Save, BookOpen, ChevronDown, ChevronUp, Upload, Loader, Link, FileText, Film, ImageIcon, File } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Save, BookOpen, ChevronDown, ChevronUp, Upload, Loader, Link, FileText, Film, ImageIcon, File, Youtube } from 'lucide-react';
+import { extractYouTubeId } from '@/lib/youtube';
 
 type Course = { id: string; title: string; category: string; level: string; duration: string; description: string; isActive: boolean };
 type CourseModule = { id: string; courseId: string; title: string; type: string; url: string | null; content: string | null; sortOrder: number };
@@ -183,6 +184,96 @@ function AddModuleModal({ courseId, onDone, onClose, existingCount }: {
   );
 }
 
+/* ── AddYouTubeCourseModal ────────────────────────────────────────────
+   Quick-add: paste a YouTube URL + domain name and get a course with one
+   embedded VIDEO module. Reuses the standard course/module endpoints. */
+function AddYouTubeCourseModal({ onDone, onClose }: {
+  onDone: () => void; onClose: () => void;
+}) {
+  const [form, setForm] = useState({ title: '', domain: '', url: '', description: '', level: 'Beginner' });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSave = async () => {
+    if (!form.title.trim()) { setError('Course title is required'); return; }
+    if (!form.domain.trim()) { setError('Domain name is required'); return; }
+    if (!extractYouTubeId(form.url)) { setError('Please paste a valid YouTube URL (watch, share, embed or shorts link)'); return; }
+    setError('');
+    setSaving(true);
+    try {
+      const rc = await fetch('/api/admin/courses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: form.title.trim(),
+          category: form.domain.trim(),
+          level: form.level,
+          duration: '',
+          description: form.description.trim(),
+        }),
+      });
+      const course = await rc.json();
+      if (!rc.ok || !course?.id) { setError('Failed to create course'); setSaving(false); return; }
+
+      const rm = await fetch('/api/admin/courses/modules', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: course.id,
+          title: form.title.trim(),
+          type: 'VIDEO',
+          url: form.url.trim(),
+          content: form.description.trim() || null,
+          sortOrder: 0,
+        }),
+      });
+      if (!rm.ok) { setError('Course created, but the video module failed to save — add it manually from the card.'); setSaving(false); return; }
+      onDone();
+    } catch {
+      setError('Something went wrong. Please try again.');
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 24 }}>
+      <div style={{ background: '#fff', borderRadius: 20, padding: 32, width: '100%', maxWidth: 560, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 64px rgba(0,0,0,0.22)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 800, color: '#0b0d20', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Youtube size={18} color="#ef4444" /> Add YouTube Course
+          </h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}><X size={18} /></button>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div><label style={lbl}>Course Title *</label><input style={inp} placeholder="e.g. IT Interview Preparation" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} /></div>
+          <div><label style={lbl}>Domain Name *</label>
+            <input style={inp} list="yt-domain-list" placeholder="e.g. IT, BPO, Finance…" value={form.domain} onChange={e => setForm(f => ({ ...f, domain: e.target.value }))} />
+            <datalist id="yt-domain-list">{CATEGORIES.map(c => <option key={c} value={c} />)}</datalist>
+          </div>
+          <div><label style={lbl}>YouTube URL *</label><input style={inp} placeholder="https://youtube.com/watch?v=…  or  https://youtu.be/…" value={form.url} onChange={e => setForm(f => ({ ...f, url: e.target.value }))} /></div>
+          <div>
+            <label style={lbl}>Level</label>
+            <select style={{ ...inp, cursor: 'pointer' }} value={form.level} onChange={e => setForm(f => ({ ...f, level: e.target.value }))}>{LEVELS.map(l => <option key={l}>{l}</option>)}</select>
+          </div>
+          <div><label style={lbl}>Description (optional)</label><textarea style={{ ...inp, borderRadius: '14px', minHeight: 70, resize: 'vertical' as const }} placeholder="What will candidates learn from this video?" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} /></div>
+          {error && <div style={{ fontSize: 12, color: '#ef4444', fontWeight: 600, background: '#fef2f2', padding: '8px 12px', borderRadius: 8 }}>{error}</div>}
+        </div>
+
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 24 }}>
+          <button onClick={onClose} style={{ padding: '10px 20px', background: '#f1f5f9', color: '#374151', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>Cancel</button>
+          <button onClick={handleSave} disabled={saving}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px', background: '#f97316', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: saving ? 0.6 : 1 }}>
+            {saving
+              ? <><Loader size={13} style={{ animation: 'spin 1s linear infinite' }} /> Saving…</>
+              : <><Save size={13} /> Add Course + Video</>}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── ModuleRow ──────────────────────────────────────────────────────── */
 function ModuleRow({ mod, onDelete }: { mod: CourseModule; onDelete: () => void }) {
   const meta = TYPE_META[mod.type] ?? TYPE_META.DOC;
@@ -313,6 +404,7 @@ export default function AdminCourses() {
   const [loading, setLoading] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [status, setStatus] = useState('');
+  const [ytModal, setYtModal] = useState(false);
 
   const load = () => fetch('/api/admin/courses').then(r => r.json()).then(setCourses).catch(() => {});
   useEffect(() => { load(); }, []);
@@ -347,6 +439,10 @@ export default function AdminCourses() {
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           {status && <span style={{ fontSize: 12, color: '#16a34a', fontWeight: 600 }}>✓ {status}</span>}
+          <button onClick={() => setYtModal(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', background: '#fff', color: '#ea580c', border: '1.5px solid #fed7aa', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
+            <Youtube size={14} /> YouTube Course
+          </button>
           <button onClick={openAdd}
             style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', background: '#f97316', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Poppins',sans-serif" }}>
             <Plus size={14} /> Add Course
@@ -391,6 +487,14 @@ export default function AdminCourses() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Add YouTube Course Modal */}
+      {ytModal && (
+        <AddYouTubeCourseModal
+          onDone={() => { setYtModal(false); load(); setStatus('Saved!'); setTimeout(() => setStatus(''), 2500); }}
+          onClose={() => setYtModal(false)}
+        />
       )}
 
       {/* Delete Confirm */}

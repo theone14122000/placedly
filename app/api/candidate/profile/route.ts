@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { isCandidateApproved, NOT_APPROVED_ERROR } from '@/lib/candidateAccess';
 
 async function getCandidate(session: any) {
   const candidateId = (session?.user as any)?.candidateId;
@@ -50,6 +51,10 @@ export async function PATCH(req: NextRequest) {
   }
   const candidateId = (session?.user as any)?.candidateId;
   if (!candidateId) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+  if (!(await isCandidateApproved(candidateId))) {
+    return NextResponse.json({ error: NOT_APPROVED_ERROR }, { status: 403 });
+  }
 
   const body = await req.json();
   const allowed = ['phone', 'city', 'currentRole', 'targetRole'];
